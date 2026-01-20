@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { Suspense, lazy } from "react";
+
+const Spline = lazy(() => import("@splinetool/react-spline"));
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <section className="relative min-h-[120vh] lg:min-h-screen flex items-center pt-20 overflow-hidden">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-mesh pointer-events-none" />
@@ -13,10 +15,10 @@ export function HeroSection() {
       <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
       
-      <div className="container-custom relative z-10 py-20">
-        <div className="max-w-3xl mx-auto lg:mx-0">
+      <div className="container-custom relative z-10 py-12 lg:py-20">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left Content */}
-          <div className="text-center lg:text-left">
+          <div className="text-center lg:text-left order-2 lg:order-1">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -61,93 +63,31 @@ export function HeroSection() {
               </a>
             </motion.div>
           </div>
-        </div>
 
-        {/* Dashboard Mockup */}
-        <ScrollReveal delay={0.4} className="mt-16 md:mt-24">
-          <div className="relative max-w-5xl mx-auto">
-            {/* Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 blur-3xl opacity-50 animate-pulse-glow" />
+          {/* Right: Spline 3D Animation */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="order-1 lg:order-2 relative h-[400px] sm:h-[500px] lg:h-[600px] xl:h-[700px]"
+          >
+            {/* Glow effect behind the 3D scene */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 blur-3xl opacity-60 pointer-events-none" />
             
-            {/* Dashboard Card */}
-            <div className="relative glass-card-strong p-4 md:p-8 rounded-3xl shadow-2xl">
-              {/* Top Bar */}
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-3 h-3 rounded-full bg-destructive/50" />
-                <div className="w-3 h-3 rounded-full bg-secondary/50" />
-                <div className="w-3 h-3 rounded-full bg-primary/50" />
-              </div>
-
-              {/* Dashboard Content */}
-              <div className="grid md:grid-cols-3 gap-6">
-                {/* Health Score */}
-                <div className="glass-card p-6">
-                  <p className="text-sm text-foreground/50 mb-2">Score Santé Global</p>
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-light text-foreground">87</span>
-                    <span className="text-sm text-secondary mb-1">+12%</span>
-                  </div>
-                  <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full w-[87%] bg-gradient-to-r from-primary to-secondary rounded-full" />
-                  </div>
+            <Suspense
+              fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
                 </div>
-
-                {/* Sleep Quality */}
-                <div className="glass-card p-6">
-                  <p className="text-sm text-foreground/50 mb-2">Qualité du Sommeil</p>
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-light text-foreground">92%</span>
-                    <span className="text-sm text-secondary mb-1">Optimal</span>
-                  </div>
-                  <div className="mt-4 flex gap-1">
-                    {[80, 65, 90, 85, 95, 88, 92].map((h, i) => (
-                      <div key={i} className="flex-1 bg-muted rounded-full overflow-hidden h-12">
-                        <div 
-                          className="w-full bg-gradient-to-t from-primary/60 to-secondary/60 rounded-full mt-auto" 
-                          style={{ height: `${h}%` }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Energy Level */}
-                <div className="glass-card p-6">
-                  <p className="text-sm text-foreground/50 mb-2">Niveau d'Énergie</p>
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-light text-foreground">Élevé</span>
-                  </div>
-                  <div className="mt-4 grid grid-cols-4 gap-2">
-                    {["Matin", "Midi", "Après-midi", "Soir"].map((time, i) => (
-                      <div key={time} className="text-center">
-                        <div className={`w-full h-8 rounded-lg ${i < 3 ? 'bg-secondary/30' : 'bg-primary/20'}`} />
-                        <span className="text-xs text-foreground/40 mt-1 block">{time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* AI Assistant Preview */}
-              <div className="mt-6 glass-card p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
-                    <span className="text-primary-foreground text-sm">IA</span>
-                  </div>
-                  <div>
-                    <p className="text-sm text-foreground/70">
-                      D'après vos données, je recommande d'augmenter votre apport en magnésium. Votre qualité de sommeil s'est améliorée de 20% ce mois-ci. Continuez ainsi ! 🌙
-                    </p>
-                    <div className="mt-3 flex gap-2">
-                      <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs">Magnésium</span>
-                      <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs">Sommeil</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ScrollReveal>
+              }
+            >
+              <Spline
+                scene="https://prod.spline.design/tX4bFFTJveu7haxH/scene.splinecode"
+                className="w-full h-full"
+              />
+            </Suspense>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

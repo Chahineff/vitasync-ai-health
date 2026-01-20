@@ -8,9 +8,25 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-mesh pointer-events-none" />
 
+      {/* Spline 3D Background - Right Side */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, delay: 0.2 }}
+        className="absolute top-0 right-0 w-full lg:w-2/3 h-full pointer-events-auto z-0"
+      >
+        {/* @ts-ignore */}
+        <spline-viewer 
+          url="https://prod.spline.design/SesUS9CodeODnLXa/scene.splinecode"
+          style={{ width: '100%', height: '100%' }}
+        />
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent pointer-events-none" />
+      </motion.div>
+
       
       <div className="container-custom relative z-10 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-2xl">
           {/* Left Content */}
           <div className="text-center lg:text-left">
             <motion.div
@@ -57,20 +73,6 @@ export function HeroSection() {
               </a>
             </motion.div>
           </div>
-
-          {/* Right Side - Spline 3D Reactive Orb */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative h-[380px] sm:h-[480px] lg:h-[580px]"
-          >
-            {/* @ts-ignore */}
-            <spline-viewer 
-              url="https://prod.spline.design/SesUS9CodeODnLXa/scene.splinecode"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </motion.div>
         </div>
 
         {/* Dashboard Mockup */}

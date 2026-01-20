@@ -1,80 +1,87 @@
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { useState } from "react";
 
 export function HeroSection() {
-  const [splineLoaded, setSplineLoaded] = useState(false);
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-      {/* Spline 3D Background via iframe */}
-      <div className="absolute inset-0 z-0">
+    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-mesh pointer-events-none" />
+
+      {/* Spline 3D Animation - Right Side */}
+      <div className="absolute top-0 right-0 w-1/2 h-full z-0 hidden lg:block">
         <iframe
           src="https://my.spline.design/uP2trMRZVW3sGyqn/"
           frameBorder="0"
-          className="w-full h-full"
+          className="w-full h-full scale-110 origin-center"
           style={{ border: 'none' }}
-          onLoad={() => setSplineLoaded(true)}
-          title="VitaSync 3D Background"
+          title="VitaSync 3D Animation"
           allow="autoplay"
         />
-        {/* Overlay to ensure text readability */}
-        <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px]" />
+        {/* Gradient fade to blend with content */}
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent pointer-events-none" />
       </div>
-
-      {/* Fallback gradient while loading */}
-      {!splineLoaded && (
-        <div className="absolute inset-0 bg-gradient-mesh pointer-events-none z-0" />
-      )}
-
-      {/* Background Gradient (subtle enhancement) */}
-      <div className="absolute inset-0 bg-gradient-radial pointer-events-none z-[1]" />
       
       <div className="container-custom relative z-10 py-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-sm text-primary mb-8 backdrop-blur-sm">
-              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-              Nouveau : Analyse vocale IA disponible
-            </span>
-          </motion.div>
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className="text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-sm text-primary mb-8">
+                <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                Nouveau : Analyse vocale IA disponible
+              </span>
+            </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-foreground mb-6 text-balance"
-          >
-            Votre Santé,{" "}
-            <span className="gradient-text">Propulsée par l'Intelligence Artificielle</span>
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-foreground mb-6 text-balance"
+            >
+              Votre Santé,{" "}
+              <span className="gradient-text">Propulsée par l'Intelligence Artificielle</span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg md:text-xl text-foreground/70 mb-10 max-w-2xl mx-auto"
-          >
-            VitaSync analyse vos besoins en temps réel pour créer la routine de compléments parfaite, adaptée à votre mode de vie.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-lg md:text-xl text-foreground/60 mb-10 max-w-xl mx-auto lg:mx-0"
+            >
+              VitaSync analyse vos besoins en temps réel pour créer la routine de compléments parfaite, adaptée à votre mode de vie.
+            </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <a href="#pricing" className="btn-neumorphic text-primary-foreground">
-              Démarrer mon bilan gratuit
-            </a>
-            <a href="#how-it-works" className="btn-neumorphic-glass text-foreground backdrop-blur-sm">
-              Comment ça marche
-            </a>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+            >
+              <a href="#pricing" className="btn-neumorphic text-primary-foreground">
+                Démarrer mon bilan gratuit
+              </a>
+              <a href="#how-it-works" className="btn-neumorphic-glass text-foreground">
+                Comment ça marche
+              </a>
+            </motion.div>
+          </div>
+
+          {/* Right Side - Placeholder for mobile / tablet */}
+          <div className="lg:hidden relative h-[300px] sm:h-[400px]">
+            <iframe
+              src="https://my.spline.design/uP2trMRZVW3sGyqn/"
+              frameBorder="0"
+              className="w-full h-full rounded-3xl"
+              style={{ border: 'none' }}
+              title="VitaSync 3D Animation Mobile"
+              allow="autoplay"
+            />
+          </div>
         </div>
 
         {/* Dashboard Mockup */}

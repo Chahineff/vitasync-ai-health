@@ -8,15 +8,12 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-mesh pointer-events-none" />
 
-      {/* Spline 3D Animation - Right Side */}
+      {/* Spline 3D Animation - Right Side (Desktop) */}
       <div className="absolute top-0 right-0 w-1/2 h-full z-0 hidden lg:block">
-        <iframe
-          src="https://my.spline.design/uP2trMRZVW3sGyqn/"
-          frameBorder="0"
-          className="w-full h-full scale-110 origin-center"
-          style={{ border: 'none' }}
-          title="VitaSync 3D Animation"
-          allow="autoplay"
+        {/* @ts-ignore */}
+        <spline-viewer 
+          url="https://prod.spline.design/uP2trMRZVW3sGyqn/scene.splinecode"
+          style={{ width: '100%', height: '100%' }}
         />
         {/* Gradient fade to blend with content */}
         <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent pointer-events-none" />
@@ -71,15 +68,12 @@ export function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right Side - Placeholder for mobile / tablet */}
-          <div className="lg:hidden relative h-[300px] sm:h-[400px]">
-            <iframe
-              src="https://my.spline.design/uP2trMRZVW3sGyqn/"
-              frameBorder="0"
-              className="w-full h-full rounded-3xl"
-              style={{ border: 'none' }}
-              title="VitaSync 3D Animation Mobile"
-              allow="autoplay"
+          {/* Right Side - Spline for mobile / tablet */}
+          <div className="lg:hidden relative h-[300px] sm:h-[400px] rounded-3xl overflow-hidden">
+            {/* @ts-ignore */}
+            <spline-viewer 
+              url="https://prod.spline.design/uP2trMRZVW3sGyqn/scene.splinecode"
+              style={{ width: '100%', height: '100%' }}
             />
           </div>
         </div>

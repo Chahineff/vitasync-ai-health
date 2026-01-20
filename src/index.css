@@ -144,6 +144,35 @@
       inset 0 1px 1px rgba(255, 255, 255, 0.4);
   }
 
+  /* Premium Glass Cards - Enhanced Glassmorphism 2025 */
+  .glass-card-premium {
+    @apply relative overflow-hidden;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .glass-card-premium:hover {
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.1),
+      0 4px 12px rgba(0, 0, 0, 0.05),
+      inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  }
+
+  /* Sidebar Glass */
+  .glass-sidebar {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
   .glass-card-strong {
     @apply glass-card;
     background: hsl(0 0% 100% / 0.85);

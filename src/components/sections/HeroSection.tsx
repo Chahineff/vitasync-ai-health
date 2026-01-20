@@ -9,25 +9,12 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-mesh pointer-events-none" />
 
-      {/* Spline 3D Background - Right Side */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5, delay: 0.2 }}
-        className="absolute top-0 right-0 w-full lg:w-2/3 h-full pointer-events-auto z-0"
-      >
-        {/* @ts-ignore */}
-        <spline-viewer 
-          url="https://prod.spline.design/SesUS9CodeODnLXa/scene.splinecode"
-          style={{ width: '100%', height: '100%' }}
-        />
-        {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent pointer-events-none" />
-      </motion.div>
-
+      {/* Decorative Elements */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
       
       <div className="container-custom relative z-10 py-20">
-        <div className="max-w-2xl">
+        <div className="max-w-3xl mx-auto lg:mx-0">
           {/* Left Content */}
           <div className="text-center lg:text-left">
             <motion.div
@@ -66,7 +53,7 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <Link to="/auth" className="btn-neumorphic text-primary-foreground">
+              <Link to="/auth?mode=signup" className="btn-neumorphic text-primary-foreground">
                 Démarrer mon bilan gratuit
               </Link>
               <a href="#how-it-works" className="btn-neumorphic-glass text-foreground">

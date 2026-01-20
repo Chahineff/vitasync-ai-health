@@ -86,9 +86,15 @@ export function Navbar() {
               ))}
             </div>
 
-            {/* CTA Button - Desktop */}
-            <div className="hidden lg:block">
-              <Link to="/auth" className="btn-neumorphic text-primary-foreground">
+            {/* CTA Buttons - Desktop */}
+            <div className="hidden lg:flex items-center gap-3">
+              <Link 
+                to="/auth?mode=signin" 
+                className="px-4 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all"
+              >
+                Se connecter
+              </Link>
+              <Link to="/auth?mode=signup" className="btn-neumorphic text-primary-foreground">
                 Démarrer
               </Link>
             </div>
@@ -169,8 +175,19 @@ export function Navbar() {
                   ))}
                 </div>
 
-                <div className="mt-auto">
-                  <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)} className="btn-neumorphic text-primary-foreground w-full text-center block">
+                <div className="mt-auto space-y-3">
+                  <Link 
+                    to="/auth?mode=signin" 
+                    onClick={() => setIsMobileMenuOpen(false)} 
+                    className="block w-full text-center px-4 py-3 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all border border-border/50"
+                  >
+                    Se connecter
+                  </Link>
+                  <Link 
+                    to="/auth?mode=signup" 
+                    onClick={() => setIsMobileMenuOpen(false)} 
+                    className="btn-neumorphic text-primary-foreground w-full text-center block"
+                  >
                     Démarrer gratuitement
                   </Link>
                 </div>

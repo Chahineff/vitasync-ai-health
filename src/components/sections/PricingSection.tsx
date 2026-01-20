@@ -1,4 +1,5 @@
 import { Check, Star } from "@phosphor-icons/react";
+import { Link } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { cn } from "@/lib/utils";
@@ -111,16 +112,17 @@ export function PricingSection() {
                   </ul>
 
                   {/* CTA */}
-                  <button 
+                  <Link 
+                    to="/auth?mode=signup"
                     className={cn(
-                      "w-full",
+                      "w-full block text-center",
                       plan.popular 
                         ? "btn-neumorphic text-primary-foreground" 
                         : "btn-neumorphic-glass text-foreground"
                     )}
                   >
                     {plan.cta}
-                  </button>
+                  </Link>
                 </div>
               </GlassCard>
             </ScrollReveal>

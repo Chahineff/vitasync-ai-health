@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { z } from "zod";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,7 +20,10 @@ const signUpSchema = z.object({
 });
 
 const Auth = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get("mode");
+  
+  const [isSignUp, setIsSignUp] = useState(mode === "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -33,6 +36,11 @@ const Auth = () => {
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Update isSignUp when URL changes
+  useEffect(() => {
+    setIsSignUp(mode === "signup");
+  }, [mode]);
 
   useEffect(() => {
     if (user) {
@@ -143,12 +151,12 @@ const Auth = () => {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="inline-flex items-center gap-2">
+          <Link to="/" className="inline-flex items-center gap-2">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
               <span className="text-primary-foreground font-semibold text-xl">V</span>
             </div>
             <span className="text-2xl font-medium tracking-tight text-foreground">VitaSync</span>
-          </a>
+          </Link>
         </div>
 
         {/* Card */}

@@ -46,10 +46,6 @@ export function HowItWorksSection() {
           {steps.map((step, index) => (
             <ScrollReveal key={step.title} delay={index * 0.1}>
               <GlassCard hover className="h-full relative">
-                {/* Step Number */}
-                <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-sm font-medium">
-                  {index + 1}
-                </div>
 
                 {/* Icon */}
                 <div className={`icon-container mb-6`}>

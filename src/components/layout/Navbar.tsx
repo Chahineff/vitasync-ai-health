@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,6 +20,8 @@ const pageLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,11 +34,18 @@ export function Navbar() {
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
       setIsMobileMenuOpen(false);
+      
+      // If we're not on the home page, navigate there first
+      if (location.pathname !== "/") {
+        navigate("/" + href);
+      } else {
+        // We're on home page, just scroll
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
     }
   };
 
@@ -79,9 +88,9 @@ export function Navbar() {
 
             {/* CTA Button - Desktop */}
             <div className="hidden lg:block">
-              <a href="#pricing" className="btn-neumorphic text-primary-foreground">
+              <Link to="/auth" className="btn-neumorphic text-primary-foreground">
                 Démarrer
-              </a>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -161,9 +170,9 @@ export function Navbar() {
                 </div>
 
                 <div className="mt-auto">
-                  <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="btn-neumorphic text-primary-foreground w-full text-center block">
+                  <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)} className="btn-neumorphic text-primary-foreground w-full text-center block">
                     Démarrer gratuitement
-                  </a>
+                  </Link>
                 </div>
               </div>
             </motion.div>

@@ -98,12 +98,89 @@ const RoutineChecklist = () => {
   );
 };
 
-// Mini Dashboard Component
+// Mini Dashboard Component (Mobile version)
+const MiniDashboardMobile = () => {
+  return (
+    <div className="w-full h-full flex flex-col bg-background/95 rounded-xl overflow-hidden">
+      {/* Mobile Header Nav */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-muted/30">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+            <Leaf weight="fill" className="w-3 h-3 text-white" />
+          </div>
+          <span className="font-light text-xs tracking-tight">VitaSync</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <motion.div 
+            className="p-1.5 rounded-lg bg-primary/10"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <Robot weight="light" className="w-4 h-4 text-primary" />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-3 space-y-2.5 overflow-hidden">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h3 className="text-xs font-light">
+            Bonjour <span className="font-medium">Alex</span>,
+          </h3>
+          <p className="text-[10px] text-foreground/60">
+            Score santé: <span className="text-primary font-medium">85%</span>
+          </p>
+        </motion.div>
+
+        {/* Coach IA Widget */}
+        <motion.div 
+          className="p-2.5 rounded-lg bg-gradient-to-br from-primary/5 to-transparent border border-primary/10"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center">
+              <ChatCircleDots weight="fill" className="w-2.5 h-2.5 text-primary" />
+            </div>
+            <span className="text-[9px] font-medium">Coach IA</span>
+          </div>
+          <motion.div 
+            className="p-1.5 rounded bg-white/50 dark:bg-white/5 text-[8px] leading-relaxed text-foreground/80"
+            animate={{ y: [0, -1, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            "Ajustez votre <span className="text-primary font-medium">Magnésium</span> ce soir."
+          </motion.div>
+        </motion.div>
+
+        {/* Stats - Compact */}
+        <motion.div 
+          className="p-2.5 rounded-lg bg-gradient-to-br from-secondary/5 to-transparent border border-secondary/10"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="flex items-center justify-between">
+            <RingChart />
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+// Mini Dashboard Component (Desktop)
 const MiniDashboard = () => {
   return (
     <div className="w-full h-full flex bg-background/95 rounded-2xl overflow-hidden">
       {/* Sidebar */}
-      <div className="hidden md:flex w-48 flex-col bg-muted/30 border-r border-border/50 p-3">
+      <div className="w-48 flex-col bg-muted/30 border-r border-border/50 p-3 hidden md:flex">
         {/* Logo */}
         <div className="flex items-center gap-2 mb-6">
           <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
@@ -243,14 +320,14 @@ export const ProductPreviewSection = () => {
   return (
     <section 
       ref={containerRef}
-      className="relative py-20 lg:py-32 overflow-hidden"
+      className="relative py-12 md:py-20 lg:py-32 overflow-hidden"
     >
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3" />
       
-      {/* Decorative blurs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+      {/* Decorative blurs - smaller on mobile */}
+      <div className="absolute top-1/4 left-1/4 w-48 md:w-96 h-48 md:h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 w-48 md:w-96 h-48 md:h-96 bg-secondary/10 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
@@ -259,20 +336,20 @@ export const ProductPreviewSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 lg:mb-16"
+          className="text-center mb-8 md:mb-12 lg:mb-16"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-3 md:mb-4 px-2">
             Votre <span className="text-primary">Dashboard</span> Personnel
           </h2>
-          <p className="text-foreground/60 text-base md:text-lg max-w-2xl mx-auto font-light">
+          <p className="text-foreground/60 text-sm md:text-base lg:text-lg max-w-2xl mx-auto font-light px-4">
             Une interface intuitive et élégante pour suivre votre santé au quotidien
           </p>
         </motion.div>
 
-        {/* Monitor Mockup */}
+        {/* Desktop Monitor Mockup */}
         <motion.div
           style={{ scale, rotateX, opacity }}
-          className="relative max-w-5xl mx-auto perspective-[2000px]"
+          className="relative max-w-5xl mx-auto perspective-[2000px] hidden md:block"
         >
           <div 
             className="relative group"
@@ -340,13 +417,54 @@ export const ProductPreviewSection = () => {
           <div className="hidden lg:block absolute -bottom-4 left-1/2 -translate-x-1/2 w-32 h-4 bg-gradient-to-t from-foreground/5 to-transparent rounded-full blur-sm" />
         </motion.div>
 
+        {/* Mobile Phone Mockup */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="md:hidden relative max-w-[280px] mx-auto"
+        >
+          {/* Phone Frame */}
+          <div 
+            className="relative rounded-[2rem] overflow-hidden p-2"
+            style={{
+              background: "linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(50, 50, 50, 0.8))",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            {/* Notch */}
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-10" />
+            
+            {/* Screen */}
+            <div className="relative rounded-[1.5rem] overflow-hidden bg-background aspect-[9/16]">
+              <MiniDashboardMobile />
+            </div>
+
+            {/* Home indicator */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/20 rounded-full" />
+          </div>
+
+          {/* CTA Button for Mobile */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            onClick={() => window.location.href = '/auth'}
+            className="mt-6 w-full px-6 py-3 rounded-full bg-gradient-to-r from-primary to-secondary text-white font-medium text-sm shadow-lg shadow-primary/25"
+          >
+            Explorer le dashboard
+          </motion.button>
+        </motion.div>
+
         {/* Mobile View Indicator */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.8 }}
-          className="text-center mt-8 text-foreground/40 text-sm font-light"
+          className="text-center mt-6 md:mt-8 text-foreground/40 text-xs md:text-sm font-light"
         >
           <DeviceMobile weight="light" className="inline w-4 h-4 mr-1" />
           Disponible sur tous vos appareils

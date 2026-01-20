@@ -39,41 +39,46 @@ export function FeaturesSection() {
     <section id="features" className="section-padding">
       <div className="container-custom">
         <ScrollReveal>
-          <div className="text-center mb-16">
-            <span className="text-sm text-secondary uppercase tracking-widest mb-4 block">
+          <div className="text-center mb-10 md:mb-16 px-2">
+            <span className="text-xs md:text-sm text-secondary uppercase tracking-widest mb-3 md:mb-4 block">
               Technologie de pointe
             </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-3 md:mb-4">
               Une IA qui{" "}
               <span className="gradient-text-reverse">comprend vraiment</span>
               {" "}votre corps
             </h2>
-            <p className="text-lg text-foreground/50 max-w-2xl mx-auto">
+            <p className="text-sm md:text-lg text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
               Découvrez les fonctionnalités qui font de VitaSync le coach santé le plus avancé du marché.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {features.map((feature, index) => (
             <ScrollReveal key={feature.title} delay={index * 0.1}>
-              <GlassCard hover className="h-full group">
+              <GlassCard hover className="h-full group p-4 md:p-6">
                 {/* Icon with gradient background */}
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} p-0.5 mb-6`}>
-                  <div className="w-full h-full rounded-[14px] bg-background flex items-center justify-center group-hover:bg-transparent transition-colors duration-300">
+                <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br ${feature.gradient} p-0.5 mb-4 md:mb-6`}>
+                  <div className="w-full h-full rounded-[10px] md:rounded-[14px] bg-background flex items-center justify-center group-hover:bg-transparent transition-colors duration-300">
+                    <feature.icon 
+                      size={20} 
+                      weight="light" 
+                      className="text-foreground group-hover:text-primary-foreground transition-colors duration-300 md:hidden" 
+                    />
                     <feature.icon 
                       size={26} 
                       weight="light" 
-                      className="text-foreground group-hover:text-primary-foreground transition-colors duration-300" 
+                      className="text-foreground group-hover:text-primary-foreground transition-colors duration-300 hidden md:block" 
                     />
                   </div>
                 </div>
 
                 {/* Content */}
-                <h3 className="text-lg font-light tracking-tight text-foreground mb-3">
+                <h3 className="text-sm md:text-lg font-light tracking-tight text-foreground mb-2 md:mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-foreground/50">
+                <p className="text-xs md:text-sm text-foreground/50 line-clamp-3 md:line-clamp-none">
                   {feature.description}
                 </p>
               </GlassCard>

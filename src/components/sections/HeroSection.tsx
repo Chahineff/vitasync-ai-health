@@ -58,6 +58,19 @@ export function HeroSection() {
             </motion.div>
           </div>
 
+          {/* Right Side - Spline 3D Reactive Orb */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="relative h-[350px] sm:h-[450px] lg:h-[550px]"
+          >
+            {/* @ts-ignore */}
+            <spline-viewer 
+              url="https://prod.spline.design/SesUS9CodeODnLXa/scene.splinecode"
+              style={{ width: '100%', height: '100%' }}
+            />
+          </motion.div>
         </div>
 
         {/* Dashboard Mockup */}

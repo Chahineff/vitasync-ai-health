@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Suspense, lazy } from "react";
-
-const Spline = lazy(() => import("@splinetool/react-spline"));
+import { useState } from "react";
 
 export function HeroSection() {
+  const [splineLoaded, setSplineLoaded] = useState(false);
+
   return (
     <section className="relative min-h-[120vh] lg:min-h-screen flex items-center pt-20 overflow-hidden">
       {/* Background Gradient */}
@@ -64,7 +64,7 @@ export function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right: Spline 3D Animation */}
+          {/* Right: Spline 3D Animation via iframe */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -74,18 +74,23 @@ export function HeroSection() {
             {/* Glow effect behind the 3D scene */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 blur-3xl opacity-60 pointer-events-none" />
             
-            <Suspense
-              fallback={
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-                </div>
-              }
-            >
-              <Spline
-                scene="https://prod.spline.design/tX4bFFTJveu7haxH/scene.splinecode"
-                className="w-full h-full"
-              />
-            </Suspense>
+            {/* Loading spinner */}
+            {!splineLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="w-16 h-16 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+              </div>
+            )}
+            
+            {/* Spline iframe embed */}
+            <iframe
+              src="https://my.spline.design/tX4bFFTJveu7haxH/"
+              frameBorder="0"
+              className={`w-full h-full rounded-2xl transition-opacity duration-500 ${splineLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => setSplineLoaded(true)}
+              title="VitaSync 3D Animation"
+              allow="autoplay; fullscreen"
+              loading="lazy"
+            />
           </motion.div>
         </div>
       </div>

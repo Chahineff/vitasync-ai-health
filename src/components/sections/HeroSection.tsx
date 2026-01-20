@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
@@ -65,9 +66,9 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <a href="#pricing" className="btn-neumorphic text-primary-foreground">
+              <Link to="/auth" className="btn-neumorphic text-primary-foreground">
                 Démarrer mon bilan gratuit
-              </a>
+              </Link>
               <a href="#how-it-works" className="btn-neumorphic-glass text-foreground">
                 Comment ça marche
               </a>

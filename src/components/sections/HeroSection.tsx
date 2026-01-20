@@ -63,7 +63,7 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative h-[400px] sm:h-[500px] lg:h-[600px] lg:-mr-12"
+            className="relative h-[320px] sm:h-[420px] lg:h-[500px]"
           >
             {/* @ts-ignore */}
             <spline-viewer 

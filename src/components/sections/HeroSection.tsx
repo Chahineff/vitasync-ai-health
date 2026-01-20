@@ -68,11 +68,14 @@ export function HeroSection() {
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="order-1 lg:order-2 relative h-[400px] sm:h-[500px] lg:h-[600px] xl:h-[700px]"
           >
+            {/* Slightly darker background for better visibility */}
+            <div className="absolute inset-0 bg-foreground/5 rounded-2xl" />
+            
             {/* Glow effect behind the 3D scene */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 blur-3xl opacity-60 pointer-events-none" />
             
             {/* Spline Web Component - scaled down for better framing */}
-            <div className="w-full h-full flex items-center justify-center" style={{ transform: 'scale(0.85)', transformOrigin: 'center center' }}>
+            <div className="w-full h-full flex items-center justify-center" style={{ transform: 'scale(0.6)', transformOrigin: 'center center' }}>
               <spline-viewer 
                 url="https://prod.spline.design/tX4bFFTJveu7haxH/scene.splinecode"
                 style={{ width: '100%', height: '100%', borderRadius: '1rem' }}

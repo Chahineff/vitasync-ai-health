@@ -8,16 +8,6 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-mesh pointer-events-none" />
 
-      {/* Spline 3D Animation - Right Side (Desktop) */}
-      <div className="absolute top-0 right-0 w-1/2 h-full z-0 hidden lg:block">
-        {/* @ts-ignore */}
-        <spline-viewer 
-          url="https://prod.spline.design/uP2trMRZVW3sGyqn/scene.splinecode"
-          style={{ width: '100%', height: '100%' }}
-        />
-        {/* Gradient fade to blend with content */}
-        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent pointer-events-none" />
-      </div>
       
       <div className="container-custom relative z-10 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -68,14 +58,6 @@ export function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right Side - Spline for mobile / tablet */}
-          <div className="lg:hidden relative h-[300px] sm:h-[400px] rounded-3xl overflow-hidden">
-            {/* @ts-ignore */}
-            <spline-viewer 
-              url="https://prod.spline.design/uP2trMRZVW3sGyqn/scene.splinecode"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </div>
         </div>
 
         {/* Dashboard Mockup */}

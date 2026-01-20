@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Robot, 
   Storefront, 
-  CreditCard, 
   Gear,
   Question,
   SignOut,
@@ -15,33 +14,40 @@ import {
   EnvelopeSimple,
   MagnifyingGlass,
   DeviceMobile,
-  Globe,
-  House
+  House,
+  FirstAidKit,
+  Crown,
+  User
 } from "@phosphor-icons/react";
+import { ChatInterface } from "@/components/dashboard/ChatInterface";
+import { ProfileSection } from "@/components/dashboard/ProfileSection";
+import QuickCoachWidget from "@/components/dashboard/QuickCoachWidget";
+import SupplementTracker from "@/components/dashboard/SupplementTracker";
+import ProgressChart from "@/components/dashboard/ProgressChart";
 
-// Menu sections - Main navigation
+type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
+
 const menuItems = [
-  { id: "home", label: "Dashboard", icon: House },
-  { id: "coach", label: "Coach IA", icon: Robot },
-  { id: "shop", label: "Boutique", icon: Storefront },
-  { id: "payments", label: "Historique Paiements", icon: CreditCard },
+  { id: "home" as Section, label: "Dashboard", icon: House },
+  { id: "coach" as Section, label: "Coach IA", icon: Robot },
+  { id: "supplements" as Section, label: "Suivi Compléments", icon: FirstAidKit },
+  { id: "shop" as Section, label: "Boutique", icon: Storefront, comingSoon: true },
 ];
 
-// General section
 const generalItems = [
-  { id: "settings", label: "Settings", icon: Gear },
-  { id: "help", label: "Help", icon: Question },
+  { id: "settings" as Section, label: "Paramètres", icon: Gear },
+  { id: "help" as Section, label: "Aide", icon: Question },
 ];
 
 const Dashboard = () => {
   const { user, profile, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState("home");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<Section>("home");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/auth");
+      navigate("/auth?mode=signin");
     }
   }, [user, loading, navigate]);
 
@@ -50,453 +56,212 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  const handleSectionChange = (sectionId: string) => {
-    setActiveSection(sectionId);
-    setIsSidebarOpen(false);
+  const formatDate = () => {
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
+    };
+    return new Date().toLocaleDateString('fr-FR', options);
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-12 h-12 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  const displayName = profile?.first_name || user?.email?.split("@")[0] || "Utilisateur";
+  if (!user) return null;
+
+  const userName = profile?.first_name || user?.email?.split("@")[0] || "Utilisateur";
 
   return (
-    <div className="min-h-screen bg-muted/30 flex">
-      {/* Sidebar Overlay (Mobile) */}
-      {isSidebarOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="lg:hidden fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex">
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
-      <motion.aside
-        initial={false}
-        animate={{ x: isSidebarOpen ? 0 : "-100%" }}
-        className={`fixed lg:static lg:translate-x-0 top-0 left-0 h-full w-64 bg-background border-r border-border/50 z-50 lg:z-auto flex flex-col transition-transform lg:transition-none ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Sidebar Header - Logo */}
-        <div className="p-5 border-b border-border/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <span className="text-primary-foreground font-semibold">V</span>
-              </div>
-              <span className="text-lg font-medium text-foreground">VitaSync</span>
-            </div>
-            <button
-              onClick={() => setIsSidebarOpen(false)}
-              className="lg:hidden p-2 text-foreground/70 hover:text-foreground rounded-lg hover:bg-foreground/5"
-            >
-              <X size={18} />
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-72 glass-sidebar flex flex-col transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 flex items-center justify-between">
+          <span className="text-xl font-light tracking-tight text-foreground">
+            Vita<span className="text-primary font-medium">Sync</span>
+          </span>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-lg hover:bg-white/50">
+            <X weight="light" className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="px-4 flex-1">
+          <p className="px-3 text-xs font-medium text-foreground/40 uppercase tracking-wider mb-3">Menu</p>
+          <nav className="space-y-1">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => { if (!item.comingSoon) { setActiveSection(item.id); setSidebarOpen(false); } }}
+                disabled={item.comingSoon}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all ${
+                  activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20'
+                    : item.comingSoon ? 'text-foreground/30 cursor-not-allowed'
+                    : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'
+                }`}
+              >
+                <item.icon weight="light" className="w-5 h-5" />
+                <span>{item.label}</span>
+                {item.comingSoon && <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-foreground/10">Bientôt</span>}
+              </button>
+            ))}
+          </nav>
+
+          <p className="px-3 text-xs font-medium text-foreground/40 uppercase tracking-wider mb-3 mt-8">Général</p>
+          <nav className="space-y-1">
+            {generalItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => { setActiveSection(item.id); setSidebarOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all ${
+                  activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50'
+                }`}
+              >
+                <item.icon weight="light" className="w-5 h-5" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+            <button onClick={handleSignOut} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-all">
+              <SignOut weight="light" className="w-5 h-5" />
+              <span>Déconnexion</span>
             </button>
+          </nav>
+        </div>
+
+        <div className="px-4 mb-4">
+          <div className="glass-card-premium rounded-xl p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                <DeviceMobile weight="light" className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">App Mobile</p>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary/20 text-secondary">Coming Soon</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="flex-1 py-4 px-3 overflow-y-auto">
-          {/* MENU Section */}
-          <div className="mb-6">
-            <p className="px-3 mb-3 text-xs font-semibold text-foreground/40 uppercase tracking-wider">
-              Menu
-            </p>
-            <ul className="space-y-1">
-              {menuItems.map((item) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => handleSectionChange(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${
-                      activeSection === item.id
-                        ? "bg-primary text-primary-foreground font-medium"
-                        : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
-                    }`}
-                  >
-                    <item.icon 
-                      size={20} 
-                      weight={activeSection === item.id ? "fill" : "regular"} 
-                    />
-                    <span>{item.label}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* GENERAL Section */}
-          <div className="mb-6">
-            <p className="px-3 mb-3 text-xs font-semibold text-foreground/40 uppercase tracking-wider">
-              General
-            </p>
-            <ul className="space-y-1">
-              {generalItems.map((item) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => handleSectionChange(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${
-                      activeSection === item.id
-                        ? "bg-primary text-primary-foreground font-medium"
-                        : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
-                    }`}
-                  >
-                    <item.icon 
-                      size={20} 
-                      weight={activeSection === item.id ? "fill" : "regular"} 
-                    />
-                    <span>{item.label}</span>
-                  </button>
-                </li>
-              ))}
-              {/* Logout button */}
-              <li>
-                <button
-                  onClick={handleSignOut}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-all text-sm"
-                >
-                  <SignOut size={20} weight="regular" />
-                  <span>Logout</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </nav>
-
-        {/* Footer - Mobile App Banner & Website Link */}
-        <div className="p-3 space-y-2">
-          {/* Mobile App Coming Soon */}
-          <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-4 text-center border border-primary/20">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center mx-auto mb-3">
-              <DeviceMobile size={22} className="text-primary" />
-            </div>
-            <p className="text-sm font-medium text-foreground mb-1">Application Mobile</p>
-            <p className="text-xs text-foreground/60 mb-3">Bientôt disponible</p>
-            <button 
-              disabled
-              className="w-full py-2 px-4 rounded-xl bg-primary/20 text-primary text-xs font-medium cursor-not-allowed"
-            >
-              Coming Soon
-            </button>
-          </div>
-
-          {/* Website Link */}
-          <Link
-            to="/"
-            className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all text-sm font-medium"
-          >
-            <Globe size={18} />
+        <div className="px-4 mb-4">
+          <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-light text-foreground/60 hover:text-foreground hover:bg-white/50 transition-all">
+            <House weight="light" className="w-4 h-4" />
             <span>Retour au site</span>
           </Link>
         </div>
-      </motion.aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/50">
-          <div className="flex items-center justify-between h-16 px-4 lg:px-6">
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 text-foreground/70 hover:text-foreground rounded-lg hover:bg-foreground/5"
-            >
-              <List size={22} />
-            </button>
-
-            {/* Search Bar */}
-            <div className="hidden md:flex items-center flex-1 max-w-md">
-              <div className="relative w-full">
-                <MagnifyingGlass size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-muted/50 border border-border/50 text-sm text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30"
-                />
+        <div className="p-4 border-t border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="w-full h-full rounded-full object-cover" /> : <User weight="light" className="w-5 h-5 text-white" />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{userName}</p>
+              <div className="flex items-center gap-1">
+                <Crown weight="fill" className="w-3 h-3 text-foreground/40" />
+                <span className="text-xs text-foreground/50">Free Plan</span>
               </div>
             </div>
+          </div>
+        </div>
+      </aside>
 
-            {/* Right Section */}
-            <div className="flex items-center gap-2">
-              {/* Inbox */}
-              <button className="relative p-2.5 rounded-xl text-foreground/60 hover:text-foreground hover:bg-muted/50 transition-all">
-                <EnvelopeSimple size={20} />
-              </button>
-
-              {/* Notifications */}
-              <button className="relative p-2.5 rounded-xl text-foreground/60 hover:text-foreground hover:bg-muted/50 transition-all">
-                <Bell size={20} />
-                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
-              </button>
-
-              {/* User Profile */}
-              <div className="flex items-center gap-3 ml-2 pl-3 border-l border-border/50">
-                <div className="hidden sm:block text-right">
-                  <p className="text-sm font-medium text-foreground leading-tight">{displayName}</p>
-                  <p className="text-xs text-foreground/50">{user?.email}</p>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden ring-2 ring-background">
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-primary-foreground font-semibold">
-                      {displayName.charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
+      {/* Main */}
+      <main className="flex-1 flex flex-col min-h-screen">
+        <header className="sticky top-0 z-30 glass-card-premium border-b border-white/10 px-4 lg:px-8 py-4">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-white/50">
+              <List weight="light" className="w-6 h-6" />
+            </button>
+            <div className="flex-1 max-w-md">
+              <div className="relative">
+                <MagnifyingGlass weight="light" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
+                <input type="text" placeholder="Rechercher..." className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/50 border border-white/20 text-sm font-light placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20" />
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="p-2.5 rounded-xl bg-white/50 border border-white/20 hover:bg-white/70 relative">
+                <Bell weight="light" className="w-5 h-5 text-foreground/60" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
+              </button>
+              <button className="p-2.5 rounded-xl bg-white/50 border border-white/20 hover:bg-white/70">
+                <EnvelopeSimple weight="light" className="w-5 h-5 text-foreground/60" />
+              </button>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-4 lg:p-6">
-          <div className="max-w-7xl mx-auto">
-            {activeSection === "home" && <DashboardHome />}
-            {activeSection === "coach" && <CoachSection />}
-            {activeSection === "shop" && <ShopSection />}
-            {activeSection === "payments" && <PaymentsSection />}
-            {activeSection === "settings" && <SettingsSection />}
-            {activeSection === "help" && <HelpSection />}
-          </div>
-        </main>
-      </div>
+        <div className="flex-1 p-4 lg:p-8 overflow-auto">
+          <AnimatePresence mode="wait">
+            {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => setActiveSection("coach")} />}
+            {activeSection === "coach" && <motion.div key="coach" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><ChatInterface /></motion.div>}
+            {activeSection === "supplements" && <motion.div key="supplements" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="max-w-2xl"><h2 className="text-2xl font-light tracking-tight text-foreground mb-6">Suivi des Compléments</h2><SupplementTracker /></motion.div>}
+            {activeSection === "settings" && <motion.div key="settings" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><ProfileSection /></motion.div>}
+            {activeSection === "help" && <motion.div key="help" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><HelpSection /></motion.div>}
+          </AnimatePresence>
+        </div>
+      </main>
     </div>
   );
 };
 
-// Import components
-import { ChatInterface } from "@/components/dashboard/ChatInterface";
-import { ProfileSection } from "@/components/dashboard/ProfileSection";
-
-// Dashboard Home Section
-const DashboardHome = () => {
-  const { profile } = useAuth();
-  const displayName = profile?.first_name || "Utilisateur";
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="mb-8">
-        <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-          Dashboard
-        </h1>
-        <p className="text-foreground/60">
-          Bienvenue, {displayName}. Voici un aperçu de votre santé.
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="glass-card rounded-2xl p-5">
-          <p className="text-sm text-foreground/50 mb-1">Score Santé</p>
-          <p className="text-3xl font-light text-foreground">87</p>
-          <p className="text-xs text-secondary mt-1">+12% ce mois</p>
-        </div>
-        <div className="glass-card rounded-2xl p-5">
-          <p className="text-sm text-foreground/50 mb-1">Conversations IA</p>
-          <p className="text-3xl font-light text-foreground">12</p>
-          <p className="text-xs text-foreground/40 mt-1">Ce mois</p>
-        </div>
-        <div className="glass-card rounded-2xl p-5">
-          <p className="text-sm text-foreground/50 mb-1">Objectifs atteints</p>
-          <p className="text-3xl font-light text-foreground">5/7</p>
-          <p className="text-xs text-secondary mt-1">Cette semaine</p>
-        </div>
-        <div className="glass-card rounded-2xl p-5">
-          <p className="text-sm text-foreground/50 mb-1">Jours consécutifs</p>
-          <p className="text-3xl font-light text-foreground">14</p>
-          <p className="text-xs text-primary mt-1">Record personnel !</p>
+const DashboardHome = ({ userName, formatDate, onGoToCoach }: { userName: string; formatDate: () => string; onGoToCoach: () => void }) => (
+  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+    <div className="mb-8">
+      <h1 className="text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-1">
+        Bonjour <span className="text-primary font-medium">{userName}</span>, prêt pour votre routine ?
+      </h1>
+      <p className="text-sm text-foreground/50 font-light capitalize">{formatDate()}</p>
+    </div>
+    <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <SupplementTracker />
+      <ProgressChart />
+    </div>
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="relative glass-card-premium rounded-2xl p-6 overflow-hidden">
+      <div className="absolute inset-0 backdrop-blur-sm bg-white/60 z-10 flex items-center justify-center">
+        <div className="text-center">
+          <Storefront weight="light" className="w-12 h-12 text-foreground/30 mx-auto mb-3" />
+          <p className="text-lg font-light text-foreground/60">Boutique</p>
+          <span className="inline-block mt-2 text-xs px-3 py-1 rounded-full bg-primary/10 text-primary">Coming Soon</span>
         </div>
       </div>
-
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="glass-card rounded-2xl p-6">
-          <h3 className="text-lg font-medium text-foreground mb-4">Accès rapide</h3>
-          <div className="space-y-3">
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all text-left">
-              <Robot size={20} />
-              <span className="text-sm font-medium">Parler au Coach IA</span>
-            </button>
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-foreground/5 text-foreground/70 hover:bg-foreground/10 transition-all text-left">
-              <Gear size={20} />
-              <span className="text-sm font-medium">Modifier mon profil</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="glass-card rounded-2xl p-6">
-          <h3 className="text-lg font-medium text-foreground mb-4">Conseil du jour</h3>
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
-              <span className="text-primary-foreground text-sm">IA</span>
-            </div>
-            <p className="text-sm text-foreground/70">
-              Pensez à boire au moins 2L d'eau aujourd'hui. L'hydratation est essentielle pour maintenir votre niveau d'énergie optimal. 💧
-            </p>
-          </div>
-        </div>
-      </div>
+      <h3 className="text-lg font-light tracking-tight text-foreground/30 mb-4">Recommandations pour vous</h3>
+      <div className="grid grid-cols-3 gap-4 opacity-30">{[1, 2, 3].map((i) => <div key={i} className="aspect-square rounded-xl bg-white/30" />)}</div>
     </motion.div>
-  );
-};
+  </motion.div>
+);
 
-// Coach IA Section
-const CoachSection = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="mb-8">
-        <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-          Coach IA
-        </h1>
-        <p className="text-foreground/60">
-          Votre assistant santé personnalisé, disponible 24h/24
-        </p>
+const HelpSection = () => (
+  <div className="max-w-2xl">
+    <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">Centre d'aide</h2>
+    <div className="space-y-4">
+      <div className="glass-card-premium rounded-xl p-6">
+        <h3 className="text-lg font-medium text-foreground mb-2">FAQ</h3>
+        <p className="text-sm text-foreground/60 font-light mb-4">Retrouvez les réponses aux questions fréquentes.</p>
+        <Link to="/" className="text-sm text-primary hover:underline">Voir la FAQ →</Link>
       </div>
-      <ChatInterface />
-    </motion.div>
-  );
-};
-
-// Shop Section
-const ShopSection = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="mb-8">
-        <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-          Boutique
-        </h1>
-        <p className="text-foreground/60">
-          Découvrez nos compléments et produits santé
-        </p>
+      <div className="glass-card-premium rounded-xl p-6">
+        <h3 className="text-lg font-medium text-foreground mb-2">Contact</h3>
+        <p className="text-sm text-foreground/60 font-light mb-4">Besoin d'aide ? Notre équipe est là pour vous.</p>
+        <Link to="/contact" className="text-sm text-primary hover:underline">Nous contacter →</Link>
       </div>
-
-      <div className="glass-card rounded-2xl p-12 text-center">
-        <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-          <Storefront size={40} weight="light" className="text-primary" />
-        </div>
-        <h2 className="text-2xl font-light text-foreground mb-4">
-          Coming Soon
-        </h2>
-        <p className="text-foreground/60 max-w-md mx-auto">
-          Notre boutique arrive bientôt ! Vous pourrez y découvrir des compléments alimentaires et produits santé sélectionnés par notre équipe d'experts.
-        </p>
-      </div>
-    </motion.div>
-  );
-};
-
-// Payments Section
-const PaymentsSection = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="mb-8">
-        <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-          Historique Paiements
-        </h1>
-        <p className="text-foreground/60">
-          Historique de vos transactions
-        </p>
-      </div>
-
-      <div className="glass-card rounded-2xl p-8">
-        <div className="text-center py-12">
-          <CreditCard size={48} weight="light" className="text-foreground/30 mx-auto mb-4" />
-          <p className="text-foreground/60">Aucun paiement pour le moment</p>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Settings Section (using ProfileSection)
-const SettingsSection = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="mb-8">
-        <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-          Settings
-        </h1>
-        <p className="text-foreground/60">
-          Gérez votre profil et vos préférences
-        </p>
-      </div>
-      <ProfileSection />
-    </motion.div>
-  );
-};
-
-// Help Section
-const HelpSection = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="mb-8">
-        <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-          Help
-        </h1>
-        <p className="text-foreground/60">
-          Besoin d'aide ? Nous sommes là pour vous.
-        </p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="glass-card rounded-2xl p-6">
-          <h3 className="text-lg font-medium text-foreground mb-4">FAQ</h3>
-          <ul className="space-y-3">
-            <li className="text-foreground/70 text-sm">• Comment fonctionne le Coach IA ?</li>
-            <li className="text-foreground/70 text-sm">• Comment modifier mon profil ?</li>
-            <li className="text-foreground/70 text-sm">• Comment annuler mon abonnement ?</li>
-            <li className="text-foreground/70 text-sm">• Comment contacter le support ?</li>
-          </ul>
-        </div>
-
-        <div className="glass-card rounded-2xl p-6">
-          <h3 className="text-lg font-medium text-foreground mb-4">Contacter le support</h3>
-          <p className="text-foreground/60 text-sm mb-4">
-            Notre équipe est disponible du lundi au vendredi, de 9h à 18h.
-          </p>
-          <a 
-            href="mailto:support@vitasync.com" 
-            className="btn-neumorphic text-primary-foreground inline-block text-sm"
-          >
-            Envoyer un email
-          </a>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
+    </div>
+  </div>
+);
 
 export default Dashboard;

@@ -53,13 +53,13 @@ export function Navbar() {
     <>
       <nav className={`nav-sticky ${isScrolled ? "scrolled" : ""}`}>
         <div className="container-custom">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <span className="text-primary-foreground font-semibold text-lg">V</span>
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <span className="text-primary-foreground font-semibold text-base md:text-lg">V</span>
               </div>
-              <span className="text-xl font-medium tracking-tight text-foreground">VitaSync</span>
+              <span className="text-lg md:text-xl font-medium tracking-tight text-foreground">VitaSync</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -105,7 +105,7 @@ export function Navbar() {
               className="lg:hidden p-2 text-foreground/70 hover:text-foreground transition-colors"
               aria-label="Open menu"
             >
-              <List size={28} weight="light" />
+              <List size={24} weight="light" />
             </button>
           </div>
         </div>

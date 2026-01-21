@@ -458,6 +458,20 @@
   }
 }
 
+/* Quick Action Ghost Buttons */
+.btn-quick-action {
+  @apply px-4 py-2 rounded-full text-sm font-light transition-all duration-200;
+  background: transparent;
+  border: 1px solid hsl(var(--primary) / 0.3);
+  color: hsl(var(--foreground) / 0.7);
+}
+
+.btn-quick-action:hover {
+  background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.6);
+  color: hsl(var(--primary));
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

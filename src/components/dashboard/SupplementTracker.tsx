@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Pill, Check, Clock, Sun, Moon } from '@phosphor-icons/react';
+import { AwaitingAnalysis } from './AwaitingAnalysis';
 
 interface Supplement {
   id: string;
@@ -9,7 +10,12 @@ interface Supplement {
   taken: boolean;
 }
 
-const SupplementTracker = () => {
+interface SupplementTrackerProps {
+  showAwaitingState?: boolean;
+  onStartDiagnostic?: () => void;
+}
+
+const SupplementTracker = ({ showAwaitingState = false, onStartDiagnostic }: SupplementTrackerProps) => {
   const [supplements, setSupplements] = useState<Supplement[]>([
     { id: '1', name: 'Vitamine D3', time: 'morning', taken: false },
     { id: '2', name: 'Oméga-3', time: 'morning', taken: false },
@@ -23,6 +29,15 @@ const SupplementTracker = () => {
     );
   };
 
+  if (showAwaitingState && onStartDiagnostic) {
+    return (
+      <AwaitingAnalysis 
+        title="Compléments du jour" 
+        onStartDiagnostic={onStartDiagnostic} 
+      />
+    );
+  }
+
   const takenCount = supplements.filter(s => s.taken).length;
   const totalCount = supplements.length;
   const progressPercent = (takenCount / totalCount) * 100;
@@ -35,7 +50,7 @@ const SupplementTracker = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-      className="glass-card-premium rounded-2xl p-6 h-full"
+      className="glass-card-premium rounded-3xl p-6 h-full border border-white/10"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">

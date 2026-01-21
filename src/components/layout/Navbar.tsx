@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { List, X } from "@phosphor-icons/react";
+import { List, X, MagnifyingGlass, Bell, ChatCircle } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -20,6 +20,9 @@ const pageLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(true);
+  const [hasMessages, setHasMessages] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -86,8 +89,54 @@ export function Navbar() {
               ))}
             </div>
 
-            {/* CTA Buttons - Desktop */}
+            {/* Right Side - Search, Notifications, CTA */}
             <div className="hidden lg:flex items-center gap-3">
+              {/* Expandable Search Bar */}
+              <div 
+                className={`relative flex items-center transition-all duration-300 ${
+                  isSearchExpanded ? 'w-64' : 'w-10'
+                }`}
+              >
+                <button
+                  onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+                  className="absolute left-0 p-2 text-foreground/60 hover:text-foreground transition-colors z-10"
+                >
+                  <MagnifyingGlass size={20} weight="light" />
+                </button>
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
+                  className={`w-full h-10 pl-10 pr-4 rounded-xl bg-foreground/5 border border-border/50 text-sm text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 transition-all duration-300 ${
+                    isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                  }`}
+                  onBlur={() => setIsSearchExpanded(false)}
+                />
+              </div>
+
+              {/* Notification Bell with Badge */}
+              <button className="relative p-2 text-foreground/60 hover:text-foreground transition-colors">
+                <Bell size={20} weight="light" />
+                {hasNotifications && (
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full animate-ping" />
+                )}
+                {hasNotifications && (
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full" />
+                )}
+              </button>
+
+              {/* Messages Icon with Badge */}
+              <button className="relative p-2 text-foreground/60 hover:text-foreground transition-colors">
+                <ChatCircle size={20} weight="light" />
+                {hasMessages && (
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full animate-ping" />
+                )}
+                {hasMessages && (
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full" />
+                )}
+              </button>
+
+              <div className="w-px h-5 bg-border mx-2" />
+
               <Link 
                 to="/auth?mode=signin" 
                 className="px-4 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all"

@@ -33,8 +33,8 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/80 pointer-events-none" />
       </div>
 
-      {/* Content Container */}
-      <div className="relative z-10 px-6 sm:px-10 lg:px-16 py-24 text-center max-w-4xl mx-auto">
+      {/* Content Container - pointer-events-none lets mouse through to Spline */}
+      <div className="relative z-10 px-6 sm:px-10 lg:px-16 py-24 text-center max-w-4xl mx-auto pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -69,7 +69,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center pointer-events-auto"
         >
           <Link 
             to="/auth?mode=signup" 

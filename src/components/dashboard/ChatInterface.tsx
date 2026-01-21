@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { PaperPlaneTilt, SpinnerGap, Robot, User, Plus, Trash, ChatCircle } from "@phosphor-icons/react";
+import { PaperPlaneTilt, Robot, User, Plus, Trash, ChatCircle } from "@phosphor-icons/react";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { TypingIndicator } from "./TypingIndicator";
+import { QuickActions } from "./QuickActions";
 
 interface Message {
   role: "user" | "assistant";
@@ -16,6 +18,10 @@ interface Conversation {
   created_at: string;
 }
 
+interface ChatInterfaceProps {
+  onFirstMessage?: () => void;
+}
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
 
 const WELCOME_MESSAGE: Message = {
@@ -23,7 +29,7 @@ const WELCOME_MESSAGE: Message = {
   content: "Bonjour ! Je suis votre coach santé IA VitaSync. Comment puis-je vous aider aujourd'hui ? N'hésitez pas à me poser des questions sur la nutrition, le sommeil, l'exercice ou tout autre aspect de votre bien-être.",
 };
 
-export function ChatInterface() {
+export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -31,6 +37,7 @@ export function ChatInterface() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
+  const [hasFirstMessage, setHasFirstMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -53,9 +60,13 @@ export function ChatInterface() {
 
     if (!error && data) {
       setConversations(data);
+      if (data.length > 0 && !hasFirstMessage) {
+        setHasFirstMessage(true);
+        onFirstMessage?.();
+      }
     }
     setIsLoadingConversations(false);
-  }, [user]);
+  }, [user, hasFirstMessage, onFirstMessage]);
 
   useEffect(() => {
     loadConversations();
@@ -116,6 +127,10 @@ export function ChatInterface() {
     });
   };
 
+  const handleQuickAction = (message: string) => {
+    setInput(message);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading || !user) return;
@@ -124,6 +139,12 @@ export function ChatInterface() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+
+    // Notify parent of first message
+    if (!hasFirstMessage) {
+      setHasFirstMessage(true);
+      onFirstMessage?.();
+    }
 
     let conversationId = currentConversationId;
 
@@ -264,13 +285,13 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex gap-4 h-[600px]">
+    <div className="flex gap-4 h-[calc(100vh-200px)] min-h-[500px]">
       {/* Conversations Sidebar */}
-      <div className="hidden md:flex flex-col w-64 glass-card rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-border/50">
+      <div className="hidden md:flex flex-col w-64 glass-card-premium rounded-3xl overflow-hidden border border-white/10 backdrop-blur-[20px]">
+        <div className="p-4 border-b border-white/10">
           <button
             onClick={createNewConversation}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all"
           >
             <Plus size={18} weight="bold" />
             <span className="text-sm font-medium">Nouvelle conversation</span>
@@ -280,7 +301,7 @@ export function ChatInterface() {
         <div className="flex-1 overflow-y-auto p-2">
           {isLoadingConversations ? (
             <div className="flex items-center justify-center py-8">
-              <SpinnerGap size={24} className="animate-spin text-foreground/40" />
+              <TypingIndicator />
             </div>
           ) : conversations.length === 0 ? (
             <div className="text-center py-8 px-4">
@@ -293,10 +314,10 @@ export function ChatInterface() {
                 <li key={conv.id}>
                   <button
                     onClick={() => selectConversation(conv.id)}
-                    className={`w-full group flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-all ${
+                    className={`w-full group flex items-center gap-2 px-3 py-2.5 rounded-xl text-left transition-all ${
                       currentConversationId === conv.id
-                        ? "bg-primary/10 text-primary"
-                        : "text-foreground/60 hover:bg-foreground/5 hover:text-foreground"
+                        ? "bg-primary/10 text-primary border border-primary/20"
+                        : "text-foreground/60 hover:bg-white/50 hover:text-foreground"
                     }`}
                   >
                     <ChatCircle size={16} weight="light" className="flex-shrink-0" />
@@ -316,7 +337,7 @@ export function ChatInterface() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 glass-card rounded-2xl overflow-hidden flex flex-col">
+      <div className="flex-1 glass-card-premium rounded-3xl overflow-hidden flex flex-col border border-white/10 backdrop-blur-[20px]">
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map((message, index) => (
@@ -328,23 +349,23 @@ export function ChatInterface() {
               className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${
+                className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${
                   message.role === "user"
                     ? "bg-primary/20"
                     : "bg-gradient-to-br from-primary to-secondary"
                 }`}
               >
                 {message.role === "user" ? (
-                  <User size={16} weight="light" className="text-primary" />
+                  <User size={18} weight="light" className="text-primary" />
                 ) : (
-                  <Robot size={16} weight="light" className="text-primary-foreground" />
+                  <Robot size={18} weight="light" className="text-primary-foreground" />
                 )}
               </div>
               <div
-                className={`max-w-[80%] px-4 py-3 rounded-2xl ${
+                className={`max-w-[80%] px-5 py-4 rounded-3xl border ${
                   message.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-foreground/5"
+                    ? "bg-primary text-primary-foreground border-primary/20"
+                    : "bg-white/5 backdrop-blur-[20px] border-white/10"
                 }`}
               >
                 {message.role === "assistant" ? (
@@ -363,37 +384,38 @@ export function ChatInterface() {
               animate={{ opacity: 1 }}
               className="flex gap-3"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Robot size={16} weight="light" className="text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Robot size={18} weight="light" className="text-primary-foreground" />
               </div>
-              <div className="px-4 py-3 rounded-2xl bg-foreground/5">
-                <SpinnerGap size={20} className="animate-spin text-foreground/50" />
+              <div className="px-5 py-4 rounded-3xl bg-white/5 backdrop-blur-[20px] border border-white/10">
+                <TypingIndicator />
               </div>
             </motion.div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <form onSubmit={handleSubmit} className="p-4 border-t border-border/50">
-          <div className="flex gap-3">
+        {/* Input Area - Sticky */}
+        <div className="sticky bottom-0 p-4 border-t border-white/10 bg-white/5 backdrop-blur-[20px]">
+          <QuickActions onAction={handleQuickAction} disabled={isLoading} />
+          <form onSubmit={handleSubmit} className="flex gap-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Posez votre question..."
               disabled={isLoading}
-              className="flex-1 px-4 py-3 rounded-xl bg-foreground/5 border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+              className="flex-1 px-5 py-4 rounded-2xl bg-white/50 border border-white/20 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 disabled:opacity-50 transition-all"
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-4 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
             >
               <PaperPlaneTilt size={20} weight="light" />
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

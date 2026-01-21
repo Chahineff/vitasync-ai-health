@@ -1,8 +1,23 @@
 import { motion } from 'framer-motion';
 import { ChartDonut, TrendUp, Calendar } from '@phosphor-icons/react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { AwaitingAnalysis } from './AwaitingAnalysis';
 
-const ProgressChart = () => {
+interface ProgressChartProps {
+  showAwaitingState?: boolean;
+  onStartDiagnostic?: () => void;
+}
+
+const ProgressChart = ({ showAwaitingState = false, onStartDiagnostic }: ProgressChartProps) => {
+  if (showAwaitingState && onStartDiagnostic) {
+    return (
+      <AwaitingAnalysis 
+        title="Progression Santé" 
+        onStartDiagnostic={onStartDiagnostic} 
+      />
+    );
+  }
+
   const adherenceRate = 78;
   const data = [
     { name: 'Complété', value: adherenceRate },
@@ -24,7 +39,7 @@ const ProgressChart = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-      className="glass-card-premium rounded-2xl p-6 h-full"
+      className="glass-card-premium rounded-3xl p-6 h-full border border-white/10"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">

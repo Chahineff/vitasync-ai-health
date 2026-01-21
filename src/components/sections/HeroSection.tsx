@@ -37,7 +37,7 @@ export function HeroSection() {
       {/* Spline Background - Full Screen with Parallax */}
       <motion.div 
         ref={splineContainerRef}
-        className="absolute inset-0 z-0"
+        className="absolute top-0 right-0 bottom-0 w-[70%] md:w-[60%] lg:w-[55%] z-0"
         style={{ y, scale }}
       >
         <spline-viewer 
@@ -46,7 +46,7 @@ export function HeroSection() {
         />
         {/* Overlay for text readability - reduced opacity */}
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent pointer-events-none"
+          className="absolute inset-0 bg-gradient-to-l from-transparent via-background/30 to-background/70 pointer-events-none"
           style={{ opacity }}
         />
       </motion.div>

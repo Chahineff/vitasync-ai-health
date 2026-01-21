@@ -7,7 +7,7 @@ export function HeroSection() {
       {/* Spline Background - Full Screen */}
       <div className="absolute inset-0 z-0">
         <spline-viewer 
-          url="https://prod.spline.design/5LW01USsusus0KGB/scene.splinecode"
+          url="https://prod.spline.design/9TTyk0TgEbKUqqjz/scene.splinecode"
           style={{ width: '100%', height: '100%' }}
         />
         {/* Overlay for text readability */}

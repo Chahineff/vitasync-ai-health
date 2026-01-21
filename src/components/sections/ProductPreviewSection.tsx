@@ -322,6 +322,9 @@ export const ProductPreviewSection = () => {
       ref={containerRef}
       className="relative py-12 md:py-20 lg:py-32 overflow-hidden"
     >
+      {/* Green gradient transition from Hero */}
+      <div className="absolute inset-x-0 top-0 h-48 md:h-64 bg-gradient-to-b from-secondary/20 via-secondary/5 to-transparent pointer-events-none" />
+      
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3" />
       

@@ -24,9 +24,9 @@ export function HeroSection() {
           url="https://prod.spline.design/9TTyk0TgEbKUqqjz/scene.splinecode"
           style={{ width: '100%', height: '100%' }}
         />
-        {/* Overlay for text readability */}
+        {/* Overlay for text readability - reduced opacity */}
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/90 pointer-events-none"
+          className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent pointer-events-none"
           style={{ opacity }}
         />
       </motion.div>
@@ -36,7 +36,7 @@ export function HeroSection() {
       <div className="absolute bottom-1/4 left-1/4 w-40 md:w-80 h-40 md:h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none z-[1]" />
       
       <div className="container-custom relative z-10 py-8 lg:py-20">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-2xl text-left">
           <motion.div
             initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -62,7 +62,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base md:text-lg lg:text-xl text-foreground/70 mb-8 md:mb-10 max-w-xl mx-auto px-2 md:px-0"
+            className="text-base md:text-lg lg:text-xl text-foreground/70 mb-8 md:mb-10 max-w-xl"
           >
             VitaSync analyse vos besoins en temps réel pour créer la routine de compléments parfaite, adaptée à votre mode de vie.
           </motion.p>
@@ -71,7 +71,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4 sm:px-0"
+            className="flex flex-col sm:flex-row gap-3 md:gap-4"
           >
             <Link to="/auth?mode=signup" className="btn-neumorphic text-primary-foreground text-sm md:text-base py-3 md:py-4 px-6 md:px-8">
               Démarrer mon bilan gratuit

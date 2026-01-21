@@ -113,27 +113,6 @@ export function Navbar() {
                 />
               </div>
 
-              {/* Notification Bell with Badge */}
-              <button className="relative p-2 text-foreground/60 hover:text-foreground transition-colors">
-                <Bell size={20} weight="light" />
-                {hasNotifications && (
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full animate-ping" />
-                )}
-                {hasNotifications && (
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full" />
-                )}
-              </button>
-
-              {/* Messages Icon with Badge */}
-              <button className="relative p-2 text-foreground/60 hover:text-foreground transition-colors">
-                <ChatCircle size={20} weight="light" />
-                {hasMessages && (
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full animate-ping" />
-                )}
-                {hasMessages && (
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-alert rounded-full" />
-                )}
-              </button>
 
               <div className="w-px h-5 bg-border mx-2" />
 

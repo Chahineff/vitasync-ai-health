@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const splineContainerRef = useRef<HTMLDivElement>(null);
+  
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"]
@@ -13,10 +15,28 @@ export function HeroSection() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  // Allow scroll through Spline animation
+  useEffect(() => {
+    const container = splineContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Prevent Spline from capturing the scroll and scroll the window instead
+      window.scrollBy({
+        top: e.deltaY,
+        behavior: 'auto'
+      });
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: true });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
+
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
       {/* Spline Background - Full Screen with Parallax */}
       <motion.div 
+        ref={splineContainerRef}
         className="absolute inset-0 z-0"
         style={{ y, scale }}
       >
@@ -35,7 +55,7 @@ export function HeroSection() {
       <div className="absolute top-1/4 right-1/4 w-48 md:w-96 h-48 md:h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none z-[1]" />
       <div className="absolute bottom-1/4 left-1/4 w-40 md:w-80 h-40 md:h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none z-[1]" />
       
-      <div className="container-custom relative z-10 py-8 lg:py-20 pl-4 md:pl-8 lg:pl-12">
+      <div className="relative z-10 py-8 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl text-left">
           <motion.div
             initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}

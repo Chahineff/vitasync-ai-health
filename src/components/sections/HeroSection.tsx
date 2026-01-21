@@ -1,18 +1,35 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
   return (
-    <section className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
-      {/* Spline Background - Full Screen */}
-      <div className="absolute inset-0 z-0">
+    <section ref={sectionRef} className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
+      {/* Spline Background - Full Screen with Parallax */}
+      <motion.div 
+        className="absolute inset-0 z-0"
+        style={{ y, scale }}
+      >
         <spline-viewer 
           url="https://prod.spline.design/9TTyk0TgEbKUqqjz/scene.splinecode"
           style={{ width: '100%', height: '100%' }}
         />
         {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/90 pointer-events-none" />
-      </div>
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/90 pointer-events-none"
+          style={{ opacity }}
+        />
+      </motion.div>
 
       {/* Decorative Elements */}
       <div className="absolute top-1/4 right-1/4 w-48 md:w-96 h-48 md:h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none z-[1]" />

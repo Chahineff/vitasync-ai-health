@@ -73,7 +73,7 @@ export function HeroSection() {
             
             {/* Spline Web Component */}
             <spline-viewer 
-              url="https://prod.spline.design/tX4bFFTJveu7haxH/scene.splinecode"
+              url="https://prod.spline.design/5LW01USsusus0KGB/scene.splinecode"
               style={{ width: '100%', height: '100%', borderRadius: '1rem' }}
             />
           </motion.div>

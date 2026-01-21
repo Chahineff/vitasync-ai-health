@@ -35,7 +35,7 @@ export function HeroSection() {
       <div className="absolute top-1/4 right-1/4 w-48 md:w-96 h-48 md:h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none z-[1]" />
       <div className="absolute bottom-1/4 left-1/4 w-40 md:w-80 h-40 md:h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none z-[1]" />
       
-      <div className="container-custom relative z-10 py-8 lg:py-20">
+      <div className="container-custom relative z-10 py-8 lg:py-20 pl-4 md:pl-8 lg:pl-12">
         <div className="max-w-2xl text-left">
           <motion.div
             initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}

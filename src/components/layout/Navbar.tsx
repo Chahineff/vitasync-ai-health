@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X, MagnifyingGlass, Bell, ChatCircle } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
+import vitasyncLogo from "@/assets/vitasync-logo.png";
 
 const navLinks = [
   { href: "#how-it-works", label: "Comment ça marche" },
@@ -59,9 +60,7 @@ export function Navbar() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <span className="text-primary-foreground font-semibold text-base md:text-lg">V</span>
-              </div>
+              <img src={vitasyncLogo} alt="VitaSync" className="w-8 h-8 md:w-10 md:h-10" />
               <span className="text-lg md:text-xl font-medium tracking-tight text-foreground">VitaSync</span>
             </Link>
 

@@ -5,6 +5,7 @@ import {
   LinkedinLogo, 
   YoutubeLogo 
 } from "@phosphor-icons/react";
+import vitasyncLogo from "@/assets/vitasync-logo.png";
 
 const footerLinks = {
   product: [
@@ -42,9 +43,7 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <span className="text-primary-foreground font-semibold text-lg">V</span>
-              </div>
+              <img src={vitasyncLogo} alt="VitaSync" className="w-10 h-10" />
               <span className="text-xl font-medium tracking-tight text-foreground">VitaSync</span>
             </Link>
             <p className="text-sm text-foreground/50 mb-6 max-w-xs">

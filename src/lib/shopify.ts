@@ -196,6 +196,56 @@ const PRODUCT_BY_HANDLE_QUERY = `
   }
 `;
 
+const PRODUCT_BY_ID_QUERY = `
+  query GetProductById($id: ID!) {
+    node(id: $id) {
+      ... on Product {
+        id
+        title
+        description
+        handle
+        productType
+        vendor
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        images(first: 5) {
+          edges {
+            node {
+              url
+              altText
+            }
+          }
+        }
+        variants(first: 10) {
+          edges {
+            node {
+              id
+              title
+              price {
+                amount
+                currencyCode
+              }
+              availableForSale
+              selectedOptions {
+                name
+                value
+              }
+            }
+          }
+        }
+        options {
+          name
+          values
+        }
+      }
+    }
+  }
+`;
+
 export async function fetchProducts(first: number = 50, query?: string): Promise<ShopifyProduct[]> {
   const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
   return data?.data?.products?.edges || [];
@@ -204,6 +254,21 @@ export async function fetchProducts(first: number = 50, query?: string): Promise
 export async function fetchProductByHandle(handle: string) {
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
   return data?.data?.productByHandle || null;
+}
+
+export async function fetchProductById(productId: string): Promise<ShopifyProduct | null> {
+  // Build full GraphQL ID if only numeric ID provided
+  const fullId = productId.startsWith('gid://') 
+    ? productId 
+    : `gid://shopify/Product/${productId}`;
+  
+  const data = await storefrontApiRequest(PRODUCT_BY_ID_QUERY, { id: fullId });
+  const product = data?.data?.node;
+  
+  if (!product) return null;
+  
+  // Wrap in the expected format
+  return { node: product };
 }
 
 // Group products by base name (e.g., "Whey Protein" groups Chocolate and Vanilla variants)

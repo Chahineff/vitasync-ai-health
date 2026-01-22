@@ -8,7 +8,7 @@ import { Robot, Storefront, Gear, Question, SignOut, List, X, Bell, EnvelopeSimp
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
 import QuickCoachWidget from "@/components/dashboard/QuickCoachWidget";
-import SupplementTracker from "@/components/dashboard/SupplementTracker";
+import { SupplementTrackerEnhanced } from "@/components/dashboard/SupplementTrackerEnhanced";
 import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ShopSection } from "@/components/dashboard/ShopSection";
@@ -250,7 +250,7 @@ const Dashboard = () => {
             opacity: 0
           }} className="max-w-2xl">
                   <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">Suivi des Compléments</h2>
-                  <SupplementTracker showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={() => handleSectionChange("coach")} />
+                  <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={() => handleSectionChange("coach")} />
                 </motion.div>}
               {activeSection === "shop" && <motion.div key="shop" initial={{
             opacity: 0,
@@ -318,7 +318,7 @@ const DashboardHome = ({
     </div>
     <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <SupplementTracker showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
+      <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
       <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
     </div>
   </motion.div>;

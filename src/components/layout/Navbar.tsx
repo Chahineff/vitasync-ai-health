@@ -69,7 +69,7 @@ export function Navbar() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <img alt="VitaSync" className="w-8 h-8 md:w-10 md:h-10" src="/lovable-uploads/37a50e32-8de6-4d95-b672-08c026f435c5.png" />
+              <img alt="VitaSync" className="w-8 h-8 md:w-10 md:h-10" src="/lovable-uploads/93cbbe29-32a4-45e6-8a4d-0893a176b344.png" />
               <span className="text-lg md:text-xl font-medium tracking-tight text-foreground">VitaSync</span>
             </Link>
 

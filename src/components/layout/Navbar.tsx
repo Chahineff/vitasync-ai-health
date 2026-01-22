@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X, MagnifyingGlass, Bell, ChatCircle } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
-import vitasyncLogo from "@/assets/vitasync-logo.png";
+import vitasyncLogo from "@/assets/vitasync-logo.svg";
 
 const navLinks = [
   { href: "#how-it-works", label: "Comment ça marche" },

@@ -5,7 +5,7 @@ import {
   LinkedinLogo, 
   YoutubeLogo 
 } from "@phosphor-icons/react";
-import vitasyncLogo from "@/assets/vitasync-logo.png";
+import vitasyncLogo from "@/assets/vitasync-logo.svg";
 
 const footerLinks = {
   product: [

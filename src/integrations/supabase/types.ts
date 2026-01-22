@@ -103,6 +103,128 @@ export type Database = {
         }
         Relationships: []
       }
+      supplement_logs: {
+        Row: {
+          id: string
+          taken: boolean | null
+          taken_at: string
+          tracking_id: string
+        }
+        Insert: {
+          id?: string
+          taken?: boolean | null
+          taken_at?: string
+          tracking_id: string
+        }
+        Update: {
+          id?: string
+          taken?: boolean | null
+          taken_at?: string
+          tracking_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplement_logs_tracking_id_fkey"
+            columns: ["tracking_id"]
+            isOneToOne: false
+            referencedRelation: "supplement_tracking"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplement_tracking: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          dosage: string | null
+          id: string
+          product_name: string
+          recommended_by_ai: boolean | null
+          shopify_product_id: string | null
+          time_of_day: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          dosage?: string | null
+          id?: string
+          product_name: string
+          recommended_by_ai?: boolean | null
+          shopify_product_id?: string | null
+          time_of_day?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          dosage?: string | null
+          id?: string
+          product_name?: string
+          recommended_by_ai?: boolean | null
+          shopify_product_id?: string | null
+          time_of_day?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_health_profiles: {
+        Row: {
+          activity_level: string | null
+          age_range: string | null
+          allergies: string[] | null
+          created_at: string
+          current_issues: string[] | null
+          diet_type: string | null
+          health_goals: string[] | null
+          id: string
+          medical_conditions: string[] | null
+          onboarding_completed: boolean | null
+          sleep_quality: string | null
+          stress_level: string | null
+          supplements_experience: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_level?: string | null
+          age_range?: string | null
+          allergies?: string[] | null
+          created_at?: string
+          current_issues?: string[] | null
+          diet_type?: string | null
+          health_goals?: string[] | null
+          id?: string
+          medical_conditions?: string[] | null
+          onboarding_completed?: boolean | null
+          sleep_quality?: string | null
+          stress_level?: string | null
+          supplements_experience?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_level?: string | null
+          age_range?: string | null
+          allergies?: string[] | null
+          created_at?: string
+          current_issues?: string[] | null
+          diet_type?: string | null
+          health_goals?: string[] | null
+          id?: string
+          medical_conditions?: string[] | null
+          onboarding_completed?: boolean | null
+          sleep_quality?: string | null
+          stress_level?: string | null
+          supplements_experience?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

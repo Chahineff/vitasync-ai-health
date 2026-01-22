@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X, MagnifyingGlass, Bell, ChatCircle } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { markIntentionalHashNav } from "@/components/ScrollToTop";
 import vitasyncLogo from "@/assets/vitasync-logo.svg";
 const navLinks = [{
   href: "#how-it-works",
@@ -48,6 +49,9 @@ export function Navbar() {
     if (href.startsWith("#")) {
       e.preventDefault();
       setIsMobileMenuOpen(false);
+      
+      // Mark this as an intentional hash navigation
+      markIntentionalHashNav(href);
 
       // If we're not on the home page, navigate there first
       if (location.pathname !== "/") {
@@ -59,6 +63,8 @@ export function Navbar() {
           element.scrollIntoView({
             behavior: "smooth"
           });
+          // Update URL without triggering navigation
+          window.history.pushState(null, "", href);
         }
       }
     }

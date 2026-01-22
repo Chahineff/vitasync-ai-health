@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PaperPlaneTilt, 
@@ -14,6 +14,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { TypingIndicator } from './TypingIndicator';
+import { ProductRecommendationCard, parseProductRecommendations } from './ProductRecommendationCard';
 import ReactMarkdown from 'react-markdown';
 import vitasyncLogo from '@/assets/vitasync-logo.svg';
 
@@ -37,29 +38,70 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
 const SUGGESTION_CARDS = [
   {
     icon: Moon,
-    title: "Analyser mon sommeil",
-    prompt: "Peux-tu analyser la qualité de mon sommeil cette semaine et me donner des conseils pour mieux dormir ?",
+    title: "Améliorer mon sommeil",
+    prompt: "Je dors mal, qu'est-ce que tu me conseilles ?",
     color: "from-indigo-500/20 to-purple-500/20"
   },
   {
     icon: Leaf,
     title: "Conseils nutrition",
-    prompt: "Donne-moi des conseils nutritionnels personnalisés basés sur mon profil de santé.",
+    prompt: "Donne-moi des conseils nutrition adaptés à mon profil.",
     color: "from-green-500/20 to-emerald-500/20"
   },
   {
     icon: Brain,
     title: "Gérer mon stress",
-    prompt: "Comment puis-je mieux gérer mon stress au quotidien ? Propose-moi des techniques adaptées.",
+    prompt: "Comment réduire mon stress au quotidien ?",
     color: "from-amber-500/20 to-orange-500/20"
   },
   {
     icon: Heart,
-    title: "Optimiser mes compléments",
-    prompt: "Analyse ma routine de compléments actuelle et suggère des optimisations.",
+    title: "Booster mon énergie",
+    prompt: "Quels compléments pour plus d'énergie ?",
     color: "from-rose-500/20 to-pink-500/20"
   }
 ];
+
+// Render message content with product cards
+function MessageContent({ content }: { content: string }) {
+  const { text, products } = parseProductRecommendations(content);
+  
+  if (products.length === 0) {
+    return (
+      <div className="prose prose-sm dark:prose-invert max-w-none font-light">
+        <ReactMarkdown>{content}</ReactMarkdown>
+      </div>
+    );
+  }
+
+  // Split text by product placeholders and render with cards
+  const parts = text.split(/__PRODUCT_(\d+)__/);
+  
+  return (
+    <div className="space-y-2">
+      {parts.map((part, index) => {
+        // Odd indices are product indices
+        if (index % 2 === 1) {
+          const productIndex = parseInt(part, 10);
+          const product = products[productIndex];
+          if (product) {
+            return <ProductRecommendationCard key={`product-${index}`} product={product} />;
+          }
+          return null;
+        }
+        // Even indices are text
+        if (part.trim()) {
+          return (
+            <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light">
+              <ReactMarkdown>{part}</ReactMarkdown>
+            </div>
+          );
+        }
+        return null;
+      })}
+    </div>
+  );
+}
 
 export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
@@ -303,7 +345,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 Bonjour {firstName},
               </h2>
               <p className="text-foreground/60 font-light mb-8">
-                Comment puis-je vous aider aujourd'hui ?
+                Posez-moi vos questions santé & bien-être !
               </p>
 
               {/* Suggestion Cards */}
@@ -358,9 +400,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     }`}
                   >
                     {message.role === 'assistant' ? (
-                      <div className="prose prose-sm dark:prose-invert max-w-none font-light">
-                        <ReactMarkdown>{message.content}</ReactMarkdown>
-                      </div>
+                      <MessageContent content={message.content} />
                     ) : (
                       <p className="text-sm font-light">{message.content}</p>
                     )}
@@ -394,7 +434,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
-              placeholder="Comment puis-je vous aider ?"
+              placeholder="Posez votre question..."
               className="w-full px-5 py-4 pr-24 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 focus:outline-none text-foreground placeholder:text-foreground/40 font-light transition-colors"
               disabled={isLoading}
             />

@@ -6,24 +6,101 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const baseSystemPrompt = `Tu es le Coach IA VitaSync, un assistant santé et bien-être expert et bienveillant. Tu aides les utilisateurs avec :
+// Shopify config
+const SHOPIFY_STORE_DOMAIN = "vitasync2.myshopify.com";
+const SHOPIFY_API_VERSION = "2025-07";
+const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
-- Conseils nutritionnels personnalisés
-- Recommandations d'exercices adaptés
-- Gestion du stress et du sommeil
-- Compléments alimentaires et vitamines
-- Objectifs de santé et suivi
+async function fetchShopifyCatalog(): Promise<string> {
+  const storefrontToken = Deno.env.get("SHOPIFY_STOREFRONT_ACCESS_TOKEN");
+  
+  if (!storefrontToken) {
+    console.warn("SHOPIFY_STOREFRONT_ACCESS_TOKEN not configured");
+    return "Catalogue non disponible.";
+  }
 
-Règles importantes :
-1. Sois toujours bienveillant et encourageant
-2. Donne des conseils pratiques et actionnables
-3. N'hésite pas à poser des questions pour mieux comprendre les besoins
-4. Rappelle toujours de consulter un professionnel de santé pour les cas sérieux
-5. Utilise des listes et une mise en forme claire pour tes réponses
-6. Réponds en français
-7. Personnalise tes réponses en fonction du profil de santé de l'utilisateur quand il est disponible
+  try {
+    const query = `
+      query {
+        products(first: 50) {
+          edges {
+            node {
+              id
+              title
+              description
+              productType
+              variants(first: 1) {
+                edges {
+                  node {
+                    id
+                    price {
+                      amount
+                      currencyCode
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
 
-Tu es là pour accompagner les utilisateurs dans leur parcours de bien-être quotidien.`;
+    const response = await fetch(SHOPIFY_STOREFRONT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': storefrontToken
+      },
+      body: JSON.stringify({ query })
+    });
+
+    if (!response.ok) {
+      console.error("Shopify API error:", response.status);
+      return "Catalogue non disponible.";
+    }
+
+    const data = await response.json();
+    const products = data?.data?.products?.edges || [];
+
+    if (products.length === 0) {
+      return "Aucun produit dans le catalogue.";
+    }
+
+    // Format catalog for the prompt
+    const catalogLines = products.map((edge: { node: { id: string; title: string; description: string; productType: string; variants: { edges: Array<{ node: { id: string; price: { amount: string; currencyCode: string } } }> } } }) => {
+      const p = edge.node;
+      const variant = p.variants.edges[0]?.node;
+      const price = variant?.price ? `${variant.price.amount}${variant.price.currencyCode === 'EUR' ? '€' : variant.price.currencyCode}` : 'Prix non disponible';
+      const shortDesc = p.description?.slice(0, 100) || 'Complément alimentaire';
+      const productId = p.id.split('/').pop(); // Extract numeric ID from gid://shopify/Product/123
+      const variantId = variant?.id || '';
+      return `- ${p.title} (ID: ${productId}, VariantID: ${variantId}, ${price}) - ${shortDesc}`;
+    });
+
+    return catalogLines.join('\n');
+  } catch (error) {
+    console.error("Error fetching Shopify catalog:", error);
+    return "Catalogue non disponible.";
+  }
+}
+
+const baseSystemPrompt = `Tu es le Coach IA VitaSync. Tu donnes des conseils COURTS et DIRECTS.
+
+RÈGLES STRICTES DE FORMAT:
+1. Maximum 2-3 phrases par réponse (sauf si l'utilisateur demande explicitement des détails)
+2. Utilise des listes à puces très courtes (1-3 items max)
+3. Va DROIT AU BUT, pas de formules de politesse longues
+4. Réponds en français
+
+QUAND TU RECOMMANDES UN PRODUIT:
+- Utilise OBLIGATOIREMENT le format: [[PRODUCT:productId:variantId:nom:prix]]
+- Exemple: "Essaie [[PRODUCT:15002251886960:gid://shopify/ProductVariant/123:5-HTP:19.99€]] pour le sommeil."
+- Tu peux recommander 1 à 3 produits max par réponse
+
+IMPORTANT:
+- Rappelle de consulter un professionnel pour les cas sérieux
+- Personnalise en fonction du profil utilisateur`;
 
 function buildEnrichedSystemPrompt(
   userProfile: { first_name?: string; last_name?: string } | null,
@@ -38,58 +115,53 @@ function buildEnrichedSystemPrompt(
     supplements_experience?: string;
     age_range?: string;
     medical_conditions?: string[];
-  } | null
+  } | null,
+  catalog: string
 ): string {
-  if (!healthProfile) {
-    return baseSystemPrompt;
-  }
-
-  const contextParts = [];
+  const contextParts: string[] = [];
   
   if (userProfile?.first_name) {
     contextParts.push(`- Prénom: ${userProfile.first_name}`);
   }
-  if (healthProfile.age_range) {
-    contextParts.push(`- Tranche d'âge: ${healthProfile.age_range}`);
-  }
-  if (healthProfile.health_goals?.length) {
-    contextParts.push(`- Objectifs santé: ${healthProfile.health_goals.join(", ")}`);
-  }
-  if (healthProfile.current_issues?.length) {
-    contextParts.push(`- Problèmes actuels: ${healthProfile.current_issues.join(", ")}`);
-  }
-  if (healthProfile.activity_level) {
-    contextParts.push(`- Niveau d'activité: ${healthProfile.activity_level}`);
-  }
-  if (healthProfile.diet_type) {
-    contextParts.push(`- Type d'alimentation: ${healthProfile.diet_type}`);
-  }
-  if (healthProfile.sleep_quality) {
-    contextParts.push(`- Qualité de sommeil: ${healthProfile.sleep_quality}`);
-  }
-  if (healthProfile.stress_level) {
-    contextParts.push(`- Niveau de stress: ${healthProfile.stress_level}`);
-  }
-  if (healthProfile.allergies?.length) {
-    contextParts.push(`- Allergies: ${healthProfile.allergies.join(", ")}`);
-  }
-  if (healthProfile.medical_conditions?.length) {
-    contextParts.push(`- Conditions médicales: ${healthProfile.medical_conditions.join(", ")}`);
-  }
-  if (healthProfile.supplements_experience) {
-    contextParts.push(`- Expérience avec les compléments: ${healthProfile.supplements_experience}`);
-  }
-
-  if (contextParts.length === 0) {
-    return baseSystemPrompt;
+  if (healthProfile) {
+    if (healthProfile.age_range) {
+      contextParts.push(`- Âge: ${healthProfile.age_range}`);
+    }
+    if (healthProfile.health_goals?.length) {
+      contextParts.push(`- Objectifs: ${healthProfile.health_goals.join(", ")}`);
+    }
+    if (healthProfile.current_issues?.length) {
+      contextParts.push(`- Problèmes: ${healthProfile.current_issues.join(", ")}`);
+    }
+    if (healthProfile.activity_level) {
+      contextParts.push(`- Activité: ${healthProfile.activity_level}`);
+    }
+    if (healthProfile.diet_type) {
+      contextParts.push(`- Alimentation: ${healthProfile.diet_type}`);
+    }
+    if (healthProfile.sleep_quality) {
+      contextParts.push(`- Sommeil: ${healthProfile.sleep_quality}`);
+    }
+    if (healthProfile.stress_level) {
+      contextParts.push(`- Stress: ${healthProfile.stress_level}`);
+    }
+    if (healthProfile.allergies?.length) {
+      contextParts.push(`- Allergies: ${healthProfile.allergies.join(", ")}`);
+    }
+    if (healthProfile.medical_conditions?.length) {
+      contextParts.push(`- Conditions: ${healthProfile.medical_conditions.join(", ")}`);
+    }
   }
 
-  return `${baseSystemPrompt}
+  let fullPrompt = baseSystemPrompt;
 
-CONTEXTE UTILISATEUR (utilise ces informations pour personnaliser tes réponses):
-${contextParts.join("\n")}
+  fullPrompt += `\n\nCATALOGUE VITASYNC (utilise ces IDs pour recommander):\n${catalog}`;
 
-Important: Adapte tes recommandations en tenant compte de ce profil. Par exemple, si l'utilisateur a des allergies, évite de recommander des produits qui pourraient les contenir.`;
+  if (contextParts.length > 0) {
+    fullPrompt += `\n\nPROFIL UTILISATEUR:\n${contextParts.join("\n")}`;
+  }
+
+  return fullPrompt;
 }
 
 // Input validation constants
@@ -103,12 +175,10 @@ interface ChatMessage {
 }
 
 function validateMessages(messages: unknown): { valid: boolean; error?: string; data?: ChatMessage[] } {
-  // Check if messages is an array
   if (!Array.isArray(messages)) {
     return { valid: false, error: "Messages must be an array" };
   }
 
-  // Check array length
   if (messages.length === 0) {
     return { valid: false, error: "Messages array cannot be empty" };
   }
@@ -122,22 +192,18 @@ function validateMessages(messages: unknown): { valid: boolean; error?: string; 
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
 
-    // Check if message is an object
     if (typeof msg !== "object" || msg === null) {
       return { valid: false, error: `Message at index ${i} must be an object` };
     }
 
-    // Check role field
     if (typeof msg.role !== "string" || !VALID_ROLES.includes(msg.role)) {
       return { valid: false, error: `Invalid role at index ${i}. Must be 'user' or 'assistant'` };
     }
 
-    // Check content field
     if (typeof msg.content !== "string") {
       return { valid: false, error: `Content at index ${i} must be a string` };
     }
 
-    // Check content length
     const trimmedContent = msg.content.trim();
     if (trimmedContent.length === 0) {
       return { valid: false, error: `Content at index ${i} cannot be empty` };
@@ -199,21 +265,26 @@ serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log("Authenticated user:", userId);
 
-    // Fetch user profile and health profile for personalization
-    const { data: userProfile } = await supabaseClient
-      .from("profiles")
-      .select("first_name, last_name")
-      .eq("user_id", userId)
-      .single();
+    // Fetch user profile, health profile, and Shopify catalog in parallel
+    const [userProfileResult, healthProfileResult, catalog] = await Promise.all([
+      supabaseClient
+        .from("profiles")
+        .select("first_name, last_name")
+        .eq("user_id", userId)
+        .single(),
+      supabaseClient
+        .from("user_health_profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single(),
+      fetchShopifyCatalog()
+    ]);
 
-    const { data: healthProfile } = await supabaseClient
-      .from("user_health_profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+    const userProfile = userProfileResult.data;
+    const healthProfile = healthProfileResult.data;
 
-    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile);
-    console.log("Using personalized system prompt:", !!healthProfile);
+    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog);
+    console.log("System prompt built with catalog:", catalog.slice(0, 200) + "...");
 
     // Parse and validate request body
     let requestBody: unknown;

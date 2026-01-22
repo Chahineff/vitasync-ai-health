@@ -1,24 +1,29 @@
 import { motion } from 'framer-motion';
+import { Brain } from '@phosphor-icons/react';
 
 export const TypingIndicator = () => {
   return (
-    <div className="flex items-center gap-1 px-2">
-      {[0, 1, 2].map((i) => (
-        <motion.span
-          key={i}
-          className="w-2 h-2 rounded-full bg-foreground/40"
-          animate={{
-            y: [0, -6, 0],
-            opacity: [0.4, 1, 0.4],
-          }}
-          transition={{
-            duration: 0.8,
-            repeat: Infinity,
-            delay: i * 0.15,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
+    <motion.div 
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-2 px-3 py-2"
+    >
+      <motion.div
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.7, 1, 0.7]
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <Brain weight="duotone" className="w-4 h-4 text-primary" />
+      </motion.div>
+      <span className="text-sm text-foreground/60 italic font-light">
+        En cours de réflexion...
+      </span>
+    </motion.div>
   );
 };

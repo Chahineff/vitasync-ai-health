@@ -29,6 +29,7 @@ import SupplementTracker from "@/components/dashboard/SupplementTracker";
 import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { Card } from "@/components/ui/card";
+import vitasyncLogo from "@/assets/vitasync-logo.png";
 
 type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
 
@@ -126,16 +127,15 @@ const Dashboard = () => {
       >
         {/* Logo & Collapse Button */}
         <div className="p-6 flex items-center justify-between">
-          <Link to="/" className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
+          <Link to="/" className={`transition-opacity duration-300 flex items-center gap-2 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
+            <img src={vitasyncLogo} alt="VitaSync" className="w-8 h-8" />
             <span className="text-xl font-light tracking-tight text-foreground whitespace-nowrap">
               Vita<span className="text-primary font-medium">Sync</span>
             </span>
           </Link>
           {sidebarCollapsed && (
             <Link to="/" className="hidden lg:block">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">V</span>
-              </div>
+              <img src={vitasyncLogo} alt="VitaSync" className="w-8 h-8" />
             </Link>
           )}
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-lg hover:bg-white/50">

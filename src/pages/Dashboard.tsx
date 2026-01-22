@@ -29,7 +29,7 @@ import SupplementTracker from "@/components/dashboard/SupplementTracker";
 import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { Card } from "@/components/ui/card";
-import vitasyncLogo from "@/assets/vitasync-logo.png";
+import vitasyncLogo from "@/assets/vitasync-logo.svg";
 
 type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
 

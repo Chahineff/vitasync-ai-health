@@ -69,8 +69,7 @@ export function PricingSection() {
                 {plan.popular && (
                   <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2">
                     <span className="inline-flex items-center gap-1 md:gap-1.5 px-3 md:px-4 py-1 md:py-1.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground text-xs md:text-sm font-medium">
-                      <Star size={12} weight="fill" className="md:hidden" />
-                      <Star size={14} weight="fill" className="hidden md:block" />
+                      <Star size={14} weight="fill" />
                       Recommandé
                     </span>
                   </div>

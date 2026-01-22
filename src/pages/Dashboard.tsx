@@ -11,6 +11,7 @@ import QuickCoachWidget from "@/components/dashboard/QuickCoachWidget";
 import SupplementTracker from "@/components/dashboard/SupplementTracker";
 import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
+import { ShopSection } from "@/components/dashboard/ShopSection";
 import { Card } from "@/components/ui/card";
 import vitasyncLogo from "@/assets/vitasync-logo.svg";
 type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
@@ -29,8 +30,7 @@ const menuItems = [{
 }, {
   id: "shop" as Section,
   label: "Boutique",
-  icon: Storefront,
-  comingSoon: true
+  icon: Storefront
 }];
 const generalItems = [{
   id: "settings" as Section,
@@ -136,16 +136,13 @@ const Dashboard = () => {
             Menu
           </p>
           <nav className="space-y-1">
-            {menuItems.map(item => <button key={item.id} onClick={() => {
-            if (!item.comingSoon) handleSectionChange(item.id);
-          }} disabled={item.comingSoon} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : item.comingSoon ? 'text-foreground/30 cursor-not-allowed' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
+            {menuItems.map(item => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
                 {/* Active indicator bar */}
                 {activeSection === item.id && <motion.div layoutId="activeIndicator" className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-primary rounded-r-full" />}
                 <item.icon weight="light" className="w-5 h-5 flex-shrink-0" />
                 <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
                   {item.label}
                 </span>
-                {item.comingSoon && !sidebarCollapsed && <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-foreground/10">Bientôt</span>}
               </button>)}
           </nav>
 
@@ -255,6 +252,17 @@ const Dashboard = () => {
                   <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">Suivi des Compléments</h2>
                   <SupplementTracker showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={() => handleSectionChange("coach")} />
                 </motion.div>}
+              {activeSection === "shop" && <motion.div key="shop" initial={{
+            opacity: 0,
+            y: 10
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} exit={{
+            opacity: 0
+          }} className="h-full">
+                  <ShopSection />
+                </motion.div>}
               {activeSection === "settings" && <motion.div key="settings" initial={{
             opacity: 0,
             y: 10
@@ -313,25 +321,6 @@ const DashboardHome = ({
       <SupplementTracker showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
       <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
     </div>
-    <motion.div initial={{
-    opacity: 0,
-    scale: 0.95
-  }} animate={{
-    opacity: 1,
-    scale: 1
-  }} transition={{
-    delay: 0.3
-  }} className="relative glass-card-premium rounded-3xl p-6 overflow-hidden border border-white/10">
-      <div className="absolute inset-0 backdrop-blur-sm bg-white/60 z-10 flex items-center justify-center">
-        <div className="text-center">
-          <Storefront weight="light" className="w-12 h-12 text-foreground/30 mx-auto mb-3" />
-          <p className="text-lg font-light text-foreground/60">Boutique</p>
-          <span className="inline-block mt-2 text-xs px-3 py-1 rounded-full bg-primary/10 text-primary">Coming Soon</span>
-        </div>
-      </div>
-      <h3 className="text-lg font-light tracking-tight text-foreground/30 mb-4">Recommandations pour vous</h3>
-      <div className="grid grid-cols-3 gap-4 opacity-30">{[1, 2, 3].map(i => <div key={i} className="aspect-square rounded-xl bg-white/30" />)}</div>
-    </motion.div>
   </motion.div>;
 const HelpSection = () => <div className="max-w-2xl">
     <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">Centre d'aide</h2>

@@ -1,13 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 export function ScrollToTop() {
   const { pathname, hash } = useLocation();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    // If there's a hash in the URL (like #how-it-works), scroll to that element
+    // On first render (page load/refresh), always scroll to top and clear hash
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      
+      // Clear any stale hash from URL
+      if (window.location.hash) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+      
+      // Force scroll to top
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    // For subsequent navigations (user clicking links)
     if (hash) {
-      // Small delay to ensure the DOM is ready
+      // User clicked an anchor link - scroll to the element
       setTimeout(() => {
         const element = document.querySelector(hash);
         if (element) {
@@ -15,31 +30,15 @@ export function ScrollToTop() {
         }
       }, 100);
     } else {
-      // No hash - scroll to top of page
+      // Regular page navigation - scroll to top
       window.scrollTo(0, 0);
     }
   }, [pathname, hash]);
 
-  // On initial page load, clear any stale hash from URL and scroll to top
-  useEffect(() => {
-    // Check if user intentionally navigated to this hash
-    const currentHash = window.location.hash;
-    const lastIntentionalHash = sessionStorage.getItem("last_hash_nav");
-    
-    // If there's a hash but it wasn't from intentional navigation, clear it
-    if (currentHash && currentHash !== lastIntentionalHash) {
-      window.history.replaceState(null, "", window.location.pathname);
-      window.scrollTo(0, 0);
-    }
-    
-    // Clear the intentional flag after checking
-    sessionStorage.removeItem("last_hash_nav");
-  }, []);
-
   return null;
 }
 
-// Helper to mark hash navigation as intentional (call this when user clicks anchor links)
+// Helper to mark hash navigation as intentional (kept for compatibility)
 export function markIntentionalHashNav(hash: string) {
-  sessionStorage.setItem("last_hash_nav", hash);
+  // No longer needed with the isFirstRender approach, but kept for API compatibility
 }

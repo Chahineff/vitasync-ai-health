@@ -1,29 +1,64 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 export function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const splineContainerRef = useRef<HTMLDivElement>(null);
 
-  // Allow scroll passthrough on Spline viewer
+  // Parallax effect based on scroll
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 800], [0, 150]);
+  const scale = useTransform(scrollY, [0, 800], [1, 1.1]);
+
+  // Improved scroll passthrough on Spline viewer
   useEffect(() => {
     const container = splineContainerRef.current;
     if (!container) return;
 
+    // Capture wheel events and forward them to window scroll
     const handleWheel = (e: WheelEvent) => {
-      window.scrollBy(0, e.deltaY);
+      e.preventDefault();
+      window.scrollBy({
+        top: e.deltaY,
+        behavior: 'auto'
+      });
     };
 
-    container.addEventListener('wheel', handleWheel, { passive: true });
-    return () => container.removeEventListener('wheel', handleWheel);
+    // Also handle touch events for mobile
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchY;
+      touchStartY = touchY;
+      window.scrollBy({
+        top: deltaY,
+        behavior: 'auto'
+      });
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+    };
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Spline 3D Background */}
-      <div 
+    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Spline 3D Background with Parallax */}
+      <motion.div 
         ref={splineContainerRef}
         className="absolute inset-0 z-0"
+        style={{ y, scale }}
       >
         <spline-viewer 
           url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
@@ -31,7 +66,7 @@ export function HeroSection() {
         />
         {/* Gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/80 pointer-events-none" />
-      </div>
+      </motion.div>
 
       {/* Content Container - pointer-events-none lets mouse through to Spline */}
       <div className="relative z-10 px-6 sm:px-10 lg:px-16 py-24 text-center max-w-4xl mx-auto pointer-events-none">

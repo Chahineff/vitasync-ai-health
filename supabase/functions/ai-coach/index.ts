@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const systemPrompt = `Tu es le Coach IA VitaSync, un assistant santé et bien-être expert et bienveillant. Tu aides les utilisateurs avec :
+const baseSystemPrompt = `Tu es le Coach IA VitaSync, un assistant santé et bien-être expert et bienveillant. Tu aides les utilisateurs avec :
 
 - Conseils nutritionnels personnalisés
 - Recommandations d'exercices adaptés
@@ -21,8 +21,76 @@ Règles importantes :
 4. Rappelle toujours de consulter un professionnel de santé pour les cas sérieux
 5. Utilise des listes et une mise en forme claire pour tes réponses
 6. Réponds en français
+7. Personnalise tes réponses en fonction du profil de santé de l'utilisateur quand il est disponible
 
 Tu es là pour accompagner les utilisateurs dans leur parcours de bien-être quotidien.`;
+
+function buildEnrichedSystemPrompt(
+  userProfile: { first_name?: string; last_name?: string } | null,
+  healthProfile: {
+    health_goals?: string[];
+    current_issues?: string[];
+    activity_level?: string;
+    diet_type?: string;
+    sleep_quality?: string;
+    stress_level?: string;
+    allergies?: string[];
+    supplements_experience?: string;
+    age_range?: string;
+    medical_conditions?: string[];
+  } | null
+): string {
+  if (!healthProfile) {
+    return baseSystemPrompt;
+  }
+
+  const contextParts = [];
+  
+  if (userProfile?.first_name) {
+    contextParts.push(`- Prénom: ${userProfile.first_name}`);
+  }
+  if (healthProfile.age_range) {
+    contextParts.push(`- Tranche d'âge: ${healthProfile.age_range}`);
+  }
+  if (healthProfile.health_goals?.length) {
+    contextParts.push(`- Objectifs santé: ${healthProfile.health_goals.join(", ")}`);
+  }
+  if (healthProfile.current_issues?.length) {
+    contextParts.push(`- Problèmes actuels: ${healthProfile.current_issues.join(", ")}`);
+  }
+  if (healthProfile.activity_level) {
+    contextParts.push(`- Niveau d'activité: ${healthProfile.activity_level}`);
+  }
+  if (healthProfile.diet_type) {
+    contextParts.push(`- Type d'alimentation: ${healthProfile.diet_type}`);
+  }
+  if (healthProfile.sleep_quality) {
+    contextParts.push(`- Qualité de sommeil: ${healthProfile.sleep_quality}`);
+  }
+  if (healthProfile.stress_level) {
+    contextParts.push(`- Niveau de stress: ${healthProfile.stress_level}`);
+  }
+  if (healthProfile.allergies?.length) {
+    contextParts.push(`- Allergies: ${healthProfile.allergies.join(", ")}`);
+  }
+  if (healthProfile.medical_conditions?.length) {
+    contextParts.push(`- Conditions médicales: ${healthProfile.medical_conditions.join(", ")}`);
+  }
+  if (healthProfile.supplements_experience) {
+    contextParts.push(`- Expérience avec les compléments: ${healthProfile.supplements_experience}`);
+  }
+
+  if (contextParts.length === 0) {
+    return baseSystemPrompt;
+  }
+
+  return `${baseSystemPrompt}
+
+CONTEXTE UTILISATEUR (utilise ces informations pour personnaliser tes réponses):
+${contextParts.join("\n")}
+
+Important: Adapte tes recommandations en tenant compte de ce profil. Par exemple, si l'utilisateur a des allergies, évite de recommander des produits qui pourraient les contenir.`;
+}
 
 // Input validation constants
 const MAX_MESSAGES = 50;
@@ -130,6 +198,22 @@ serve(async (req) => {
 
     const userId = claimsData.claims.sub;
     console.log("Authenticated user:", userId);
+
+    // Fetch user profile and health profile for personalization
+    const { data: userProfile } = await supabaseClient
+      .from("profiles")
+      .select("first_name, last_name")
+      .eq("user_id", userId)
+      .single();
+
+    const { data: healthProfile } = await supabaseClient
+      .from("user_health_profiles")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
+
+    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile);
+    console.log("Using personalized system prompt:", !!healthProfile);
 
     // Parse and validate request body
     let requestBody: unknown;

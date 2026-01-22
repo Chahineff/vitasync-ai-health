@@ -189,11 +189,17 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     };
 
     try {
+      // Get the current session for authentication
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!currentSession?.access_token) {
+        throw new Error("Session not found");
+      }
+
       const resp = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${currentSession.access_token}`,
         },
         body: JSON.stringify({ messages: [...messages, userMessage] }),
       });

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.90.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,13 +24,141 @@ Règles importantes :
 
 Tu es là pour accompagner les utilisateurs dans leur parcours de bien-être quotidien.`;
 
+// Input validation constants
+const MAX_MESSAGES = 50;
+const MAX_MESSAGE_LENGTH = 8000;
+const VALID_ROLES = ["user", "assistant"];
+
+interface ChatMessage {
+  role: string;
+  content: string;
+}
+
+function validateMessages(messages: unknown): { valid: boolean; error?: string; data?: ChatMessage[] } {
+  // Check if messages is an array
+  if (!Array.isArray(messages)) {
+    return { valid: false, error: "Messages must be an array" };
+  }
+
+  // Check array length
+  if (messages.length === 0) {
+    return { valid: false, error: "Messages array cannot be empty" };
+  }
+
+  if (messages.length > MAX_MESSAGES) {
+    return { valid: false, error: `Maximum ${MAX_MESSAGES} messages allowed` };
+  }
+
+  const validatedMessages: ChatMessage[] = [];
+
+  for (let i = 0; i < messages.length; i++) {
+    const msg = messages[i];
+
+    // Check if message is an object
+    if (typeof msg !== "object" || msg === null) {
+      return { valid: false, error: `Message at index ${i} must be an object` };
+    }
+
+    // Check role field
+    if (typeof msg.role !== "string" || !VALID_ROLES.includes(msg.role)) {
+      return { valid: false, error: `Invalid role at index ${i}. Must be 'user' or 'assistant'` };
+    }
+
+    // Check content field
+    if (typeof msg.content !== "string") {
+      return { valid: false, error: `Content at index ${i} must be a string` };
+    }
+
+    // Check content length
+    const trimmedContent = msg.content.trim();
+    if (trimmedContent.length === 0) {
+      return { valid: false, error: `Content at index ${i} cannot be empty` };
+    }
+
+    if (trimmedContent.length > MAX_MESSAGE_LENGTH) {
+      return { valid: false, error: `Content at index ${i} exceeds maximum length of ${MAX_MESSAGE_LENGTH} characters` };
+    }
+
+    validatedMessages.push({
+      role: msg.role,
+      content: trimmedContent,
+    });
+  }
+
+  return { valid: true, data: validatedMessages };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { messages } = await req.json();
+    // Authentication check
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      console.error("Missing or invalid Authorization header");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Create Supabase client and validate user
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+
+    if (claimsError || !claimsData?.claims) {
+      console.error("Auth validation failed:", claimsError?.message || "No claims found");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log("Authenticated user:", userId);
+
+    // Parse and validate request body
+    let requestBody: unknown;
+    try {
+      requestBody = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Validate messages structure
+    const validation = validateMessages((requestBody as Record<string, unknown>)?.messages);
+    if (!validation.valid || !validation.data) {
+      console.error("Message validation failed:", validation.error);
+      return new Response(
+        JSON.stringify({ error: validation.error || "Invalid message format" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const messages = validation.data;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -46,7 +175,7 @@ serve(async (req) => {
         model: "openai/gpt-5-mini",
         messages: [
           { role: "system", content: systemPrompt },
-          ...messages.map((m: { role: string; content: string }) => ({
+          ...messages.map((m) => ({
             role: m.role,
             content: m.content,
           })),
@@ -91,7 +220,7 @@ serve(async (req) => {
   } catch (e) {
     console.error("AI coach error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Erreur inconnue" }),
+      JSON.stringify({ error: "Une erreur s'est produite" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

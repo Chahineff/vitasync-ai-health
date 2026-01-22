@@ -87,12 +87,7 @@ export function Navbar() {
             {/* Right Side - Search, Notifications, CTA */}
             <div className="hidden lg:flex items-center gap-3">
               {/* Expandable Search Bar */}
-              <div className={`relative flex items-center transition-all duration-300 ${isSearchExpanded ? 'w-64' : 'w-10'}`}>
-                <button onClick={() => setIsSearchExpanded(!isSearchExpanded)} className="absolute left-0 p-2 text-foreground/60 hover:text-foreground transition-colors z-10">
-                  <MagnifyingGlass size={20} weight="light" />
-                </button>
-                <input type="text" placeholder="Rechercher..." className={`w-full h-10 pl-10 pr-4 rounded-xl bg-foreground/5 border border-border/50 text-sm text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 transition-all duration-300 ${isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onBlur={() => setIsSearchExpanded(false)} />
-              </div>
+              
 
 
               

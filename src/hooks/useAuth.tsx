@@ -164,12 +164,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { url: null, error: uploadError };
     }
 
-    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+    // Store the file path (not URL) - we'll generate signed URLs when displaying
+    await updateProfile({ avatar_url: filePath });
 
-    // Update profile with new avatar URL
-    await updateProfile({ avatar_url: data.publicUrl });
-
-    return { url: data.publicUrl, error: null };
+    return { url: filePath, error: null };
   };
 
   return (

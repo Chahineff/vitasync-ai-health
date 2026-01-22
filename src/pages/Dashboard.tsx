@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
+import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { Robot, Storefront, Gear, Question, SignOut, List, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
@@ -47,6 +48,7 @@ const Dashboard = () => {
     loading,
     signOut
   } = useAuth();
+  const { signedUrl: avatarUrl } = useAvatarUrl(profile?.avatar_url);
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<Section>("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -188,7 +190,7 @@ const Dashboard = () => {
         <div className="p-4 border-t border-white/10">
           <div className={`flex items-center gap-3 ${sidebarCollapsed ? 'lg:justify-center' : ''}`}>
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
-              {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="w-full h-full rounded-full object-cover" /> : <User weight="light" className="w-5 h-5 text-white" />}
+              {avatarUrl ? <img src={avatarUrl} alt="" className="w-full h-full rounded-full object-cover" /> : <User weight="light" className="w-5 h-5 text-white" />}
             </div>
             <div className={`flex-1 min-w-0 transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
               <p className="text-sm font-medium text-foreground truncate">{userName}</p>

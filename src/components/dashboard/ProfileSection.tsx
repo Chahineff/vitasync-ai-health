@@ -1,11 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Camera, SpinnerGap, Check } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/useAuth";
+import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
 
 export function ProfileSection() {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
+  const { signedUrl: avatarUrl, isLoading: isLoadingAvatar } = useAvatarUrl(profile?.avatar_url);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -14,6 +16,15 @@ export function ProfileSection() {
   const [dateOfBirth, setDateOfBirth] = useState(profile?.date_of_birth || "");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // Sync state when profile changes
+  useEffect(() => {
+    if (profile) {
+      setFirstName(profile.first_name || "");
+      setLastName(profile.last_name || "");
+      setDateOfBirth(profile.date_of_birth || "");
+    }
+  }, [profile]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -124,9 +135,9 @@ export function ProfileSection() {
         <div className="flex flex-col items-center mb-8">
           <div className="relative">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
-              {profile?.avatar_url ? (
+              {avatarUrl ? (
                 <img
-                  src={profile.avatar_url}
+                  src={avatarUrl}
                   alt="Avatar"
                   className="w-full h-full object-cover"
                 />
@@ -135,7 +146,7 @@ export function ProfileSection() {
                   {displayName.charAt(0).toUpperCase()}
                 </span>
               )}
-              {isUploadingAvatar && (
+              {(isUploadingAvatar || isLoadingAvatar) && (
                 <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-full">
                   <SpinnerGap size={24} className="animate-spin text-primary" />
                 </div>

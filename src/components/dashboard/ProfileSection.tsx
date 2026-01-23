@@ -4,6 +4,7 @@ import { Camera, SpinnerGap, Check } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function ProfileSection() {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
@@ -122,13 +123,19 @@ export function ProfileSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
+      className="space-y-8"
     >
-      <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-        Mon Profil
-      </h1>
-      <p className="text-foreground/60 mb-8">
-        Gérez vos informations personnelles
-      </p>
+      <div>
+        <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
+          Paramètres
+        </h1>
+        <p className="text-foreground/60 mb-8">
+          Gérez vos informations personnelles et vos préférences
+        </p>
+      </div>
+
+      {/* Theme Toggle */}
+      <ThemeToggle />
 
       <div className="glass-card rounded-2xl p-8">
         {/* Avatar Section */}

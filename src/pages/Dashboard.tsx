@@ -48,7 +48,9 @@ const Dashboard = () => {
     loading,
     signOut
   } = useAuth();
-  const { signedUrl: avatarUrl } = useAvatarUrl(profile?.avatar_url);
+  const {
+    signedUrl: avatarUrl
+  } = useAvatarUrl(profile?.avatar_url);
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<Section>("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -202,29 +204,7 @@ const Dashboard = () => {
 
       {/* Main */}
       <main className="flex-1 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-30 glass-card-premium border-b border-white/10 px-4 lg:px-8 py-4 backdrop-blur-[20px]">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-white/50">
-              <List weight="light" className="w-6 h-6" />
-            </button>
-            <div className={`flex-1 max-w-md transition-all duration-300 ${searchFocused ? 'max-w-xl' : ''}`}>
-              <div className="relative">
-                <MagnifyingGlass weight="light" className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
-                <input type="text" placeholder="Rechercher..." onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)} className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/50 border text-sm font-light placeholder:text-foreground/40 focus:outline-none transition-all duration-300 ${searchFocused ? 'border-primary/50 ring-2 ring-primary/20 bg-white/70' : 'border-white/20'}`} />
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button className="p-2.5 rounded-xl bg-white/50 border border-white/20 hover:bg-white/70 relative transition-all">
-                <Bell weight="light" className="w-5 h-5 text-foreground/60" />
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-alert rounded-full animate-ping" />
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-alert rounded-full" />
-              </button>
-              <button className="p-2.5 rounded-xl bg-white/50 border border-white/20 hover:bg-white/70 transition-all">
-                <EnvelopeSimple weight="light" className="w-5 h-5 text-foreground/60" />
-              </button>
-            </div>
-          </div>
-        </header>
+        
 
         <div className="flex-1 p-4 lg:p-8 overflow-auto">
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">

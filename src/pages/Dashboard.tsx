@@ -112,8 +112,8 @@ const Dashboard = () => {
       }} className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
       </AnimatePresence>
 
-      {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 glass-sidebar flex flex-col transform transition-all duration-300 ease-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-72'} w-72`}>
+      {/* Sidebar - Fixed on all screens */}
+      <aside className={`fixed inset-y-0 left-0 z-50 glass-sidebar flex flex-col transition-all duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
         {/* Logo & Collapse Button */}
         <div className="p-6 flex items-center justify-between">
           <Link to="/" className={`transition-opacity duration-300 flex items-center gap-2 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
@@ -202,8 +202,8 @@ const Dashboard = () => {
         </div>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 flex flex-col min-h-screen">
+      {/* Main - with margin-left to compensate for fixed sidebar */}
+      <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
         
 
         <div className="flex-1 p-4 lg:p-8 overflow-auto">

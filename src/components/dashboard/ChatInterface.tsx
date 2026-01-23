@@ -15,16 +15,24 @@ import {
   SpeakerHigh,
   SpeakerX,
   Stop,
-  User as UserIcon
+  User as UserIcon,
+  CaretLeft,
+  CaretRight,
+  X,
+  File as FileIcon,
+  Image as ImageIcon
 } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { TypingIndicator } from './TypingIndicator';
 import { ProductRecommendationCard, parseProductRecommendations } from './ProductRecommendationCard';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
+import { useSpeechToText } from '@/hooks/useSpeechToText';
 import ReactMarkdown from 'react-markdown';
-import vitasyncLogo from '@/assets/vitasync-logo.svg';
 import { cn } from '@/lib/utils';
+
+// Official VitaSync PNG Logo
+const vitasyncLogoUrl = "/lovable-uploads/93cbbe29-32a4-45e6-8a4d-0893a176b344.png";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -160,12 +168,39 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [hasCalledFirstMessage, setHasCalledFirstMessage] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isListening, setIsListening] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Speech-to-text hook
+  const { 
+    startListening, 
+    stopListening, 
+    isListening, 
+    isConnecting,
+    transcript,
+    partialTranscript,
+    isSupported: sttSupported 
+  } = useSpeechToText();
 
   const firstName = profile?.first_name || 'toi';
   const MAX_CHARS = 2000;
+
+  // Update input with transcript
+  useEffect(() => {
+    if (transcript) {
+      setInput(prev => prev + (prev ? ' ' : '') + transcript);
+    }
+  }, [transcript]);
+
+  // Show partial transcript in real-time
+  useEffect(() => {
+    if (partialTranscript && isListening) {
+      // Optionally update UI to show partial transcript
+    }
+  }, [partialTranscript, isListening]);
 
   useEffect(() => {
     if (user) {
@@ -236,29 +271,38 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     inputRef.current?.focus();
   };
 
-  // Voice input handler
-  const handleVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
-      return;
+  // File selection handler
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      
+      // Create preview for images
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => setFilePreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+      } else {
+        setFilePreview(null);
+      }
     }
+  };
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'fr-FR';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    recognition.onerror = () => setIsListening(false);
-    
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(prev => prev + transcript);
-    };
-
-    recognition.start();
+  // Voice input toggle
+  const handleVoiceInput = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -267,6 +311,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
     const userMessage = input.trim();
     setInput('');
+    clearSelectedFile();
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
@@ -371,23 +416,57 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
   return (
     <div className="flex h-[calc(100vh-2rem)] min-h-[600px] bg-background/30 rounded-3xl overflow-hidden border border-white/10 backdrop-blur-xl">
-      {/* Collapsible Sidebar */}
+      {/* Hidden file input */}
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFileSelect}
+        accept="image/*,.pdf,.doc,.docx,.txt"
+        className="hidden"
+      />
+
+      {/* Collapsible & Fixed Sidebar */}
       <motion.div 
         initial={false}
-        animate={{ width: isSidebarCollapsed ? 0 : 280 }}
-        className="border-r border-white/10 flex flex-col bg-background/20 overflow-hidden hidden md:flex"
+        animate={{ width: isSidebarCollapsed ? 72 : 280 }}
+        className="sticky top-0 h-full border-r border-white/10 flex flex-col bg-background/20 overflow-hidden hidden md:flex flex-shrink-0"
       >
-        <div className="p-4 min-w-[280px]">
-          <button
-            onClick={createNewConversation}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium shadow-lg shadow-primary/20"
-          >
-            <Plus weight="bold" className="w-5 h-5" />
-            Nouvelle conversation
-          </button>
+        {/* Header with toggle */}
+        <div className="p-3 flex items-center justify-between min-w-[72px]">
+          {!isSidebarCollapsed ? (
+            <button
+              onClick={createNewConversation}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium shadow-lg shadow-primary/20"
+            >
+              <Plus weight="bold" className="w-5 h-5" />
+              <span className="whitespace-nowrap">Nouvelle conversation</span>
+            </button>
+          ) : (
+            <button
+              onClick={createNewConversation}
+              className="mx-auto p-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+              title="Nouvelle conversation"
+            >
+              <Plus weight="bold" className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 space-y-1 min-w-[280px]">
+        {/* Toggle button */}
+        <button
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          className="absolute top-4 right-0 translate-x-1/2 z-10 p-1.5 rounded-full bg-background/80 border border-white/20 hover:bg-white/10 transition-colors"
+          title={isSidebarCollapsed ? "Étendre" : "Réduire"}
+        >
+          {isSidebarCollapsed ? (
+            <CaretRight weight="bold" className="w-3 h-3 text-foreground/60" />
+          ) : (
+            <CaretLeft weight="bold" className="w-3 h-3 text-foreground/60" />
+          )}
+        </button>
+
+        {/* Scrollable conversations list */}
+        <div className="flex-1 overflow-y-auto px-2 space-y-1">
           {conversations.map(conv => (
             <button
               key={conv.id}
@@ -398,32 +477,29 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                   ? 'bg-white/10 text-foreground'
                   : 'text-foreground/60 hover:bg-white/5 hover:text-foreground'
               )}
+              title={isSidebarCollapsed ? (conv.title || 'Conversation') : undefined}
             >
               <ChatCircle weight="light" className="w-4 h-4 flex-shrink-0" />
-              <span className="flex-1 truncate text-sm font-light">
-                {conv.title || 'Conversation'}
-              </span>
-              <button
-                onClick={(e) => deleteConversation(conv.id, e)}
-                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded-lg transition-all"
-              >
-                <Trash weight="light" className="w-4 h-4 text-foreground/40 hover:text-destructive" />
-              </button>
+              {!isSidebarCollapsed && (
+                <>
+                  <span className="flex-1 truncate text-sm font-light">
+                    {conv.title || 'Conversation'}
+                  </span>
+                  <button
+                    onClick={(e) => deleteConversation(conv.id, e)}
+                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded-lg transition-all"
+                  >
+                    <Trash weight="light" className="w-4 h-4 text-foreground/40 hover:text-destructive" />
+                  </button>
+                </>
+              )}
             </button>
           ))}
         </div>
       </motion.div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col relative">
-        {/* Toggle Sidebar Button */}
-        <button
-          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          className="absolute top-4 left-4 z-10 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors hidden md:flex"
-        >
-          <ChatCircle weight="light" className="w-5 h-5 text-foreground/60" />
-        </button>
-
+      <div className="flex-1 flex flex-col relative min-w-0">
         {isNewConversation ? (
           /* Premium Welcome Screen */
           <div className="flex-1 flex flex-col items-center justify-center p-6 pb-32">
@@ -440,7 +516,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 transition={{ delay: 0.1, duration: 0.5 }}
                 className="w-20 h-20 mx-auto mb-8 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-4 border border-white/20 shadow-xl shadow-primary/10"
               >
-                <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
+                <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
               </motion.div>
 
               {/* Greeting */}
@@ -507,7 +583,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     {/* AI Avatar */}
                     {message.role === 'assistant' && (
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20">
-                        <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
+                        <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
                       </div>
                     )}
                     
@@ -553,7 +629,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                   className="flex gap-3"
                 >
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20">
-                    <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
+                    <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
                   </div>
                   <div className="bg-transparent border border-white/10 rounded-2xl px-4 py-3">
                     <TypingIndicator />
@@ -568,6 +644,54 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         {/* Premium Floating Input Bar */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/90 to-transparent">
           <div className="max-w-3xl mx-auto">
+            {/* Listening indicator */}
+            {(isListening || isConnecting) && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 mb-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20"
+              >
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                >
+                  <Microphone weight="fill" className="w-5 h-5 text-primary" />
+                </motion.div>
+                <span className="text-sm text-primary font-medium">
+                  {isConnecting ? "Connexion..." : "🎙️ Écoute en cours..."}
+                </span>
+                {partialTranscript && (
+                  <span className="text-sm text-foreground/60 italic truncate flex-1">
+                    {partialTranscript}
+                  </span>
+                )}
+              </motion.div>
+            )}
+
+            {/* Selected file preview */}
+            {selectedFile && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-3 mb-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+              >
+                {filePreview ? (
+                  <img src={filePreview} className="w-10 h-10 rounded-lg object-cover" alt="Preview" />
+                ) : (
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                    <FileIcon weight="light" className="w-5 h-5 text-foreground/60" />
+                  </div>
+                )}
+                <span className="text-sm text-foreground/80 truncate flex-1">{selectedFile.name}</span>
+                <button 
+                  onClick={clearSelectedFile}
+                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <X weight="bold" className="w-4 h-4 text-foreground/60" />
+                </button>
+              </motion.div>
+            )}
+
             <form onSubmit={handleSubmit} className="relative">
               <div className="glass-card rounded-2xl border border-white/20 shadow-2xl shadow-black/10 overflow-hidden">
                 {/* Input Area */}
@@ -590,6 +714,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     {/* Attach Button */}
                     <button
                       type="button"
+                      onClick={() => fileInputRef.current?.click()}
                       className="p-2 rounded-lg text-foreground/50 hover:text-foreground/80 hover:bg-white/5 transition-colors"
                       title="Joindre un fichier"
                     >
@@ -600,13 +725,16 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     <button
                       type="button"
                       onClick={handleVoiceInput}
+                      disabled={!sttSupported || isConnecting}
                       className={cn(
                         "p-2 rounded-lg transition-all",
                         isListening 
                           ? "text-primary bg-primary/20 animate-pulse" 
+                          : isConnecting
+                          ? "text-foreground/30 cursor-wait"
                           : "text-foreground/50 hover:text-foreground/80 hover:bg-white/5"
                       )}
-                      title="Dictée vocale"
+                      title={isListening ? "Arrêter la dictée" : "Dictée vocale"}
                     >
                       <Microphone weight={isListening ? "fill" : "light"} className="w-5 h-5" />
                     </button>

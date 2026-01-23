@@ -105,9 +105,7 @@ const MiniDashboardMobile = () => {
       {/* Mobile Header Nav */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-muted/30">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-            <Leaf weight="fill" className="w-3 h-3 text-white" />
-          </div>
+          <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="VitaSync" className="w-5 h-5" />
           <span className="font-light text-xs tracking-tight">VitaSync</span>
         </div>
         <div className="flex items-center gap-2">
@@ -183,9 +181,7 @@ const MiniDashboard = () => {
       <div className="w-48 flex-col bg-muted/30 border-r border-border/50 p-3 hidden md:flex">
         {/* Logo */}
         <div className="flex items-center gap-2 mb-6">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-            <Leaf weight="fill" className="w-3.5 h-3.5 text-white" />
-          </div>
+          <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="VitaSync" className="w-6 h-6" />
           <span className="font-light text-sm tracking-tight">VitaSync</span>
         </div>
 

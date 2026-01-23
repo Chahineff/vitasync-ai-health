@@ -1,10 +1,11 @@
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { ChatCircle, FileArrowUp, Package, ClipboardText } from "@phosphor-icons/react";
+import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import vitaSyncLogo from "@/assets/vitasync-logo.svg";
 
 const steps = [
   {
+    icon: ClipboardText,
     number: "01",
     title: "Onboarding personnalisé",
     description: "Répondez à 10 questions simples sur vos objectifs, votre sommeil, votre alimentation et votre niveau de stress. L'IA apprend à vous connaître en profondeur.",
@@ -14,6 +15,7 @@ const steps = [
     gradient: "from-cyan-500/10 via-cyan-500/5 to-transparent",
   },
   {
+    icon: ChatCircle,
     number: "02",
     title: "Échangez avec votre Coach IA",
     description: "Clarifiez vos besoins par chat ou voix. Notre IA comprend vos objectifs en profondeur et adapte ses conseils personnalisés en temps réel.",
@@ -23,6 +25,7 @@ const steps = [
     gradient: "from-primary/10 via-primary/5 to-transparent",
   },
   {
+    icon: FileArrowUp,
     number: "03",
     title: "Analyse Poussée (Optionnel)",
     description: "Importez vos analyses sanguines pour une précision maximale. L'IA interprète vos biomarqueurs instantanément et affine ses recommandations.",
@@ -32,6 +35,7 @@ const steps = [
     gradient: "from-accent/10 via-accent/5 to-transparent",
   },
   {
+    icon: Package,
     number: "04",
     title: "Recevez votre Stack",
     description: "Abonnez-vous à votre pack personnalisé de compléments, ajusté mensuellement selon vos progrès et l'évolution de vos besoins.",
@@ -43,6 +47,8 @@ const steps = [
 ];
 
 function StepCard({ step }: { step: typeof steps[0] }) {
+  const IconComponent = step.icon;
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 80, scale: 0.9 }}
@@ -83,12 +89,17 @@ function StepCard({ step }: { step: typeof steps[0] }) {
             <div className="h-px flex-1 bg-gradient-to-r from-foreground/10 to-transparent" />
           </div>
           
-          {/* VitaSync Logo */}
+          {/* Icon */}
           <div className="icon-container w-16 h-16 md:w-20 md:h-20 rounded-2xl mb-6 md:mb-8 flex items-center justify-center">
-            <img 
-              src={vitaSyncLogo} 
-              alt="VitaSync" 
-              className="w-9 h-9 md:w-12 md:h-12"
+            <IconComponent 
+              size={36} 
+              weight="light" 
+              className={cn(step.colorClass, "md:hidden")} 
+            />
+            <IconComponent 
+              size={48} 
+              weight="light" 
+              className={cn(step.colorClass, "hidden md:block")} 
             />
           </div>
           

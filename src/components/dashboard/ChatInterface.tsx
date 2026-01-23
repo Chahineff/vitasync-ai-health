@@ -5,18 +5,26 @@ import {
   Plus, 
   Trash, 
   ChatCircle,
-  ArrowsClockwise,
   Moon,
   Leaf,
   Brain,
-  Heart
+  Heart,
+  Microphone,
+  Paperclip,
+  Database,
+  SpeakerHigh,
+  SpeakerX,
+  Stop,
+  User as UserIcon
 } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { TypingIndicator } from './TypingIndicator';
 import { ProductRecommendationCard, parseProductRecommendations } from './ProductRecommendationCard';
+import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import ReactMarkdown from 'react-markdown';
 import vitasyncLogo from '@/assets/vitasync-logo.svg';
+import { cn } from '@/lib/utils';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -40,25 +48,29 @@ const SUGGESTION_CARDS = [
     icon: Moon,
     title: "Améliorer mon sommeil",
     prompt: "Je dors mal, qu'est-ce que tu me conseilles ?",
-    color: "from-indigo-500/20 to-purple-500/20"
+    gradient: "from-indigo-500/10 to-purple-500/10",
+    iconColor: "text-indigo-500"
   },
   {
     icon: Leaf,
     title: "Conseils nutrition",
     prompt: "Donne-moi des conseils nutrition adaptés à mon profil.",
-    color: "from-green-500/20 to-emerald-500/20"
+    gradient: "from-emerald-500/10 to-green-500/10",
+    iconColor: "text-emerald-500"
   },
   {
     icon: Brain,
     title: "Gérer mon stress",
     prompt: "Comment réduire mon stress au quotidien ?",
-    color: "from-amber-500/20 to-orange-500/20"
+    gradient: "from-amber-500/10 to-orange-500/10",
+    iconColor: "text-amber-500"
   },
   {
     icon: Heart,
     title: "Booster mon énergie",
     prompt: "Quels compléments pour plus d'énergie ?",
-    color: "from-rose-500/20 to-pink-500/20"
+    gradient: "from-rose-500/10 to-pink-500/10",
+    iconColor: "text-rose-500"
   }
 ];
 
@@ -74,13 +86,11 @@ function MessageContent({ content }: { content: string }) {
     );
   }
 
-  // Split text by product placeholders and render with cards
   const parts = text.split(/__PRODUCT_(\d+)__/);
   
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {parts.map((part, index) => {
-        // Odd indices are product indices
         if (index % 2 === 1) {
           const productIndex = parseInt(part, 10);
           const product = products[productIndex];
@@ -89,7 +99,6 @@ function MessageContent({ content }: { content: string }) {
           }
           return null;
         }
-        // Even indices are text
         if (part.trim()) {
           return (
             <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light">
@@ -103,6 +112,45 @@ function MessageContent({ content }: { content: string }) {
   );
 }
 
+// TTS Button Component
+function TTSButton({ content }: { content: string }) {
+  const { speak, stop, isSpeaking, isSupported } = useSpeechSynthesis();
+  
+  if (!isSupported) return null;
+
+  const handleClick = () => {
+    if (isSpeaking) {
+      stop();
+    } else {
+      speak(content);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className={cn(
+        "p-1.5 rounded-lg transition-all duration-200",
+        isSpeaking 
+          ? "bg-primary/20 text-primary" 
+          : "text-foreground/40 hover:text-foreground/70 hover:bg-white/5"
+      )}
+      title={isSpeaking ? "Arrêter la lecture" : "Lire à voix haute"}
+    >
+      {isSpeaking ? (
+        <motion.div
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+        >
+          <SpeakerHigh weight="fill" className="w-4 h-4" />
+        </motion.div>
+      ) : (
+        <SpeakerHigh weight="light" className="w-4 h-4" />
+      )}
+    </button>
+  );
+}
+
 export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -111,10 +159,13 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [hasCalledFirstMessage, setHasCalledFirstMessage] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const firstName = profile?.first_name || 'ami';
-  const MAX_CHARS = 1000;
+  const firstName = profile?.first_name || 'toi';
+  const MAX_CHARS = 2000;
 
   useEffect(() => {
     if (user) {
@@ -125,6 +176,14 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 150)}px`;
+    }
+  }, [input]);
 
   const loadConversations = async () => {
     if (!user) return;
@@ -174,10 +233,32 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
   const handleSuggestionClick = (prompt: string) => {
     setInput(prompt);
+    inputRef.current?.focus();
   };
 
-  const refreshSuggestions = () => {
-    // Could shuffle or fetch personalized suggestions
+  // Voice input handler
+  const handleVoiceInput = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+    
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(prev => prev + transcript);
+    };
+
+    recognition.start();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -189,7 +270,6 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
-    // Call onFirstMessage callback
     if (!hasCalledFirstMessage && onFirstMessage) {
       onFirstMessage();
       setHasCalledFirstMessage(true);
@@ -198,7 +278,6 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     let conversationId = currentConversationId;
 
     try {
-      // Create conversation if needed
       if (!conversationId) {
         const { data: newConv } = await supabase
           .from('conversations')
@@ -216,7 +295,6 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         await saveMessage(conversationId, 'user', userMessage);
       }
 
-      // Stream response
       const session = await supabase.auth.getSession();
       const response = await fetch(CHAT_URL, {
         method: 'POST',
@@ -282,32 +360,44 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   const isNewConversation = messages.length === 0;
 
   return (
-    <div className="flex h-full bg-background/50 rounded-3xl overflow-hidden border border-white/10">
-      {/* Sidebar */}
-      <div className="w-64 border-r border-white/10 flex flex-col bg-background/30 hidden md:flex">
-        <div className="p-4">
+    <div className="flex h-full bg-background/30 rounded-3xl overflow-hidden border border-white/10 backdrop-blur-xl">
+      {/* Collapsible Sidebar */}
+      <motion.div 
+        initial={false}
+        animate={{ width: isSidebarCollapsed ? 0 : 280 }}
+        className="border-r border-white/10 flex flex-col bg-background/20 overflow-hidden hidden md:flex"
+      >
+        <div className="p-4 min-w-[280px]">
           <button
             onClick={createNewConversation}
-            className="w-full flex items-center gap-2 px-4 py-3 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary transition-colors font-medium"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium shadow-lg shadow-primary/20"
           >
             <Plus weight="bold" className="w-5 h-5" />
             Nouvelle conversation
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-2 space-y-1">
+        <div className="flex-1 overflow-y-auto px-3 space-y-1 min-w-[280px]">
           {conversations.map(conv => (
             <button
               key={conv.id}
               onClick={() => selectConversation(conv.id)}
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all group ${
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all group",
                 currentConversationId === conv.id
                   ? 'bg-white/10 text-foreground'
                   : 'text-foreground/60 hover:bg-white/5 hover:text-foreground'
-              }`}
+              )}
             >
               <ChatCircle weight="light" className="w-4 h-4 flex-shrink-0" />
               <span className="flex-1 truncate text-sm font-light">
@@ -322,135 +412,244 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative">
+        {/* Toggle Sidebar Button */}
+        <button
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          className="absolute top-4 left-4 z-10 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors hidden md:flex"
+        >
+          <ChatCircle weight="light" className="w-5 h-5 text-foreground/60" />
+        </button>
+
         {isNewConversation ? (
-          /* Welcome Screen */
-          <div className="flex-1 flex flex-col items-center justify-center p-8">
+          /* Premium Welcome Screen */
+          <div className="flex-1 flex flex-col items-center justify-center p-6 pb-32">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-center max-w-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-center max-w-3xl w-full"
             >
-              {/* Logo */}
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-4 border border-white/10">
+              {/* Logo with gradient glow */}
+              <motion.div 
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="w-20 h-20 mx-auto mb-8 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-4 border border-white/20 shadow-xl shadow-primary/10"
+              >
                 <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
-              </div>
+              </motion.div>
 
               {/* Greeting */}
-              <h2 className="text-2xl md:text-3xl font-light text-foreground mb-2">
-                Bonjour {firstName},
-              </h2>
-              <p className="text-foreground/60 font-light mb-8">
-                Posez-moi vos questions santé & bien-être !
-              </p>
+              <motion.h2 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="text-3xl md:text-4xl font-light text-foreground mb-3"
+              >
+                Bonjour à {firstName} 👋
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="text-lg text-foreground/60 font-light mb-10"
+              >
+                Je suis VitaSync AI. Comment pouvons-nous t'aider aujourd'hui pour améliorer ta santé ?
+              </motion.p>
 
-              {/* Suggestion Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              {/* Suggestion Cards - 2x2 Grid */}
+              <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto">
                 {SUGGESTION_CARDS.map((card, index) => (
                   <motion.button
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
                     onClick={() => handleSuggestionClick(card.prompt)}
-                    className={`p-4 rounded-2xl bg-gradient-to-br ${card.color} border border-white/10 hover:border-white/20 text-left transition-all hover:scale-[1.02] group`}
+                    className={cn(
+                      "p-5 rounded-2xl bg-gradient-to-br border border-white/10 hover:border-white/20",
+                      "text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
+                      "backdrop-blur-sm group",
+                      card.gradient
+                    )}
                   >
-                    <card.icon weight="duotone" className="w-6 h-6 text-foreground/80 mb-2 group-hover:text-primary transition-colors" />
+                    <card.icon 
+                      weight="duotone" 
+                      className={cn("w-7 h-7 mb-3 transition-transform group-hover:scale-110", card.iconColor)} 
+                    />
                     <p className="text-sm font-medium text-foreground">{card.title}</p>
                   </motion.button>
                 ))}
               </div>
-
-              {/* Refresh Button */}
-              <button
-                onClick={refreshSuggestions}
-                className="flex items-center gap-2 mx-auto text-sm text-foreground/50 hover:text-foreground/70 transition-colors"
-              >
-                <ArrowsClockwise weight="light" className="w-4 h-4" />
-                Rafraîchir les suggestions
-              </button>
             </motion.div>
           </div>
         ) : (
-          /* Messages Area */
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-            <AnimatePresence mode="popLayout">
-              {messages.map((message, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  {message.role === 'assistant' && (
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/10">
-                      <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
-                    </div>
-                  )}
-                  <div
-                    className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'glass-card border border-white/10'
-                    }`}
-                  >
-                    {message.role === 'assistant' ? (
-                      <MessageContent content={message.content} />
-                    ) : (
-                      <p className="text-sm font-light">{message.content}</p>
+          /* Messages Area - Centered with max-w-3xl */
+          <div className="flex-1 overflow-y-auto pb-32">
+            <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
+              <AnimatePresence mode="popLayout">
+                {messages.map((message, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className={cn(
+                      "flex gap-3",
+                      message.role === 'user' ? 'justify-end' : 'justify-start'
                     )}
+                  >
+                    {/* AI Avatar */}
+                    {message.role === 'assistant' && (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20">
+                        <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
+                      </div>
+                    )}
+                    
+                    {/* Message Bubble */}
+                    <div
+                      className={cn(
+                        "max-w-[80%] rounded-2xl px-4 py-3",
+                        message.role === 'user'
+                          ? 'bg-primary/10 border border-primary/20 text-foreground'
+                          : 'bg-transparent border border-white/10'
+                      )}
+                    >
+                      {message.role === 'assistant' ? (
+                        <div className="space-y-2">
+                          <MessageContent content={message.content} />
+                          {/* TTS Button */}
+                          {message.content && (
+                            <div className="flex justify-end pt-1">
+                              <TTSButton content={message.content} />
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm font-light">{message.content}</p>
+                      )}
+                    </div>
+
+                    {/* User Avatar */}
+                    {message.role === 'user' && (
+                      <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                        <UserIcon weight="fill" className="w-5 h-5 text-primary" />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {/* Typing Indicator */}
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex gap-3"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20">
+                    <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
+                  </div>
+                  <div className="bg-transparent border border-white/10 rounded-2xl px-4 py-3">
+                    <TypingIndicator />
                   </div>
                 </motion.div>
-              ))}
-            </AnimatePresence>
-
-            {isLoading && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex gap-3"
-              >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/10">
-                  <img src={vitasyncLogo} alt="VitaSync" className="w-full h-full" />
-                </div>
-                <div className="glass-card rounded-2xl px-4 py-3 border border-white/10">
-                  <TypingIndicator />
-                </div>
-              </motion.div>
-            )}
-            <div ref={messagesEndRef} />
+              )}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
         )}
 
-        {/* Input Area */}
-        <div className="p-4 border-t border-white/10">
-          <form onSubmit={handleSubmit} className="relative">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
-              placeholder="Posez votre question..."
-              className="w-full px-5 py-4 pr-24 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 focus:outline-none text-foreground placeholder:text-foreground/40 font-light transition-colors"
-              disabled={isLoading}
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              <span className="text-xs text-foreground/40">
-                {input.length}/{MAX_CHARS}
-              </span>
-              <button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                className="p-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <PaperPlaneTilt weight="fill" className="w-5 h-5" />
-              </button>
-            </div>
-          </form>
+        {/* Premium Floating Input Bar */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/90 to-transparent">
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit} className="relative">
+              <div className="glass-card rounded-2xl border border-white/20 shadow-2xl shadow-black/10 overflow-hidden">
+                {/* Input Area */}
+                <div className="flex items-end gap-2 p-3">
+                  <textarea
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Pose-moi ta question..."
+                    className="flex-1 bg-transparent border-0 focus:outline-none text-foreground placeholder:text-foreground/40 font-light resize-none min-h-[24px] max-h-[150px] py-2 px-2"
+                    disabled={isLoading}
+                    rows={1}
+                  />
+                </div>
+
+                {/* Toolbar */}
+                <div className="flex items-center justify-between px-3 pb-3 pt-0">
+                  <div className="flex items-center gap-1">
+                    {/* Attach Button */}
+                    <button
+                      type="button"
+                      className="p-2 rounded-lg text-foreground/50 hover:text-foreground/80 hover:bg-white/5 transition-colors"
+                      title="Joindre un fichier"
+                    >
+                      <Paperclip weight="light" className="w-5 h-5" />
+                    </button>
+
+                    {/* Voice Input Button */}
+                    <button
+                      type="button"
+                      onClick={handleVoiceInput}
+                      className={cn(
+                        "p-2 rounded-lg transition-all",
+                        isListening 
+                          ? "text-primary bg-primary/20 animate-pulse" 
+                          : "text-foreground/50 hover:text-foreground/80 hover:bg-white/5"
+                      )}
+                      title="Dictée vocale"
+                    >
+                      <Microphone weight={isListening ? "fill" : "light"} className="w-5 h-5" />
+                    </button>
+
+                    {/* Source Button */}
+                    <button
+                      type="button"
+                      className="p-2 rounded-lg text-foreground/50 hover:text-foreground/80 hover:bg-white/5 transition-colors flex items-center gap-1.5"
+                      title="Source de connaissances"
+                    >
+                      <Database weight="light" className="w-5 h-5" />
+                      <span className="text-xs">VitaSync</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-foreground/30">
+                      {input.length}/{MAX_CHARS}
+                    </span>
+                    
+                    {/* Send Button */}
+                    <button
+                      type="submit"
+                      disabled={!input.trim() || isLoading}
+                      className={cn(
+                        "p-2.5 rounded-xl transition-all duration-200",
+                        input.trim() && !isLoading
+                          ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30"
+                          : "bg-white/10 text-foreground/30 cursor-not-allowed"
+                      )}
+                    >
+                      <PaperPlaneTilt weight="fill" className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            {/* Disclaimer */}
+            <p className="text-center text-xs text-foreground/30 mt-3">
+              VitaSync AI peut afficher des informations inexactes. Vérifiez les conseils importants.
+            </p>
+          </div>
         </div>
       </div>
     </div>

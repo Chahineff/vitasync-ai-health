@@ -13,7 +13,7 @@ import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ShopSection } from "@/components/dashboard/ShopSection";
 import { Card } from "@/components/ui/card";
-import vitasyncLogo from "@/assets/vitasync-logo.svg";
+const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
 const menuItems = [{
   id: "home" as Section,
@@ -117,7 +117,7 @@ const Dashboard = () => {
         {/* Logo & Collapse Button */}
         <div className="p-6 flex items-center justify-between">
           <Link to="/" className={`transition-opacity duration-300 flex items-center gap-2 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
-            <img alt="VitaSync" className="w-8 h-8" src="/lovable-uploads/b76c7338-9637-4218-a2fd-4ee911de2e71.png" />
+            <img alt="VitaSync" className="w-8 h-8" src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" />
             <span className="text-xl font-light tracking-tight text-foreground whitespace-nowrap">
               Vita<span className="text-primary font-medium">Sync</span>
             </span>

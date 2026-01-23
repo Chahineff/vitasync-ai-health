@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { InstagramLogo, TwitterLogo, LinkedinLogo, YoutubeLogo } from "@phosphor-icons/react";
-import vitasyncLogo from "@/assets/vitasync-logo.svg";
+// Logo is now using PNG from public folder
 const footerLinks = {
   product: [{
     label: "Fonctionnalités",

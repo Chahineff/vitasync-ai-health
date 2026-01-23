@@ -32,7 +32,7 @@ import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 
 // Official VitaSync PNG Logo
-const vitasyncLogoUrl = "/lovable-uploads/93cbbe29-32a4-45e6-8a4d-0893a176b344.png";
+const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
 interface Message {
   role: 'user' | 'assistant';

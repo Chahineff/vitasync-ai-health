@@ -152,9 +152,11 @@ const Auth = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-              <span className="text-primary-foreground font-semibold text-xl">V</span>
-            </div>
+            <img 
+              src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" 
+              alt="VitaSync" 
+              className="w-12 h-12"
+            />
             <span className="text-2xl font-medium tracking-tight text-foreground">VitaSync</span>
           </Link>
         </div>

@@ -15,6 +15,15 @@ import { ShopSection } from "@/components/dashboard/ShopSection";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
+// Custom VitaSync icon component for Coach IA
+const VitaSyncIcon = ({ className, weight }: { className?: string; weight?: string }) => (
+  <img 
+    src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" 
+    alt="Coach IA" 
+    className={className || "w-5 h-5"}
+  />
+);
+
 const menuItems = [{
   id: "home" as Section,
   label: "Dashboard",
@@ -22,7 +31,7 @@ const menuItems = [{
 }, {
   id: "coach" as Section,
   label: "Coach IA",
-  icon: Robot
+  icon: VitaSyncIcon
 }, {
   id: "supplements" as Section,
   label: "Suivi Compléments",
@@ -140,7 +149,7 @@ const Dashboard = () => {
           <nav className="space-y-1">
             {menuItems.map(item => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
                 {/* Active indicator bar */}
-                {activeSection === item.id && <motion.div layoutId="activeIndicator" className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-primary rounded-r-full" />}
+                {activeSection === item.id && <motion.div layoutId="activeIndicator" className="absolute -left-0.5 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-full" />}
                 <item.icon weight="light" className="w-5 h-5 flex-shrink-0" />
                 <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
                   {item.label}
@@ -153,7 +162,7 @@ const Dashboard = () => {
           </p>
           <nav className="space-y-1">
             {generalItems.map(item => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50'}`}>
-                {activeSection === item.id && <motion.div layoutId="activeIndicator" className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-primary rounded-r-full" />}
+                {activeSection === item.id && <motion.div layoutId="activeIndicator" className="absolute -left-0.5 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-full" />}
                 <item.icon weight="light" className="w-5 h-5 flex-shrink-0" />
                 <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
                   {item.label}

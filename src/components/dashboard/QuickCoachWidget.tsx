@@ -17,8 +17,8 @@ const QuickCoachWidget = ({ onStartChat, userName }: QuickCoachWidgetProps) => {
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         {/* Left: Icon and text */}
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center flex-shrink-0">
-            <Robot weight="light" className="w-7 h-7 text-primary" />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="VitaSync" className="w-8 h-8 object-contain" />
           </div>
           <div>
             <h3 className="text-xl font-light tracking-tight text-foreground mb-1">

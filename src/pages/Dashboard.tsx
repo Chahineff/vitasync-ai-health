@@ -123,7 +123,7 @@ const Dashboard = () => {
             </span>
           </Link>
           {sidebarCollapsed && <Link to="/" className="hidden lg:block">
-              <img src={vitasyncLogo} alt="VitaSync" className="w-8 h-8" />
+              <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="VitaSync" className="w-8 h-8" />
             </Link>}
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-lg hover:bg-white/50">
             <X weight="light" className="w-5 h-5" />

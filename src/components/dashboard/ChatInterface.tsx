@@ -698,13 +698,17 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 <div className="flex items-end gap-2 p-3">
                   <textarea
                     ref={inputRef}
-                    value={input}
+                    value={isListening && partialTranscript ? input + (input ? ' ' : '') + partialTranscript : input}
                     onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
                     onKeyDown={handleKeyDown}
-                    placeholder="Pose-moi ta question..."
-                    className="flex-1 bg-transparent border-0 focus:outline-none text-foreground placeholder:text-foreground/40 font-light resize-none min-h-[24px] max-h-[150px] py-2 px-2"
+                    placeholder={isListening ? "Écoute en cours..." : "Pose-moi ta question..."}
+                    className={cn(
+                      "flex-1 bg-transparent border-0 focus:outline-none text-foreground placeholder:text-foreground/40 font-light resize-none min-h-[24px] max-h-[150px] py-2 px-2",
+                      isListening && partialTranscript && "text-foreground/70 italic"
+                    )}
                     disabled={isLoading}
                     rows={1}
+                    readOnly={isListening}
                   />
                 </div>
 

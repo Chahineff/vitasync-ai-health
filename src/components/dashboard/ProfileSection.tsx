@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "./ThemeToggle";
+import { HealthProfileSection } from "./HealthProfileSection";
 
 export function ProfileSection() {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
@@ -263,6 +264,9 @@ export function ProfileSection() {
           </button>
         </form>
       </div>
+
+      {/* Health Profile Section */}
+      <HealthProfileSection />
     </motion.div>
   );
 }

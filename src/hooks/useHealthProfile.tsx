@@ -18,6 +18,19 @@ export interface HealthProfile {
   onboarding_completed: boolean;
   created_at: string;
   updated_at: string;
+  // New onboarding fields
+  is_adult: boolean | null;
+  shipping_country: string | null;
+  sport_types: string[];
+  sleep_hours: string | null;
+  sleep_quality_score: number | null;
+  energy_level: number | null;
+  preferred_forms: string[];
+  max_daily_intakes: string | null;
+  monthly_budget: string | null;
+  budget_range_min: number | null;
+  budget_range_max: number | null;
+  medications_notes: string | null;
 }
 
 export function useHealthProfile() {

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { DailyCheckinProvider } from "@/hooks/useDailyCheckin";
 import { ThemeProvider } from "next-themes";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { useCartSync } from "@/hooks/useCartSync";
@@ -47,7 +48,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <AuthProvider>
-          <AppContent />
+          <DailyCheckinProvider>
+            <AppContent />
+          </DailyCheckinProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

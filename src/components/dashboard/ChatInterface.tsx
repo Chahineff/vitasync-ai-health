@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Fragment } from 'react';
+import { useState, useRef, useEffect, Fragment, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PaperPlaneTilt, 
@@ -20,10 +20,16 @@ import {
   CaretRight,
   X,
   File as FileIcon,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Lightning,
+  Barbell,
+  Pill,
+  ShieldPlus
 } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useHealthProfile } from '@/hooks/useHealthProfile';
+import { useDailyCheckin } from '@/hooks/useDailyCheckin';
 import { TypingIndicator } from './TypingIndicator';
 import { ProductRecommendationCard, parseProductRecommendations } from './ProductRecommendationCard';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
@@ -51,7 +57,15 @@ interface ChatInterfaceProps {
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
 
-const SUGGESTION_CARDS = [
+interface SuggestionCard {
+  icon: React.ElementType;
+  title: string;
+  prompt: string;
+  gradient: string;
+  iconColor: string;
+}
+
+const DEFAULT_SUGGESTIONS: SuggestionCard[] = [
   {
     icon: Moon,
     title: "Améliorer mon sommeil",
@@ -161,6 +175,8 @@ function TTSButton({ content }: { content: string }) {
 
 export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
+  const { healthProfile } = useHealthProfile();
+  const { getTrends } = useDailyCheckin();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -187,6 +203,122 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
   const firstName = profile?.first_name || 'toi';
   const MAX_CHARS = 2000;
+
+  // Generate dynamic suggestions based on user profile and check-ins
+  const suggestionCards = useMemo(() => {
+    const suggestions: SuggestionCard[] = [];
+    const trends = getTrends();
+    const goals = healthProfile?.health_goals || [];
+    const currentIssues = healthProfile?.current_issues || [];
+
+    // Based on recent check-in trends
+    if (trends) {
+      if (trends.avgSleep < 3) {
+        suggestions.push({
+          icon: Moon,
+          title: "Analyser mon sommeil",
+          prompt: "J'ai mal dormi ces derniers jours selon mes check-ins. Que me conseilles-tu pour améliorer mon sommeil ?",
+          gradient: "from-indigo-500/10 to-purple-500/10",
+          iconColor: "text-indigo-500"
+        });
+      }
+      if (trends.avgEnergy < 3) {
+        suggestions.push({
+          icon: Lightning,
+          title: "Booster mon énergie",
+          prompt: "Mon niveau d'énergie est bas ces derniers jours. Quels conseils ou compléments pour retrouver la forme ?",
+          gradient: "from-amber-500/10 to-yellow-500/10",
+          iconColor: "text-amber-500"
+        });
+      }
+      if (trends.avgStress > 3) {
+        suggestions.push({
+          icon: Brain,
+          title: "Réduire mon stress",
+          prompt: "Je suis stressé en ce moment selon mes check-ins. Comment gérer mon stress naturellement ?",
+          gradient: "from-rose-500/10 to-pink-500/10",
+          iconColor: "text-rose-500"
+        });
+      }
+    }
+
+    // Based on health goals
+    if (goals.includes("sommeil") && !suggestions.some(s => s.title.includes("sommeil"))) {
+      suggestions.push({
+        icon: Moon,
+        title: "Améliorer mon sommeil",
+        prompt: "Comment améliorer mon sommeil selon mon profil de santé ?",
+        gradient: "from-indigo-500/10 to-purple-500/10",
+        iconColor: "text-indigo-500"
+      });
+    }
+    if (goals.includes("energie") && !suggestions.some(s => s.title.includes("énergie"))) {
+      suggestions.push({
+        icon: Heart,
+        title: "Plus d'énergie",
+        prompt: "Quels compléments recommandes-tu pour avoir plus d'énergie au quotidien ?",
+        gradient: "from-rose-500/10 to-red-500/10",
+        iconColor: "text-rose-500"
+      });
+    }
+    if (goals.includes("stress") && !suggestions.some(s => s.title.includes("stress"))) {
+      suggestions.push({
+        icon: Brain,
+        title: "Gérer mon stress",
+        prompt: "Quelles solutions naturelles pour gérer mon stress et mon anxiété ?",
+        gradient: "from-amber-500/10 to-orange-500/10",
+        iconColor: "text-amber-500"
+      });
+    }
+    if (goals.includes("sport") || goals.includes("prise-muscle")) {
+      suggestions.push({
+        icon: Barbell,
+        title: "Performance sportive",
+        prompt: "Quels compléments pour optimiser mes performances sportives et ma récupération ?",
+        gradient: "from-cyan-500/10 to-blue-500/10",
+        iconColor: "text-cyan-500"
+      });
+    }
+    if (goals.includes("immunite")) {
+      suggestions.push({
+        icon: ShieldPlus,
+        title: "Renforcer mon immunité",
+        prompt: "Quels compléments pour renforcer mon système immunitaire ?",
+        gradient: "from-green-500/10 to-emerald-500/10",
+        iconColor: "text-green-500"
+      });
+    }
+    if (goals.includes("digestion")) {
+      suggestions.push({
+        icon: Leaf,
+        title: "Améliorer ma digestion",
+        prompt: "J'ai des problèmes de digestion, que me conseilles-tu ?",
+        gradient: "from-emerald-500/10 to-teal-500/10",
+        iconColor: "text-emerald-500"
+      });
+    }
+    if (goals.includes("focus") || goals.includes("concentration")) {
+      suggestions.push({
+        icon: Brain,
+        title: "Améliorer ma concentration",
+        prompt: "Comment améliorer ma concentration et ma mémoire naturellement ?",
+        gradient: "from-violet-500/10 to-purple-500/10",
+        iconColor: "text-violet-500"
+      });
+    }
+
+    // Fill with defaults if needed
+    if (suggestions.length < 4) {
+      for (const defaultSuggestion of DEFAULT_SUGGESTIONS) {
+        if (suggestions.length >= 4) break;
+        if (!suggestions.some(s => s.title === defaultSuggestion.title)) {
+          suggestions.push(defaultSuggestion);
+        }
+      }
+    }
+
+    return suggestions.slice(0, 4);
+  }, [healthProfile, getTrends]);
 
   // Update input with transcript
   useEffect(() => {
@@ -539,7 +671,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
               {/* Suggestion Cards - 2x2 Grid */}
               <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto">
-                {SUGGESTION_CARDS.map((card, index) => (
+                {suggestionCards.map((card, index) => (
                   <motion.button
                     key={index}
                     initial={{ opacity: 0, y: 20 }}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sun, Moon, Battery, Brain, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ interface DailyCheckinProps {
 }
 
 export function DailyCheckin({ onComplete }: DailyCheckinProps) {
-  const { showCheckinModal, submitCheckin, dismissCheckin } = useDailyCheckin();
+  const { showCheckinModal, todayCheckin, submitCheckin, dismissCheckin } = useDailyCheckin();
   const { supplements } = useSupplementTracking();
   
   const [step, setStep] = useState(0);
@@ -23,6 +23,19 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
   const [mood, setMood] = useState<string | null>(null);
   const [supplementFeedback, setSupplementFeedback] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Pre-fill values if editing existing check-in
+  useEffect(() => {
+    if (todayCheckin && showCheckinModal) {
+      setSleepQuality(todayCheckin.sleep_quality || 3);
+      setEnergyLevel(todayCheckin.energy_level || 3);
+      setStressLevel(todayCheckin.stress_level || 3);
+      setMood(todayCheckin.mood);
+      if (todayCheckin.supplement_feedback) {
+        setSupplementFeedback(todayCheckin.supplement_feedback as Record<string, string>);
+      }
+    }
+  }, [todayCheckin, showCheckinModal]);
 
   // Get supplements taken for at least 7 days
   const supplementsToAsk = supplements.filter((s) => {

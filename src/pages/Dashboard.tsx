@@ -14,6 +14,7 @@ import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ShopSection } from "@/components/dashboard/ShopSection";
 import { DailyCheckin } from "@/components/dashboard/DailyCheckin";
+import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
@@ -319,6 +320,7 @@ const DashboardHome = ({
       </h1>
       <p className="text-sm text-foreground/50 font-light capitalize">{formatDate()}</p>
     </div>
+    <DailyCheckinWidget />
     <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />

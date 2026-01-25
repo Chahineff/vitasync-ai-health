@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
+import { useHealthProfile } from "@/hooks/useHealthProfile";
 import { Robot, Storefront, Gear, Question, SignOut, List, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
@@ -12,6 +13,7 @@ import { SupplementTrackerEnhanced } from "@/components/dashboard/SupplementTrac
 import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ShopSection } from "@/components/dashboard/ShopSection";
+import { DailyCheckin } from "@/components/dashboard/DailyCheckin";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
@@ -60,6 +62,7 @@ const Dashboard = () => {
   const {
     signedUrl: avatarUrl
   } = useAvatarUrl(profile?.avatar_url);
+  const { healthProfile, loading: healthProfileLoading } = useHealthProfile();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<Section>("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -72,11 +75,20 @@ const Dashboard = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasInteractedWithCoach, setHasInteractedWithCoach] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  
+  // Redirect to auth if not logged in
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth?mode=signin");
     }
   }, [user, loading, navigate]);
+  
+  // Redirect to onboarding if not completed
+  useEffect(() => {
+    if (!loading && !healthProfileLoading && user && healthProfile && !healthProfile.onboarding_completed) {
+      navigate("/onboarding");
+    }
+  }, [user, loading, healthProfile, healthProfileLoading, navigate]);
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));
   }, [sidebarCollapsed]);
@@ -110,6 +122,8 @@ const Dashboard = () => {
   if (!user) return null;
   const userName = profile?.first_name || user?.email?.split("@")[0] || "Utilisateur";
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex w-full">
+      {/* Daily Checkin Modal */}
+      <DailyCheckin />
       {/* Mobile overlay */}
       <AnimatePresence>
         {sidebarOpen && <motion.div initial={{

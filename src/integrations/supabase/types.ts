@@ -38,6 +38,48 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_checkins: {
+        Row: {
+          checkin_date: string
+          created_at: string
+          energy_level: number | null
+          id: string
+          mood: string | null
+          notes: string | null
+          pain_areas: string[] | null
+          sleep_quality: number | null
+          stress_level: number | null
+          supplement_feedback: Json | null
+          user_id: string
+        }
+        Insert: {
+          checkin_date?: string
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          mood?: string | null
+          notes?: string | null
+          pain_areas?: string[] | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          supplement_feedback?: Json | null
+          user_id: string
+        }
+        Update: {
+          checkin_date?: string
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          mood?: string | null
+          notes?: string | null
+          pain_areas?: string[] | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          supplement_feedback?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -176,14 +218,26 @@ export type Database = {
           activity_level: string | null
           age_range: string | null
           allergies: string[] | null
+          budget_range_max: number | null
+          budget_range_min: number | null
           created_at: string
           current_issues: string[] | null
           diet_type: string | null
+          energy_level: number | null
           health_goals: string[] | null
           id: string
+          is_adult: boolean | null
+          max_daily_intakes: string | null
           medical_conditions: string[] | null
+          medications_notes: string | null
+          monthly_budget: string | null
           onboarding_completed: boolean | null
+          preferred_forms: string[] | null
+          shipping_country: string | null
+          sleep_hours: string | null
           sleep_quality: string | null
+          sleep_quality_score: number | null
+          sport_types: string[] | null
           stress_level: string | null
           supplements_experience: string | null
           updated_at: string
@@ -193,14 +247,26 @@ export type Database = {
           activity_level?: string | null
           age_range?: string | null
           allergies?: string[] | null
+          budget_range_max?: number | null
+          budget_range_min?: number | null
           created_at?: string
           current_issues?: string[] | null
           diet_type?: string | null
+          energy_level?: number | null
           health_goals?: string[] | null
           id?: string
+          is_adult?: boolean | null
+          max_daily_intakes?: string | null
           medical_conditions?: string[] | null
+          medications_notes?: string | null
+          monthly_budget?: string | null
           onboarding_completed?: boolean | null
+          preferred_forms?: string[] | null
+          shipping_country?: string | null
+          sleep_hours?: string | null
           sleep_quality?: string | null
+          sleep_quality_score?: number | null
+          sport_types?: string[] | null
           stress_level?: string | null
           supplements_experience?: string | null
           updated_at?: string
@@ -210,14 +276,26 @@ export type Database = {
           activity_level?: string | null
           age_range?: string | null
           allergies?: string[] | null
+          budget_range_max?: number | null
+          budget_range_min?: number | null
           created_at?: string
           current_issues?: string[] | null
           diet_type?: string | null
+          energy_level?: number | null
           health_goals?: string[] | null
           id?: string
+          is_adult?: boolean | null
+          max_daily_intakes?: string | null
           medical_conditions?: string[] | null
+          medications_notes?: string | null
+          monthly_budget?: string | null
           onboarding_completed?: boolean | null
+          preferred_forms?: string[] | null
+          shipping_country?: string | null
+          sleep_hours?: string | null
           sleep_quality?: string | null
+          sleep_quality_score?: number | null
+          sport_types?: string[] | null
           stress_level?: string | null
           supplements_experience?: string | null
           updated_at?: string

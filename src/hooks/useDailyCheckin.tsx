@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface DailyCheckin {
   id: string;
@@ -11,7 +11,7 @@ export interface DailyCheckin {
   stress_level: number | null;
   pain_areas: string[];
   mood: string | null;
-  supplement_feedback: Record<string, any>;
+  supplement_feedback: Record<string, unknown> | null;
   notes: string | null;
   created_at: string;
 }
@@ -23,60 +23,66 @@ export interface SupplementFeedback {
   notes?: string;
 }
 
-export function useDailyCheckin() {
+interface DailyCheckinContextType {
+  todayCheckin: DailyCheckin | null;
+  recentCheckins: DailyCheckin[];
+  loading: boolean;
+  showCheckinModal: boolean;
+  submitCheckin: (checkin: Partial<DailyCheckin>) => Promise<{ error: Error | null; data: any }>;
+  dismissCheckin: () => void;
+  openCheckinModal: () => void;
+  getTrends: () => { avgSleep: number; avgEnergy: number; avgStress: number; checkinCount: number } | null;
+  refetch: () => Promise<void>;
+}
+
+const DailyCheckinContext = createContext<DailyCheckinContextType | null>(null);
+
+export function DailyCheckinProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [todayCheckin, setTodayCheckin] = useState<DailyCheckin | null>(null);
   const [recentCheckins, setRecentCheckins] = useState<DailyCheckin[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
 
-  const today = new Date().toISOString().split("T")[0];
+  const getTodayDate = () => {
+    return new Date().toISOString().split("T")[0];
+  };
 
   const fetchTodayCheckin = useCallback(async () => {
-    if (!user) {
-      setTodayCheckin(null);
-      setLoading(false);
-      return;
-    }
+    if (!user) return;
 
-    try {
-      const { data, error } = await supabase
-        .from("daily_checkins" as any)
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("checkin_date", today)
-        .maybeSingle();
+    setLoading(true);
+    const today = getTodayDate();
 
-      if (error) {
-        console.error("Error fetching today's checkin:", error);
-        return;
-      }
+    const { data, error } = await supabase
+      .from("daily_checkins")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("checkin_date", today)
+      .maybeSingle();
 
-      setTodayCheckin(data as unknown as DailyCheckin | null);
-      
-      // Show modal if no checkin today
+    if (error) {
+      console.error("Error fetching today's checkin:", error);
+    } else {
+      setTodayCheckin(data as DailyCheckin | null);
+      // Only show modal if no checkin exists for today
       if (!data) {
         setShowCheckinModal(true);
       }
-    } catch (error) {
-      console.error("Error fetching today's checkin:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user, today]);
-
-  const fetchRecentCheckins = useCallback(async (days: number = 7) => {
-    if (!user) {
-      setRecentCheckins([]);
-      return;
     }
 
-    try {
+    setLoading(false);
+  }, [user]);
+
+  const fetchRecentCheckins = useCallback(
+    async (days: number = 7) => {
+      if (!user) return;
+
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
 
       const { data, error } = await supabase
-        .from("daily_checkins" as any)
+        .from("daily_checkins")
         .select("*")
         .eq("user_id", user.id)
         .gte("checkin_date", startDate.toISOString().split("T")[0])
@@ -84,76 +90,112 @@ export function useDailyCheckin() {
 
       if (error) {
         console.error("Error fetching recent checkins:", error);
-        return;
+      } else {
+        setRecentCheckins((data || []) as DailyCheckin[]);
       }
-
-      setRecentCheckins(data as unknown as DailyCheckin[]);
-    } catch (error) {
-      console.error("Error fetching recent checkins:", error);
-    }
-  }, [user]);
+    },
+    [user]
+  );
 
   useEffect(() => {
-    fetchTodayCheckin();
-    fetchRecentCheckins();
-  }, [fetchTodayCheckin, fetchRecentCheckins]);
+    if (user) {
+      fetchTodayCheckin();
+      fetchRecentCheckins();
+    }
+  }, [user, fetchTodayCheckin, fetchRecentCheckins]);
 
   const submitCheckin = async (checkin: Partial<DailyCheckin>) => {
-    if (!user) return { error: new Error("Not authenticated") };
+    if (!user) return { error: new Error("Not authenticated"), data: null };
 
-    try {
-      const { data, error } = await supabase
-        .from("daily_checkins" as any)
-        .upsert({
-          user_id: user.id,
-          checkin_date: today,
-          ...checkin,
-        } as any, {
-          onConflict: "user_id,checkin_date",
-        })
-        .select()
-        .single();
+    const today = getTodayDate();
 
-      if (error) throw error;
+    const checkinData: Record<string, unknown> = {
+      user_id: user.id,
+      checkin_date: today,
+      sleep_quality: checkin.sleep_quality,
+      energy_level: checkin.energy_level,
+      stress_level: checkin.stress_level,
+      mood: checkin.mood,
+      pain_areas: checkin.pain_areas,
+      notes: checkin.notes,
+      supplement_feedback: checkin.supplement_feedback ?? {},
+    };
 
-      setTodayCheckin(data as unknown as DailyCheckin);
+    const { data, error } = await supabase
+      .from("daily_checkins")
+      .upsert(checkinData as any, { onConflict: "user_id,checkin_date" })
+      .select()
+      .single();
+
+    if (!error && data) {
+      setTodayCheckin(data as DailyCheckin);
       setShowCheckinModal(false);
-      await fetchRecentCheckins();
-      return { error: null, data };
-    } catch (error) {
-      console.error("Error submitting checkin:", error);
-      return { error: error as Error };
+      fetchRecentCheckins();
     }
+
+    return { error: error ? new Error(error.message) : null, data };
   };
 
   const dismissCheckin = () => {
     setShowCheckinModal(false);
   };
 
-  // Calculate trends from recent checkins
-  const getTrends = () => {
-    if (recentCheckins.length < 2) return null;
+  const openCheckinModal = () => {
+    setShowCheckinModal(true);
+  };
 
-    const avgSleep = recentCheckins.reduce((sum, c) => sum + (c.sleep_quality || 0), 0) / recentCheckins.length;
-    const avgEnergy = recentCheckins.reduce((sum, c) => sum + (c.energy_level || 0), 0) / recentCheckins.length;
-    const avgStress = recentCheckins.reduce((sum, c) => sum + (c.stress_level || 0), 0) / recentCheckins.length;
+  const getTrends = () => {
+    if (recentCheckins.length === 0) return null;
+
+    const validCheckins = recentCheckins.filter(
+      (c) => c.sleep_quality !== null || c.energy_level !== null || c.stress_level !== null
+    );
+
+    if (validCheckins.length === 0) return null;
+
+    const avgSleep =
+      validCheckins.reduce((acc, c) => acc + (c.sleep_quality || 0), 0) /
+      validCheckins.filter((c) => c.sleep_quality !== null).length;
+
+    const avgEnergy =
+      validCheckins.reduce((acc, c) => acc + (c.energy_level || 0), 0) /
+      validCheckins.filter((c) => c.energy_level !== null).length;
+
+    const avgStress =
+      validCheckins.reduce((acc, c) => acc + (c.stress_level || 0), 0) /
+      validCheckins.filter((c) => c.stress_level !== null).length;
 
     return {
-      avgSleep: Math.round(avgSleep * 10) / 10,
-      avgEnergy: Math.round(avgEnergy * 10) / 10,
-      avgStress: Math.round(avgStress * 10) / 10,
-      checkinCount: recentCheckins.length,
+      avgSleep: isNaN(avgSleep) ? 0 : avgSleep,
+      avgEnergy: isNaN(avgEnergy) ? 0 : avgEnergy,
+      avgStress: isNaN(avgStress) ? 0 : avgStress,
+      checkinCount: validCheckins.length,
     };
   };
 
-  return {
-    todayCheckin,
-    recentCheckins,
-    loading,
-    showCheckinModal,
-    submitCheckin,
-    dismissCheckin,
-    getTrends,
-    refetch: fetchTodayCheckin,
-  };
+  return (
+    <DailyCheckinContext.Provider
+      value={{
+        todayCheckin,
+        recentCheckins,
+        loading,
+        showCheckinModal,
+        submitCheckin,
+        dismissCheckin,
+        openCheckinModal,
+        getTrends,
+        refetch: fetchTodayCheckin,
+      }}
+    >
+      {children}
+    </DailyCheckinContext.Provider>
+  );
+}
+
+export function useDailyCheckin() {
+  const context = useContext(DailyCheckinContext);
+  if (!context) {
+    throw new Error("useDailyCheckin must be used within a DailyCheckinProvider");
+  }
+  return context;
 }

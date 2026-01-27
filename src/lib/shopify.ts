@@ -52,6 +52,54 @@ export interface ShopifyProduct {
   };
 }
 
+export interface ProductDetail {
+  id: string;
+  title: string;
+  description: string;
+  descriptionHtml: string;
+  handle: string;
+  productType: string;
+  vendor: string;
+  tags: string[];
+  priceRange: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  images: {
+    edges: Array<{
+      node: {
+        url: string;
+        altText: string | null;
+      };
+    }>;
+  };
+  variants: {
+    edges: Array<{
+      node: {
+        id: string;
+        title: string;
+        price: {
+          amount: string;
+          currencyCode: string;
+        };
+        availableForSale: boolean;
+        selectedOptions: Array<{
+          name: string;
+          value: string;
+        }>;
+      };
+    }>;
+  };
+  options: Array<{
+    name: string;
+    values: string[];
+  }>;
+  benefitsMetafield: { value: string; type: string } | null;
+  ingredientsMetafield: { value: string; type: string } | null;
+}
+
 export interface ProductGroup {
   baseTitle: string;
   products: ShopifyProduct[];
@@ -154,9 +202,11 @@ const PRODUCT_BY_HANDLE_QUERY = `
       id
       title
       description
+      descriptionHtml
       handle
       productType
       vendor
+      tags
       priceRange {
         minVariantPrice {
           amount
@@ -191,6 +241,14 @@ const PRODUCT_BY_HANDLE_QUERY = `
       options {
         name
         values
+      }
+      benefitsMetafield: metafield(namespace: "custom", key: "benefits") {
+        value
+        type
+      }
+      ingredientsMetafield: metafield(namespace: "custom", key: "ingredients") {
+        value
+        type
       }
     }
   }
@@ -251,7 +309,7 @@ export async function fetchProducts(first: number = 50, query?: string): Promise
   return data?.data?.products?.edges || [];
 }
 
-export async function fetchProductByHandle(handle: string) {
+export async function fetchProductByHandle(handle: string): Promise<ProductDetail | null> {
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
   return data?.data?.productByHandle || null;
 }

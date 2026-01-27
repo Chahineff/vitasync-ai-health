@@ -85,6 +85,70 @@ async function fetchShopifyCatalog(): Promise<string> {
   }
 }
 
+// Fetch recent check-ins for the user (last 7 days)
+interface DailyCheckin {
+  sleep_quality: number | null;
+  energy_level: number | null;
+  stress_level: number | null;
+  mood: string | null;
+  checkin_date: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchRecentCheckins(supabase: any, userId: string): Promise<DailyCheckin[]> {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 7);
+
+  const { data, error } = await supabase
+    .from("daily_checkins")
+    .select("sleep_quality, energy_level, stress_level, mood, checkin_date")
+    .eq("user_id", userId)
+    .gte("checkin_date", startDate.toISOString().split("T")[0])
+    .order("checkin_date", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching check-ins:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+// Calculate trends from check-ins
+interface Trends {
+  avgSleep: number;
+  avgEnergy: number;
+  avgStress: number;
+  count: number;
+  latestMood: string | null;
+}
+
+function calculateTrends(checkins: DailyCheckin[]): Trends | null {
+  if (!checkins.length) return null;
+
+  const sleepValues = checkins.filter(c => c.sleep_quality !== null).map(c => c.sleep_quality!);
+  const energyValues = checkins.filter(c => c.energy_level !== null).map(c => c.energy_level!);
+  const stressValues = checkins.filter(c => c.stress_level !== null).map(c => c.stress_level!);
+
+  const avgSleep = sleepValues.length > 0 
+    ? sleepValues.reduce((sum, v) => sum + v, 0) / sleepValues.length 
+    : 0;
+  const avgEnergy = energyValues.length > 0 
+    ? energyValues.reduce((sum, v) => sum + v, 0) / energyValues.length 
+    : 0;
+  const avgStress = stressValues.length > 0 
+    ? stressValues.reduce((sum, v) => sum + v, 0) / stressValues.length 
+    : 0;
+
+  return {
+    avgSleep,
+    avgEnergy,
+    avgStress,
+    count: checkins.length,
+    latestMood: checkins[0]?.mood || null
+  };
+}
+
 const baseSystemPrompt = `Tu es le Coach IA VitaSync. Tu donnes des conseils COURTS et DIRECTS.
 
 RÈGLES STRICTES DE FORMAT:
@@ -97,6 +161,13 @@ QUAND TU RECOMMANDES UN PRODUIT:
 - Utilise OBLIGATOIREMENT le format: [[PRODUCT:productId:variantId:nom:prix]]
 - Exemple: "Essaie [[PRODUCT:15002251886960:gid://shopify/ProductVariant/123:5-HTP:19.99€]] pour le sommeil."
 - Tu peux recommander 1 à 3 produits max par réponse
+
+PERSONNALISATION BASÉE SUR LE SUIVI JOURNALIER:
+- Si le sommeil moyen est <3, priorise les conseils sommeil et recommande des produits adaptés
+- Si l'énergie est basse (<3), recommande des boosters d'énergie naturels
+- Si le stress est élevé (>3.5), propose des solutions anti-stress
+- Mentionne les tendances observées dans tes conseils de manière proactive
+- Utilise les données du suivi pour personnaliser chaque réponse
 
 IMPORTANT:
 - Rappelle de consulter un professionnel pour les cas sérieux
@@ -116,7 +187,8 @@ function buildEnrichedSystemPrompt(
     age_range?: string;
     medical_conditions?: string[];
   } | null,
-  catalog: string
+  catalog: string,
+  trends: Trends | null
 ): string {
   const contextParts: string[] = [];
   
@@ -140,16 +212,44 @@ function buildEnrichedSystemPrompt(
       contextParts.push(`- Alimentation: ${healthProfile.diet_type}`);
     }
     if (healthProfile.sleep_quality) {
-      contextParts.push(`- Sommeil: ${healthProfile.sleep_quality}`);
+      contextParts.push(`- Sommeil (profil): ${healthProfile.sleep_quality}`);
     }
     if (healthProfile.stress_level) {
-      contextParts.push(`- Stress: ${healthProfile.stress_level}`);
+      contextParts.push(`- Stress (profil): ${healthProfile.stress_level}`);
     }
     if (healthProfile.allergies?.length) {
       contextParts.push(`- Allergies: ${healthProfile.allergies.join(", ")}`);
     }
     if (healthProfile.medical_conditions?.length) {
       contextParts.push(`- Conditions: ${healthProfile.medical_conditions.join(", ")}`);
+    }
+  }
+
+  // Add daily check-in trends
+  if (trends) {
+    contextParts.push(`\nSUIVI JOURNALIER (${trends.count} jours):`);
+    contextParts.push(`- Sommeil moyen: ${trends.avgSleep.toFixed(1)}/5`);
+    contextParts.push(`- Énergie moyenne: ${trends.avgEnergy.toFixed(1)}/5`);
+    contextParts.push(`- Stress moyen: ${trends.avgStress.toFixed(1)}/5`);
+    
+    if (trends.latestMood) {
+      contextParts.push(`- Humeur récente: ${trends.latestMood}`);
+    }
+
+    // Add alerts for concerning trends
+    const alerts: string[] = [];
+    if (trends.avgSleep < 3) {
+      alerts.push(`⚠️ ALERTE SOMMEIL: L'utilisateur dort mal cette semaine (${trends.avgSleep.toFixed(1)}/5). Priorise les conseils sommeil!`);
+    }
+    if (trends.avgEnergy < 3) {
+      alerts.push(`⚠️ ALERTE ÉNERGIE: Énergie basse détectée (${trends.avgEnergy.toFixed(1)}/5). Recommande des boosters naturels.`);
+    }
+    if (trends.avgStress > 3.5) {
+      alerts.push(`⚠️ ALERTE STRESS: Niveau de stress élevé (${trends.avgStress.toFixed(1)}/5). Propose des solutions anti-stress.`);
+    }
+    
+    if (alerts.length > 0) {
+      contextParts.push("\n" + alerts.join("\n"));
     }
   }
 
@@ -265,8 +365,8 @@ Deno.serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log("Authenticated user:", userId);
 
-    // Fetch user profile, health profile, and Shopify catalog in parallel
-    const [userProfileResult, healthProfileResult, catalog] = await Promise.all([
+    // Fetch user profile, health profile, check-ins, and Shopify catalog in parallel
+    const [userProfileResult, healthProfileResult, recentCheckins, catalog] = await Promise.all([
       supabaseClient
         .from("profiles")
         .select("first_name, last_name")
@@ -277,14 +377,18 @@ Deno.serve(async (req) => {
         .select("*")
         .eq("user_id", userId)
         .single(),
+      fetchRecentCheckins(supabaseClient, userId),
       fetchShopifyCatalog()
     ]);
 
     const userProfile = userProfileResult.data;
     const healthProfile = healthProfileResult.data;
+    const trends = calculateTrends(recentCheckins);
 
-    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog);
-    console.log("System prompt built with catalog:", catalog.slice(0, 200) + "...");
+    console.log("Check-in trends:", trends);
+
+    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends);
+    console.log("System prompt built with trends:", trends ? `Sleep: ${trends.avgSleep.toFixed(1)}, Energy: ${trends.avgEnergy.toFixed(1)}, Stress: ${trends.avgStress.toFixed(1)}` : "No trends");
 
     // Parse and validate request body
     let requestBody: unknown;

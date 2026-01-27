@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCartSimple, Star, Check, SpinnerGap } from '@phosphor-icons/react';
 import { ShopifyProduct } from '@/lib/shopify';
@@ -24,7 +25,10 @@ export function ProductCard({ product, recommendedByAI = false }: ProductCardPro
 
   const hasMultipleVariants = variants.length > 1;
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (!selectedVariant || isAdding) return;
 
     setIsAdding(true);
@@ -50,8 +54,15 @@ export function ProductCard({ product, recommendedByAI = false }: ProductCardPro
     }
   };
 
+  const handleVariantClick = (e: React.MouseEvent, index: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedVariantIndex(index);
+  };
+
   return (
-    <motion.div 
+    <Link to={`/product/${node.handle}`} className="block">
+      <motion.div
       whileHover={{ y: -4 }}
       className="glass-card rounded-2xl overflow-hidden border border-white/10 group"
     >
@@ -89,13 +100,13 @@ export function ProductCard({ product, recommendedByAI = false }: ProductCardPro
           )}
         </div>
 
-        {/* Variant Selector */}
+      {/* Variant Selector */}
         {hasMultipleVariants && (
           <div className="flex flex-wrap gap-2">
             {variants.slice(0, 4).map((variant, index) => (
               <button
                 key={variant.node.id}
-                onClick={() => setSelectedVariantIndex(index)}
+                onClick={(e) => handleVariantClick(e, index)}
                 className={`px-2 py-1 text-xs rounded-lg transition-colors ${
                   selectedVariantIndex === index
                     ? 'bg-primary text-primary-foreground'
@@ -149,6 +160,7 @@ export function ProductCard({ product, recommendedByAI = false }: ProductCardPro
           <p className="text-xs text-destructive font-light">Rupture de stock</p>
         )}
       </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 }

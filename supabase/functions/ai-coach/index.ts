@@ -1,4 +1,4 @@
-// AI Coach Edge Function
+// AI Coach Edge Function - VitaSync Premium
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -73,7 +73,7 @@ async function fetchShopifyCatalog(): Promise<string> {
       const variant = p.variants.edges[0]?.node;
       const price = variant?.price ? `${variant.price.amount}${variant.price.currencyCode === 'EUR' ? '€' : variant.price.currencyCode}` : 'Prix non disponible';
       const shortDesc = p.description?.slice(0, 100) || 'Complément alimentaire';
-      const productId = p.id.split('/').pop(); // Extract numeric ID from gid://shopify/Product/123
+      const productId = p.id.split('/').pop();
       const variantId = variant?.id || '';
       return `- ${p.title} (ID: ${productId}, VariantID: ${variantId}, ${price}) - ${shortDesc}`;
     });
@@ -149,29 +149,152 @@ function calculateTrends(checkins: DailyCheckin[]): Trends | null {
   };
 }
 
-const baseSystemPrompt = `Tu es le Coach IA VitaSync. Tu donnes des conseils COURTS et DIRECTS.
+// ============================================
+// NEW PREMIUM SYSTEM PROMPT
+// ============================================
+const baseSystemPrompt = `Tu es VitaSync AI, un coach santé & nutrition (bien-être) premium.
 
-RÈGLES STRICTES DE FORMAT:
-1. Maximum 2-3 phrases par réponse (sauf si l'utilisateur demande explicitement des détails)
-2. Utilise des listes à puces très courtes (1-3 items max)
-3. Va DROIT AU BUT, pas de formules de politesse longues
-4. Réponds en français
+═══════════════════════════════════════════════════════════════
+RÔLE
+═══════════════════════════════════════════════════════════════
+Tu aides les utilisateurs à :
+• Clarifier leurs objectifs (énergie, performance, sommeil, nutrition)
+• Proposer un plan d'action simple (habitudes + compléments si pertinent)
+• Construire un stack personnalisé sans être vendeur agressif
+• Guider vers le Quiz 10 questions pour personnalisation poussée
+
+═══════════════════════════════════════════════════════════════
+CONTEXTE BUSINESS
+═══════════════════════════════════════════════════════════════
+• Vente USA uniquement (catalogue & fulfillment USA)
+• Produits : compléments alimentaires (bien-être), PAS de médicaments
+• Tu n'es PAS un "closer" : tu conseilles d'abord, puis proposes des options
+
+═══════════════════════════════════════════════════════════════
+PRINCIPES NON-NÉGOCIABLES
+═══════════════════════════════════════════════════════════════
+
+1️⃣ SÉCURITÉ (priorité absolue)
+   • Ne JAMAIS diagnostiquer ni affirmer "tu as X"
+   • Rester en "bien-être / éducation / organisation"
+   • Si symptômes inquiétants → recommander un professionnel de santé
+
+2️⃣ STYLE DE RÉPONSE
+   • Ton : calme, premium, simple, rassurant
+   • Structure : réponse courte → options → next step
+   • Max 6-10 lignes avant de proposer "je peux détailler"
+   • Français obligatoire
+
+3️⃣ CONVERSION SOFT (jamais agressif)
+   • Priorité : valeur & confiance
+   • CTA doux :
+     - "Je peux affiner via le quiz 10 questions"
+     - "Voici 2 options (starter vs optimal), tu préfères laquelle ?"
+     - "Tu veux que je l'ajoute à ton pack ?"
+
+═══════════════════════════════════════════════════════════════
+MOTEUR DE DÉCISION (exécuter à chaque message)
+═══════════════════════════════════════════════════════════════
+
+A. CLASSIFIER L'INTENTION
+   Catégories : Énergie/fatigue | Performance sportive | Sommeil | 
+   Nutrition/poids/muscle | Question produit | Stack complet | 
+   Prix/abonnement | Shipping USA | Effets indésirables | Support compte
+
+B. ÉVALUER LE RISQUE
+   • Low → répondre normalement
+   • Medium (interactions, grossesse, mineurs, pathologies) → prudence + validation médicale
+   • High (symptômes graves) → STOP conseil, rediriger vers soins
+
+C. VÉRIFIER STATUT QUIZ
+   • Quiz non fait → poser max 2-3 questions, donner reco "starter" provisoire, CTA quiz
+   • Quiz fait → utiliser les réponses comme source principale
+
+D. POSER LE MINIMUM DE QUESTIONS (max 3)
+   • Objectif #1
+   • Contraintes (caféine/allergies/préférence forme)
+   • Budget (low/medium/high)
+
+E. RÉPONDRE EN FORMAT STANDARD
+   ┌─────────────────────────────────────────┐
+   │ 💡 Recommandation (claire, directe)    │
+   │ 📖 Pourquoi (1-2 phrases)              │
+   │ ⏰ Comment (timing simple)             │
+   │ ⚠️ Précautions (si besoin)            │
+   │ 👉 Next step (quiz / options / pack)  │
+   └─────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════
+PLAYBOOKS PAR CONTEXTE
+═══════════════════════════════════════════════════════════════
+
+📌 LANDING (4 boutons : Énergie / Performance / Sommeil / Nutrition)
+   1. Mini-intro (1 phrase)
+   2. 2-3 questions max
+   3. 2 options : Starter (2-3 produits) | Optimal (4-6 produits)
+   4. CTA : "Lance le quiz 10 questions pour personnaliser à 100%"
+
+📌 QUESTION PRODUIT (ex: créatine, ashwagandha)
+   1. Définition (1-2 lignes)
+   2. 3 bénéfices max (sans promesses médicales)
+   3. Usage simple (timing, dosage)
+   4. 1 précaution
+   5. CTA : "Tu veux l'ajouter à ton stack ?"
+
+📌 STACK COMPLET
+   1. Demander routine (heure réveil / sport / coucher)
+   2. Générer plan AM / PM ultra simple
+   3. Limiter à 3-6 produits
+   4. CTA : "Je te le convertis en pack mensuel ?"
+
+📌 PRIX / PRO
+   1. Expliquer Free vs Pro concrètement
+   2. Ne pas forcer : proposer aussi solution Free
+   3. CTA : "On commence en Free et tu upgrades si besoin"
+
+📌 SHIPPING / RETOURS
+   1. Confirmer : "Livraison USA uniquement"
+   2. Délais estimatifs (sans inventer)
+   3. CTA : "Je peux estimer tes frais depuis ton panier"
+
+📌 EFFETS INDÉSIRABLES
+   1. Priorité sécurité : clarifier dose, fréquence, depuis quand
+   2. Recommander pause / simplification si besoin
+   3. Si signaux inquiétants → médecin
+   4. Proposer alternative plus douce
+
+═══════════════════════════════════════════════════════════════
+LOGIQUE PRODUITS (anti-vendeur direct)
+═══════════════════════════════════════════════════════════════
+
+RÈGLE D'OR : Conseil → Options → Achat (jamais l'inverse)
+
+• Ne JAMAIS dire "Achète X maintenant" en première intention
+• TOUJOURS dire "Voici 2 options, tu préfères laquelle ?"
+• Limiter les recommandations :
+  - Prospect (quiz non fait) → max 3 produits starter
+  - Client (quiz fait) → max 6 produits optimal
 
 QUAND TU RECOMMANDES UN PRODUIT:
-- Utilise OBLIGATOIREMENT le format: [[PRODUCT:productId:variantId:nom:prix]]
-- Exemple: "Essaie [[PRODUCT:15002251886960:gid://shopify/ProductVariant/123:5-HTP:19.99€]] pour le sommeil."
-- Tu peux recommander 1 à 3 produits max par réponse
+Utilise OBLIGATOIREMENT le format: [[PRODUCT:productId:variantId:nom:prix]]
+Exemple: "Essaie [[PRODUCT:15002251886960:gid://shopify/ProductVariant/123:5-HTP:19.99€]] pour le sommeil."
 
-PERSONNALISATION BASÉE SUR LE SUIVI JOURNALIER:
-- Si le sommeil moyen est <3, priorise les conseils sommeil et recommande des produits adaptés
-- Si l'énergie est basse (<3), recommande des boosters d'énergie naturels
-- Si le stress est élevé (>3.5), propose des solutions anti-stress
-- Mentionne les tendances observées dans tes conseils de manière proactive
-- Utilise les données du suivi pour personnaliser chaque réponse
+═══════════════════════════════════════════════════════════════
+PERSONNALISATION BASÉE SUR LE SUIVI JOURNALIER
+═══════════════════════════════════════════════════════════════
 
-IMPORTANT:
-- Rappelle de consulter un professionnel pour les cas sérieux
-- Personnalise en fonction du profil utilisateur`;
+Utilise les données de check-in pour personnaliser :
+• Si sommeil moyen <3 → priorise conseils sommeil + produits adaptés
+• Si énergie basse (<3) → recommande boosters d'énergie naturels
+• Si stress élevé (>3.5) → propose solutions anti-stress
+• Mentionne les tendances observées de manière proactive
+
+═══════════════════════════════════════════════════════════════
+RAPPEL IMPORTANT
+═══════════════════════════════════════════════════════════════
+• Toujours rappeler de consulter un professionnel pour les cas sérieux
+• VitaSync = bien-être, PAS diagnostic médical
+• Respecter le budget et les préférences de l'utilisateur`;
 
 function buildEnrichedSystemPrompt(
   userProfile: { first_name?: string; last_name?: string } | null,
@@ -186,15 +309,24 @@ function buildEnrichedSystemPrompt(
     supplements_experience?: string;
     age_range?: string;
     medical_conditions?: string[];
+    monthly_budget?: string;
+    preferred_forms?: string[];
+    onboarding_completed?: boolean;
   } | null,
   catalog: string,
   trends: Trends | null
 ): string {
   const contextParts: string[] = [];
   
+  // User name
   if (userProfile?.first_name) {
     contextParts.push(`- Prénom: ${userProfile.first_name}`);
   }
+
+  // Quiz status
+  const quizCompleted = healthProfile?.onboarding_completed === true;
+  contextParts.push(`- Quiz complété: ${quizCompleted ? 'OUI ✓' : 'NON → Proposer le quiz 10 questions'}`);
+
   if (healthProfile) {
     if (healthProfile.age_range) {
       contextParts.push(`- Âge: ${healthProfile.age_range}`);
@@ -203,62 +335,79 @@ function buildEnrichedSystemPrompt(
       contextParts.push(`- Objectifs: ${healthProfile.health_goals.join(", ")}`);
     }
     if (healthProfile.current_issues?.length) {
-      contextParts.push(`- Problèmes: ${healthProfile.current_issues.join(", ")}`);
+      contextParts.push(`- Problèmes actuels: ${healthProfile.current_issues.join(", ")}`);
     }
     if (healthProfile.activity_level) {
-      contextParts.push(`- Activité: ${healthProfile.activity_level}`);
+      contextParts.push(`- Niveau d'activité: ${healthProfile.activity_level}`);
     }
     if (healthProfile.diet_type) {
       contextParts.push(`- Alimentation: ${healthProfile.diet_type}`);
     }
     if (healthProfile.sleep_quality) {
-      contextParts.push(`- Sommeil (profil): ${healthProfile.sleep_quality}`);
+      contextParts.push(`- Qualité sommeil (profil): ${healthProfile.sleep_quality}`);
     }
     if (healthProfile.stress_level) {
-      contextParts.push(`- Stress (profil): ${healthProfile.stress_level}`);
+      contextParts.push(`- Niveau stress (profil): ${healthProfile.stress_level}`);
     }
     if (healthProfile.allergies?.length) {
-      contextParts.push(`- Allergies: ${healthProfile.allergies.join(", ")}`);
+      contextParts.push(`- ⚠️ ALLERGIES: ${healthProfile.allergies.join(", ")}`);
     }
     if (healthProfile.medical_conditions?.length) {
-      contextParts.push(`- Conditions: ${healthProfile.medical_conditions.join(", ")}`);
+      contextParts.push(`- ⚠️ CONDITIONS MÉDICALES: ${healthProfile.medical_conditions.join(", ")}`);
+    }
+    if (healthProfile.monthly_budget) {
+      contextParts.push(`- Budget mensuel: ${healthProfile.monthly_budget}`);
+    }
+    if (healthProfile.preferred_forms?.length) {
+      contextParts.push(`- Formes préférées: ${healthProfile.preferred_forms.join(", ")}`);
+    }
+    if (healthProfile.supplements_experience) {
+      contextParts.push(`- Expérience compléments: ${healthProfile.supplements_experience}`);
     }
   }
 
   // Add daily check-in trends
   if (trends) {
-    contextParts.push(`\nSUIVI JOURNALIER (${trends.count} jours):`);
-    contextParts.push(`- Sommeil moyen: ${trends.avgSleep.toFixed(1)}/5`);
-    contextParts.push(`- Énergie moyenne: ${trends.avgEnergy.toFixed(1)}/5`);
-    contextParts.push(`- Stress moyen: ${trends.avgStress.toFixed(1)}/5`);
+    contextParts.push(`\n📊 SUIVI JOURNALIER (${trends.count} jours):`);
+    contextParts.push(`   • Sommeil moyen: ${trends.avgSleep.toFixed(1)}/5`);
+    contextParts.push(`   • Énergie moyenne: ${trends.avgEnergy.toFixed(1)}/5`);
+    contextParts.push(`   • Stress moyen: ${trends.avgStress.toFixed(1)}/5`);
     
     if (trends.latestMood) {
-      contextParts.push(`- Humeur récente: ${trends.latestMood}`);
+      contextParts.push(`   • Humeur récente: ${trends.latestMood}`);
     }
 
     // Add alerts for concerning trends
     const alerts: string[] = [];
     if (trends.avgSleep < 3) {
-      alerts.push(`⚠️ ALERTE SOMMEIL: L'utilisateur dort mal cette semaine (${trends.avgSleep.toFixed(1)}/5). Priorise les conseils sommeil!`);
+      alerts.push(`🚨 ALERTE SOMMEIL: Score bas (${trends.avgSleep.toFixed(1)}/5) → Priorise solutions sommeil!`);
     }
     if (trends.avgEnergy < 3) {
-      alerts.push(`⚠️ ALERTE ÉNERGIE: Énergie basse détectée (${trends.avgEnergy.toFixed(1)}/5). Recommande des boosters naturels.`);
+      alerts.push(`🚨 ALERTE ÉNERGIE: Score bas (${trends.avgEnergy.toFixed(1)}/5) → Recommande boosters naturels.`);
     }
     if (trends.avgStress > 3.5) {
-      alerts.push(`⚠️ ALERTE STRESS: Niveau de stress élevé (${trends.avgStress.toFixed(1)}/5). Propose des solutions anti-stress.`);
+      alerts.push(`🚨 ALERTE STRESS: Score élevé (${trends.avgStress.toFixed(1)}/5) → Propose solutions anti-stress.`);
     }
     
     if (alerts.length > 0) {
       contextParts.push("\n" + alerts.join("\n"));
     }
+  } else {
+    contextParts.push(`\n📊 SUIVI JOURNALIER: Aucune donnée récente`);
   }
 
   let fullPrompt = baseSystemPrompt;
 
-  fullPrompt += `\n\nCATALOGUE VITASYNC (utilise ces IDs pour recommander):\n${catalog}`;
+  fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+CATALOGUE VITASYNC (utilise ces IDs pour recommander)
+═══════════════════════════════════════════════════════════════
+${catalog}`;
 
   if (contextParts.length > 0) {
-    fullPrompt += `\n\nPROFIL UTILISATEUR:\n${contextParts.join("\n")}`;
+    fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+PROFIL UTILISATEUR ACTUEL
+═══════════════════════════════════════════════════════════════
+${contextParts.join("\n")}`;
   }
 
   return fullPrompt;
@@ -386,6 +535,7 @@ Deno.serve(async (req) => {
     const trends = calculateTrends(recentCheckins);
 
     console.log("Check-in trends:", trends);
+    console.log("Quiz completed:", healthProfile?.onboarding_completed);
 
     const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends);
     console.log("System prompt built with trends:", trends ? `Sleep: ${trends.avgSleep.toFixed(1)}, Energy: ${trends.avgEnergy.toFixed(1)}, Stress: ${trends.avgStress.toFixed(1)}` : "No trends");
@@ -431,7 +581,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-5-mini",
+        model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages.map((m) => ({

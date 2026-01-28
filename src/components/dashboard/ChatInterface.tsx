@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, Fragment, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   PaperPlaneTilt, 
   Plus, 
@@ -24,7 +25,9 @@ import {
   Lightning,
   Barbell,
   Pill,
-  ShieldPlus
+  ShieldPlus,
+  Sparkle,
+  ClipboardText
 } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -34,6 +37,8 @@ import { TypingIndicator } from './TypingIndicator';
 import { ProductRecommendationCard, parseProductRecommendations } from './ProductRecommendationCard';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { ProfileSummaryCard } from './ProfileSummaryCard';
+import { DisclaimerModal } from './DisclaimerModal';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 
@@ -174,6 +179,7 @@ function TTSButton({ content }: { content: string }) {
 }
 
 export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
+  const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { healthProfile } = useHealthProfile();
   const { getTrends } = useDailyCheckin();
@@ -634,7 +640,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       <div className="flex-1 flex flex-col relative min-w-0">
         {isNewConversation ? (
           /* Premium Welcome Screen */
-          <div className="flex-1 flex flex-col items-center justify-center p-6 pb-32">
+          <div className="flex-1 flex flex-col items-center justify-center p-6 pb-32 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -646,7 +652,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.1, duration: 0.5 }}
-                className="w-20 h-20 mx-auto mb-8 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-4 border border-white/20 shadow-xl shadow-primary/10"
+                className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-4 border border-white/20 shadow-xl shadow-primary/10"
               >
                 <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
               </motion.div>
@@ -658,16 +664,46 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="text-3xl md:text-4xl font-light text-foreground mb-3"
               >
-                Bonjour à {firstName} 👋
+                Bonjour {firstName} 👋
               </motion.h2>
               <motion.p 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="text-lg text-foreground/60 font-light mb-10"
+                className="text-lg text-foreground/60 font-light mb-6"
               >
-                Je suis VitaSync AI. Comment pouvons-nous t'aider aujourd'hui pour améliorer ta santé ?
+                Je suis VitaSync AI. Comment puis-je t'aider ?
               </motion.p>
+
+              {/* Quiz CTA or Profile Summary */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.5 }}
+                className="max-w-xl mx-auto mb-6"
+              >
+                {healthProfile?.onboarding_completed ? (
+                  /* Profile Summary Card */
+                  <ProfileSummaryCard 
+                    goals={healthProfile.health_goals || []}
+                    allergies={healthProfile.allergies || []}
+                    budget={healthProfile.monthly_budget}
+                    onEdit={() => navigate("/onboarding?edit=true")}
+                  />
+                ) : (
+                  /* Quiz CTA Button */
+                  <motion.button
+                    onClick={() => navigate("/onboarding")}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full p-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-medium shadow-lg shadow-primary/20 flex items-center justify-center gap-3 hover:shadow-xl transition-shadow"
+                  >
+                    <ClipboardText weight="bold" className="w-5 h-5" />
+                    <span>🎯 Personnaliser mon plan (60 sec)</span>
+                    <Sparkle weight="fill" className="w-4 h-4 opacity-70" />
+                  </motion.button>
+                )}
+              </motion.div>
 
               {/* Suggestion Cards - 2x2 Grid */}
               <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto">
@@ -693,6 +729,19 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                   </motion.button>
                 ))}
               </div>
+
+              {/* Disclaimer */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
+                className="mt-6 text-center"
+              >
+                <p className="text-xs text-foreground/40">
+                  VitaSync AI est un outil de bien-être, pas un diagnostic médical.{' '}
+                  <DisclaimerModal />
+                </p>
+              </motion.div>
             </motion.div>
           </div>
         ) : (

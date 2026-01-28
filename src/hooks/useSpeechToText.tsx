@@ -2,6 +2,55 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+// Extend Window interface for Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message?: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  onstart: (() => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
+
 interface UseSpeechToTextReturn {
   startListening: () => Promise<void>;
   stopListening: () => void;
@@ -20,17 +69,37 @@ export function useSpeechToText(): UseSpeechToTextReturn {
   const [partialTranscript, setPartialTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
   
+  // Web Speech API refs
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  
+  // ElevenLabs fallback refs
   const websocketRef = useRef<WebSocket | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   
-  // Check if browser supports required APIs
-  const isSupported = typeof navigator !== 'undefined' && 
+  // Check Web Speech API support
+  const webSpeechSupported = typeof window !== 'undefined' && 
+    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  
+  // Check if browser supports required APIs for fallback
+  const elevenLabsSupported = typeof navigator !== 'undefined' && 
     'mediaDevices' in navigator && 
     'getUserMedia' in navigator.mediaDevices;
 
+  const isSupported = webSpeechSupported || elevenLabsSupported;
+
   const cleanup = useCallback(() => {
+    // Stop Web Speech API
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        // Ignore errors during cleanup
+      }
+      recognitionRef.current = null;
+    }
+
     // Stop audio processing
     if (processorRef.current) {
       processorRef.current.disconnect();
@@ -66,8 +135,98 @@ export function useSpeechToText(): UseSpeechToTextReturn {
     return cleanup;
   }, [cleanup]);
 
-  const startListening = useCallback(async () => {
-    if (!isSupported) {
+  // Start with Web Speech API (primary method - free)
+  const startWebSpeechListening = useCallback(() => {
+    setIsConnecting(true);
+    setError(null);
+    setTranscript('');
+    setPartialTranscript('');
+
+    try {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      recognition.lang = 'fr-FR';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        console.log('Web Speech API started');
+        setIsListening(true);
+        setIsConnecting(false);
+        toast.success("Dictée vocale activée");
+      };
+
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interimTranscript += result[0].transcript;
+          }
+        }
+
+        setPartialTranscript(interimTranscript);
+        
+        if (finalTranscript) {
+          setTranscript(prev => prev + (prev ? ' ' : '') + finalTranscript.trim());
+          setPartialTranscript('');
+        }
+      };
+
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error('Web Speech API error:', event.error);
+        
+        if (event.error === 'not-allowed') {
+          setError('Accès au microphone refusé. Veuillez autoriser l\'accès.');
+          toast.error('Accès au microphone refusé');
+        } else if (event.error === 'no-speech') {
+          // Restart on no-speech to keep listening
+          try {
+            recognition.start();
+          } catch (e) {
+            // Already started, ignore
+          }
+          return;
+        } else if (event.error === 'network') {
+          setError('Erreur réseau. Vérifiez votre connexion.');
+          toast.error('Erreur réseau');
+        } else {
+          setError(`Erreur: ${event.error}`);
+        }
+        
+        cleanup();
+      };
+
+      recognition.onend = () => {
+        console.log('Web Speech API ended');
+        if (isListening && recognitionRef.current) {
+          // Auto-restart if still supposed to be listening
+          try {
+            recognition.start();
+          } catch (e) {
+            cleanup();
+          }
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.error('Error starting Web Speech API:', err);
+      setError('Impossible de démarrer la dictée vocale');
+      toast.error('Erreur de dictée vocale');
+      setIsConnecting(false);
+    }
+  }, [cleanup, isListening]);
+
+  // Start with ElevenLabs (fallback method)
+  const startElevenLabsListening = useCallback(async () => {
+    if (!elevenLabsSupported) {
       setError("La dictée vocale n'est pas supportée par votre navigateur.");
       toast.error("La dictée vocale n'est pas supportée par votre navigateur.");
       return;
@@ -107,7 +266,7 @@ export function useSpeechToText(): UseSpeechToTextReturn {
         console.log('ElevenLabs STT WebSocket connected');
         setIsListening(true);
         setIsConnecting(false);
-        toast.success("Dictée vocale activée");
+        toast.success("Dictée vocale activée (ElevenLabs)");
 
         // Set up audio processing
         audioContextRef.current = new AudioContext({ sampleRate: 16000 });
@@ -166,13 +325,29 @@ export function useSpeechToText(): UseSpeechToTextReturn {
       };
 
     } catch (err) {
-      console.error('Error starting speech-to-text:', err);
+      console.error('Error starting ElevenLabs speech-to-text:', err);
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
       setError(message);
       toast.error(`Erreur dictée vocale: ${message}`);
       cleanup();
     }
-  }, [isSupported, cleanup]);
+  }, [elevenLabsSupported, cleanup]);
+
+  const startListening = useCallback(async () => {
+    if (!isSupported) {
+      setError("La dictée vocale n'est pas supportée par votre navigateur.");
+      toast.error("La dictée vocale n'est pas supportée par votre navigateur.");
+      return;
+    }
+
+    // Priority 1: Use Web Speech API (free, low latency)
+    if (webSpeechSupported) {
+      startWebSpeechListening();
+    } else {
+      // Fallback: Use ElevenLabs
+      await startElevenLabsListening();
+    }
+  }, [isSupported, webSpeechSupported, startWebSpeechListening, startElevenLabsListening]);
 
   const stopListening = useCallback(() => {
     cleanup();

@@ -41,7 +41,7 @@ const testimonials = [
   }
 ];
 
-export function TestimonialsSection() {
+export function TestimonialsSection(): JSX.Element {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 

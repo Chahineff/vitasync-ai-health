@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Fragment, useMemo } from 'react';
+import { useState, useRef, useEffect, Fragment, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -39,6 +39,7 @@ import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { ProfileSummaryCard } from './ProfileSummaryCard';
 import { DisclaimerModal } from './DisclaimerModal';
+import { GuidedSuggestionCards } from './GuidedSuggestionCards';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 
@@ -404,6 +405,20 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     await supabase.from('messages').insert({ conversation_id: conversationId, role, content });
   };
 
+  // Handle guided suggestion prompt submission
+  const handleGuidedPromptSubmit = useCallback((prompt: string) => {
+    setInput(prompt);
+    // Auto-submit after a short delay
+    setTimeout(() => {
+      inputRef.current?.focus();
+      // Trigger submit
+      const form = inputRef.current?.closest('form');
+      if (form) {
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
+    }, 100);
+  }, []);
+
   const handleSuggestionClick = (prompt: string) => {
     setInput(prompt);
     inputRef.current?.focus();
@@ -705,30 +720,11 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 )}
               </motion.div>
 
-              {/* Suggestion Cards - 2x2 Grid */}
-              <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto">
-                {suggestionCards.map((card, index) => (
-                  <motion.button
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
-                    onClick={() => handleSuggestionClick(card.prompt)}
-                    className={cn(
-                      "p-5 rounded-2xl bg-gradient-to-br border border-white/10 hover:border-white/20",
-                      "text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
-                      "backdrop-blur-sm group",
-                      card.gradient
-                    )}
-                  >
-                    <card.icon 
-                      weight="duotone" 
-                      className={cn("w-7 h-7 mb-3 transition-transform group-hover:scale-110", card.iconColor)} 
-                    />
-                    <p className="text-sm font-medium text-foreground">{card.title}</p>
-                  </motion.button>
-                ))}
-              </div>
+              {/* Guided Suggestion Cards with Multi-Step Flow */}
+              <GuidedSuggestionCards 
+                onSubmitPrompt={handleGuidedPromptSubmit}
+                onboardingCompleted={healthProfile?.onboarding_completed}
+              />
 
               {/* Disclaimer */}
               <motion.div

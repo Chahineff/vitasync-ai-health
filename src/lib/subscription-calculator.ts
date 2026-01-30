@@ -155,6 +155,7 @@ export function validateDose(packsNeeded: number): { valid: boolean; warning?: s
 // Parse subscription block from AI response
 export interface ParsedSubscriptionItem {
   productName: string;
+  variantId: string;
   dosePerDay: number;
   packsPerMonth: number;
   priceAfterDiscount: number;
@@ -179,19 +180,36 @@ export function parseSubscriptionBlock(content: string): {
   const blockContent = match[1];
   const items: ParsedSubscriptionItem[] = [];
   
-  // Parse lines like: - Produit: Créatine | Dose: 1/jour | Packs: 1/mois | Prix: 26.99$ (-10%)
-  const lineRegex = /Produit:\s*([^|]+)\s*\|\s*Dose:\s*(\d+)\/jour\s*\|\s*Packs:\s*(\d+)\/mois\s*\|\s*Prix:\s*([\d.]+)\$?\s*\(-10%\)/gi;
+  // Parse lines with VariantID format:
+  // - Produit: [Nom] | VariantID: [gid://shopify/ProductVariant/XXX] | Dose: [X]/jour | Packs: [N]/mois | Prix: [XX.XX]$ (-10%) | Original: [YY.YY]$
+  const lineRegex = /Produit:\s*([^|]+)\s*\|\s*VariantID:\s*([^|]+)\s*\|\s*Dose:\s*(\d+)\/jour\s*\|\s*Packs:\s*(\d+)\/mois\s*\|\s*Prix:\s*([\d.]+)\$[^|]*\|\s*Original:\s*([\d.]+)\$/gi;
   let lineMatch;
   
   while ((lineMatch = lineRegex.exec(blockContent)) !== null) {
-    const originalPrice = parseFloat(lineMatch[4]) / (1 - SUBSCRIPTION_DISCOUNT_RATE);
     items.push({
       productName: lineMatch[1].trim(),
-      dosePerDay: parseInt(lineMatch[2], 10),
-      packsPerMonth: parseInt(lineMatch[3], 10),
-      priceAfterDiscount: parseFloat(lineMatch[4]),
-      originalPrice
+      variantId: lineMatch[2].trim(),
+      dosePerDay: parseInt(lineMatch[3], 10),
+      packsPerMonth: parseInt(lineMatch[4], 10),
+      priceAfterDiscount: parseFloat(lineMatch[5]),
+      originalPrice: parseFloat(lineMatch[6])
     });
+  }
+  
+  // Fallback: try old format without VariantID (for backwards compatibility)
+  if (items.length === 0) {
+    const oldLineRegex = /Produit:\s*([^|]+)\s*\|\s*Dose:\s*(\d+)\/jour\s*\|\s*Packs:\s*(\d+)\/mois\s*\|\s*Prix:\s*([\d.]+)\$?\s*\(-10%\)/gi;
+    while ((lineMatch = oldLineRegex.exec(blockContent)) !== null) {
+      const priceAfterDiscount = parseFloat(lineMatch[4]);
+      items.push({
+        productName: lineMatch[1].trim(),
+        variantId: '', // No variant ID in old format
+        dosePerDay: parseInt(lineMatch[2], 10),
+        packsPerMonth: parseInt(lineMatch[3], 10),
+        priceAfterDiscount,
+        originalPrice: priceAfterDiscount / (1 - SUBSCRIPTION_DISCOUNT_RATE)
+      });
+    }
   }
   
   const total = items.reduce((sum, item) => sum + item.priceAfterDiscount, 0);

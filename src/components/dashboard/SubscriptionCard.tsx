@@ -23,29 +23,45 @@ export function SubscriptionCard({ subscription, onModify }: SubscriptionCardPro
   const [isCreated, setIsCreated] = useState(false);
 
   const handleCreateSubscription = async () => {
+    // Check if we have valid variant IDs
+    const validItems = subscription.items.filter(item => 
+      item.variantId && item.variantId.startsWith('gid://shopify/ProductVariant/')
+    );
+
+    if (validItems.length === 0) {
+      toast.error("Impossible de créer le panier", {
+        description: "Les produits n'ont pas pu être identifiés. Demande à l'IA de régénérer l'abonnement.",
+      });
+      return;
+    }
+
     setIsCreating(true);
     try {
-      // For now, create a regular cart (selling plans will be added when configured in Shopify)
-      // In production, this would use selling plan IDs from the products
-      const items = subscription.items.map(item => ({
-        variantId: '', // Would be populated from product lookup
+      // Create cart items with real variant IDs from AI response
+      const cartItems = validItems.map(item => ({
+        variantId: item.variantId,
         quantity: item.packsPerMonth,
-        // sellingPlanId would be added here when available
       }));
 
-      // Note: This is a simplified version. In production, we'd need to:
-      // 1. Look up product IDs from product names
-      // 2. Get selling plan IDs from Shopify
-      // 3. Create the subscription cart with proper selling plans
+      console.log('Creating subscription cart with items:', cartItems);
+
+      const result = await createSubscriptionCart(cartItems);
       
-      toast.info("Fonctionnalité abonnement", {
-        description: "Les abonnements seront disponibles prochainement. En attendant, ajoutez les produits au panier.",
-      });
-      
-      setIsCreated(true);
-      setTimeout(() => setIsCreated(false), 3000);
+      if (result?.checkoutUrl) {
+        toast.success("Panier créé !", {
+          description: "Tu vas être redirigé vers le checkout Shopify.",
+        });
+        setIsCreated(true);
+        // Open checkout in new tab
+        window.open(result.checkoutUrl, '_blank');
+        setTimeout(() => setIsCreated(false), 3000);
+      } else {
+        toast.error("Erreur lors de la création du panier", {
+          description: "Vérifie ta connexion et réessaie.",
+        });
+      }
     } catch (error) {
-      console.error('Error creating subscription:', error);
+      console.error('Error creating subscription cart:', error);
       toast.error("Erreur lors de la création de l'abonnement");
     } finally {
       setIsCreating(false);

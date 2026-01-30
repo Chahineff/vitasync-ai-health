@@ -34,7 +34,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { useDailyCheckin } from '@/hooks/useDailyCheckin';
 import { TypingIndicator } from './TypingIndicator';
-import { ProductRecommendationCard, parseProductRecommendations } from './ProductRecommendationCard';
+import { ProductRecommendationCard, parseProductRecommendations, SubscriptionCard } from './ProductRecommendationCard';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { ProfileSummaryCard } from './ProfileSummaryCard';
@@ -102,11 +102,12 @@ const DEFAULT_SUGGESTIONS: SuggestionCard[] = [
   }
 ];
 
-// Render message content with product cards
+// Render message content with product cards and subscription blocks
 function MessageContent({ content }: { content: string }) {
-  const { text, products } = parseProductRecommendations(content);
+  const { text, products, subscription } = parseProductRecommendations(content);
   
-  if (products.length === 0) {
+  // Simple case: no products or subscription
+  if (products.length === 0 && !subscription) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none font-light">
         <ReactMarkdown>{content}</ReactMarkdown>
@@ -114,12 +115,13 @@ function MessageContent({ content }: { content: string }) {
     );
   }
 
-  const parts = text.split(/__PRODUCT_(\d+)__/);
+  const parts = text.split(/__PRODUCT_(\d+)__|__SUBSCRIPTION_BLOCK__/);
   
   return (
     <div className="space-y-3">
       {parts.map((part, index) => {
-        if (index % 2 === 1) {
+        // Check if this is a product placeholder
+        if (index % 2 === 1 && /^\d+$/.test(part)) {
           const productIndex = parseInt(part, 10);
           const product = products[productIndex];
           if (product) {
@@ -127,7 +129,14 @@ function MessageContent({ content }: { content: string }) {
           }
           return null;
         }
-        if (part.trim()) {
+        
+        // Check if we should render subscription at this position
+        if (part === '' && subscription && text.includes('__SUBSCRIPTION_BLOCK__')) {
+          return <SubscriptionCard key={`subscription-${index}`} subscription={subscription} />;
+        }
+        
+        // Regular text content
+        if (part && part.trim()) {
           return (
             <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light">
               <ReactMarkdown>{part}</ReactMarkdown>
@@ -136,6 +145,11 @@ function MessageContent({ content }: { content: string }) {
         }
         return null;
       })}
+      
+      {/* Render subscription card if present and not already rendered */}
+      {subscription && !text.includes('__SUBSCRIPTION_BLOCK__') && (
+        <SubscriptionCard subscription={subscription} />
+      )}
     </div>
   );
 }

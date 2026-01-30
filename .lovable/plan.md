@@ -1,422 +1,183 @@
 
+## Plan : Correction Boutique + Abonnements IA VitaSync
 
-## Plan : VitaSync Subscription Cart Builder (Shopify)
-
-Ce plan implemente un assistant IA qui transforme un stack de supplements en abonnement mensuel Shopify.
+Ce plan corrige les 3 problèmes identifiés : affichage des produits, calcul d'abonnement par l'IA, et bouton de checkout.
 
 ---
 
-### Architecture Overview
+### Problème 1 : Les produits ne s'affichent plus
 
-```text
-+------------------------+     +-------------------------+     +------------------+
-|   AI Coach (Prompt)    |---->| Subscription Calculator |---->| Shopify Cart API |
-| Detects intent:        |     | - Pack size logic       |     | - Selling Plans  |
-| "abonnement mensuel"   |     | - 10% discount          |     | - Checkout URL   |
-+------------------------+     | - Cadence grouping      |     +------------------+
-                               +-------------------------+
-                                          |
-                                          v
-                               +-------------------------+
-                               | Subscription Summary UI |
-                               | - Price breakdown       |
-                               | - Confirm/Adjust        |
-                               +-------------------------+
+**Cause racine :**
+```
+"Access denied for sellingPlanGroup field. Required access: 
+`unauthenticated_read_selling_plans` access scope."
 ```
 
----
+La query `PRODUCTS_QUERY` demande les `sellingPlanGroups` mais le token Storefront n'a pas cette permission. Résultat : la requête ENTIÈRE échoue et retourne `null` au lieu des produits.
 
-### Phase 1 : Enrichir les Metafields Produits
-
-**Objectif** : Récupérer les informations nécessaires pour calculer les quantités mensuelles.
+**Solution :**
+Retirer `sellingPlanGroups` de la query principale et la mettre dans une query séparée (optionnelle).
 
 **Fichier : `src/lib/shopify.ts`**
 
-Enrichir la query produits pour récupérer les metafields de dose et de conditionnement :
-
-| Metafield | Namespace | Key | Description |
-|-----------|-----------|-----|-------------|
-| `pack_units` | custom | pack_units | Nombre de doses/capsules par pack (ex: 90) |
-| `unit_type` | custom | unit_type | Type d'unité (servings, capsules, gummies) |
-| `default_dose` | custom | default_dose | Dose quotidienne par défaut (ex: 1, 2, 3) |
-| `selling_plan_monthly` | custom | selling_plan_id | ID du selling plan mensuel |
-
-```graphql
-# Ajouter à PRODUCTS_QUERY
-packUnitsMetafield: metafield(namespace: "custom", key: "pack_units") {
-  value
-  type
-}
-unitTypeMetafield: metafield(namespace: "custom", key: "unit_type") {
-  value
-  type
-}
-defaultDoseMetafield: metafield(namespace: "custom", key: "default_dose") {
-  value
-  type
-}
-```
-
-**Note** : Si ces metafields ne sont pas configurés dans Shopify, le système utilisera des valeurs par défaut raisonnables.
-
----
-
-### Phase 2 : Créer le Module de Calcul d'Abonnement
-
-**Nouveau fichier : `src/lib/subscription-calculator.ts`**
-
-Ce module contient la logique de calcul pour les abonnements mensuels :
+| Avant | Après |
+|-------|-------|
+| Query unique avec sellingPlanGroups | Query produits SANS sellingPlanGroups + Query séparée optionnelle |
+| Échec total si permission manquante | Fonctionne toujours, selling plans en bonus |
 
 ```typescript
-// Constantes
-const SUBSCRIPTION_DISCOUNT_RATE = 0.10; // 10%
-const DEFAULT_CYCLE_DAYS = 30;
-const DEFAULT_PACK_UNITS = 30; // Conservative default
-
-// Types
-interface SubscriptionLineItem {
-  productId: string;
-  variantId: string;
-  productName: string;
-  dosePerDay: number;
-  unitType: string;
-  packUnits: number;
-  cycleDays: number;
-  packsNeeded: number;
-  unitPrice: number;
-  lineSubtotal: number;
-  lineDiscount: number;
-  lineTotal: number;
-  sellingPlanId: string | null;
-}
-
-interface SubscriptionSummary {
-  lines: SubscriptionLineItem[];
-  subtotalBeforeDiscount: number;
-  totalDiscount: number;
-  totalAfterDiscount: number;
-  currencyCode: string;
-  hasSellingPlans: boolean;
-}
-
-// Fonctions de calcul
-function calculatePacksNeeded(
-  dosePerDay: number,
-  cycleDays: number,
-  packUnits: number
-): number {
-  const totalUnitsNeeded = dosePerDay * cycleDays;
-  return Math.ceil(totalUnitsNeeded / packUnits);
-}
-
-function calculateSubscriptionLine(
-  product: ProductWithMeta,
-  dosePerDay: number,
-  cycleDays: number = DEFAULT_CYCLE_DAYS
-): SubscriptionLineItem {
-  const packUnits = product.packUnits || DEFAULT_PACK_UNITS;
-  const packsNeeded = calculatePacksNeeded(dosePerDay, cycleDays, packUnits);
-  const unitPrice = parseFloat(product.price);
-  const lineSubtotal = packsNeeded * unitPrice;
-  const lineDiscount = lineSubtotal * SUBSCRIPTION_DISCOUNT_RATE;
-  const lineTotal = lineSubtotal - lineDiscount;
-  
-  return {
-    productId: product.id,
-    variantId: product.variantId,
-    productName: product.title,
-    dosePerDay,
-    unitType: product.unitType || 'capsules',
-    packUnits,
-    cycleDays,
-    packsNeeded,
-    unitPrice,
-    lineSubtotal,
-    lineDiscount,
-    lineTotal,
-    sellingPlanId: product.sellingPlanId || null
-  };
-}
-```
-
----
-
-### Phase 3 : Requêtes GraphQL pour Selling Plans
-
-**Fichier : `src/lib/shopify.ts`**
-
-Ajouter le support des Selling Plans dans les queries et mutations du cart :
-
-```graphql
-# Query pour récupérer les selling plans d'un produit
-query GetProductSellingPlans($id: ID!) {
-  product(id: $id) {
-    sellingPlanGroups(first: 5) {
+// Query principale simplifiée (SANS sellingPlanGroups)
+const PRODUCTS_QUERY = `
+  query GetProducts($first: Int!, $query: String) {
+    products(first: $first, query: $query) {
       edges {
         node {
-          name
-          sellingPlans(first: 10) {
-            edges {
-              node {
-                id
-                name
-                description
-                recurringDeliveries
-                options {
-                  name
-                  value
-                }
-                priceAdjustments {
-                  adjustmentValue {
-                    ... on SellingPlanPercentagePriceAdjustment {
-                      adjustmentPercentage
-                    }
-                    ... on SellingPlanFixedPriceAdjustment {
-                      price { amount currencyCode }
-                    }
-                  }
-                  orderCount
-                }
-              }
-            }
-          }
+          id
+          title
+          description
+          handle
+          productType
+          vendor
+          priceRange { ... }
+          images(first: 5) { ... }
+          variants(first: 10) { ... }
+          options { ... }
+          // RETIRER: sellingPlanGroups
         }
       }
     }
   }
-}
-
-# Mutation pour créer un cart avec selling plan
-mutation cartCreateWithSellingPlan($input: CartInput!) {
-  cartCreate(input: $input) {
-    cart {
-      id
-      checkoutUrl
-      lines(first: 100) {
-        edges {
-          node {
-            id
-            merchandise {
-              ... on ProductVariant { id }
-            }
-            sellingPlanAllocation {
-              sellingPlan { id name }
-            }
-          }
-        }
-      }
-    }
-    userErrors { field message }
-  }
-}
-```
-
-**Ajouter les fonctions helpers :**
-
-```typescript
-// Créer un cart d'abonnement
-async function createSubscriptionCart(
-  items: Array<{
-    variantId: string;
-    quantity: number;
-    sellingPlanId?: string;
-  }>
-): Promise<{ cartId: string; checkoutUrl: string } | null> {
-  const lines = items.map(item => ({
-    quantity: item.quantity,
-    merchandiseId: item.variantId,
-    ...(item.sellingPlanId && { sellingPlanId: item.sellingPlanId })
-  }));
-
-  const data = await storefrontApiRequest(CART_CREATE_WITH_SELLING_PLAN_MUTATION, {
-    input: { lines }
-  });
-
-  const cart = data?.data?.cartCreate?.cart;
-  if (!cart?.checkoutUrl) return null;
-
-  return {
-    cartId: cart.id,
-    checkoutUrl: formatCheckoutUrl(cart.checkoutUrl)
-  };
-}
+`;
 ```
 
 ---
 
-### Phase 4 : Nouveau Composant SubscriptionBuilder
+### Problème 2 : L'IA ne génère pas les abonnements correctement
 
-**Nouveau fichier : `src/components/dashboard/SubscriptionBuilder.tsx`**
+**Cause :**
+- L'IA a accès au catalogue (nom, prix, ID) mais pas aux quantités par pack
+- Elle doit calculer les packs nécessaires et le prix avec remise 10%
+- Elle doit générer les données exactes pour le checkout Shopify
 
-Interface utilisateur pour afficher et gérer l'abonnement proposé par l'IA :
-
-```typescript
-interface SubscriptionBuilderProps {
-  summary: SubscriptionSummary;
-  onConfirm: () => void;
-  onAdjust: (productId: string, newDose: number) => void;
-  onRemove: (productId: string) => void;
-}
-
-// Structure du composant :
-// - Header avec "Votre Abonnement Mensuel"
-// - Liste des produits avec:
-//   - Nom, dose/jour, packs/mois, prix
-//   - Bouton +/- pour ajuster la dose
-//   - Bouton supprimer
-// - Section totaux:
-//   - Sous-total (avant remise)
-//   - Remise 10% (en vert)
-//   - Total mensuel
-// - Footer avec:
-//   - Bouton "Ajuster"
-//   - Bouton "Valider et payer" -> ouvre checkout URL
-```
-
-**Design UI :**
-- Carte avec fond glass-card
-- Badge "10% de remise" en primary
-- Indicateur de cadence (30 jours)
-- Avertissement si un produit n'a pas de selling plan
-
----
-
-### Phase 5 : Enrichir le Prompt AI Coach
+**Solution :**
+Enrichir le prompt IA avec :
+1. Les quantités par pack par défaut (30 doses)
+2. Le format exact de sortie avec les vrais variant IDs
+3. La logique de calcul intégrée
 
 **Fichier : `supabase/functions/ai-coach/index.ts`**
 
-Ajouter un nouveau playbook pour la création d'abonnements :
+Modifications au `fetchShopifyCatalog()` et au prompt :
 
 ```typescript
-// Ajouter au baseSystemPrompt
-
-PLAYBOOK ABONNEMENT MENSUEL
-═══════════════════════════════════════════════════════════════
-
-Quand l'utilisateur demande un "abonnement", "pack mensuel", ou "livraison automatique":
-
-1. COLLECTER LE STACK
-   - Identifier les produits recommandés ou dans le suivi
-   - Pour chaque produit, déterminer la dose/jour
-
-2. CALCULER LES QUANTITÉS MENSUELLES
-   - Utilise la formule: packs_needed = ceil(dose_per_day * 30 / pack_units)
-   - Applique 10% de remise abonnement
-
-3. AFFICHER LE RÉCAPITULATIF
-   Format obligatoire:
-   
-   📦 TON ABONNEMENT MENSUEL
-   ──────────────────────────
-   [[SUBSCRIPTION_START]]
-   - Produit: [Nom]
-     Dose: [X]/jour | Packs: [N]/mois | Prix: [XX]$ (-10%)
-   ...
-   [[SUBSCRIPTION_END]]
-   
-   💰 TOTAL: [XXX]$/mois (économie de [YY]$)
-
-4. DEMANDER CONFIRMATION
-   - "Tu veux que je crée ce panier récurrent ?"
-   - "Tu préfères ajuster les doses ou produits avant ?"
-
-5. REDIRIGER VERS CHECKOUT
-   Jamais d'achat automatique, toujours lien vers checkout Shopify.
-
-RÈGLES SPÉCIFIQUES:
-- Livraison USA uniquement
-- Si stock épuisé → proposer alternative ou exclure
-- Si dose anormalement haute (>6 packs/mois) → demander confirmation
-- Si produit sans selling plan → mentionner "achat unique"
-```
-
----
-
-### Phase 6 : Parser les Recommandations d'Abonnement
-
-**Fichier : `src/components/dashboard/ProductRecommendationCard.tsx`**
-
-Ajouter un parser pour les blocs d'abonnement générés par l'IA :
-
-```typescript
-// Nouveau format de parsing
-// [[SUBSCRIPTION_START]]
-// - Produit: Créatine
-//   Dose: 1/jour | Packs: 1/mois | Prix: 29.99$ (-10%)
-// [[SUBSCRIPTION_END]]
-
-interface SubscriptionBlock {
-  items: Array<{
-    productName: string;
-    dosePerDay: number;
-    packsPerMonth: number;
-    priceAfterDiscount: number;
-  }>;
-  total: number;
-  savings: number;
-}
-
-function parseSubscriptionBlock(content: string): {
-  text: string;
-  subscription: SubscriptionBlock | null;
-} {
-  const regex = /\[\[SUBSCRIPTION_START\]\]([\s\S]*?)\[\[SUBSCRIPTION_END\]\]/;
-  const match = content.match(regex);
+// Enrichir le catalogue avec quantités estimées
+const catalogLines = products.map((edge) => {
+  const p = edge.node;
+  const variant = p.variants.edges[0]?.node;
+  const price = variant?.price?.amount || '0';
+  const productId = p.id.split('/').pop();
+  const variantId = variant?.id || '';
   
-  if (!match) return { text: content, subscription: null };
+  // Estimer pack_units basé sur le type de produit
+  let packUnits = 30; // Default
+  const title = p.title.toLowerCase();
+  if (title.includes('powder') || title.includes('poudre')) {
+    packUnits = 30; // ~30 scoops
+  } else if (title.includes('capsule') || title.includes('gummies')) {
+    packUnits = 60; // Souvent 60 capsules
+  }
   
-  // Parse les lignes d'abonnement
-  // Retourner la structure parsée
-}
+  return `- ${p.title}
+    ProductID: ${productId}
+    VariantID: ${variantId}
+    Prix: ${price}$
+    Type: ${p.productType}
+    Pack: ~${packUnits} doses
+    Format: [[PRODUCT:${productId}:${variantId}:${p.title}:${price}$]]`;
+});
+```
+
+**Nouveau playbook dans le prompt :**
+
+```
+PLAYBOOK ABONNEMENT - FORMAT EXACT
+═══════════════════════════════════
+
+Quand tu proposes un abonnement, tu DOIS:
+
+1. Identifier les produits du catalogue avec leurs vrais IDs
+2. Calculer: packs_needed = ceil(dose_par_jour * 30 / pack_units)
+3. Appliquer remise: prix_final = prix_original * 0.90
+
+FORMAT OBLIGATOIRE:
+
+📦 TON ABONNEMENT MENSUEL (-10%)
+[[SUBSCRIPTION_START]]
+- Produit: Créatine | VariantID: gid://shopify/ProductVariant/123 | Dose: 1/jour | Packs: 1/mois | Prix: 26.99$ (-10%)
+- Produit: Ashwagandha | VariantID: gid://shopify/ProductVariant/456 | Dose: 1/jour | Packs: 1/mois | Prix: 22.49$ (-10%)
+[[SUBSCRIPTION_END]]
+
+💰 TOTAL: 49.48$/mois (économie de 5.50$)
+
+👉 Clique sur "Créer mon abonnement" pour finaliser !
 ```
 
 ---
 
-### Phase 7 : Composant SubscriptionCard dans le Chat
+### Problème 3 : Bouton Abonnement → Checkout Shopify
 
-**Nouveau fichier : `src/components/dashboard/SubscriptionCard.tsx`**
+**Cause :**
+Le `SubscriptionCard` affiche un toast informatif au lieu de créer un vrai panier Shopify.
 
-Une carte interactive qui s'affiche dans le chat quand l'IA propose un abonnement :
+**Solution :**
+Modifier le composant pour :
+1. Parser les variant IDs depuis la réponse IA
+2. Créer un cart Shopify avec les quantités calculées
+3. Rediriger vers le checkout avec la remise appliquée
+
+**Fichier : `src/components/dashboard/SubscriptionCard.tsx`**
 
 ```typescript
-interface SubscriptionCardProps {
-  subscription: SubscriptionBlock;
-  onConfirm: () => Promise<void>;
-  onModify: () => void;
-}
+const handleCreateSubscription = async () => {
+  setIsCreating(true);
+  try {
+    // Créer le panier Shopify avec les produits
+    const items = subscription.items.map(item => ({
+      variantId: item.variantId, // Récupéré depuis la réponse IA
+      quantity: item.packsPerMonth,
+    }));
 
-// Affichage:
-// - Récapitulatif visuel du panier
-// - Badge "10% d'économie"
-// - Bouton "Créer mon abonnement" (primary)
-// - Bouton "Modifier" (secondary)
-// - Lien "En savoir plus sur les abonnements"
+    const result = await createShopifyCart(items);
+    
+    if (result?.checkoutUrl) {
+      // Ouvrir le checkout dans un nouvel onglet
+      window.open(result.checkoutUrl, '_blank');
+      toast.success("Panier créé ! Finalise ton achat.");
+    }
+  } catch (error) {
+    toast.error("Erreur lors de la création du panier");
+  } finally {
+    setIsCreating(false);
+  }
+};
 ```
 
----
+**Fichier : `src/lib/subscription-calculator.ts`**
 
-### Phase 8 : Gestion des Cadences Multiples
-
-**Dans : `src/lib/subscription-calculator.ts`**
-
-Logique pour gérer différentes cadences (30, 60, 90 jours) :
+Ajouter le parsing du VariantID :
 
 ```typescript
-interface CadenceGroup {
-  cadenceDays: number;
-  items: SubscriptionLineItem[];
-  subtotal: number;
+export interface ParsedSubscriptionItem {
+  productName: string;
+  variantId: string; // NOUVEAU
+  dosePerDay: number;
+  packsPerMonth: number;
+  priceAfterDiscount: number;
+  originalPrice: number;
 }
 
-function groupByCadence(items: SubscriptionLineItem[]): CadenceGroup[] {
-  // Grouper les items par cadence
-  // Si un produit dure naturellement 60 jours, proposer options:
-  // A) Inclure en mensuel (livraison partielle)
-  // B) Séparer en abonnement 60 jours
-}
-
-// Note: Shopify ne supporte pas les cadences mixtes dans un cart
-// Solution: Créer plusieurs carts si nécessaire
+// Nouveau regex pour capturer VariantID
+const lineRegex = /Produit:\s*([^|]+)\s*\|\s*VariantID:\s*([^|]+)\s*\|\s*Dose:\s*(\d+)\/jour\s*\|\s*Packs:\s*(\d+)\/mois\s*\|\s*Prix:\s*([\d.]+)\$/gi;
 ```
 
 ---
@@ -425,61 +186,53 @@ function groupByCadence(items: SubscriptionLineItem[]): CadenceGroup[] {
 
 | Action | Fichier | Priorité |
 |--------|---------|----------|
-| Modifier | `src/lib/shopify.ts` | Haute |
-| Créer | `src/lib/subscription-calculator.ts` | Haute |
-| Créer | `src/components/dashboard/SubscriptionBuilder.tsx` | Haute |
-| Créer | `src/components/dashboard/SubscriptionCard.tsx` | Haute |
+| Modifier | `src/lib/shopify.ts` | **Critique** (produits invisibles) |
 | Modifier | `supabase/functions/ai-coach/index.ts` | Haute |
-| Modifier | `src/components/dashboard/ProductRecommendationCard.tsx` | Moyenne |
-| Modifier | `src/components/dashboard/ChatInterface.tsx` | Moyenne |
-
----
-
-### Dépendances Shopify Requises
-
-Pour que les abonnements fonctionnent, le store Shopify doit avoir :
-
-1. **App d'abonnement installée** (ex: Recharge, Bold, Appstle)
-2. **Selling Plans configurés** pour chaque produit
-3. **Metafields configurés** (optionnel mais recommandé) :
-   - `custom.pack_units` (nombre de doses par pack)
-   - `custom.unit_type` (type d'unité)
-   - `custom.default_dose` (dose quotidienne par défaut)
-
-**Note importante** : Si les selling plans ne sont pas configurés dans Shopify, le système créera un cart one-time avec un message indiquant que l'abonnement n'est pas disponible pour ces produits.
+| Modifier | `src/lib/subscription-calculator.ts` | Haute |
+| Modifier | `src/components/dashboard/SubscriptionCard.tsx` | Haute |
 
 ---
 
 ### Flow Utilisateur Final
 
 ```text
-1. Utilisateur: "Je veux un abonnement mensuel avec mon stack"
-   
+1. Utilisateur: "Je veux un stack énergie + sommeil en abonnement"
+
 2. AI Coach:
-   - Récupère les produits du suivi + profil
-   - Calcule les quantités mensuelles
-   - Affiche le récapitulatif avec prix
-   - Demande confirmation
+   - Identifie les produits recommandés (Créatine, Ashwagandha, Magnésium)
+   - Récupère les vrais IDs variants du catalogue
+   - Calcule: 1 dose/jour × 30 jours ÷ 30 doses/pack = 1 pack/mois
+   - Applique -10%: 29.99$ × 0.90 = 26.99$
+   - Génère le bloc [[SUBSCRIPTION_START]]...[[SUBSCRIPTION_END]]
 
 3. Interface:
-   - Affiche SubscriptionCard dans le chat
-   - Permet d'ajuster doses/produits
-   - Bouton "Créer mon abonnement"
+   - Parse la réponse et affiche SubscriptionCard
+   - Montre le récapitulatif avec prix barrés et remise
+   - Gros bouton "Créer mon abonnement"
 
-4. Checkout:
-   - Crée le cart Shopify avec selling plans
-   - Ouvre le checkout URL dans nouvel onglet
-   - Utilisateur finalise le paiement sur Shopify
+4. Clic sur bouton:
+   - Crée cart Shopify avec les variant IDs
+   - Ouvre checkout URL dans nouvel onglet
+   - Utilisateur finalise le paiement
 ```
 
 ---
 
 ### Ordre d'Implémentation
 
-1. **Shopify Queries** - Metafields + Selling Plans
-2. **Calculator Module** - Logique de calcul
-3. **AI Prompt** - Playbook abonnement
-4. **SubscriptionCard** - Affichage dans le chat
-5. **Cart Creation** - Mutation avec selling plans
-6. **Testing** - Validation du flow complet
+1. **Correction critique** : Retirer `sellingPlanGroups` de PRODUCTS_QUERY → les produits s'affichent
+2. **Enrichir le catalogue IA** : Ajouter variant IDs + pack units au prompt
+3. **Parser VariantID** : Mettre à jour `parseSubscriptionBlock()`
+4. **Bouton Checkout** : Créer le cart Shopify avec redirection
+5. **Test end-to-end** : Demander un abonnement et vérifier le checkout
 
+---
+
+### Note Importante
+
+**Remise 10% :** Shopify n'a pas de Selling Plans configurés (d'où l'erreur de permission). La remise sera affichée côté IA mais pas appliquée automatiquement au checkout Shopify. Options futures :
+- Configurer les Selling Plans dans Shopify Admin
+- Créer un code promo "ABONNEMENT10" à appliquer au checkout
+- Utiliser une app d'abonnement (Recharge, Bold, Appstle)
+
+Pour l'instant, le système créera un panier normal et l'IA mentionnera la remise comme "économie estimée".

@@ -190,6 +190,47 @@ const PRODUCTS_QUERY = `
             name
             values
           }
+          packUnitsMetafield: metafield(namespace: "custom", key: "pack_units") {
+            value
+            type
+          }
+          unitTypeMetafield: metafield(namespace: "custom", key: "unit_type") {
+            value
+            type
+          }
+          defaultDoseMetafield: metafield(namespace: "custom", key: "default_dose") {
+            value
+            type
+          }
+          sellingPlanGroups(first: 3) {
+            edges {
+              node {
+                name
+                sellingPlans(first: 5) {
+                  edges {
+                    node {
+                      id
+                      name
+                      description
+                      recurringDeliveries
+                      options {
+                        name
+                        value
+                      }
+                      priceAdjustments {
+                        adjustmentValue {
+                          ... on SellingPlanPercentagePriceAdjustment {
+                            adjustmentPercentage
+                          }
+                        }
+                        orderCount
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -419,6 +460,33 @@ export const CART_LINES_REMOVE_MUTATION = `
   }
 `;
 
+// Mutation for creating cart with selling plans (subscriptions)
+export const CART_CREATE_WITH_SELLING_PLAN_MUTATION = `
+  mutation cartCreateWithSellingPlan($input: CartInput!) {
+    cartCreate(input: $input) {
+      cart {
+        id
+        checkoutUrl
+        lines(first: 100) {
+          edges {
+            node {
+              id
+              merchandise {
+                ... on ProductVariant { id }
+              }
+              sellingPlanAllocation {
+                sellingPlan { id name }
+              }
+            }
+          }
+        }
+      }
+      userErrors { field message }
+    }
+  }
+`;
+
+
 function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
@@ -508,4 +576,38 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
     return { success: false };
   }
   return { success: true };
+}
+
+// Create a subscription cart with selling plans
+export interface SubscriptionCartItem {
+  variantId: string;
+  quantity: number;
+  sellingPlanId?: string;
+}
+
+export async function createSubscriptionCart(
+  items: SubscriptionCartItem[]
+): Promise<{ cartId: string; checkoutUrl: string } | null> {
+  const lines = items.map(item => ({
+    quantity: item.quantity,
+    merchandiseId: item.variantId,
+    ...(item.sellingPlanId && { sellingPlanId: item.sellingPlanId })
+  }));
+
+  const data = await storefrontApiRequest(CART_CREATE_WITH_SELLING_PLAN_MUTATION, {
+    input: { lines }
+  });
+
+  if (data?.data?.cartCreate?.userErrors?.length > 0) {
+    console.error('Subscription cart creation failed:', data.data.cartCreate.userErrors);
+    return null;
+  }
+
+  const cart = data?.data?.cartCreate?.cart;
+  if (!cart?.checkoutUrl) return null;
+
+  return {
+    cartId: cart.id,
+    checkoutUrl: formatCheckoutUrl(cart.checkoutUrl)
+  };
 }

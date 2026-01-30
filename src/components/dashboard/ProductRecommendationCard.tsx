@@ -5,6 +5,12 @@ import { useCartStore } from '@/stores/cartStore';
 import { useSupplementTracking } from '@/hooks/useSupplementTracking';
 import { fetchProductById } from '@/lib/shopify';
 import { toast } from 'sonner';
+import { 
+  parseSubscriptionBlock, 
+  ParsedSubscriptionBlock,
+  SUBSCRIPTION_DISCOUNT_RATE 
+} from '@/lib/subscription-calculator';
+import { SubscriptionCard } from './SubscriptionCard';
 
 export interface ProductRecommendation {
   productId: string;
@@ -143,15 +149,28 @@ export function ProductRecommendationCard({ product }: ProductRecommendationCard
 export function parseProductRecommendations(content: string): {
   text: string;
   products: ProductRecommendation[];
+  subscription: ParsedSubscriptionBlock | null;
 } {
+  // First, check for subscription blocks
+  const subscriptionResult = parseSubscriptionBlock(content);
+  let textToProcess = subscriptionResult.text;
+  
   // Format: [[PRODUCT:productId:variantId:nom:prix]]
   const regex = /\[\[PRODUCT:([^:]+):([^:]+):([^:]+):([^\]]+)\]\]/g;
   const products: ProductRecommendation[] = [];
   
-  const text = content.replace(regex, (_, productId, variantId, name, price) => {
+  const text = textToProcess.replace(regex, (_, productId, variantId, name, price) => {
     products.push({ productId, variantId, name, price });
     return `__PRODUCT_${products.length - 1}__`; // Placeholder for React rendering
   });
   
-  return { text, products };
+  return { 
+    text, 
+    products,
+    subscription: subscriptionResult.subscription
+  };
 }
+
+// Export the SubscriptionCard for use in ChatInterface
+export { SubscriptionCard } from './SubscriptionCard';
+export type { ParsedSubscriptionBlock } from '@/lib/subscription-calculator';

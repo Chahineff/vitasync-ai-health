@@ -67,18 +67,32 @@ async function fetchShopifyCatalog(): Promise<string> {
       return "Aucun produit dans le catalogue.";
     }
 
-    // Format catalog for the prompt
+    // Format catalog for the prompt with pack units estimation
     const catalogLines = products.map((edge: { node: { id: string; title: string; description: string; productType: string; variants: { edges: Array<{ node: { id: string; price: { amount: string; currencyCode: string } } }> } } }) => {
       const p = edge.node;
       const variant = p.variants.edges[0]?.node;
-      const price = variant?.price ? `${variant.price.amount}${variant.price.currencyCode === 'EUR' ? '€' : variant.price.currencyCode}` : 'Prix non disponible';
-      const shortDesc = p.description?.slice(0, 100) || 'Complément alimentaire';
+      const price = variant?.price?.amount || '0';
       const productId = p.id.split('/').pop();
       const variantId = variant?.id || '';
-      return `- ${p.title} (ID: ${productId}, VariantID: ${variantId}, ${price}) - ${shortDesc}`;
+      
+      // Estimate pack_units based on product type
+      let packUnits = 30; // Default
+      const title = p.title.toLowerCase();
+      if (title.includes('powder') || title.includes('poudre') || title.includes('whey') || title.includes('pre-workout')) {
+        packUnits = 30; // ~30 scoops
+      } else if (title.includes('capsule') || title.includes('gummies') || title.includes('omega') || title.includes('vitamin')) {
+        packUnits = 60; // Often 60 capsules
+      }
+      
+      return `- ${p.title}
+    ProductID: ${productId}
+    VariantID: ${variantId}
+    Prix: ${price}$
+    Pack: ~${packUnits} doses/boîte
+    Pour abonnement: [[PRODUCT:${productId}:${variantId}:${p.title}:${price}]]`;
     });
 
-    return catalogLines.join('\n');
+    return catalogLines.join('\n\n');
   } catch (error) {
     console.error("Error fetching Shopify catalog:", error);
     return "Catalogue non disponible.";
@@ -264,42 +278,40 @@ PLAYBOOKS PAR CONTEXTE
    4. Proposer alternative plus douce
 
 ═══════════════════════════════════════════════════════════════
-PLAYBOOK ABONNEMENT MENSUEL
+PLAYBOOK ABONNEMENT MENSUEL (FORMAT EXACT OBLIGATOIRE)
 ═══════════════════════════════════════════════════════════════
 
 Quand l'utilisateur demande un "abonnement", "pack mensuel", ou "livraison automatique":
 
-1️⃣ COLLECTER LE STACK
-   - Identifier les produits recommandés ou dans le suivi
-   - Pour chaque produit, déterminer la dose/jour (utilise default_dose ou demande)
+1️⃣ IDENTIFIER LES PRODUITS DU CATALOGUE
+   - Utilise les vrais VariantIDs du catalogue ci-dessus
+   - Chaque produit a environ 30-60 doses par boîte
 
 2️⃣ CALCULER LES QUANTITÉS MENSUELLES
    - Formule: packs_needed = ceil(dose_per_day * 30 / pack_units)
-   - Pack standard = 30 doses sauf indication contraire
-   - Applique 10% de remise abonnement automatiquement
+   - Pack standard = 30 doses (poudres) ou 60 doses (capsules)
+   - Applique 10% de remise: prix_final = prix_original * 0.90
 
-3️⃣ AFFICHER LE RÉCAPITULATIF
-   Format OBLIGATOIRE (utilise les balises exactes):
+3️⃣ AFFICHER LE RÉCAPITULATIF - FORMAT EXACT OBLIGATOIRE:
    
-   📦 TON ABONNEMENT MENSUEL
-   ──────────────────────────
+   📦 TON ABONNEMENT MENSUEL (-10%)
+   ──────────────────────────────────
    [[SUBSCRIPTION_START]]
-   - Produit: [Nom] | Dose: [X]/jour | Packs: [N]/mois | Prix: [XX.XX]$ (-10%)
-   - Produit: [Nom2] | Dose: [X]/jour | Packs: [N]/mois | Prix: [XX.XX]$ (-10%)
+   - Produit: [Nom du produit] | VariantID: [gid://shopify/ProductVariant/XXX] | Dose: [X]/jour | Packs: [N]/mois | Prix: [XX.XX]$ (-10%) | Original: [YY.YY]$
+   - Produit: [Nom du produit 2] | VariantID: [gid://shopify/ProductVariant/XXX] | Dose: [X]/jour | Packs: [N]/mois | Prix: [XX.XX]$ (-10%) | Original: [YY.YY]$
    [[SUBSCRIPTION_END]]
    
    💰 TOTAL: [XXX.XX]$/mois (économie de [YY.YY]$)
+   
+   👉 Clique sur le bouton ci-dessous pour créer ton abonnement !
 
-4️⃣ DEMANDER CONFIRMATION
-   - "Tu veux que je crée ce panier récurrent ?"
-   - "Tu préfères ajuster les doses ou produits avant ?"
-
-5️⃣ RÈGLES SPÉCIFIQUES
+⚠️ RÈGLES CRITIQUES:
+   - TOUJOURS utiliser les vrais VariantIDs du catalogue (format gid://shopify/ProductVariant/XXX)
+   - TOUJOURS inclure les balises [[SUBSCRIPTION_START]] et [[SUBSCRIPTION_END]]
+   - Le prix avec remise = prix original × 0.90
    - Livraison USA uniquement
-   - Si stock épuisé → proposer alternative ou exclure
-   - Si dose anormalement haute (>6 packs/mois) → demander confirmation
-   - Si produit sans selling plan → mentionner "achat unique"
-   - JAMAIS d'achat automatique, toujours lien vers checkout
+   - Si dose > 3/jour → demander confirmation
+   - JAMAIS d'achat automatique
 
 ═══════════════════════════════════════════════════════════════
 LOGIQUE PRODUITS (anti-vendeur direct)

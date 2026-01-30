@@ -143,7 +143,7 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   return data;
 }
 
-// GraphQL Queries
+// GraphQL Queries - NOTE: sellingPlanGroups removed to avoid permission issues
 const PRODUCTS_QUERY = `
   query GetProducts($first: Int!, $query: String) {
     products(first: $first, query: $query) {
@@ -190,53 +190,11 @@ const PRODUCTS_QUERY = `
             name
             values
           }
-          packUnitsMetafield: metafield(namespace: "custom", key: "pack_units") {
-            value
-            type
-          }
-          unitTypeMetafield: metafield(namespace: "custom", key: "unit_type") {
-            value
-            type
-          }
-          defaultDoseMetafield: metafield(namespace: "custom", key: "default_dose") {
-            value
-            type
-          }
-          sellingPlanGroups(first: 3) {
-            edges {
-              node {
-                name
-                sellingPlans(first: 5) {
-                  edges {
-                    node {
-                      id
-                      name
-                      description
-                      recurringDeliveries
-                      options {
-                        name
-                        value
-                      }
-                      priceAdjustments {
-                        adjustmentValue {
-                          ... on SellingPlanPercentagePriceAdjustment {
-                            adjustmentPercentage
-                          }
-                        }
-                        orderCount
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
         }
       }
     }
   }
 `;
-
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
     productByHandle(handle: $handle) {

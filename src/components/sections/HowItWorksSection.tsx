@@ -51,21 +51,21 @@ function StepCard({ step }: { step: typeof steps[0] }) {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 80, scale: 0.9 }}
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -80, scale: 0.95 }}
+      exit={{ opacity: 0, y: -40, scale: 0.98 }}
       transition={{ 
-        duration: 0.6, 
+        duration: 0.4, 
         ease: [0.22, 1, 0.36, 1],
       }}
       className="w-full max-w-3xl mx-auto px-4"
     >
-      <div 
-        className={cn(
-          "glass-card-premium relative overflow-hidden p-8 md:p-12 lg:p-16",
-          "border border-white/10 dark:border-white/5"
-        )}
-      >
+        <div 
+          className={cn(
+            "glass-card-premium relative overflow-hidden p-6 md:p-8 lg:p-10",
+            "border border-white/10 dark:border-white/5"
+          )}
+        >
         {/* Background gradient */}
         <div className={cn(
           "absolute inset-0 bg-gradient-to-br opacity-50",
@@ -214,7 +214,7 @@ export function HowItWorksSection() {
       ref={sectionRef}
       id="how-it-works" 
       className="relative"
-      style={{ height: `${steps.length * 100}vh` }}
+      style={{ height: `${steps.length * 60}vh` }}
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">

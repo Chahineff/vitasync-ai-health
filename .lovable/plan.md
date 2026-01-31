@@ -1,238 +1,175 @@
 
-## Plan : Correction Boutique + Abonnements IA VitaSync
+## Plan : Améliorations de la Homepage VitaSync
 
-Ce plan corrige les 3 problèmes identifiés : affichage des produits, calcul d'abonnement par l'IA, et bouton de checkout.
+Ce plan corrige 4 éléments de la homepage selon vos retours : capture du vrai dashboard, scroll raccourci, suppression des témoignages, et section tarifs enrichie.
 
 ---
 
-### Problème 1 : Les produits ne s'affichent plus
+### 1. Dashboard Personnel : Capture d'écran réelle
 
-**Cause racine :**
-```
-"Access denied for sellingPlanGroup field. Required access: 
-`unauthenticated_read_selling_plans` access scope."
-```
-
-La query `PRODUCTS_QUERY` demande les `sellingPlanGroups` mais le token Storefront n'a pas cette permission. Résultat : la requête ENTIÈRE échoue et retourne `null` au lieu des produits.
+**Situation actuelle :**
+La section "Votre Dashboard Personnel" (`ProductPreviewSection.tsx`) affiche un mockup CSS construit en dur (`MiniDashboard` et `MiniDashboardMobile`), pas le vrai dashboard.
 
 **Solution :**
-Retirer `sellingPlanGroups` de la query principale et la mettre dans une query séparée (optionnelle).
+Remplacer les composants `MiniDashboard` par une image (screenshot) du vrai dashboard.
 
-**Fichier : `src/lib/shopify.ts`**
+**Fichier : `src/components/sections/ProductPreviewSection.tsx`**
 
 | Avant | Après |
 |-------|-------|
-| Query unique avec sellingPlanGroups | Query produits SANS sellingPlanGroups + Query séparée optionnelle |
-| Échec total si permission manquante | Fonctionne toujours, selling plans en bonus |
+| Composants `MiniDashboard` + `MiniDashboardMobile` (~300 lignes) | Simple balise `<img>` avec la capture |
+| Animation complexe avec ring charts | Image statique avec léger effet de parallaxe |
+
+**Actions :**
+1. Capturer une image haute qualité du dashboard réel (via le navigateur)
+2. Uploader l'image dans `public/lovable-uploads/`
+3. Simplifier drastiquement le composant :
 
 ```typescript
-// Query principale simplifiée (SANS sellingPlanGroups)
-const PRODUCTS_QUERY = `
-  query GetProducts($first: Int!, $query: String) {
-    products(first: $first, query: $query) {
-      edges {
-        node {
-          id
-          title
-          description
-          handle
-          productType
-          vendor
-          priceRange { ... }
-          images(first: 5) { ... }
-          variants(first: 10) { ... }
-          options { ... }
-          // RETIRER: sellingPlanGroups
-        }
-      }
-    }
-  }
-`;
+// Remplacer MiniDashboard par :
+<img 
+  src="/lovable-uploads/dashboard-screenshot.png" 
+  alt="Dashboard VitaSync" 
+  className="w-full h-full object-cover rounded-xl"
+/>
 ```
+
+4. Supprimer les composants inutilisés : `RingChart`, `RoutineChecklist`, `MiniDashboard`, `MiniDashboardMobile`
 
 ---
 
-### Problème 2 : L'IA ne génère pas les abonnements correctement
+### 2. Section "Comment ça marche" : Raccourcir le scroll
 
-**Cause :**
-- L'IA a accès au catalogue (nom, prix, ID) mais pas aux quantités par pack
-- Elle doit calculer les packs nécessaires et le prix avec remise 10%
-- Elle doit générer les données exactes pour le checkout Shopify
+**Situation actuelle :**
+La section utilise `100vh × 4 étapes = 400vh` de hauteur, ce qui crée un scroll très long.
+
+**Fichier : `src/components/sections/HowItWorksSection.tsx`**
 
 **Solution :**
-Enrichir le prompt IA avec :
-1. Les quantités par pack par défaut (30 doses)
-2. Le format exact de sortie avec les vrais variant IDs
-3. La logique de calcul intégrée
+Réduire la hauteur par étape de 100vh à 60vh.
 
-**Fichier : `supabase/functions/ai-coach/index.ts`**
-
-Modifications au `fetchShopifyCatalog()` et au prompt :
+| Paramètre | Avant | Après |
+|-----------|-------|-------|
+| Hauteur totale | `${steps.length * 100}vh` (400vh) | `${steps.length * 60}vh` (240vh) |
+| Durée scroll | ~4 écrans complets | ~2.5 écrans |
 
 ```typescript
-// Enrichir le catalogue avec quantités estimées
-const catalogLines = products.map((edge) => {
-  const p = edge.node;
-  const variant = p.variants.edges[0]?.node;
-  const price = variant?.price?.amount || '0';
-  const productId = p.id.split('/').pop();
-  const variantId = variant?.id || '';
-  
-  // Estimer pack_units basé sur le type de produit
-  let packUnits = 30; // Default
-  const title = p.title.toLowerCase();
-  if (title.includes('powder') || title.includes('poudre')) {
-    packUnits = 30; // ~30 scoops
-  } else if (title.includes('capsule') || title.includes('gummies')) {
-    packUnits = 60; // Souvent 60 capsules
-  }
-  
-  return `- ${p.title}
-    ProductID: ${productId}
-    VariantID: ${variantId}
-    Prix: ${price}$
-    Type: ${p.productType}
-    Pack: ~${packUnits} doses
-    Format: [[PRODUCT:${productId}:${variantId}:${p.title}:${price}$]]`;
-});
+// Ligne 217 - Réduire la hauteur
+<section 
+  style={{ height: `${steps.length * 60}vh` }}  // Était 100vh
+>
 ```
 
-**Nouveau playbook dans le prompt :**
-
-```
-PLAYBOOK ABONNEMENT - FORMAT EXACT
-═══════════════════════════════════
-
-Quand tu proposes un abonnement, tu DOIS:
-
-1. Identifier les produits du catalogue avec leurs vrais IDs
-2. Calculer: packs_needed = ceil(dose_par_jour * 30 / pack_units)
-3. Appliquer remise: prix_final = prix_original * 0.90
-
-FORMAT OBLIGATOIRE:
-
-📦 TON ABONNEMENT MENSUEL (-10%)
-[[SUBSCRIPTION_START]]
-- Produit: Créatine | VariantID: gid://shopify/ProductVariant/123 | Dose: 1/jour | Packs: 1/mois | Prix: 26.99$ (-10%)
-- Produit: Ashwagandha | VariantID: gid://shopify/ProductVariant/456 | Dose: 1/jour | Packs: 1/mois | Prix: 22.49$ (-10%)
-[[SUBSCRIPTION_END]]
-
-💰 TOTAL: 49.48$/mois (économie de 5.50$)
-
-👉 Clique sur "Créer mon abonnement" pour finaliser !
-```
+**Ajustements additionnels :**
+- Réduire le padding vertical des cartes
+- Accélérer les transitions d'animation (de 0.6s à 0.4s)
 
 ---
 
-### Problème 3 : Bouton Abonnement → Checkout Shopify
+### 3. Supprimer la section Témoignages
 
-**Cause :**
-Le `SubscriptionCard` affiche un toast informatif au lieu de créer un vrai panier Shopify.
+**Situation actuelle :**
+La section `TestimonialsSection` affiche 5 faux témoignages avec métriques inventées.
+
+**Fichier : `src/pages/Index.tsx`**
 
 **Solution :**
-Modifier le composant pour :
-1. Parser les variant IDs depuis la réponse IA
-2. Créer un cart Shopify avec les quantités calculées
-3. Rediriger vers le checkout avec la remise appliquée
-
-**Fichier : `src/components/dashboard/SubscriptionCard.tsx`**
+Retirer l'import et le composant de la homepage.
 
 ```typescript
-const handleCreateSubscription = async () => {
-  setIsCreating(true);
-  try {
-    // Créer le panier Shopify avec les produits
-    const items = subscription.items.map(item => ({
-      variantId: item.variantId, // Récupéré depuis la réponse IA
-      quantity: item.packsPerMonth,
-    }));
-
-    const result = await createShopifyCart(items);
-    
-    if (result?.checkoutUrl) {
-      // Ouvrir le checkout dans un nouvel onglet
-      window.open(result.checkoutUrl, '_blank');
-      toast.success("Panier créé ! Finalise ton achat.");
-    }
-  } catch (error) {
-    toast.error("Erreur lors de la création du panier");
-  } finally {
-    setIsCreating(false);
-  }
-};
+// Supprimer ces lignes :
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+// ...
+<TestimonialsSection />
 ```
 
-**Fichier : `src/lib/subscription-calculator.ts`**
+**Note :** Le fichier `TestimonialsSection.tsx` restera dans le projet pour une utilisation future avec de vrais témoignages.
 
-Ajouter le parsing du VariantID :
+---
 
-```typescript
-export interface ParsedSubscriptionItem {
-  productName: string;
-  variantId: string; // NOUVEAU
-  dosePerDay: number;
-  packsPerMonth: number;
-  priceAfterDiscount: number;
-  originalPrice: number;
-}
+### 4. Section Tarifs : Plus de détails + Tableau comparatif
 
-// Nouveau regex pour capturer VariantID
-const lineRegex = /Produit:\s*([^|]+)\s*\|\s*VariantID:\s*([^|]+)\s*\|\s*Dose:\s*(\d+)\/jour\s*\|\s*Packs:\s*(\d+)\/mois\s*\|\s*Prix:\s*([\d.]+)\$/gi;
+**Situation actuelle :**
+Deux cartes simples avec listes de fonctionnalités basiques.
+
+**Fichier : `src/components/sections/PricingSection.tsx`**
+
+**Nouvelle structure :**
+
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│                     Tarification simple                          │
+│              Choisissez votre niveau d'intelligence              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│   ┌──────────────────┐    ┌──────────────────┐                   │
+│   │    GRATUIT       │    │   PREMIUM IA ★   │                   │
+│   │      0€          │    │    7,99€/mois    │                   │
+│   │  [Features...]   │    │  [Features...]   │                   │
+│   └──────────────────┘    └──────────────────┘                   │
+│                                                                   │
+├─────────────────────────────────────────────────────────────────┤
+│           TABLEAU COMPARATIF DÉTAILLÉ                            │
+│                                                                   │
+│   Fonctionnalité               │ Gratuit │ Premium              │
+│   ─────────────────────────────┼─────────┼──────────            │
+│   Conversations IA / jour      │    5    │ Illimité             │
+│   Chat texte                   │    ✓    │    ✓                 │
+│   Fonctions vocales            │    ✗    │    ✓                 │
+│   Analyse documents (PDF)      │    ✗    │    ✓                 │
+│   Historique                   │  7 jours│ Illimité             │
+│   Recommandations personnalisées│ Basiques│ Avancées            │
+│   Suivi proactif temps réel    │    ✗    │    ✓                 │
+│   Support                      │ Standard│ Prioritaire          │
+│                                                                   │
+├─────────────────────────────────────────────────────────────────┤
+│   Note : L'abonnement aux compléments est proposé séparément     │
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+**Détails enrichis pour les plans :**
+
+| Plan | Nouvelles fonctionnalités détaillées |
+|------|--------------------------------------|
+| Gratuit | Conversations IA : 5/jour, Chat texte uniquement, Recommandations générales, Historique 7 jours, Pas de voix ni documents |
+| Premium | Conversations illimitées, Chat + Voix, Analyse PDF/photos, Suivi proactif, Historique illimité, Support prioritaire 24/7 |
+
+**Composants à ajouter :**
+- Tableau HTML/CSS avec composant `Table` de shadcn/ui
+- Icônes Check/X pour comparaison visuelle
+- Section "Questions fréquentes sur les tarifs" (optionnel)
 
 ---
 
 ### Récapitulatif des Fichiers
 
-| Action | Fichier | Priorité |
-|--------|---------|----------|
-| Modifier | `src/lib/shopify.ts` | **Critique** (produits invisibles) |
-| Modifier | `supabase/functions/ai-coach/index.ts` | Haute |
-| Modifier | `src/lib/subscription-calculator.ts` | Haute |
-| Modifier | `src/components/dashboard/SubscriptionCard.tsx` | Haute |
-
----
-
-### Flow Utilisateur Final
-
-```text
-1. Utilisateur: "Je veux un stack énergie + sommeil en abonnement"
-
-2. AI Coach:
-   - Identifie les produits recommandés (Créatine, Ashwagandha, Magnésium)
-   - Récupère les vrais IDs variants du catalogue
-   - Calcule: 1 dose/jour × 30 jours ÷ 30 doses/pack = 1 pack/mois
-   - Applique -10%: 29.99$ × 0.90 = 26.99$
-   - Génère le bloc [[SUBSCRIPTION_START]]...[[SUBSCRIPTION_END]]
-
-3. Interface:
-   - Parse la réponse et affiche SubscriptionCard
-   - Montre le récapitulatif avec prix barrés et remise
-   - Gros bouton "Créer mon abonnement"
-
-4. Clic sur bouton:
-   - Crée cart Shopify avec les variant IDs
-   - Ouvre checkout URL dans nouvel onglet
-   - Utilisateur finalise le paiement
-```
+| Action | Fichier | Impact |
+|--------|---------|--------|
+| Modifier | `src/components/sections/ProductPreviewSection.tsx` | Remplacer mockup par image |
+| Modifier | `src/components/sections/HowItWorksSection.tsx` | Réduire hauteur scroll |
+| Modifier | `src/pages/Index.tsx` | Supprimer TestimonialsSection |
+| Modifier | `src/components/sections/PricingSection.tsx` | Ajouter tableau comparatif |
+| Conserver | `src/components/sections/TestimonialsSection.tsx` | Ne pas supprimer (futur usage) |
 
 ---
 
 ### Ordre d'Implémentation
 
-1. **Correction critique** : Retirer `sellingPlanGroups` de PRODUCTS_QUERY → les produits s'affichent
-2. **Enrichir le catalogue IA** : Ajouter variant IDs + pack units au prompt
-3. **Parser VariantID** : Mettre à jour `parseSubscriptionBlock()`
-4. **Bouton Checkout** : Créer le cart Shopify avec redirection
-5. **Test end-to-end** : Demander un abonnement et vérifier le checkout
+1. **Supprimer Témoignages** - Modification rapide dans Index.tsx
+2. **Raccourcir scroll** - Ajuster la hauteur dans HowItWorksSection
+3. **Tableau tarifs** - Enrichir PricingSection avec comparaison détaillée
+4. **Screenshot Dashboard** - Capturer et intégrer l'image (nécessite capture préalable)
 
 ---
 
-### Note Importante
+### Note sur la Capture d'Écran
 
-**Remise 10% :** Shopify n'a pas de Selling Plans configurés (d'où l'erreur de permission). La remise sera affichée côté IA mais pas appliquée automatiquement au checkout Shopify. Options futures :
-- Configurer les Selling Plans dans Shopify Admin
-- Créer un code promo "ABONNEMENT10" à appliquer au checkout
-- Utiliser une app d'abonnement (Recharge, Bold, Appstle)
+Pour la capture du dashboard réel, deux options :
 
-Pour l'instant, le système créera un panier normal et l'IA mentionnera la remise comme "économie estimée".
+**Option A - Manuelle :**
+Vous capturez une image du dashboard depuis votre navigateur et l'uploadez dans le projet.
+
+**Option B - Automatisée :**
+Je peux prendre une capture via l'outil browser de Lovable et l'intégrer directement.
+
+Quelle option préférez-vous pour le screenshot ?

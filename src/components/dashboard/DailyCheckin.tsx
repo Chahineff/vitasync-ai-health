@@ -101,30 +101,48 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
       >
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-background rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-border"
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 20 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="glass-card-premium rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-border/50"
         >
-          {/* Header */}
-          <div className="p-6 border-b border-border flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-medium text-foreground">
-                Comment ça va aujourd'hui ?
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                {step + 1}/{totalSteps} - Suivi quotidien
-              </p>
+          {/* Header with gradient background */}
+          <div className="relative p-6 border-b border-border/30">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
+            <div className="relative flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-medium text-foreground">
+                  Comment ça va aujourd'hui ?
+                </h2>
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="flex gap-1">
+                    {Array.from({ length: totalSteps }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className={cn(
+                          "h-1.5 rounded-full transition-all duration-300",
+                          i === step ? "w-6 bg-primary" : i < step ? "w-3 bg-primary/50" : "w-3 bg-muted"
+                        )}
+                        layoutId={`step-${i}`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-xs text-muted-foreground ml-2">
+                    Étape {step + 1}/{totalSteps}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={dismissCheckin}
+                className="p-2.5 rounded-xl hover:bg-muted/50 transition-colors glass-card"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <button
-              onClick={dismissCheckin}
-              className="p-2 rounded-full hover:bg-muted/50 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
 
           {/* Content */}
@@ -133,16 +151,19 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
               {step === 0 && (
                 <motion.div
                   key="step-0"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  exit={{ opacity: 0, x: -30 }}
+                  transition={{ duration: 0.3 }}
                   className="space-y-6"
                 >
                   {/* Sleep Quality */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Moon className="w-5 h-5 text-primary" />
-                      <span className="font-medium">Comment as-tu dormi ?</span>
+                  <div className="space-y-4 p-4 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Moon className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="font-medium text-foreground">Comment as-tu dormi ?</span>
                     </div>
                     <div className="flex items-center gap-4">
                       <Slider
@@ -153,21 +174,28 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
                         step={1}
                         className="flex-1"
                       />
-                      <span className="text-2xl">
+                      <motion.span 
+                        key={sleepQuality}
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        className="text-3xl"
+                      >
                         {["😫", "😕", "😐", "😊", "😴"][sleepQuality - 1]}
-                      </span>
+                      </motion.span>
                     </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
+                    <div className="flex justify-between text-xs text-muted-foreground px-1">
                       <span>Très mal</span>
                       <span>Très bien</span>
                     </div>
                   </div>
 
                   {/* Energy Level */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Battery className="w-5 h-5 text-primary" />
-                      <span className="font-medium">Ton niveau d'énergie ?</span>
+                  <div className="space-y-4 p-4 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                        <Battery className="w-5 h-5 text-secondary" />
+                      </div>
+                      <span className="font-medium text-foreground">Ton niveau d'énergie ?</span>
                     </div>
                     <div className="flex items-center gap-4">
                       <Slider
@@ -178,11 +206,16 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
                         step={1}
                         className="flex-1"
                       />
-                      <span className="text-2xl">
+                      <motion.span 
+                        key={energyLevel}
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        className="text-3xl"
+                      >
                         {["🔋", "🪫", "⚡", "💪", "🚀"][energyLevel - 1]}
-                      </span>
+                      </motion.span>
                     </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
+                    <div className="flex justify-between text-xs text-muted-foreground px-1">
                       <span>Épuisé</span>
                       <span>En forme</span>
                     </div>
@@ -193,16 +226,19 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
               {step === 1 && (
                 <motion.div
                   key="step-1"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  exit={{ opacity: 0, x: -30 }}
+                  transition={{ duration: 0.3 }}
                   className="space-y-6"
                 >
                   {/* Stress Level */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Brain className="w-5 h-5 text-primary" />
-                      <span className="font-medium">Ton niveau de stress ?</span>
+                  <div className="space-y-4 p-4 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                        <Brain className="w-5 h-5 text-accent" />
+                      </div>
+                      <span className="font-medium text-foreground">Ton niveau de stress ?</span>
                     </div>
                     <div className="flex items-center gap-4">
                       <Slider
@@ -213,11 +249,16 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
                         step={1}
                         className="flex-1"
                       />
-                      <span className="text-2xl">
+                      <motion.span 
+                        key={stressLevel}
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        className="text-3xl"
+                      >
                         {["😌", "🙂", "😐", "😰", "🤯"][stressLevel - 1]}
-                      </span>
+                      </motion.span>
                     </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
+                    <div className="flex justify-between text-xs text-muted-foreground px-1">
                       <span>Zen</span>
                       <span>Très stressé</span>
                     </div>
@@ -225,25 +266,29 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
 
                   {/* Mood */}
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Sun className="w-5 h-5 text-primary" />
-                      <span className="font-medium">Comment te sens-tu globalement ?</span>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Sun className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="font-medium text-foreground">Comment te sens-tu globalement ?</span>
                     </div>
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="grid grid-cols-5 gap-2">
                       {moods.map((m) => (
-                        <button
+                        <motion.button
                           key={m.value}
                           onClick={() => setMood(m.value)}
+                          whileTap={{ scale: 0.95 }}
+                          whileHover={{ scale: 1.05 }}
                           className={cn(
-                            "px-4 py-2 rounded-full text-sm transition-all flex items-center gap-2",
+                            "flex flex-col items-center gap-1.5 p-3 rounded-xl text-sm transition-all duration-200 border-2",
                             mood === m.value
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted hover:bg-muted/80"
+                              ? "bg-primary/10 border-primary shadow-lg shadow-primary/20"
+                              : "bg-muted/30 border-transparent hover:border-primary/30 hover:bg-muted/50"
                           )}
                         >
-                          <span>{m.emoji}</span>
-                          <span>{m.label}</span>
-                        </button>
+                          <span className="text-2xl">{m.emoji}</span>
+                          <span className="text-xs text-muted-foreground">{m.label}</span>
+                        </motion.button>
                       ))}
                     </div>
                   </div>
@@ -253,40 +298,48 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
               {step === 2 && supplementsToAsk.length > 0 && (
                 <motion.div
                   key="step-2"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  exit={{ opacity: 0, x: -30 }}
+                  transition={{ duration: 0.3 }}
                   className="space-y-6"
                 >
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground text-center bg-muted/30 p-3 rounded-xl border border-border/30">
                     Ressentez-vous des effets de vos compléments ?
                   </p>
                   
-                  {supplementsToAsk.slice(0, 3).map((supplement) => (
-                    <div key={supplement.id} className="space-y-3">
-                      <p className="font-medium">{supplement.product_name}</p>
-                      <div className="flex gap-2">
+                  {supplementsToAsk.slice(0, 3).map((supplement, index) => (
+                    <motion.div 
+                      key={supplement.id} 
+                      className="space-y-3 p-4 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <p className="font-medium text-foreground">{supplement.product_name}</p>
+                      <div className="grid grid-cols-3 gap-2">
                         {[
                           { value: "positive", label: "Positif", emoji: "👍" },
                           { value: "neutral", label: "Aucun", emoji: "😐" },
                           { value: "negative", label: "Négatif", emoji: "👎" },
                         ].map((effect) => (
-                          <button
+                          <motion.button
                             key={effect.value}
                             onClick={() => handleSupplementFeedback(supplement.id, effect.value)}
+                            whileTap={{ scale: 0.95 }}
                             className={cn(
-                              "flex-1 px-3 py-2 rounded-xl text-sm transition-all flex flex-col items-center gap-1",
+                              "flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-sm transition-all duration-200 border-2",
                               supplementFeedback[supplement.id] === effect.value
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted hover:bg-muted/80"
+                                ? "bg-primary/10 border-primary"
+                                : "bg-background/50 border-transparent hover:border-primary/30"
                             )}
                           >
-                            <span>{effect.emoji}</span>
-                            <span>{effect.label}</span>
-                          </button>
+                            <span className="text-xl">{effect.emoji}</span>
+                            <span className="text-xs">{effect.label}</span>
+                          </motion.button>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </motion.div>
               )}
@@ -294,18 +347,18 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-border flex gap-3">
+          <div className="p-6 border-t border-border/30 bg-gradient-to-t from-muted/20 to-transparent flex gap-3">
             <Button
               variant="outline"
               onClick={dismissCheckin}
-              className="flex-1"
+              className="flex-1 rounded-xl h-12 border-border/50 hover:bg-muted/50"
             >
               Plus tard
             </Button>
             <Button
               onClick={handleNext}
               disabled={isSubmitting}
-              className="flex-1"
+              className="flex-1 rounded-xl h-12 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg shadow-primary/25"
             >
               {isSubmitting ? (
                 <motion.div

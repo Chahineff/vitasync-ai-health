@@ -88,19 +88,19 @@ function FeatureBlock({ feature, index }: FeatureBlockProps) {
   return (
     <motion.div
       ref={ref}
-      className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-12 items-center`}
+      className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-6 md:gap-8 lg:gap-12 items-center`}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.4 }}
     >
       {/* Text Block */}
       <motion.div 
         className="w-full lg:w-1/2"
-        initial={{ opacity: 0, x: isReversed ? 60 : -60 }}
+        initial={{ opacity: 0, x: isReversed ? 40 : -40 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <GlassCard className="h-full p-6 md:p-8 lg:p-10">
           {/* Icon with gradient background */}
@@ -135,21 +135,17 @@ function FeatureBlock({ feature, index }: FeatureBlockProps) {
           </p>
 
           {/* Details list with staggered animation */}
-          <ul className="space-y-3">
+          <ul className="space-y-3 stagger-children">
             {feature.details.map((detail, detailIndex) => (
-              <motion.li 
+              <li 
                 key={detailIndex}
                 className="flex items-start gap-3"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 + detailIndex * 0.1, duration: 0.4 }}
               >
                 <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0 mt-0.5`}>
                   <Check size={12} weight="bold" className="text-primary-foreground" />
                 </div>
                 <span className="text-sm text-foreground/70">{detail}</span>
-              </motion.li>
+              </li>
             ))}
           </ul>
         </GlassCard>
@@ -158,10 +154,10 @@ function FeatureBlock({ feature, index }: FeatureBlockProps) {
       {/* Image Block */}
       <motion.div 
         className="w-full lg:w-1/2"
-        initial={{ opacity: 0, x: isReversed ? -60 : 60 }}
+        initial={{ opacity: 0, x: isReversed ? -40 : 40 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+        transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
         style={{ y: imageY }}
       >
         <div className={`relative aspect-[4/3] rounded-3xl overflow-hidden bg-gradient-to-br ${feature.bgGradient}`}>
@@ -223,11 +219,11 @@ export function FeaturesSection() {
       <div className="container-custom">
         {/* Header */}
         <motion.div 
-          className="text-center mb-16 md:mb-24 px-2"
+          className="text-center mb-12 md:mb-16 lg:mb-24 px-2"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.4 }}
         >
           <span className="text-xs md:text-sm text-secondary uppercase tracking-widest mb-3 md:mb-4 block">
             Technologie de pointe
@@ -237,13 +233,13 @@ export function FeaturesSection() {
             <span className="gradient-text-reverse">comprend vraiment</span>
             {" "}votre corps
           </h2>
-          <p className="text-sm md:text-lg text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
+          <p className="text-sm md:text-base lg:text-lg text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
             Découvrez les fonctionnalités qui font de VitaSync le coach santé le plus avancé du marché.
           </p>
         </motion.div>
 
         {/* Features Grid - Zigzag layout */}
-        <div className="space-y-16 md:space-y-24 lg:space-y-32">
+        <div className="space-y-12 md:space-y-16 lg:space-y-24">
           {features.map((feature, index) => (
             <FeatureBlock key={feature.title} feature={feature} index={index} />
           ))}

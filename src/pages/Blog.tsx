@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 import { motion } from "framer-motion";
 import { ArrowRight, Clock, Tag } from "@phosphor-icons/react";
 
@@ -48,6 +49,7 @@ const articles = [
 const Blog = () => {
   return (
     <div className="min-h-screen bg-background">
+      <FloatingThemeToggle />
       <Navbar />
       <main>
         {/* Hero */}

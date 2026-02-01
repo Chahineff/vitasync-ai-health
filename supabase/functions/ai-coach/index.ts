@@ -22,13 +22,15 @@ async function fetchShopifyCatalog(): Promise<string> {
   try {
     const query = `
       query {
-        products(first: 50) {
+        products(first: 100) {
           edges {
             node {
               id
               title
               description
               productType
+              tags
+              vendor
               variants(first: 1) {
                 edges {
                   node {
@@ -37,6 +39,7 @@ async function fetchShopifyCatalog(): Promise<string> {
                       amount
                       currencyCode
                     }
+                    availableForSale
                   }
                 }
               }
@@ -67,32 +70,82 @@ async function fetchShopifyCatalog(): Promise<string> {
       return "Aucun produit dans le catalogue.";
     }
 
+    // Categorize products by type
+    const categories: Record<string, string[]> = {
+      "📦 PROTÉINES & MUSCLES": [],
+      "💊 VITAMINES & MINÉRAUX": [],
+      "🧠 NOOTROPIQUES & FOCUS": [],
+      "😴 SOMMEIL & RELAXATION": [],
+      "⚡ ÉNERGIE & PRE-WORKOUT": [],
+      "🏋️ PERFORMANCE & RÉCUPÉRATION": [],
+      "🍃 SANTÉ GÉNÉRALE": [],
+    };
+
     // Format catalog for the prompt with pack units estimation
-    const catalogLines = products.map((edge: { node: { id: string; title: string; description: string; productType: string; variants: { edges: Array<{ node: { id: string; price: { amount: string; currencyCode: string } } }> } } }) => {
+    const allProducts = products.map((edge: { node: { id: string; title: string; description: string; productType: string; tags: string[]; vendor: string; variants: { edges: Array<{ node: { id: string; price: { amount: string; currencyCode: string }; availableForSale: boolean } }> } } }) => {
       const p = edge.node;
       const variant = p.variants.edges[0]?.node;
       const price = variant?.price?.amount || '0';
       const productId = p.id.split('/').pop();
       const variantId = variant?.id || '';
+      const inStock = variant?.availableForSale ? '✓ En stock' : '⚠ Rupture';
+      const tags = p.tags || [];
       
       // Estimate pack_units based on product type
       let packUnits = 30; // Default
       const title = p.title.toLowerCase();
+      const productType = (p.productType || '').toLowerCase();
+      
       if (title.includes('powder') || title.includes('poudre') || title.includes('whey') || title.includes('pre-workout')) {
         packUnits = 30; // ~30 scoops
       } else if (title.includes('capsule') || title.includes('gummies') || title.includes('omega') || title.includes('vitamin')) {
         packUnits = 60; // Often 60 capsules
       }
       
-      return `- ${p.title}
-    ProductID: ${productId}
-    VariantID: ${variantId}
-    Prix: ${price}$
-    Pack: ~${packUnits} doses/boîte
-    Pour abonnement: [[PRODUCT:${productId}:${variantId}:${p.title}:${price}]]`;
+      // Categorize
+      let category = "🍃 SANTÉ GÉNÉRALE";
+      if (productType.includes('protein') || title.includes('whey') || title.includes('protéine') || title.includes('creatine')) {
+        category = "📦 PROTÉINES & MUSCLES";
+      } else if (productType.includes('vitamin') || title.includes('vitamin') || title.includes('zinc') || title.includes('magnes')) {
+        category = "💊 VITAMINES & MINÉRAUX";
+      } else if (title.includes('focus') || title.includes('nootropic') || title.includes('brain') || title.includes('alpha-gpc') || title.includes('lion')) {
+        category = "🧠 NOOTROPIQUES & FOCUS";
+      } else if (title.includes('sleep') || title.includes('sommeil') || title.includes('melatonin') || title.includes('5-htp') || title.includes('ashwagandha')) {
+        category = "😴 SOMMEIL & RELAXATION";
+      } else if (title.includes('pre-workout') || title.includes('energy') || title.includes('caffeine') || title.includes('boost')) {
+        category = "⚡ ÉNERGIE & PRE-WORKOUT";
+      } else if (title.includes('bcaa') || title.includes('recovery') || title.includes('glutamine') || title.includes('collagen')) {
+        category = "🏋️ PERFORMANCE & RÉCUPÉRATION";
+      }
+      
+      const productLine = `- ${p.title} | ${inStock} | ${price}$ | ~${packUnits} doses
+    ProductID: ${productId} | VariantID: ${variantId}
+    Tags: ${tags.slice(0, 3).join(', ') || 'N/A'}
+    Pour recommander: [[PRODUCT:${productId}:${variantId}:${p.title}:${price}]]`;
+      
+      // Add to category
+      if (categories[category]) {
+        categories[category].push(productLine);
+      } else {
+        categories["🍃 SANTÉ GÉNÉRALE"].push(productLine);
+      }
+      
+      return productLine;
     });
 
-    return catalogLines.join('\n\n');
+    // Build categorized output
+    const categorizedCatalog = Object.entries(categories)
+      .filter(([_, items]) => items.length > 0)
+      .map(([category, items]) => `${category}:\n${items.join('\n\n')}`)
+      .join('\n\n═══════════════════════════════════════════════\n\n');
+
+    return `CATALOGUE VITASYNC (${products.length} produits disponibles)
+═══════════════════════════════════════════════
+
+${categorizedCatalog}
+
+═══════════════════════════════════════════════
+RAPPEL: Utilise [[PRODUCT:id:variantId:nom:prix]] pour recommander`;
   } catch (error) {
     console.error("Error fetching Shopify catalog:", error);
     return "Catalogue non disponible.";

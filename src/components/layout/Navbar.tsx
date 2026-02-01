@@ -1,35 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { List, X, MagnifyingGlass, Bell, ChatCircle } from "@phosphor-icons/react";
+import { List, X } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
-import vitasyncLogo from "@/assets/vitasync-logo.svg";
-const navLinks = [{
-  href: "#how-it-works",
-  label: "Comment ça marche"
-}, {
-  href: "#features",
-  label: "Fonctionnalités"
-}, {
-  href: "#testimonials",
-  label: "Témoignages"
-}, {
-  href: "#pricing",
-  label: "Tarifs"
-}, {
-  href: "#faq",
-  label: "FAQ"
-}];
-const pageLinks = [{
-  href: "/about",
-  label: "À propos"
-}, {
-  href: "/blog",
-  label: "Blog"
-}, {
-  href: "/contact",
-  label: "Contact"
-}];
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
+import { useTranslation } from "@/hooks/useTranslation";
 export function Navbar() {
+  const { t } = useTranslation();
+  
+  const navLinks = [
+    { href: "#how-it-works", labelKey: "nav.howItWorks" },
+    { href: "#features", labelKey: "nav.features" },
+    { href: "#pricing", labelKey: "nav.pricing" },
+    { href: "#faq", labelKey: "nav.faq" },
+  ];
+  
+  const pageLinks = [
+    { href: "/about", labelKey: "nav.about" },
+    { href: "/blog", labelKey: "nav.blog" },
+    { href: "/contact", labelKey: "nav.contact" },
+  ];
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -75,28 +64,36 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
-              {navLinks.map(link => <a key={link.href} href={link.href} onClick={e => handleAnchorClick(e, link.href)} className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200">
-                  {link.label}
-                </a>)}
+              {navLinks.map(link => (
+                <a 
+                  key={link.href} 
+                  href={link.href} 
+                  onClick={e => handleAnchorClick(e, link.href)} 
+                  className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200"
+                >
+                  {t(link.labelKey)}
+                </a>
+              ))}
               <div className="w-px h-5 bg-border" />
-              {pageLinks.map(link => <Link key={link.href} to={link.href} className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200">
-                  {link.label}
-                </Link>)}
+              {pageLinks.map(link => (
+                <Link 
+                  key={link.href} 
+                  to={link.href} 
+                  className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200"
+                >
+                  {t(link.labelKey)}
+                </Link>
+              ))}
             </div>
 
-            {/* Right Side - Search, Notifications, CTA */}
+            {/* Right Side - Language, CTA */}
             <div className="hidden lg:flex items-center gap-3">
-              {/* Expandable Search Bar */}
-              
-
-
-              
-
+              <LanguageSelector />
               <Link to="/auth?mode=signin" className="px-4 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all">
-                Se connecter
+                {t("nav.signin")}
               </Link>
               <Link to="/auth?mode=signup" className="btn-neumorphic text-primary-foreground">
-                Démarrer
+                {t("nav.start")}
               </Link>
             </div>
 
@@ -137,41 +134,49 @@ export function Navbar() {
                 </div>
                 
                 <div className="flex flex-col gap-4">
-                  {navLinks.map((link, index) => <motion.a key={link.href} href={link.href} initial={{
-                opacity: 0,
-                x: 20
-              }} animate={{
-                opacity: 1,
-                x: 0
-              }} transition={{
-                delay: index * 0.05
-              }} onClick={e => handleAnchorClick(e, link.href)} className="text-lg text-foreground/70 hover:text-foreground transition-colors py-2 border-b border-border/50">
-                      {link.label}
-                    </motion.a>)}
+                  {navLinks.map((link, index) => (
+                    <motion.a 
+                      key={link.href} 
+                      href={link.href} 
+                      initial={{ opacity: 0, x: 20 }} 
+                      animate={{ opacity: 1, x: 0 }} 
+                      transition={{ delay: index * 0.05 }} 
+                      onClick={e => handleAnchorClick(e, link.href)} 
+                      className="text-lg text-foreground/70 hover:text-foreground transition-colors py-2 border-b border-border/50"
+                    >
+                      {t(link.labelKey)}
+                    </motion.a>
+                  ))}
                   
                   <div className="my-4" />
                   
-                  {pageLinks.map((link, index) => <motion.div key={link.href} initial={{
-                opacity: 0,
-                x: 20
-              }} animate={{
-                opacity: 1,
-                x: 0
-              }} transition={{
-                delay: (navLinks.length + index) * 0.05
-              }}>
-                      <Link to={link.href} onClick={() => setIsMobileMenuOpen(false)} className="text-lg text-foreground/70 hover:text-foreground transition-colors py-2 block border-b border-border/50">
-                        {link.label}
+                  {pageLinks.map((link, index) => (
+                    <motion.div 
+                      key={link.href} 
+                      initial={{ opacity: 0, x: 20 }} 
+                      animate={{ opacity: 1, x: 0 }} 
+                      transition={{ delay: (navLinks.length + index) * 0.05 }}
+                    >
+                      <Link 
+                        to={link.href} 
+                        onClick={() => setIsMobileMenuOpen(false)} 
+                        className="text-lg text-foreground/70 hover:text-foreground transition-colors py-2 block border-b border-border/50"
+                      >
+                        {t(link.labelKey)}
                       </Link>
-                    </motion.div>)}
+                    </motion.div>
+                  ))}
                 </div>
 
                 <div className="mt-auto space-y-3">
+                  <div className="flex justify-center mb-4">
+                    <LanguageSelector />
+                  </div>
                   <Link to="/auth?mode=signin" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center px-4 py-3 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all border border-border/50">
-                    Se connecter
+                    {t("nav.signin")}
                   </Link>
                   <Link to="/auth?mode=signup" onClick={() => setIsMobileMenuOpen(false)} className="btn-neumorphic text-primary-foreground w-full text-center block">
-                    Démarrer gratuitement
+                    {t("nav.startFree")}
                   </Link>
                 </div>
               </div>

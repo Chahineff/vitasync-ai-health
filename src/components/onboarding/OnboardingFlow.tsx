@@ -417,16 +417,32 @@ export function OnboardingFlow() {
               <motion.button
                 key={opt.value}
                 onClick={() => handleSelect(opt.value)}
-                whileTap={{ scale: 0.98 }}
+                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.02 }}
                 className={cn(
-                  "p-6 rounded-2xl border text-center transition-all",
+                  "group relative p-6 rounded-2xl border-2 text-center transition-all duration-300",
+                  "backdrop-blur-sm shadow-sm hover:shadow-lg",
                   answers[q.id] === opt.value
-                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
-                    : "border-border bg-card/50 hover:border-primary/50 hover:bg-card"
+                    ? "border-primary bg-primary/5 shadow-lg shadow-primary/20"
+                    : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
                 )}
               >
-                <span className="text-3xl mb-3 block">{opt.emoji}</span>
-                <span className="text-sm font-medium">{opt.label}</span>
+                <motion.span 
+                  className="text-4xl mb-3 block group-hover:scale-110 transition-transform duration-200"
+                  animate={answers[q.id] === opt.value ? { scale: [1, 1.1, 1] } : {}}
+                >
+                  {opt.emoji}
+                </motion.span>
+                <span className="text-sm font-medium text-foreground">{opt.label}</span>
+                {answers[q.id] === opt.value && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
+                  >
+                    <Check className="w-3.5 h-3.5 text-primary-foreground" />
+                  </motion.div>
+                )}
               </motion.button>
             ))}
           </div>
@@ -462,25 +478,46 @@ export function OnboardingFlow() {
       return (
         <div className="space-y-4">
           {q.maxSelections && (
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-xs text-muted-foreground text-center bg-muted/30 px-3 py-2 rounded-full inline-flex mx-auto">
               {(answers[q.id] || []).length}/{q.maxSelections} sélectionnés
             </p>
           )}
           <div className="grid grid-cols-2 gap-3">
-            {q.options?.map((opt) => (
+            {q.options?.map((opt, index) => (
               <motion.button
                 key={opt.value}
                 onClick={() => handleSelect(opt.value)}
-                whileTap={{ scale: 0.98 }}
+                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.02 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.03 }}
                 className={cn(
-                  "p-4 rounded-2xl border text-left transition-all",
+                  "group relative p-4 rounded-2xl border-2 text-left transition-all duration-300",
+                  "backdrop-blur-sm shadow-sm hover:shadow-md",
                   isOptionSelected(opt.value)
-                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
-                    : "border-border bg-card/50 hover:border-primary/50 hover:bg-card"
+                    ? "border-primary bg-primary/5 shadow-lg shadow-primary/15"
+                    : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
                 )}
               >
-                <span className="text-2xl mb-2 block">{opt.emoji}</span>
-                <span className="text-sm font-medium">{opt.label}</span>
+                <div className="flex items-center gap-3">
+                  <motion.span 
+                    className="text-2xl group-hover:scale-110 transition-transform duration-200"
+                    animate={isOptionSelected(opt.value) ? { scale: [1, 1.1, 1] } : {}}
+                  >
+                    {opt.emoji}
+                  </motion.span>
+                  <span className="text-sm font-medium text-foreground">{opt.label}</span>
+                </div>
+                {isOptionSelected(opt.value) && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                  >
+                    <Check className="w-3 h-3 text-primary-foreground" />
+                  </motion.div>
+                )}
               </motion.button>
             ))}
           </div>
@@ -492,20 +529,39 @@ export function OnboardingFlow() {
     if (q.type === "single") {
       return (
         <div className="grid grid-cols-2 gap-3">
-          {q.options?.map((opt) => (
+          {q.options?.map((opt, index) => (
             <motion.button
               key={opt.value}
               onClick={() => handleSelect(opt.value)}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.03 }}
               className={cn(
-                "p-4 rounded-2xl border text-left transition-all",
+                "group relative p-4 rounded-2xl border-2 text-left transition-all duration-300",
+                "backdrop-blur-sm shadow-sm hover:shadow-md",
                 isOptionSelected(opt.value)
-                  ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
-                  : "border-border bg-card/50 hover:border-primary/50 hover:bg-card"
+                  ? "border-primary bg-primary/5 shadow-lg shadow-primary/15"
+                  : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
               )}
             >
-              <span className="text-2xl mb-2 block">{opt.emoji}</span>
-              <span className="text-sm font-medium">{opt.label}</span>
+              <motion.span 
+                className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200"
+                animate={isOptionSelected(opt.value) ? { scale: [1, 1.1, 1] } : {}}
+              >
+                {opt.emoji}
+              </motion.span>
+              <span className="text-sm font-medium text-foreground">{opt.label}</span>
+              {isOptionSelected(opt.value) && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                >
+                  <Check className="w-3 h-3 text-primary-foreground" />
+                </motion.div>
+              )}
             </motion.button>
           ))}
         </div>

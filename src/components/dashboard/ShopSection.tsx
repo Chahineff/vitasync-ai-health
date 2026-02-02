@@ -6,7 +6,11 @@ import { ProductCard } from './ProductCard';
 import { CartDrawer } from './CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
 
-export function ShopSection() {
+interface ShopSectionProps {
+  onProductSelect?: (handle: string) => void;
+}
+
+export function ShopSection({ onProductSelect }: ShopSectionProps) {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -125,7 +129,10 @@ export function ShopSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <ProductCard product={product} />
+                <ProductCard 
+                  product={product} 
+                  onProductClick={onProductSelect}
+                />
               </motion.div>
             ))}
           </motion.div>

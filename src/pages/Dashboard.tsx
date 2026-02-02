@@ -13,11 +13,12 @@ import { SupplementTrackerEnhanced } from "@/components/dashboard/SupplementTrac
 import ProgressChart from "@/components/dashboard/ProgressChart";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ShopSection } from "@/components/dashboard/ShopSection";
+import { ProductDetailSection } from "@/components/dashboard/ProductDetailSection";
 import { DailyCheckin } from "@/components/dashboard/DailyCheckin";
 import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
-type Section = "home" | "coach" | "supplements" | "shop" | "settings" | "help";
+type Section = "home" | "coach" | "supplements" | "shop" | "product" | "settings" | "help";
 // Custom VitaSync icon component for Coach IA
 const VitaSyncIcon = ({ className, weight }: { className?: string; weight?: string }) => (
   <img 
@@ -76,6 +77,7 @@ const Dashboard = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasInteractedWithCoach, setHasInteractedWithCoach] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
   
   // Redirect to auth if not logged in
   useEffect(() => {
@@ -94,13 +96,26 @@ const Dashboard = () => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));
   }, [sidebarCollapsed]);
   const handleSectionChange = (section: Section) => {
-    if (section === activeSection) return;
+    if (section === activeSection && section !== "product") return;
     setIsTransitioning(true);
     setSidebarOpen(false);
+    if (section !== "product") {
+      setSelectedProductHandle(null);
+    }
     setTimeout(() => {
       setActiveSection(section);
       setIsTransitioning(false);
     }, 150);
+  };
+  
+  const handleProductSelect = (handle: string) => {
+    setSelectedProductHandle(handle);
+    handleSectionChange("product");
+  };
+  
+  const handleBackToShop = () => {
+    setSelectedProductHandle(null);
+    handleSectionChange("shop");
   };
   const handleSignOut = async () => {
     await signOut();
@@ -265,7 +280,21 @@ const Dashboard = () => {
           }} exit={{
             opacity: 0
           }} className="h-full">
-                  <ShopSection />
+                  <ShopSection onProductSelect={handleProductSelect} />
+                </motion.div>}
+              {activeSection === "product" && selectedProductHandle && <motion.div key="product" initial={{
+            opacity: 0,
+            y: 10
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} exit={{
+            opacity: 0
+          }} className="h-full">
+                  <ProductDetailSection 
+                    handle={selectedProductHandle} 
+                    onBack={handleBackToShop}
+                  />
                 </motion.div>}
               {activeSection === "settings" && <motion.div key="settings" initial={{
             opacity: 0,

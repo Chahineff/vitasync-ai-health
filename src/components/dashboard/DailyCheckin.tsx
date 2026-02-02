@@ -111,13 +111,15 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
       <SuccessCheckmark isVisible={showSuccess} />
       
       <AnimatePresence>
-        <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/70 backdrop-blur-xl z-50 flex items-center justify-center p-4"
-      >
-        <motion.div
+        {showCheckinModal && (
+          <motion.div
+            key="checkin-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-xl z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
           initial={{ scale: 0.9, opacity: 0, y: 30 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 30 }}
@@ -469,7 +471,8 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
           </div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
     </>
   );
 }

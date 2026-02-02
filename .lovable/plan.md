@@ -1,49 +1,146 @@
 
+# Plan d'amelioration des fiches produits VitaSync
 
-# Plan de correction : Intégration Shopify complète
+## Probleme principal identifie
 
-## Problèmes identifiés
+Actuellement, quand on clique sur un produit depuis la boutique du dashboard, on est redirige vers `/product/:handle` qui est une page independante, sans la sidebar du dashboard. La sidebar disparait completement.
 
-Après analyse des logs réseau, j'ai identifié les problèmes suivants :
+## Solution proposee
 
-1. **Token Storefront vide** : La requête Shopify échoue avec une erreur 400 car l'en-tête `X-Shopify-Storefront-Access-Token` est vide
-2. **Limite de produits** : Le code charge seulement 50 produits au lieu de vos 73
-3. **Variables d'environnement** : Le token `VITE_SHOPIFY_STOREFRONT_TOKEN` n'est pas correctement utilisé
+### Architecture : Page produit integree au Dashboard
 
-## Solution proposée
+Au lieu d'utiliser une route separee `/product/:handle`, je propose d'integrer l'affichage des produits directement dans le dashboard, comme une nouvelle section. Cela garantit que la sidebar reste toujours visible.
 
-### Étape 1 : Corriger la configuration du token Storefront
+### Etape 1 : Creer un composant ProductDetailSection
 
-Modifier `src/lib/shopify.ts` pour utiliser le token Storefront correctement en récupérant la valeur directe au lieu de dépendre uniquement des variables d'environnement potentiellement mal configurées :
+Nouveau fichier : `src/components/dashboard/ProductDetailSection.tsx`
+
+Ce composant sera affiche dans le dashboard quand on clique sur un produit. Il contiendra :
+
+**Zone Image (gauche sur desktop)**
+- Galerie d'images avec navigation par miniatures
+- Image principale avec animation de transition
+- Badge "Recommande par l'IA" si applicable
+- Zoom au survol (optionnel)
+
+**Zone Informations (droite sur desktop)**
+- Marque (vendor) en petit au-dessus du titre
+- Titre du produit en grand
+- Badge de categorie (productType)
+- Prix avec indication de devise
+- Selecteur de variantes (si plusieurs disponibles)
+- Statut de disponibilite
+- Boutons d'action :
+  - Ajouter au panier (principal)
+  - Ajouter au suivi des complements
+
+**Onglets d'information detaillee**
+1. **Description** : HTML complet depuis Shopify avec mise en forme
+2. **Bienfaits** : Liste extraite depuis les metafields ou parsee depuis la description
+3. **Ingredients** : Liste complete extraite depuis la description HTML
+4. **Utilisation** : Dosage recommande et conseils d'utilisation
+5. **Informations** : Pays de fabrication, poids, avertissements
+
+### Etape 2 : Parser les donnees riches depuis Shopify
+
+Les descriptions Shopify contiennent des informations structurees :
+- **Ingredients** : Section "Ingredients:" dans le HTML
+- **Suggested Use** : Section "Suggested Use:" 
+- **Product Amount** : Section "Product Amount:"
+- **Caution/Warning** : Sections d'avertissement
+- **Manufacturer Country** : Pays de fabrication
+
+Je vais creer des fonctions utilitaires pour extraire ces donnees :
 
 ```text
-Fichier: src/lib/shopify.ts
-- Utiliser le token fourni par Lovable/Shopify intégré
-- Ajouter une meilleure gestion des erreurs pour diagnostiquer les problèmes de token
+Fichier: src/lib/shopify-parser.ts
+- extractIngredients(htmlDescription)
+- extractSuggestedUse(htmlDescription)
+- extractProductAmount(htmlDescription)
+- extractManufacturerCountry(htmlDescription)
+- extractWarnings(htmlDescription)
+- extractCertifications(htmlDescription) - pour les badges (Gluten-free, etc.)
 ```
 
-### Étape 2 : Augmenter la limite de produits à 100
+### Etape 3 : Modifier le Dashboard pour supporter la navigation produit
 
-Modifier `src/components/dashboard/ShopSection.tsx` :
-- Changer `fetchProducts(50)` en `fetchProducts(100)` pour charger tous vos 73 produits
+Modifications dans `src/pages/Dashboard.tsx` :
+- Ajouter un nouvel etat `selectedProductHandle`
+- Ajouter une section conditionnelle pour afficher `ProductDetailSection`
+- Le bouton retour ramene a la boutique
 
-### Étape 3 : Mettre à jour l'Edge Function AI-Coach
+```text
+Type Section etendu:
+"home" | "coach" | "supplements" | "shop" | "product" | "settings" | "help"
+```
 
-Modifier `supabase/functions/ai-coach/index.ts` :
-- S'assurer que la fonction récupère les 100 produits pour que le Coach IA ait accès à l'intégralité du catalogue
+### Etape 4 : Modifier ProductCard pour navigation interne
 
-## Résumé des modifications
+Modifications dans `src/components/dashboard/ProductCard.tsx` :
+- Au lieu de `<Link to="/product/...">`, utiliser un callback `onProductClick`
+- Propager le handle vers le parent pour changer la section
 
-| Fichier | Modification |
-|---------|--------------|
-| `src/lib/shopify.ts` | Utiliser le token Storefront correct avec fallback sécurisé |
-| `src/components/dashboard/ShopSection.tsx` | Augmenter la limite de 50 à 100 produits |
-| `supabase/functions/ai-coach/index.ts` | Confirmer la limite de 100 produits (déjà en place) |
+### Etape 5 : Modifier ShopSection pour gerer la selection
 
-## Résultat attendu
+Modifications dans `src/components/dashboard/ShopSection.tsx` :
+- Ajouter prop `onProductSelect(handle: string)`
+- Passer cette prop aux ProductCard
 
-- Tous les 73 produits seront affichés dans la boutique
-- La recherche et les filtres par catégorie fonctionneront
-- Le Coach IA aura accès à l'intégralité du catalogue
-- Ajout au panier et fiches produit fonctionnels
+## Structure de la nouvelle fiche produit
 
+```text
++------------------------------------------------------------------+
+|  [←] Retour a la boutique                    [Panier] [Favoris]  |
++------------------------------------------------------------------+
+|                                                                   |
+|  +------------------------+   +--------------------------------+  |
+|  |                        |   | VITASYNC                       |  |
+|  |    IMAGE PRINCIPALE    |   | Titre du Produit               |  |
+|  |                        |   | [Specialty Supplements]        |  |
+|  |                        |   |                                |  |
+|  |                        |   | 19.90 EUR                      |  |
+|  +------------------------+   |                                |  |
+|  [min1] [min2] [min3]         | Variante: [Option 1] [Option 2]|  |
+|                               |                                |  |
+|                               | [+ Ajouter au panier]  [Suivi] |  |
+|                               +--------------------------------+  |
+|                                                                   |
+|  +--------------------------------------------------------------+ |
+|  | [Description] [Bienfaits] [Ingredients] [Utilisation] [Info] | |
+|  +--------------------------------------------------------------+ |
+|  |                                                               | |
+|  |  Contenu de l'onglet selectionne...                          | |
+|  |                                                               | |
+|  |  - Point 1                                                    | |
+|  |  - Point 2                                                    | |
+|  |  - Point 3                                                    | |
+|  |                                                               | |
+|  +--------------------------------------------------------------+ |
+|                                                                   |
+|  +--------------------------------------------------------------+ |
+|  | Certifications: [Gluten-free] [Lactose-free] [All Natural]   | |
+|  +--------------------------------------------------------------+ |
++------------------------------------------------------------------+
+```
+
+## Fichiers a creer/modifier
+
+| Fichier | Action | Description |
+|---------|--------|-------------|
+| `src/lib/shopify-parser.ts` | Creer | Fonctions d'extraction des donnees structurees |
+| `src/components/dashboard/ProductDetailSection.tsx` | Creer | Nouveau composant fiche produit complete |
+| `src/pages/Dashboard.tsx` | Modifier | Ajouter section "product" et gestion navigation |
+| `src/components/dashboard/ShopSection.tsx` | Modifier | Ajouter callback onProductSelect |
+| `src/components/dashboard/ProductCard.tsx` | Modifier | Navigation interne au lieu de lien externe |
+
+## Avantages de cette approche
+
+1. **Sidebar toujours visible** : L'utilisateur reste dans le contexte du dashboard
+2. **Navigation fluide** : Pas de rechargement de page
+3. **Donnees enrichies** : Extraction automatique des ingredients, dosage, etc.
+4. **Coherence UX** : Meme design glass-card que le reste du dashboard
+5. **Acces rapide** : Bouton retour ramene directement a la boutique
+
+## Note technique
+
+La route `/product/:handle` existante sera conservee pour l'acces direct par URL (partage, SEO), mais la navigation depuis le dashboard utilisera le systeme de sections internes.

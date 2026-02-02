@@ -22,7 +22,7 @@ export function ShopSection() {
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const data = await fetchProducts(50);
+      const data = await fetchProducts(100);
       setProducts(data);
     } catch (error) {
       console.error('Failed to load products:', error);

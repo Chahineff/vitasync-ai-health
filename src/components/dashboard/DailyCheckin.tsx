@@ -7,6 +7,7 @@ import { useDailyCheckin } from "@/hooks/useDailyCheckin";
 import { useSupplementTracking } from "@/hooks/useSupplementTracking";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Confetti, SuccessCheckmark } from "@/components/ui/Confetti";
 
 interface DailyCheckinProps {
   onComplete?: () => void;
@@ -23,6 +24,7 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
   const [mood, setMood] = useState<string | null>(null);
   const [supplementFeedback, setSupplementFeedback] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Pre-fill values if editing existing check-in
   useEffect(() => {
@@ -68,14 +70,21 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
 
     if (error) {
       toast.error("Erreur lors de l'enregistrement");
+      setIsSubmitting(false);
     } else {
-      toast.success("Check-in enregistré !", {
-        description: "Merci pour votre suivi quotidien",
-      });
-      onComplete?.();
+      // Show success animation
+      setShowSuccess(true);
+      
+      // Wait for animation then close
+      setTimeout(() => {
+        toast.success("Check-in enregistré !", {
+          description: "Merci pour votre suivi quotidien",
+        });
+        setShowSuccess(false);
+        setIsSubmitting(false);
+        onComplete?.();
+      }, 2000);
     }
-    
-    setIsSubmitting(false);
   };
 
   const handleNext = () => {
@@ -96,8 +105,13 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
   if (!showCheckinModal) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
+    <>
+      {/* Success animations */}
+      <Confetti isActive={showSuccess} />
+      <SuccessCheckmark isVisible={showSuccess} />
+      
+      <AnimatePresence>
+        <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -456,5 +470,6 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
         </motion.div>
       </motion.div>
     </AnimatePresence>
+    </>
   );
 }

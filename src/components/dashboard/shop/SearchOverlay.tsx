@@ -1,0 +1,207 @@
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MagnifyingGlass, X, ShoppingCart } from '@phosphor-icons/react';
+import { ShopifyProduct } from '@/lib/shopify';
+import { useTranslation } from '@/hooks/useTranslation';
+
+interface SearchOverlayProps {
+  products: ShopifyProduct[];
+  onProductSelect: (handle: string) => void;
+  onSearch: (query: string) => void;
+}
+
+export function SearchOverlay({ products, onProductSelect, onSearch }: SearchOverlayProps) {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Filter products based on search query
+  const searchResults = query.trim().length >= 2
+    ? products.filter(product => {
+        const searchLower = query.toLowerCase().trim();
+        const words = searchLower.split(/\s+/);
+        
+        const title = product.node.title.toLowerCase();
+        const description = (product.node.description || '').toLowerCase();
+        const productType = (product.node.productType || '').toLowerCase();
+
+        // All words must match in title, description, or product type
+        return words.every(word => 
+          title.includes(word) || 
+          description.includes(word) ||
+          productType.includes(word)
+        );
+      }).slice(0, 6)
+    : [];
+
+  // Close on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  // Focus input when opening
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  const handleInputChange = (value: string) => {
+    setQuery(value);
+    onSearch(value);
+  };
+
+  const handleProductClick = (handle: string) => {
+    setIsOpen(false);
+    setQuery('');
+    onProductSelect(handle);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setQuery('');
+    onSearch('');
+  };
+
+  const handleViewAll = () => {
+    setIsOpen(false);
+    // Keep the search query active in the main grid
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      {/* Search trigger / input */}
+      <motion.div
+        animate={{ width: isOpen ? '100%' : 'auto' }}
+        className="relative"
+      >
+        <div 
+          className={`relative flex items-center transition-all duration-300 ${
+            isOpen 
+              ? 'w-full md:w-80' 
+              : 'w-10 md:w-64'
+          }`}
+        >
+          <MagnifyingGlass 
+            className={`absolute left-3 w-4 h-4 text-foreground/40 pointer-events-none z-10 ${
+              !isOpen ? 'md:block hidden' : ''
+            }`} 
+          />
+          
+          {/* Mobile: Icon button when closed */}
+          {!isOpen && (
+            <button
+              onClick={() => setIsOpen(true)}
+              className="md:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <MagnifyingGlass className="w-5 h-5 text-foreground/60" />
+            </button>
+          )}
+
+          {/* Desktop: Always show input, mobile: show when open */}
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => handleInputChange(e.target.value)}
+            onFocus={() => setIsOpen(true)}
+            placeholder={t("shop.search")}
+            className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 focus:bg-white/10 focus:outline-none text-sm text-foreground placeholder:text-foreground/40 font-light transition-all ${
+              isOpen ? 'block' : 'hidden md:block'
+            }`}
+          />
+
+          {/* Clear button */}
+          {isOpen && query && (
+            <button
+              onClick={handleClose}
+              className="absolute right-3 p-1 rounded-full hover:bg-white/10 transition-colors"
+            >
+              <X className="w-4 h-4 text-foreground/40" />
+            </button>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Results dropdown */}
+      <AnimatePresence>
+        {isOpen && query.trim().length >= 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-background/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 min-w-[300px] md:min-w-[320px]"
+          >
+            {searchResults.length === 0 ? (
+              <div className="p-6 text-center">
+                <ShoppingCart weight="light" className="w-10 h-10 text-foreground/20 mx-auto mb-2" />
+                <p className="text-sm text-foreground/60">{t("shop.noProducts")}</p>
+              </div>
+            ) : (
+              <>
+                <div className="max-h-[400px] overflow-y-auto">
+                  {searchResults.map((product) => (
+                    <button
+                      key={product.node.id}
+                      onClick={() => handleProductClick(product.node.handle)}
+                      className="w-full flex items-center gap-3 p-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
+                    >
+                      {/* Product image */}
+                      <div className="w-14 h-14 rounded-lg bg-white/5 overflow-hidden flex-shrink-0">
+                        {product.node.images.edges[0]?.node ? (
+                          <img
+                            src={product.node.images.edges[0].node.url}
+                            alt={product.node.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <ShoppingCart weight="light" className="w-6 h-6 text-foreground/20" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Product info */}
+                      <div className="flex-1 min-w-0 text-left">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {product.node.title}
+                        </p>
+                        <p className="text-xs text-foreground/50">
+                          {product.node.productType || 'Supplement'}
+                        </p>
+                        <p className="text-sm font-semibold text-primary">
+                          {parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)} {product.node.priceRange.minVariantPrice.currencyCode}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* View all results */}
+                {searchResults.length >= 6 && (
+                  <button
+                    onClick={handleViewAll}
+                    className="w-full p-3 text-center text-sm text-primary hover:bg-primary/5 transition-colors border-t border-white/10"
+                  >
+                    {t("shop.viewResults")} →
+                  </button>
+                )}
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

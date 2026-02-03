@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Robot, Storefront, Gear, Question, SignOut, List, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
@@ -29,33 +30,8 @@ const VitaSyncIcon = ({ className, weight }: { className?: string; weight?: stri
   />
 );
 
-const menuItems = [{
-  id: "home" as Section,
-  label: "Dashboard",
-  icon: House
-}, {
-  id: "coach" as Section,
-  label: "Coach IA",
-  icon: VitaSyncIcon
-}, {
-  id: "supplements" as Section,
-  label: "Suivi Compléments",
-  icon: FirstAidKit
-}, {
-  id: "shop" as Section,
-  label: "Boutique",
-  icon: Storefront
-}];
-const generalItems = [{
-  id: "settings" as Section,
-  label: "Paramètres",
-  icon: Gear
-}, {
-  id: "help" as Section,
-  label: "Aide",
-  icon: Question
-}];
 const Dashboard = () => {
+  const { t, locale } = useTranslation();
   const {
     user,
     profile,
@@ -79,6 +55,34 @@ const Dashboard = () => {
   const [hasInteractedWithCoach, setHasInteractedWithCoach] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
+
+  const menuItems = [{
+    id: "home" as Section,
+    label: t("dashboard.home"),
+    icon: House
+  }, {
+    id: "coach" as Section,
+    label: t("dashboard.coach"),
+    icon: VitaSyncIcon
+  }, {
+    id: "supplements" as Section,
+    label: t("dashboard.supplements"),
+    icon: FirstAidKit
+  }, {
+    id: "shop" as Section,
+    label: t("dashboard.shop"),
+    icon: Storefront
+  }];
+  
+  const generalItems = [{
+    id: "settings" as Section,
+    label: t("dashboard.settings"),
+    icon: Gear
+  }, {
+    id: "help" as Section,
+    label: t("dashboard.help"),
+    icon: Question
+  }];
   
   // Redirect to auth if not logged in
   useEffect(() => {
@@ -123,13 +127,14 @@ const Dashboard = () => {
     navigate("/");
   };
   const formatDate = () => {
+    const localeMap = { fr: 'fr-FR', en: 'en-US', es: 'es-ES' };
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     };
-    return new Date().toLocaleDateString('fr-FR', options);
+    return new Date().toLocaleDateString(localeMap[locale] || 'fr-FR', options);
   };
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
@@ -137,7 +142,7 @@ const Dashboard = () => {
       </div>;
   }
   if (!user) return null;
-  const userName = profile?.first_name || user?.email?.split("@")[0] || "Utilisateur";
+  const userName = profile?.first_name || user?.email?.split("@")[0] || "User";
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex w-full">
       {/* Daily Checkin Modal */}
       <DailyCheckin />
@@ -168,14 +173,14 @@ const Dashboard = () => {
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-lg hover:bg-white/50">
             <X weight="light" className="w-5 h-5" />
           </button>
-          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="hidden lg:flex p-2 rounded-lg hover:bg-white/50 transition-all" title={sidebarCollapsed ? "Étendre" : "Réduire"}>
+          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="hidden lg:flex p-2 rounded-lg hover:bg-white/50 transition-all" title={sidebarCollapsed ? t("dashboard.expand") : t("dashboard.collapse")}>
             {sidebarCollapsed ? <CaretRight weight="light" className="w-5 h-5 text-foreground/60" /> : <CaretLeft weight="light" className="w-5 h-5 text-foreground/60" />}
           </button>
         </div>
 
         <div className="px-4 flex-1">
           <p className={`px-3 text-xs font-medium text-foreground/40 uppercase tracking-wider mb-3 transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0' : ''}`}>
-            Menu
+            {t("dashboard.menu")}
           </p>
           <nav className="space-y-1">
             {menuItems.map(item => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
@@ -189,7 +194,7 @@ const Dashboard = () => {
           </nav>
 
           <p className={`px-3 text-xs font-medium text-foreground/40 uppercase tracking-wider mb-3 mt-8 transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0' : ''}`}>
-            Général
+            {t("dashboard.general")}
           </p>
           <nav className="space-y-1">
             {generalItems.map(item => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50'}`}>
@@ -199,10 +204,10 @@ const Dashboard = () => {
                   {item.label}
                 </span>
               </button>)}
-            <button onClick={handleSignOut} title={sidebarCollapsed ? "Déconnexion" : undefined} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-all">
+            <button onClick={handleSignOut} title={sidebarCollapsed ? t("dashboard.signout") : undefined} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-all">
               <SignOut weight="light" className="w-5 h-5 flex-shrink-0" />
               <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
-                Déconnexion
+                {t("dashboard.signout")}
               </span>
             </button>
           </nav>
@@ -216,11 +221,11 @@ const Dashboard = () => {
                 <DeviceMobile weight="light" className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium text-foreground">App Mobile</p>
+                <p className="text-sm font-medium text-foreground">{t("dashboard.mobileApp")}</p>
               </div>
             </div>
             <button disabled className="w-full mt-2 px-3 py-2 rounded-lg bg-foreground/5 text-foreground/40 text-xs font-medium cursor-not-allowed border border-white/10">
-              Coming Soon
+              {t("dashboard.comingSoon")}
             </button>
           </Card>
         </div>
@@ -235,7 +240,7 @@ const Dashboard = () => {
               <p className="text-sm font-medium text-foreground truncate">{userName}</p>
               <div className="flex items-center gap-1">
                 <Crown weight="fill" className="w-3 h-3 text-foreground/40" />
-                <span className="text-xs text-foreground/50">Free Plan</span>
+                <span className="text-xs text-foreground/50">{t("dashboard.freePlan")}</span>
               </div>
             </div>
           </div>
@@ -269,7 +274,7 @@ const Dashboard = () => {
           }} exit={{
             opacity: 0
           }} className="max-w-2xl">
-                  <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">Suivi des Compléments</h2>
+                  <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("dashboard.supplements")}</h2>
                   <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={() => handleSectionChange("coach")} />
                 </motion.div>}
               {activeSection === "shop" && <motion.div key="shop" initial={{
@@ -343,18 +348,21 @@ const DashboardHome = ({
   formatDate,
   onGoToCoach,
   hasInteractedWithCoach
-}: DashboardHomeProps) => <motion.div initial={{
-  opacity: 0,
-  y: 10
-}} animate={{
-  opacity: 1,
-  y: 0
-}} exit={{
-  opacity: 0
-}} className="space-y-6">
+}: DashboardHomeProps) => {
+  const { t } = useTranslation();
+  
+  return <motion.div initial={{
+    opacity: 0,
+    y: 10
+  }} animate={{
+    opacity: 1,
+    y: 0
+  }} exit={{
+    opacity: 0
+  }} className="space-y-6">
     <div className="mb-8">
       <h1 className="text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-1">
-        Bonjour <span className="text-primary font-medium">{userName}</span>, prêt pour votre routine ?
+        {t("dashboard.hello")} <span className="text-primary font-medium">{userName}</span>, {t("dashboard.readyForRoutine")}
       </h1>
       <p className="text-sm text-foreground/50 font-light capitalize">{formatDate()}</p>
     </div>
@@ -365,19 +373,26 @@ const DashboardHome = ({
       <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
     </div>
   </motion.div>;
-const HelpSection = () => <div className="max-w-2xl">
-    <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">Centre d'aide</h2>
+};
+
+const HelpSection = () => {
+  const { t } = useTranslation();
+  
+  return <div className="max-w-2xl">
+    <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("help.title")}</h2>
     <div className="space-y-4">
       <div className="glass-card-premium rounded-3xl p-6 border border-white/10">
-        <h3 className="text-lg font-medium text-foreground mb-2">FAQ</h3>
-        <p className="text-sm text-foreground/60 font-light mb-4">Retrouvez les réponses aux questions fréquentes.</p>
-        <Link to="/#faq" className="text-sm text-primary hover:underline">Voir la FAQ →</Link>
+        <h3 className="text-lg font-medium text-foreground mb-2">{t("help.faq")}</h3>
+        <p className="text-sm text-foreground/60 font-light mb-4">{t("help.faqDesc")}</p>
+        <Link to="/#faq" className="text-sm text-primary hover:underline">{t("help.viewFaq")}</Link>
       </div>
       <div className="glass-card-premium rounded-3xl p-6 border border-white/10">
-        <h3 className="text-lg font-medium text-foreground mb-2">Contact</h3>
-        <p className="text-sm text-foreground/60 font-light mb-4">Besoin d'aide ? Notre équipe est là pour vous.</p>
-        <Link to="/contact" className="text-sm text-primary hover:underline">Nous contacter →</Link>
+        <h3 className="text-lg font-medium text-foreground mb-2">{t("help.contact")}</h3>
+        <p className="text-sm text-foreground/60 font-light mb-4">{t("help.contactDesc")}</p>
+        <Link to="/contact" className="text-sm text-primary hover:underline">{t("help.contactUs")}</Link>
       </div>
     </div>
   </div>;
+};
+
 export default Dashboard;

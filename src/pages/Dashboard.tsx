@@ -294,6 +294,7 @@ const Dashboard = () => {
                   <ProductDetailSection 
                     handle={selectedProductHandle} 
                     onBack={handleBackToShop}
+                    onProductSelect={handleProductSelect}
                   />
                 </motion.div>}
               {activeSection === "settings" && <motion.div key="settings" initial={{

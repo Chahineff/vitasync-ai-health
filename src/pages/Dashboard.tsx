@@ -16,6 +16,7 @@ import { ShopSection } from "@/components/dashboard/ShopSection";
 import { ProductDetailSection } from "@/components/dashboard/ProductDetailSection";
 import { DailyCheckin } from "@/components/dashboard/DailyCheckin";
 import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
+import { MobileBottomNav } from "@/components/dashboard/MobileBottomNav";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "settings" | "help";
@@ -244,8 +245,8 @@ const Dashboard = () => {
       {/* Main - with margin-left to compensate for fixed sidebar */}
       <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
         
-
-        <div className="flex-1 p-4 lg:p-8 overflow-auto">
+        {/* Add padding bottom on mobile for bottom nav */}
+        <div className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8 overflow-auto">
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
               {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} hasInteractedWithCoach={hasInteractedWithCoach} />}
               {activeSection === "coach" && <motion.div key="coach" initial={{
@@ -322,6 +323,13 @@ const Dashboard = () => {
             </AnimatePresence>}
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav 
+        activeSection={activeSection} 
+        onSectionChange={handleSectionChange}
+        onSignOut={handleSignOut}
+      />
     </div>;
 };
 interface DashboardHomeProps {

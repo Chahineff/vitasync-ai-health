@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   Table,
   TableBody,
@@ -11,51 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const plans = [
-  {
-    name: "Gratuit",
-    price: "0€",
-    period: "/mois",
-    description: "Découvrez le potentiel de l'IA santé",
-    features: [
-      "5 conversations IA par jour",
-      "Chat texte uniquement",
-      "Recommandations générales",
-      "Historique 7 jours",
-    ],
-    cta: "Commencer gratuitement",
-    popular: false,
-  },
-  {
-    name: "Premium IA",
-    price: "7,99€",
-    period: "/mois",
-    description: "L'expérience IA santé complète",
-    features: [
-      "Conversations IA illimitées",
-      "Chat texte + Voix",
-      "Analyse documents (PDF, photos)",
-      "Suivi proactif temps réel",
-      "Historique illimité",
-      "Support prioritaire 24/7",
-    ],
-    cta: "Démarrer mon essai",
-    popular: true,
-  },
-];
-
-const comparisonFeatures = [
-  { name: "Conversations IA / jour", free: "5", premium: "Illimité" },
-  { name: "Chat texte", free: true, premium: true },
-  { name: "Fonctions vocales (Speech-to-Text)", free: false, premium: true },
-  { name: "Analyse documents (PDF, photos)", free: false, premium: true },
-  { name: "Recommandations personnalisées", free: "Basiques", premium: "Avancées" },
-  { name: "Suivi proactif en temps réel", free: false, premium: true },
-  { name: "Historique des conversations", free: "7 jours", premium: "Illimité" },
-  { name: "Synchronisation multi-appareils", free: false, premium: true },
-  { name: "Support", free: "Standard", premium: "Prioritaire 24/7" },
-];
 
 function FeatureValue({ value }: { value: boolean | string }) {
   if (typeof value === "boolean") {
@@ -69,20 +25,67 @@ function FeatureValue({ value }: { value: boolean | string }) {
 }
 
 export function PricingSection() {
+  const { t } = useTranslation();
+
+  const plans = [
+    {
+      name: t("pricing.plan1.name"),
+      price: t("pricing.freePrice"),
+      period: t("pricing.perMonth"),
+      description: t("pricing.plan1.description"),
+      features: [
+        t("pricing.plan1.feature1"),
+        t("pricing.plan1.feature2"),
+        t("pricing.plan1.feature3"),
+        t("pricing.plan1.feature4"),
+      ],
+      cta: t("pricing.plan1.cta"),
+      popular: false,
+    },
+    {
+      name: t("pricing.plan2.name"),
+      price: t("pricing.premiumPrice"),
+      period: t("pricing.perMonth"),
+      description: t("pricing.plan2.description"),
+      features: [
+        t("pricing.plan2.feature1"),
+        t("pricing.plan2.feature2"),
+        t("pricing.plan2.feature3"),
+        t("pricing.plan2.feature4"),
+        t("pricing.plan2.feature5"),
+        t("pricing.plan2.feature6"),
+      ],
+      cta: t("pricing.plan2.cta"),
+      popular: true,
+    },
+  ];
+
+  const comparisonFeatures = [
+    { name: t("pricing.comparison.row1"), free: t("pricing.comparison.row1Free"), premium: t("pricing.comparison.row1Premium") },
+    { name: t("pricing.comparison.row2"), free: true, premium: true },
+    { name: t("pricing.comparison.row3"), free: false, premium: true },
+    { name: t("pricing.comparison.row4"), free: false, premium: true },
+    { name: t("pricing.comparison.row5"), free: t("pricing.comparison.row5Free"), premium: t("pricing.comparison.row5Premium") },
+    { name: t("pricing.comparison.row6"), free: false, premium: true },
+    { name: t("pricing.comparison.row7"), free: t("pricing.comparison.row7Free"), premium: t("pricing.comparison.row7Premium") },
+    { name: t("pricing.comparison.row8"), free: false, premium: true },
+    { name: t("pricing.comparison.row9"), free: t("pricing.comparison.row9Free"), premium: t("pricing.comparison.row9Premium") },
+  ];
+
   return (
     <section id="pricing" className="section-padding">
       <div className="container-custom">
         <ScrollReveal>
           <div className="text-center mb-10 md:mb-16 px-2">
             <span className="text-xs md:text-sm text-secondary uppercase tracking-widest mb-3 md:mb-4 block">
-              Tarification simple
+              {t("pricing.title")}
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-3 md:mb-4">
-              Choisissez votre niveau{" "}
-              <span className="gradient-text-reverse">d'intelligence</span>
+              {t("pricing.subtitle").split(" ").slice(0, -1).join(" ")}{" "}
+              <span className="gradient-text-reverse">{t("pricing.subtitle").split(" ").slice(-1)}</span>
             </h2>
             <p className="text-sm md:text-lg text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
-              Commencez gratuitement et évoluez vers Premium pour débloquer tout le potentiel de l'IA santé.
+              {t("pricing.description")}
             </p>
           </div>
         </ScrollReveal>
@@ -102,7 +105,7 @@ export function PricingSection() {
                   <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2">
                     <span className="inline-flex items-center gap-1 md:gap-1.5 px-3 md:px-4 py-1 md:py-1.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground text-xs md:text-sm font-medium">
                       <Star size={14} weight="fill" />
-                      Recommandé
+                      {t("pricing.recommended")}
                     </span>
                   </div>
                 )}
@@ -172,15 +175,15 @@ export function PricingSection() {
             <GlassCard className="overflow-hidden">
               <div className="p-4 md:p-6 border-b border-border/50">
                 <h3 className="text-lg md:text-xl font-light text-foreground text-center">
-                  Comparaison détaillée
+                  {t("pricing.comparison.title")}
                 </h3>
               </div>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border/50">
-                      <TableHead className="text-foreground/70 font-light w-1/2">Fonctionnalité</TableHead>
-                      <TableHead className="text-center text-foreground/70 font-light w-1/4">Gratuit</TableHead>
+                      <TableHead className="text-foreground/70 font-light w-1/2">{t("pricing.comparison.feature")}</TableHead>
+                      <TableHead className="text-center text-foreground/70 font-light w-1/4">{t("pricing.free")}</TableHead>
                       <TableHead className="text-center text-foreground/70 font-light w-1/4">
                         <span className="inline-flex items-center gap-1">
                           Premium
@@ -190,7 +193,7 @@ export function PricingSection() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {comparisonFeatures.map((feature, index) => (
+                    {comparisonFeatures.map((feature) => (
                       <TableRow key={feature.name} className="border-border/30">
                         <TableCell className="text-foreground/80 text-sm font-light">
                           {feature.name}
@@ -215,7 +218,7 @@ export function PricingSection() {
           <div className="mt-8 md:mt-12 text-center px-4">
             <GlassCard className="inline-block px-4 md:px-6 py-3 md:py-4">
               <p className="text-xs md:text-sm text-foreground/60">
-                <span className="text-foreground/80">Note :</span> L'abonnement aux compléments physiques est proposé séparément par le Coach IA.
+                {t("pricing.note")}
               </p>
             </GlassCard>
           </div>

@@ -11,35 +11,37 @@ import {
   PaperPlaneTilt 
 } from "@phosphor-icons/react";
 import { useState } from "react";
-
-const contactInfo = [
-  {
-    icon: EnvelopeSimple,
-    label: "Email",
-    value: "contact@vitasync.com",
-    href: "mailto:contact@vitasync.com",
-  },
-  {
-    icon: Phone,
-    label: "Téléphone",
-    value: "+33 1 23 45 67 89",
-    href: "tel:+33123456789",
-  },
-  {
-    icon: MapPin,
-    label: "Adresse",
-    value: "42 Rue de l'Innovation, 75001 Paris",
-    href: "#",
-  },
-];
+import { useTranslation } from "@/hooks/useTranslation";
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     message: "",
   });
+
+  const contactInfo = [
+    {
+      icon: EnvelopeSimple,
+      label: t("contact.email"),
+      value: "contact@vitasync.com",
+      href: "mailto:contact@vitasync.com",
+    },
+    {
+      icon: Phone,
+      label: t("contact.phone"),
+      value: "+33 1 23 45 67 89",
+      href: "tel:+33123456789",
+    },
+    {
+      icon: MapPin,
+      label: t("contact.address"),
+      value: "42 Rue de l'Innovation, 75001 Paris",
+      href: "#",
+    },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,14 +64,14 @@ const Contact = () => {
               className="max-w-3xl mx-auto text-center"
             >
               <span className="text-sm text-primary uppercase tracking-widest mb-4 block">
-                Contact
+                {t("contact.badge")}
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground mb-6">
-                Parlons de{" "}
-                <span className="gradient-text">votre santé</span>
+                {t("contact.title")}{" "}
+                <span className="gradient-text">{t("contact.titleHighlight")}</span>
               </h1>
               <p className="text-lg text-foreground/60">
-                Une question, une suggestion ou besoin d'aide ? Notre équipe est là pour vous accompagner.
+                {t("contact.subtitle")}
               </p>
             </motion.div>
           </div>
@@ -83,7 +85,7 @@ const Contact = () => {
               <div className="lg:col-span-2">
                 <ScrollReveal>
                   <h2 className="text-2xl font-light tracking-tight text-foreground mb-8">
-                    Nos coordonnées
+                    {t("contact.infoTitle")}
                   </h2>
                   <div className="space-y-6">
                     {contactInfo.map((info) => (
@@ -106,14 +108,14 @@ const Contact = () => {
                   </div>
 
                   <div className="mt-12">
-                    <h3 className="text-lg font-light text-foreground mb-4">Horaires d'ouverture</h3>
+                    <h3 className="text-lg font-light text-foreground mb-4">{t("contact.hoursTitle")}</h3>
                     <div className="space-y-2 text-sm text-foreground/60">
-                      <p>Lundi - Vendredi : 9h00 - 18h00</p>
-                      <p>Samedi : 10h00 - 14h00</p>
-                      <p>Dimanche : Fermé</p>
+                      <p>{t("contact.hours1")}</p>
+                      <p>{t("contact.hours2")}</p>
+                      <p>{t("contact.hours3")}</p>
                     </div>
                     <p className="mt-4 text-sm text-foreground/50">
-                      <span className="text-secondary">Note :</span> Notre IA est disponible 24h/24, 7j/7 pour répondre à vos questions santé.
+                      <span className="text-secondary">Note :</span> {t("contact.hoursNote")}
                     </p>
                   </div>
                 </ScrollReveal>
@@ -124,13 +126,13 @@ const Contact = () => {
                 <ScrollReveal delay={0.2}>
                   <GlassCard className="p-8 md:p-12">
                     <h2 className="text-2xl font-light tracking-tight text-foreground mb-8">
-                      Envoyez-nous un message
+                      {t("contact.formTitle")}
                     </h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid sm:grid-cols-2 gap-6">
                         <div>
                           <label htmlFor="name" className="block text-sm text-foreground/70 mb-2">
-                            Nom complet
+                            {t("contact.nameLabel")}
                           </label>
                           <input
                             type="text"
@@ -138,13 +140,13 @@ const Contact = () => {
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                            placeholder="Votre nom"
+                            placeholder={t("contact.namePlaceholder")}
                             required
                           />
                         </div>
                         <div>
                           <label htmlFor="email" className="block text-sm text-foreground/70 mb-2">
-                            Email
+                            {t("contact.emailLabel")}
                           </label>
                           <input
                             type="email"
@@ -152,7 +154,7 @@ const Contact = () => {
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                            placeholder="votre@email.com"
+                            placeholder={t("contact.emailPlaceholder")}
                             required
                           />
                         </div>
@@ -160,7 +162,7 @@ const Contact = () => {
 
                       <div>
                         <label htmlFor="subject" className="block text-sm text-foreground/70 mb-2">
-                          Sujet
+                          {t("contact.subjectLabel")}
                         </label>
                         <input
                           type="text"
@@ -168,14 +170,14 @@ const Contact = () => {
                           value={formData.subject}
                           onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                           className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                          placeholder="Comment pouvons-nous vous aider ?"
+                          placeholder={t("contact.subjectPlaceholder")}
                           required
                         />
                       </div>
 
                       <div>
                         <label htmlFor="message" className="block text-sm text-foreground/70 mb-2">
-                          Message
+                          {t("contact.messageLabel")}
                         </label>
                         <textarea
                           id="message"
@@ -183,14 +185,14 @@ const Contact = () => {
                           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                           rows={5}
                           className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-                          placeholder="Décrivez votre demande..."
+                          placeholder={t("contact.messagePlaceholder")}
                           required
                         />
                       </div>
 
                       <button type="submit" className="btn-neumorphic text-primary-foreground w-full sm:w-auto">
                         <span className="flex items-center gap-2">
-                          Envoyer le message
+                          {t("contact.send")}
                           <PaperPlaneTilt size={18} weight="light" />
                         </span>
                       </button>

@@ -1,16 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Camera, SpinnerGap, Check } from "@phosphor-icons/react";
+import { Camera, SpinnerGap, Check, Globe } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useI18n } from "@/hooks/useTranslation";
+import { languages, type Locale } from "@/lib/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 import { HealthProfileSection } from "./HealthProfileSection";
+import { cn } from "@/lib/utils";
 
 export function ProfileSection() {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
   const { signedUrl: avatarUrl, isLoading: isLoadingAvatar } = useAvatarUrl(profile?.avatar_url);
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const { locale, setLocale } = useI18n();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [firstName, setFirstName] = useState(profile?.first_name || "");
@@ -39,8 +45,8 @@ export function ProfileSection() {
     // Validate file type
     if (!file.type.startsWith("image/")) {
       toast({
-        title: "Type de fichier invalide",
-        description: "Veuillez sélectionner une image.",
+        title: t("settings.invalidFileType"),
+        description: t("settings.selectImage"),
         variant: "destructive",
       });
       return;
@@ -49,8 +55,8 @@ export function ProfileSection() {
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
-        title: "Fichier trop volumineux",
-        description: "L'image ne doit pas dépasser 5 Mo.",
+        title: t("settings.fileTooLarge"),
+        description: t("settings.maxFileSize"),
         variant: "destructive",
       });
       return;
@@ -62,14 +68,14 @@ export function ProfileSection() {
 
     if (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de télécharger l'image.",
+        title: t("common.error"),
+        description: t("settings.uploadError"),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Photo mise à jour",
-        description: "Votre photo de profil a été modifiée.",
+        title: t("settings.photoUpdated"),
+        description: t("settings.photoUpdatedDesc"),
       });
     }
 
@@ -88,14 +94,14 @@ export function ProfileSection() {
 
     if (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le profil.",
+        title: t("common.error"),
+        description: t("settings.updateError"),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Profil mis à jour",
-        description: "Vos informations ont été enregistrées.",
+        title: t("settings.profileUpdated"),
+        description: t("settings.profileUpdatedDesc"),
       });
     }
 
@@ -128,15 +134,45 @@ export function ProfileSection() {
     >
       <div>
         <h1 className="text-3xl font-light tracking-tight text-foreground mb-2">
-          Paramètres
+          {t("settings.title")}
         </h1>
         <p className="text-foreground/60 mb-8">
-          Gérez vos informations personnelles et vos préférences
+          {t("settings.subtitle")}
         </p>
       </div>
 
       {/* Theme Toggle */}
       <ThemeToggle />
+
+      {/* Language Selector */}
+      <div className="glass-card rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Globe weight="light" className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-medium text-foreground">{t("settings.language")}</h3>
+            <p className="text-sm text-foreground/50">{t("settings.languageSubtitle")}</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {languages.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => setLocale(lang.code as Locale)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all border",
+                locale === lang.code
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-muted/30 text-foreground/70 border-border/50 hover:border-primary/50"
+              )}
+            >
+              <span className="text-base">{lang.flag}</span>
+              <span>{lang.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="glass-card rounded-2xl p-8">
         {/* Avatar Section */}
@@ -176,7 +212,7 @@ export function ProfileSection() {
             className="hidden"
           />
           <p className="text-sm text-foreground/50 mt-3">
-            Cliquez pour changer votre photo
+            {t("settings.avatarChange")}
           </p>
         </div>
 
@@ -185,7 +221,7 @@ export function ProfileSection() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="firstName" className="block text-sm text-foreground/70 mb-2">
-                Prénom
+                {t("settings.firstName")}
               </label>
               <input
                 type="text"
@@ -193,12 +229,12 @@ export function ProfileSection() {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-foreground/5 border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="Votre prénom"
+                placeholder={t("settings.firstName")}
               />
             </div>
             <div>
               <label htmlFor="lastName" className="block text-sm text-foreground/70 mb-2">
-                Nom
+                {t("settings.lastName")}
               </label>
               <input
                 type="text"
@@ -206,14 +242,14 @@ export function ProfileSection() {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-foreground/5 border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="Votre nom"
+                placeholder={t("settings.lastName")}
               />
             </div>
           </div>
 
           <div>
             <label htmlFor="email" className="block text-sm text-foreground/70 mb-2">
-              Email
+              {t("settings.email")}
             </label>
             <input
               type="email"
@@ -223,13 +259,13 @@ export function ProfileSection() {
               className="w-full px-4 py-3 rounded-xl bg-foreground/5 border-0 text-foreground/50 cursor-not-allowed"
             />
             <p className="text-xs text-foreground/40 mt-1">
-              L'email ne peut pas être modifié
+              {t("settings.emailCantChange")}
             </p>
           </div>
 
           <div>
             <label htmlFor="dateOfBirth" className="block text-sm text-foreground/70 mb-2">
-              Date de naissance
+              {t("settings.dateOfBirth")}
             </label>
             <input
               type="date"
@@ -240,7 +276,7 @@ export function ProfileSection() {
             />
             {age !== null && (
               <p className="text-sm text-foreground/50 mt-1">
-                {age} ans
+                {age} {t("settings.years")}
               </p>
             )}
           </div>
@@ -253,12 +289,12 @@ export function ProfileSection() {
             {isUpdating ? (
               <>
                 <SpinnerGap size={20} className="animate-spin" />
-                Enregistrement...
+                {t("settings.saving")}
               </>
             ) : (
               <>
                 <Check size={20} weight="light" />
-                Enregistrer les modifications
+                {t("settings.save")}
               </>
             )}
           </button>

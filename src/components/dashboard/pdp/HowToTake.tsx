@@ -1,28 +1,31 @@
 import { Timer, Drop, Calendar, Lightbulb } from '@phosphor-icons/react';
 import { ParsedProductData } from '@/lib/shopify-parser';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface HowToTakeProps {
   parsedData: ParsedProductData | null;
 }
 
 export function HowToTake({ parsedData }: HowToTakeProps) {
+  const { t } = useTranslation();
+  
   const dosage = parsedData?.suggestedUse || '—';
-  const timing = deriveTiming(parsedData?.suggestedUse);
-  const notes = deriveNotes(parsedData?.suggestedUse);
-  const duration = '4-8 semaines pour des résultats optimaux';
-  const coachTip = generateCoachTip(parsedData);
+  const timing = deriveTiming(parsedData?.suggestedUse, t);
+  const notes = deriveNotes(parsedData?.suggestedUse, t);
+  const duration = t('pdp.durationValue');
+  const coachTip = generateCoachTip(parsedData, t);
 
   const items = [
-    { icon: Timer, label: 'Dosage', value: dosage, show: !!parsedData?.suggestedUse },
-    { icon: Calendar, label: 'Timing', value: timing, show: !!timing },
-    { icon: Drop, label: 'Notes', value: notes, show: !!notes },
-    { icon: Calendar, label: 'Durée recommandée', value: duration, show: true },
+    { icon: Timer, label: t('pdp.dosage'), value: dosage, show: !!parsedData?.suggestedUse },
+    { icon: Calendar, label: t('pdp.timing'), value: timing, show: !!timing },
+    { icon: Drop, label: t('pdp.notes'), value: notes, show: !!notes },
+    { icon: Calendar, label: t('pdp.duration'), value: duration, show: true },
   ].filter(item => item.show);
 
   return (
     <section className="py-8 space-y-6">
       <h2 className="text-xl font-semibold text-foreground">
-        How to Take It
+        {t('pdp.howToTake')}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -54,7 +57,7 @@ export function HowToTake({ parsedData }: HowToTakeProps) {
           </div>
           <div>
             <p className="text-xs text-primary font-medium uppercase tracking-wider mb-1">
-              Coach Tip
+              {t('pdp.coachTip')}
             </p>
             <p className="text-foreground font-light text-sm leading-relaxed">
               {coachTip}
@@ -66,59 +69,59 @@ export function HowToTake({ parsedData }: HowToTakeProps) {
   );
 }
 
-function deriveTiming(suggestedUse: string | undefined): string {
+function deriveTiming(suggestedUse: string | undefined, t: (key: string) => string): string {
   if (!suggestedUse) return '';
   
   const use = suggestedUse.toLowerCase();
   
-  if (use.includes('morning') || use.includes('matin')) return 'Le matin au réveil';
-  if (use.includes('evening') || use.includes('soir') || use.includes('before bed')) return 'Le soir avant le coucher';
-  if (use.includes('with meal') || use.includes('avec repas') || use.includes('with food')) return 'Avec un repas';
-  if (use.includes('empty stomach')) return 'À jeun';
-  if (use.includes('before workout')) return 'Avant l\'entraînement';
-  if (use.includes('after workout')) return 'Après l\'entraînement';
+  if (use.includes('morning') || use.includes('matin')) return t('pdp.timingMorning');
+  if (use.includes('evening') || use.includes('soir') || use.includes('before bed')) return t('pdp.timingEvening');
+  if (use.includes('with meal') || use.includes('avec repas') || use.includes('with food')) return t('pdp.timingWithMeal');
+  if (use.includes('empty stomach')) return t('pdp.timingEmptyStomach');
+  if (use.includes('before workout')) return t('pdp.timingBeforeWorkout');
+  if (use.includes('after workout')) return t('pdp.timingAfterWorkout');
   
-  return 'Prendre quotidiennement';
+  return t('pdp.timingDaily');
 }
 
-function deriveNotes(suggestedUse: string | undefined): string {
+function deriveNotes(suggestedUse: string | undefined, t: (key: string) => string): string {
   if (!suggestedUse) return '';
   
   const notes: string[] = [];
   const use = suggestedUse.toLowerCase();
   
   if (use.includes('water') || use.includes('eau')) {
-    notes.push('Prendre avec un grand verre d\'eau');
+    notes.push(t('pdp.notesWater'));
   }
   if (use.includes('milk') || use.includes('lait')) {
-    notes.push('Peut être mélangé avec du lait ou une boisson végétale');
+    notes.push(t('pdp.notesMilk'));
   }
   if (use.includes('shake') || use.includes('smoothie')) {
-    notes.push('Idéal dans un shake ou smoothie');
+    notes.push(t('pdp.notesShake'));
   }
   
   if (notes.length === 0) {
-    notes.push('Bien s\'hydrater tout au long de la journée');
+    notes.push(t('pdp.notesHydrate'));
   }
   
   return notes.join('. ');
 }
 
-function generateCoachTip(parsedData: ParsedProductData | null): string {
+function generateCoachTip(parsedData: ParsedProductData | null, t: (key: string) => string): string {
   const tips = [
-    'Pour des résultats optimaux, soyez régulier dans votre prise quotidienne.',
-    'Associez ce complément à une alimentation équilibrée et variée.',
-    'Écoutez votre corps et ajustez si nécessaire après consultation.',
-    'La constance est la clé : ne sautez pas de jours pour maximiser les effets.',
+    t('pdp.coachTip1'),
+    t('pdp.coachTip2'),
+    t('pdp.coachTip3'),
+    t('pdp.coachTip4'),
   ];
   
   // Return a tip based on product characteristics
   if (parsedData?.suggestedUse?.toLowerCase().includes('workout')) {
-    return 'Préparez votre dose à l\'avance pour ne jamais manquer votre prise post-entraînement.';
+    return t('pdp.coachTipWorkout');
   }
   if (parsedData?.suggestedUse?.toLowerCase().includes('sleep') || 
       parsedData?.suggestedUse?.toLowerCase().includes('soir')) {
-    return 'Établissez une routine du soir incluant ce complément pour des effets optimaux.';
+    return t('pdp.coachTipSleep');
   }
   
   return tips[Math.floor(Math.random() * tips.length)];

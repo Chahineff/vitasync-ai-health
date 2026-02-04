@@ -10,7 +10,6 @@ import {
   Leaf,
   Flask,
   Truck,
-  Package,
 } from '@phosphor-icons/react';
 import { ProductDetail, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
@@ -19,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import { ParsedProductData } from '@/lib/shopify-parser';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ProductPurchaseBoxProps {
   product: ProductDetail;
@@ -33,6 +33,7 @@ export function ProductPurchaseBox({
   relatedProducts,
   onFlavorChange 
 }: ProductPurchaseBoxProps) {
+  const { t } = useTranslation();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -77,13 +78,13 @@ export function ProductPurchaseBox({
       });
       
       setJustAdded(true);
-      toast.success('Produit ajouté au panier', {
+      toast.success(t('pdp.addedToCart'), {
         description: product.title,
         position: 'top-center',
       });
       setTimeout(() => setJustAdded(false), 2000);
     } catch (error) {
-      toast.error("Erreur lors de l'ajout au panier");
+      toast.error(t('shop.addError'));
     } finally {
       setIsAdding(false);
     }
@@ -130,7 +131,7 @@ export function ProductPurchaseBox({
       {/* Flavor Selector (if multiple related products) */}
       {relatedProducts && relatedProducts.length > 1 && (
         <div className="space-y-2">
-          <p className="text-sm text-foreground/60 font-medium">Goût / Variante</p>
+          <p className="text-sm text-foreground/60 font-medium">{t('pdp.flavorVariant')}</p>
           <div className="flex flex-wrap gap-2">
             {relatedProducts.map((related) => (
               <button
@@ -154,7 +155,7 @@ export function ProductPurchaseBox({
       {hasMultipleVariants && (
         <div className="space-y-2">
           <p className="text-sm text-foreground/60 font-medium">
-            Taille : {selectedVariant?.title}
+            {t('pdp.size')}: {selectedVariant?.title}
           </p>
           <div className="flex flex-wrap gap-2">
             {variants.map((variant, index) => (
@@ -184,7 +185,7 @@ export function ProductPurchaseBox({
           {parseFloat(price.amount).toFixed(2)} €
         </span>
         <span className="text-sm text-foreground/50">
-          {selectedVariant?.availableForSale ? 'En stock' : 'Rupture de stock'}
+          {selectedVariant?.availableForSale ? t('pdp.inStock') : t('pdp.outOfStock')}
         </span>
       </div>
 
@@ -207,19 +208,19 @@ export function ProductPurchaseBox({
           ) : justAdded ? (
             <>
               <Check weight="bold" className="w-5 h-5" />
-              Ajouté !
+              {t('pdp.added')}
             </>
           ) : (
             <>
               <ShoppingCartSimple weight="bold" className="w-5 h-5" />
-              Ajouter au panier
+              {t('pdp.addToCart')}
             </>
           )}
         </motion.button>
         
         <button
           className="px-4 py-4 rounded-2xl bg-muted/50 border border-border/50 hover:bg-muted transition-colors"
-          title="Ajouter au stack"
+          title={t('pdp.addToStack')}
         >
           <Plus weight="bold" className="w-5 h-5 text-foreground" />
         </button>
@@ -230,19 +231,19 @@ export function ProductPurchaseBox({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Repeat weight="light" className="w-5 h-5 text-primary" />
-            <span className="font-medium text-foreground">Subscribe & Save</span>
+            <span className="font-medium text-foreground">{t('pdp.subscribeAndSave')}</span>
           </div>
           <Badge variant="outline" className="text-xs border-primary/30 text-primary">
-            Coming Soon
+            {t('pdp.comingSoon')}
           </Badge>
         </div>
         <p className="text-sm text-foreground/60 font-light mb-3">
-          Module abonnement à intégrer plus tard
+          {t('pdp.subscriptionModule')}
         </p>
         <div className="flex items-center justify-between opacity-50">
           <div className="flex items-center gap-3">
             <Switch disabled />
-            <span className="text-sm text-foreground/70">Livraison récurrente</span>
+            <span className="text-sm text-foreground/70">{t('pdp.recurringDelivery')}</span>
           </div>
           <span className="text-sm font-medium text-primary">-10%</span>
         </div>
@@ -250,10 +251,10 @@ export function ProductPurchaseBox({
 
       {/* Trust Bar */}
       <div className="grid grid-cols-2 gap-3">
-        <TrustItem icon={ShieldCheck} label="Testé qualité" />
-        <TrustItem icon={Leaf} label="Transparent labeling" />
-        <TrustItem icon={Flask} label="Formule clean" />
-        <TrustItem icon={Truck} label="Livraison rapide" />
+        <TrustItem icon={ShieldCheck} label={t('pdp.testedQuality')} />
+        <TrustItem icon={Leaf} label={t('pdp.transparentLabeling')} />
+        <TrustItem icon={Flask} label={t('pdp.cleanFormula')} />
+        <TrustItem icon={Truck} label={t('pdp.fastShipping')} />
       </div>
 
       {/* Certifications */}
@@ -269,7 +270,7 @@ export function ProductPurchaseBox({
 
       {/* Micro Disclaimer */}
       <p className="text-xs text-foreground/40 text-center font-light">
-        Wellness support only • Not medical advice
+        {t('pdp.disclaimer')}
       </p>
     </div>
   );

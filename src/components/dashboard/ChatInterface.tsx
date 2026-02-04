@@ -33,6 +33,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { useDailyCheckin } from '@/hooks/useDailyCheckin';
+import { useTranslation } from '@/hooks/useTranslation';
 import { TypingIndicator } from './TypingIndicator';
 import { ProductRecommendationCard, parseProductRecommendations, SubscriptionCard } from './ProductRecommendationCard';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
@@ -71,36 +72,38 @@ interface SuggestionCard {
   iconColor: string;
 }
 
-const DEFAULT_SUGGESTIONS: SuggestionCard[] = [
-  {
-    icon: Moon,
-    title: "Améliorer mon sommeil",
-    prompt: "Je dors mal, qu'est-ce que tu me conseilles ?",
-    gradient: "from-indigo-500/10 to-purple-500/10",
-    iconColor: "text-indigo-500"
-  },
-  {
-    icon: Leaf,
-    title: "Conseils nutrition",
-    prompt: "Donne-moi des conseils nutrition adaptés à mon profil.",
-    gradient: "from-emerald-500/10 to-green-500/10",
-    iconColor: "text-emerald-500"
-  },
-  {
-    icon: Brain,
-    title: "Gérer mon stress",
-    prompt: "Comment réduire mon stress au quotidien ?",
-    gradient: "from-amber-500/10 to-orange-500/10",
-    iconColor: "text-amber-500"
-  },
-  {
-    icon: Heart,
-    title: "Booster mon énergie",
-    prompt: "Quels compléments pour plus d'énergie ?",
-    gradient: "from-rose-500/10 to-pink-500/10",
-    iconColor: "text-rose-500"
-  }
-];
+function getDefaultSuggestions(t: (key: string) => string): SuggestionCard[] {
+  return [
+    {
+      icon: Moon,
+      title: t("coach.suggestion1"),
+      prompt: t("coach.suggestion1Prompt"),
+      gradient: "from-indigo-500/10 to-purple-500/10",
+      iconColor: "text-indigo-500"
+    },
+    {
+      icon: Leaf,
+      title: t("coach.suggestion2"),
+      prompt: t("coach.suggestion2Prompt"),
+      gradient: "from-emerald-500/10 to-green-500/10",
+      iconColor: "text-emerald-500"
+    },
+    {
+      icon: Brain,
+      title: t("coach.suggestion3"),
+      prompt: t("coach.suggestion3Prompt"),
+      gradient: "from-amber-500/10 to-orange-500/10",
+      iconColor: "text-amber-500"
+    },
+    {
+      icon: Heart,
+      title: t("coach.suggestion4"),
+      prompt: t("coach.suggestion4Prompt"),
+      gradient: "from-rose-500/10 to-pink-500/10",
+      iconColor: "text-rose-500"
+    }
+  ];
+}
 
 // Render message content with product cards and subscription blocks
 function MessageContent({ content }: { content: string }) {
@@ -198,6 +201,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
   const { healthProfile } = useHealthProfile();
   const { getTrends } = useDailyCheckin();
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -230,15 +234,15 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     const suggestions: SuggestionCard[] = [];
     const trends = getTrends();
     const goals = healthProfile?.health_goals || [];
-    const currentIssues = healthProfile?.current_issues || [];
+    const defaultSuggestions = getDefaultSuggestions(t);
 
     // Based on recent check-in trends
     if (trends) {
       if (trends.avgSleep < 3) {
         suggestions.push({
           icon: Moon,
-          title: "Analyser mon sommeil",
-          prompt: "J'ai mal dormi ces derniers jours selon mes check-ins. Que me conseilles-tu pour améliorer mon sommeil ?",
+          title: t("coach.analyzeSleep"),
+          prompt: t("coach.analyzeSleepPrompt"),
           gradient: "from-indigo-500/10 to-purple-500/10",
           iconColor: "text-indigo-500"
         });
@@ -246,8 +250,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       if (trends.avgEnergy < 3) {
         suggestions.push({
           icon: Lightning,
-          title: "Booster mon énergie",
-          prompt: "Mon niveau d'énergie est bas ces derniers jours. Quels conseils ou compléments pour retrouver la forme ?",
+          title: t("coach.boostEnergy"),
+          prompt: t("coach.boostEnergyPrompt"),
           gradient: "from-amber-500/10 to-yellow-500/10",
           iconColor: "text-amber-500"
         });
@@ -255,8 +259,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       if (trends.avgStress > 3) {
         suggestions.push({
           icon: Brain,
-          title: "Réduire mon stress",
-          prompt: "Je suis stressé en ce moment selon mes check-ins. Comment gérer mon stress naturellement ?",
+          title: t("coach.reduceStress"),
+          prompt: t("coach.reduceStressPrompt"),
           gradient: "from-rose-500/10 to-pink-500/10",
           iconColor: "text-rose-500"
         });
@@ -264,20 +268,20 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     }
 
     // Based on health goals
-    if (goals.includes("sommeil") && !suggestions.some(s => s.title.includes("sommeil"))) {
+    if (goals.includes("sommeil") && !suggestions.some(s => s.title.includes("sommeil") || s.title.includes("sleep"))) {
       suggestions.push({
         icon: Moon,
-        title: "Améliorer mon sommeil",
-        prompt: "Comment améliorer mon sommeil selon mon profil de santé ?",
+        title: t("coach.improveSleep"),
+        prompt: t("coach.improveSleepPrompt"),
         gradient: "from-indigo-500/10 to-purple-500/10",
         iconColor: "text-indigo-500"
       });
     }
-    if (goals.includes("energie") && !suggestions.some(s => s.title.includes("énergie"))) {
+    if (goals.includes("energie") && !suggestions.some(s => s.title.includes("énergie") || s.title.includes("energy"))) {
       suggestions.push({
         icon: Heart,
-        title: "Plus d'énergie",
-        prompt: "Quels compléments recommandes-tu pour avoir plus d'énergie au quotidien ?",
+        title: t("coach.moreEnergy"),
+        prompt: t("coach.moreEnergyPrompt"),
         gradient: "from-rose-500/10 to-red-500/10",
         iconColor: "text-rose-500"
       });
@@ -285,8 +289,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     if (goals.includes("stress") && !suggestions.some(s => s.title.includes("stress"))) {
       suggestions.push({
         icon: Brain,
-        title: "Gérer mon stress",
-        prompt: "Quelles solutions naturelles pour gérer mon stress et mon anxiété ?",
+        title: t("coach.manageStress"),
+        prompt: t("coach.manageStressPrompt"),
         gradient: "from-amber-500/10 to-orange-500/10",
         iconColor: "text-amber-500"
       });
@@ -294,8 +298,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     if (goals.includes("sport") || goals.includes("prise-muscle")) {
       suggestions.push({
         icon: Barbell,
-        title: "Performance sportive",
-        prompt: "Quels compléments pour optimiser mes performances sportives et ma récupération ?",
+        title: t("coach.sportPerformance"),
+        prompt: t("coach.sportPerformancePrompt"),
         gradient: "from-cyan-500/10 to-blue-500/10",
         iconColor: "text-cyan-500"
       });
@@ -303,8 +307,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     if (goals.includes("immunite")) {
       suggestions.push({
         icon: ShieldPlus,
-        title: "Renforcer mon immunité",
-        prompt: "Quels compléments pour renforcer mon système immunitaire ?",
+        title: t("coach.boostImmunity"),
+        prompt: t("coach.boostImmunityPrompt"),
         gradient: "from-green-500/10 to-emerald-500/10",
         iconColor: "text-green-500"
       });
@@ -312,8 +316,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     if (goals.includes("digestion")) {
       suggestions.push({
         icon: Leaf,
-        title: "Améliorer ma digestion",
-        prompt: "J'ai des problèmes de digestion, que me conseilles-tu ?",
+        title: t("coach.improveDigestion"),
+        prompt: t("coach.improveDigestionPrompt"),
         gradient: "from-emerald-500/10 to-teal-500/10",
         iconColor: "text-emerald-500"
       });
@@ -321,8 +325,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     if (goals.includes("focus") || goals.includes("concentration")) {
       suggestions.push({
         icon: Brain,
-        title: "Améliorer ma concentration",
-        prompt: "Comment améliorer ma concentration et ma mémoire naturellement ?",
+        title: t("coach.improveFocus"),
+        prompt: t("coach.improveFocusPrompt"),
         gradient: "from-violet-500/10 to-purple-500/10",
         iconColor: "text-violet-500"
       });
@@ -330,7 +334,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
     // Fill with defaults if needed
     if (suggestions.length < 4) {
-      for (const defaultSuggestion of DEFAULT_SUGGESTIONS) {
+      for (const defaultSuggestion of defaultSuggestions) {
         if (suggestions.length >= 4) break;
         if (!suggestions.some(s => s.title === defaultSuggestion.title)) {
           suggestions.push(defaultSuggestion);
@@ -339,7 +343,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     }
 
     return suggestions.slice(0, 4);
-  }, [healthProfile, getTrends]);
+  }, [healthProfile, getTrends, t]);
 
   // Update input with transcript
   useEffect(() => {

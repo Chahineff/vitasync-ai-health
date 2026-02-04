@@ -163,7 +163,7 @@ const Dashboard = () => {
       </AnimatePresence>
 
       {/* Sidebar - Fixed on all screens */}
-      <aside className={`fixed inset-y-0 left-0 z-50 glass-sidebar flex flex-col transition-all duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
+      <aside className={`fixed top-4 bottom-4 left-4 z-50 glass-sidebar-floating flex flex-col transition-all duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
         {/* Logo & Collapse Button */}
         <div className="p-6 flex items-center justify-between">
           <Link to="/" className={`transition-opacity duration-300 flex items-center gap-2 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
@@ -253,7 +253,7 @@ const Dashboard = () => {
       </aside>
 
       {/* Main - with margin-left to compensate for fixed sidebar */}
-      <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
+      <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
         
         {/* Add padding bottom on mobile for bottom nav */}
         <div className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8 overflow-auto">

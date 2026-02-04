@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Flask, Warning, MagnifyingGlass, X } from '@phosphor-icons/react';
+import { Flask, Warning, MagnifyingGlass } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { ProductDetail } from '@/lib/shopify';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface IngredientsLabelProps {
   parsedData: ParsedProductData | null;
@@ -11,6 +12,7 @@ interface IngredientsLabelProps {
 }
 
 export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps) {
+  const { t } = useTranslation();
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   
   const ingredients = parsedData?.ingredients || [];
@@ -25,12 +27,12 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
   )?.node || product.images.edges[product.images.edges.length - 1]?.node;
 
   // Allergens detection
-  const allergens = detectAllergens(ingredients, product.description);
+  const allergens = detectAllergens(ingredients, product.description, t);
 
   return (
     <section className="py-8 space-y-6">
       <h2 className="text-xl font-semibold text-foreground">
-        Ingredients & Label
+        {t('pdp.ingredients')}
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -40,7 +42,7 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
           <div className="p-5 rounded-2xl bg-muted/30 border border-border/30 space-y-4">
             <div className="flex items-center gap-2">
               <Flask weight="light" className="w-5 h-5 text-primary" />
-              <h3 className="font-medium text-foreground">What's Inside</h3>
+              <h3 className="font-medium text-foreground">{t('pdp.whatsInside')}</h3>
             </div>
             
             {ingredients.length > 0 ? (
@@ -57,7 +59,7 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
               </div>
             ) : (
               <p className="text-foreground/50 text-sm font-light">
-                Voir le label pour la liste complète
+                {t('pdp.seeLabel')}
               </p>
             )}
           </div>
@@ -67,7 +69,7 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
             <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-3">
               <div className="flex items-center gap-2">
                 <Warning weight="fill" className="w-5 h-5 text-amber-500" />
-                <h3 className="font-medium text-foreground">Allergènes</h3>
+                <h3 className="font-medium text-foreground">{t('pdp.allergens')}</h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 {allergens.map((allergen, index) => (
@@ -104,14 +106,14 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
             {supplementFactsImage ? (
               <img
                 src={supplementFactsImage.url}
-                alt="Supplement Facts"
+                alt={t('pdp.supplementFacts')}
                 className="w-full h-full object-contain p-4"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <div className="text-center text-muted-foreground/50">
                   <Flask weight="light" className="w-12 h-12 mx-auto mb-2" />
-                  <p className="text-sm">Supplement Facts</p>
+                  <p className="text-sm">{t('pdp.supplementFacts')}</p>
                   <p className="text-xs">(Image slot)</p>
                 </div>
               </div>
@@ -123,14 +125,14 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
                 <DialogTrigger asChild>
                   <button className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg flex items-center gap-2">
                     <MagnifyingGlass weight="light" className="w-4 h-4" />
-                    <span className="text-sm font-medium">View Full Label</span>
+                    <span className="text-sm font-medium">{t('pdp.viewFullLabel')}</span>
                   </button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl w-full p-0 bg-white">
                   <div className="relative">
                     <img
                       src={supplementFactsImage.url}
-                      alt="Supplement Facts - Full Size"
+                      alt={`${t('pdp.supplementFacts')} - Full Size`}
                       className="w-full h-auto"
                     />
                   </div>
@@ -140,7 +142,7 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
           </div>
           
           <p className="text-xs text-foreground/40 text-center">
-            See full label for complete nutritional information
+            {t('pdp.seeLabel')}
           </p>
         </div>
       </div>
@@ -148,24 +150,24 @@ export function IngredientsLabel({ parsedData, product }: IngredientsLabelProps)
   );
 }
 
-function detectAllergens(ingredients: string[], description: string): string[] {
+function detectAllergens(ingredients: string[], description: string, t: (key: string) => string): string[] {
   const allergens: string[] = [];
   const text = [...ingredients, description].join(' ').toLowerCase();
   
   const allergenKeywords = [
-    { keyword: 'milk', label: 'Lait' },
-    { keyword: 'dairy', label: 'Produits laitiers' },
-    { keyword: 'whey', label: 'Lactosérum' },
-    { keyword: 'casein', label: 'Caséine' },
-    { keyword: 'soy', label: 'Soja' },
+    { keyword: 'milk', label: 'Milk' },
+    { keyword: 'dairy', label: 'Dairy' },
+    { keyword: 'whey', label: 'Whey' },
+    { keyword: 'casein', label: 'Casein' },
+    { keyword: 'soy', label: 'Soy' },
     { keyword: 'gluten', label: 'Gluten' },
-    { keyword: 'wheat', label: 'Blé' },
-    { keyword: 'egg', label: 'Œuf' },
-    { keyword: 'fish', label: 'Poisson' },
-    { keyword: 'shellfish', label: 'Crustacés' },
-    { keyword: 'tree nut', label: 'Fruits à coque' },
-    { keyword: 'peanut', label: 'Arachides' },
-    { keyword: 'sesame', label: 'Sésame' },
+    { keyword: 'wheat', label: 'Wheat' },
+    { keyword: 'egg', label: 'Egg' },
+    { keyword: 'fish', label: 'Fish' },
+    { keyword: 'shellfish', label: 'Shellfish' },
+    { keyword: 'tree nut', label: 'Tree nuts' },
+    { keyword: 'peanut', label: 'Peanuts' },
+    { keyword: 'sesame', label: 'Sesame' },
   ];
   
   for (const { keyword, label } of allergenKeywords) {

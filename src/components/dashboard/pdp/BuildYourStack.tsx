@@ -2,6 +2,7 @@ import { Plus, Stack } from '@phosphor-icons/react';
 import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface BuildYourStackProps {
   products: ShopifyProduct[];
@@ -10,6 +11,7 @@ interface BuildYourStackProps {
 }
 
 export function BuildYourStack({ products, currentProductId, onProductClick }: BuildYourStackProps) {
+  const { t } = useTranslation();
   const addItem = useCartStore(state => state.addItem);
   
   // Filter out current product and get up to 4 products
@@ -35,12 +37,12 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
         quantity: 1,
         selectedOptions: variant.selectedOptions || [],
       });
-      toast.success('Ajouté au panier', {
+      toast.success(t('pdp.addedToCart'), {
         description: product.node.title,
         position: 'top-center',
       });
     } catch (error) {
-      toast.error("Erreur lors de l'ajout au panier");
+      toast.error(t('shop.addError'));
     }
   };
 
@@ -49,7 +51,7 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
       <div className="flex items-center gap-2">
         <Stack weight="light" className="w-5 h-5 text-primary" />
         <h2 className="text-xl font-semibold text-foreground">
-          Build Your Stack
+          {t('pdp.buildYourStack')}
         </h2>
       </div>
 
@@ -57,7 +59,7 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
         {/* Pairs Well With */}
         {pairsWell.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-sm text-foreground/60 font-medium">Pairs well with:</h3>
+            <h3 className="text-sm text-foreground/60 font-medium">{t('pdp.pairsWellWith')}</h3>
             <div className="space-y-3">
               {pairsWell.map((product) => (
                 <CrossSellCard 
@@ -74,7 +76,7 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
         {/* Popular Stack */}
         {popularStack.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-sm text-foreground/60 font-medium">Popular stack:</h3>
+            <h3 className="text-sm text-foreground/60 font-medium">{t('pdp.popularStack')}</h3>
             <div className="space-y-3">
               {popularStack.map((product) => (
                 <CrossSellCard 

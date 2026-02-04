@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ShoppingCart, Heart } from '@phosphor-icons/react';
 import { fetchProductByHandle, fetchProducts, ProductDetail, ShopifyProduct } from '@/lib/shopify';
@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CartDrawer } from '../CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Import all PDP sections
 import { ProductGallery } from './ProductGallery';
@@ -31,82 +32,189 @@ interface ProductDetailMasterProps {
   recommendedByAI?: boolean;
 }
 
+// Cache for product data to enable instant switching
+interface CachedProduct {
+  product: ProductDetail;
+  parsedData: ParsedProductData | null;
+}
+
 export function ProductDetailMaster({ 
   handle, 
   onBack, 
   onProductSelect,
   recommendedByAI = false 
 }: ProductDetailMasterProps) {
-  const [product, setProduct] = useState<ProductDetail | null>(null);
+  const { t } = useTranslation();
+  
+  // Current handle being displayed (can differ from prop during flavor switching)
+  const [currentHandle, setCurrentHandle] = useState(handle);
+  
+  // Cache of all related products (flavor variants)
+  const [productCache, setProductCache] = useState<Map<string, CachedProduct>>(new Map());
+  
+  // All products for cross-sell and finding related products
   const [allProducts, setAllProducts] = useState<ShopifyProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [parsedData, setParsedData] = useState<ParsedProductData | null>(null);
+  
+  // Loading states
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [preloadingFlavors, setPreloadingFlavors] = useState(false);
+  
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   
   const cartItems = useCartStore(state => state.items);
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Reset when handle prop changes (new product entirely)
   useEffect(() => {
-    loadProduct();
-    loadAllProducts();
+    if (handle !== currentHandle && !productCache.has(handle)) {
+      setCurrentHandle(handle);
+      setProductCache(new Map());
+      setInitialLoading(true);
+    } else if (handle !== currentHandle && productCache.has(handle)) {
+      // Handle exists in cache, just switch
+      setCurrentHandle(handle);
+    }
   }, [handle]);
 
-  const loadProduct = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchProductByHandle(handle);
-      setProduct(data);
-      if (data) {
-        const parsed = parseProductDescription(
-          data.descriptionHtml,
-          data.tags,
-          {
-            benefits: data.benefitsMetafield?.value,
-            ingredients: data.ingredientsMetafield?.value,
-          }
-        );
-        setParsedData(parsed);
+  // Load initial product and all products
+  useEffect(() => {
+    const loadInitialData = async () => {
+      setInitialLoading(true);
+      try {
+        // Load the main product and all products in parallel
+        const [productData, productsData] = await Promise.all([
+          fetchProductByHandle(currentHandle),
+          fetchProducts(100)
+        ]);
+        
+        setAllProducts(productsData);
+        
+        if (productData) {
+          const parsed = parseProductDescription(
+            productData.descriptionHtml,
+            productData.tags,
+            {
+              benefits: productData.benefitsMetafield?.value,
+              ingredients: productData.ingredientsMetafield?.value,
+            }
+          );
+          
+          // Add to cache
+          const newCache = new Map(productCache);
+          newCache.set(currentHandle, { product: productData, parsedData: parsed });
+          setProductCache(newCache);
+          
+          // Preload related products (flavor variants) in background
+          preloadRelatedProducts(productData, productsData, newCache);
+        }
+      } catch (error) {
+        console.error('Failed to load product:', error);
+        toast.error(t('pdp.loadError'));
+      } finally {
+        setInitialLoading(false);
       }
+    };
+    
+    // Only load if not in cache
+    if (!productCache.has(currentHandle)) {
+      loadInitialData();
+    }
+  }, [currentHandle]);
+
+  // Preload all flavor variants in background
+  const preloadRelatedProducts = async (
+    mainProduct: ProductDetail, 
+    products: ShopifyProduct[],
+    existingCache: Map<string, CachedProduct>
+  ) => {
+    const flavorPatterns = [
+      /\s*\(([^)]+)\)\s*$/,
+      /\s*-\s*([^-]+)\s*$/,
+    ];
+    
+    let baseTitle = mainProduct.title;
+    for (const pattern of flavorPatterns) {
+      const match = mainProduct.title.match(pattern);
+      if (match) {
+        baseTitle = mainProduct.title.replace(pattern, '').trim();
+        break;
+      }
+    }
+    
+    // Find all related product handles
+    const relatedHandles: string[] = [];
+    for (const p of products) {
+      let pBase = p.node.title;
+      for (const pattern of flavorPatterns) {
+        const match = p.node.title.match(pattern);
+        if (match) {
+          pBase = p.node.title.replace(pattern, '').trim();
+          break;
+        }
+      }
+      
+      if (pBase === baseTitle && p.node.handle !== mainProduct.handle && !existingCache.has(p.node.handle)) {
+        relatedHandles.push(p.node.handle);
+      }
+    }
+    
+    if (relatedHandles.length === 0) return;
+    
+    setPreloadingFlavors(true);
+    
+    try {
+      // Fetch all related products in parallel
+      const relatedProducts = await Promise.all(
+        relatedHandles.map(h => fetchProductByHandle(h))
+      );
+      
+      const newCache = new Map(existingCache);
+      
+      for (const product of relatedProducts) {
+        if (product) {
+          const parsed = parseProductDescription(
+            product.descriptionHtml,
+            product.tags,
+            {
+              benefits: product.benefitsMetafield?.value,
+              ingredients: product.ingredientsMetafield?.value,
+            }
+          );
+          newCache.set(product.handle, { product, parsedData: parsed });
+        }
+      }
+      
+      setProductCache(newCache);
     } catch (error) {
-      console.error('Failed to load product:', error);
-      toast.error('Erreur lors du chargement du produit');
+      console.error('Failed to preload flavor variants:', error);
     } finally {
-      setLoading(false);
+      setPreloadingFlavors(false);
     }
   };
 
-  const loadAllProducts = async () => {
-    try {
-      const products = await fetchProducts(50);
-      setAllProducts(products);
-    } catch (error) {
-      console.error('Failed to load products for cross-sell:', error);
-    }
-  };
+  // Get current product from cache
+  const currentProduct = productCache.get(currentHandle);
+  const product = currentProduct?.product || null;
+  const parsedData = currentProduct?.parsedData || null;
 
   // Find related products (same base name = flavor variants)
-  const findRelatedProducts = (): Array<{ flavor: string; handle: string }> => {
+  const relatedProducts = useMemo((): Array<{ flavor: string; handle: string }> => {
     if (!product || !allProducts.length) return [];
     
-    // Extract base title (remove flavor suffix)
     const flavorPatterns = [
       /\s*\(([^)]+)\)\s*$/,
       /\s*-\s*([^-]+)\s*$/,
     ];
     
     let baseTitle = product.title;
-    let currentFlavor = 'Default';
-    
     for (const pattern of flavorPatterns) {
       const match = product.title.match(pattern);
       if (match) {
-        currentFlavor = match[1].trim();
         baseTitle = product.title.replace(pattern, '').trim();
         break;
       }
     }
     
-    // Find products with same base title
     const related: Array<{ flavor: string; handle: string }> = [];
     
     for (const p of allProducts) {
@@ -128,25 +236,42 @@ export function ProductDetailMaster({
     }
     
     return related.length > 1 ? related : [];
-  };
+  }, [product, allProducts]);
 
-  const relatedProducts = findRelatedProducts();
+  // Handle instant flavor switching
+  const handleFlavorChange = useCallback((newHandle: string) => {
+    if (productCache.has(newHandle)) {
+      // Instant switch - product is already cached
+      setCurrentHandle(newHandle);
+      setSelectedVariantIndex(0);
+      // Update URL without triggering a reload
+      if (onProductSelect) {
+        onProductSelect(newHandle);
+      }
+    } else {
+      // Fallback: product not in cache, let parent handle navigation
+      if (onProductSelect) {
+        onProductSelect(newHandle);
+      }
+    }
+  }, [productCache, onProductSelect]);
+
   const images = product?.images.edges.map(e => e.node) || [];
 
-  if (loading) {
-    return <ProductDetailSkeleton onBack={onBack} />;
+  if (initialLoading) {
+    return <ProductDetailSkeleton onBack={onBack} t={t} />;
   }
 
   if (!product) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-foreground/60 font-light mb-4">Produit non trouvé</p>
+        <p className="text-foreground/60 font-light mb-4">{t('pdp.productNotFound')}</p>
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-primary hover:underline"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour à la boutique
+          {t('pdp.backToShop')}
         </button>
       </div>
     );
@@ -167,7 +292,7 @@ export function ProductDetailMaster({
               className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors"
             >
               <ArrowLeft weight="light" className="w-5 h-5" />
-              <span className="text-sm font-light">Retour à la boutique</span>
+              <span className="text-sm font-light">{t('pdp.backToShop')}</span>
             </button>
             
             <div className="flex items-center gap-3">
@@ -205,7 +330,7 @@ export function ProductDetailMaster({
               product={product}
               parsedData={parsedData}
               relatedProducts={relatedProducts}
-              onFlavorChange={onProductSelect}
+              onFlavorChange={handleFlavorChange}
             />
           </div>
         </section>
@@ -281,7 +406,7 @@ export function ProductDetailMaster({
         <BuildYourStack 
           products={allProducts}
           currentProductId={product.id}
-          onProductClick={onProductSelect}
+          onProductClick={handleFlavorChange}
         />
 
         {/* 12. Shipping / Returns / Support Footer */}
@@ -297,7 +422,7 @@ export function ProductDetailMaster({
   );
 }
 
-function ProductDetailSkeleton({ onBack }: { onBack: () => void }) {
+function ProductDetailSkeleton({ onBack, t }: { onBack: () => void; t: (key: string) => string }) {
   return (
     <div className="space-y-6">
       <button
@@ -305,7 +430,7 @@ function ProductDetailSkeleton({ onBack }: { onBack: () => void }) {
         className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors"
       >
         <ArrowLeft weight="light" className="w-5 h-5" />
-        <span className="text-sm font-light">Retour à la boutique</span>
+        <span className="text-sm font-light">{t('pdp.backToShop')}</span>
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

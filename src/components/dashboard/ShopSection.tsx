@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, SpinnerGap } from '@phosphor-icons/react';
+import { ShoppingCart, SpinnerGap, Sparkle } from '@phosphor-icons/react';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { CartDrawer } from './CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
@@ -11,6 +11,7 @@ import {
   ShopFilters, 
   ProductGroupCard, 
   Pagination,
+  AIRecommendationsWidget,
   CATEGORY_MAPPING,
   type SortOption,
   type CategoryKey
@@ -31,6 +32,7 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
   const [sortOption, setSortOption] = useState<SortOption>('az');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
   const [currentPage, setCurrentPage] = useState(1);
+  const shopContainerRef = useRef<HTMLDivElement>(null);
   const cartItems = useCartStore(state => state.items);
 
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -55,10 +57,17 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
     loadProducts();
   }, []);
 
-  // Reset page when filters change
+  // Reset page and scroll to top when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory, sortOption, priceRange]);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    if (shopContainerRef.current) {
+      shopContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentPage]);
 
   const loadProducts = async () => {
     setLoading(true);
@@ -167,7 +176,10 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-light text-foreground">{t('shop.title')}</h2>
+          <h2 className="text-2xl font-light text-foreground flex items-center gap-2">
+            {t('shop.title')}
+            <Sparkle weight="fill" className="w-5 h-5 text-primary/60" />
+          </h2>
           <p className="text-foreground/60 font-light text-sm">
             {t('shop.subtitle')}
           </p>
@@ -209,47 +221,54 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
       />
 
       {/* Products Grid */}
-      <div className="flex-1 overflow-y-auto mt-6">
+      <div ref={shopContainerRef} className="flex-1 overflow-y-auto mt-6 scroll-smooth">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <SpinnerGap className="w-8 h-8 text-primary animate-spin" />
           </div>
-        ) : paginatedGroups.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-center">
-            <ShoppingCart weight="light" className="w-16 h-16 text-foreground/20 mb-4" />
-            <p className="text-foreground/60 font-light">
-              {searchQuery || selectedCategory !== 'all' ? t('shop.noProducts') : t('shop.noProductsAvailable')}
-            </p>
-          </div>
         ) : (
           <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="grid grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
-            >
-              {paginatedGroups.map((group, index) => (
-                <motion.div
-                  key={group.baseTitle}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
+            {/* AI Recommendations Widget */}
+            <AIRecommendationsWidget onProductClick={onProductSelect} />
+            
+            {paginatedGroups.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 text-center">
+                <ShoppingCart weight="light" className="w-16 h-16 text-foreground/20 mb-4" />
+                <p className="text-foreground/60 font-light">
+                  {searchQuery || selectedCategory !== 'all' ? t('shop.noProducts') : t('shop.noProductsAvailable')}
+                </p>
+              </div>
+            ) : (
+              <>
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="grid grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
                 >
-                  <ProductGroupCard 
-                    group={group} 
-                    onProductClick={onProductSelect}
-                  />
+                  {paginatedGroups.map((group, index) => (
+                    <motion.div
+                      key={group.baseTitle}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                    >
+                      <ProductGroupCard 
+                        group={group} 
+                        onProductClick={onProductSelect}
+                      />
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
 
-            {/* Pagination */}
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={filteredGroups.length}
-              onPageChange={setCurrentPage}
-            />
+                {/* Pagination */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={filteredGroups.length}
+                  onPageChange={setCurrentPage}
+                />
+              </>
+            )}
           </>
         )}
       </div>

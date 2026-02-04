@@ -333,6 +333,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.productAdded": "Produit ajouté au panier",
     "shop.addError": "Erreur lors de l'ajout au panier",
     "shop.viewResults": "Voir tous les résultats",
+    "shop.aiRecommendations": "Recommandations IA",
+    "shop.aiThinking": "Votre Coach IA analyse votre profil...",
+    "shop.aiRecommendationsDesc": "Sélection personnalisée pour vous",
+    "shop.refreshRecommendations": "Actualiser",
 
     // Settings
     "settings.title": "Paramètres",
@@ -783,6 +787,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.productAdded": "Product added to cart",
     "shop.addError": "Error adding to cart",
     "shop.viewResults": "View all results",
+    "shop.aiRecommendations": "AI Recommendations",
+    "shop.aiThinking": "Your AI Coach is analyzing your profile...",
+    "shop.aiRecommendationsDesc": "Personalized selection for you",
+    "shop.refreshRecommendations": "Refresh",
 
     // Settings
     "settings.title": "Settings",
@@ -1233,6 +1241,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.productAdded": "Producto añadido al carrito",
     "shop.addError": "Error al añadir al carrito",
     "shop.viewResults": "Ver todos los resultados",
+    "shop.aiRecommendations": "Recomendaciones IA",
+    "shop.aiThinking": "Tu Coach IA está analizando tu perfil...",
+    "shop.aiRecommendationsDesc": "Selección personalizada para ti",
+    "shop.refreshRecommendations": "Actualizar",
 
     // Settings
     "settings.title": "Configuración",

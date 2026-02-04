@@ -20,6 +20,7 @@ interface ChatMessageBubbleProps {
 function MessageContent({ content }: { content: string }) {
   const { text, products, subscription } = parseProductRecommendations(content);
   
+  // If no special content, just render markdown
   if (products.length === 0 && !subscription) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
@@ -28,39 +29,36 @@ function MessageContent({ content }: { content: string }) {
     );
   }
 
-  const parts = text.split(/__PRODUCT_(\d+)__|__SUBSCRIPTION_BLOCK__/);
+  // Split text by product placeholders
+  const parts = text.split(/__PRODUCT_(\d+)__/);
+  const elements: React.ReactNode[] = [];
   
-  return (
-    <div className="space-y-3">
-      {parts.map((part, index) => {
-        if (index % 2 === 1 && /^\d+$/.test(part)) {
-          const productIndex = parseInt(part, 10);
-          const product = products[productIndex];
-          if (product) {
-            return <ProductRecommendationCard key={`product-${index}`} product={product} />;
-          }
-          return null;
-        }
-        
-        if (part === '' && subscription && text.includes('__SUBSCRIPTION_BLOCK__')) {
-          return <SubscriptionCard key={`subscription-${index}`} subscription={subscription} />;
-        }
-        
-        if (part && part.trim()) {
-          return (
-            <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
-              <ReactMarkdown>{part}</ReactMarkdown>
-            </div>
-          );
-        }
-        return null;
-      })}
-      
-      {subscription && !text.includes('__SUBSCRIPTION_BLOCK__') && (
-        <SubscriptionCard subscription={subscription} />
-      )}
-    </div>
-  );
+  parts.forEach((part, index) => {
+    // Check if this is a product index (odd indices after split are captured groups)
+    if (index % 2 === 1) {
+      const productIndex = parseInt(part, 10);
+      const product = products[productIndex];
+      if (product) {
+        elements.push(
+          <ProductRecommendationCard key={`product-${productIndex}`} product={product} />
+        );
+      }
+    } else if (part && part.trim()) {
+      // This is text content
+      elements.push(
+        <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+          <ReactMarkdown>{part.trim()}</ReactMarkdown>
+        </div>
+      );
+    }
+  });
+  
+  // Add subscription card if present
+  if (subscription) {
+    elements.push(<SubscriptionCard key="subscription" subscription={subscription} />);
+  }
+  
+  return <div className="space-y-2">{elements}</div>;
 }
 
 // TTS Button Component

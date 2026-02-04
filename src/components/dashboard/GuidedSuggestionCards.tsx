@@ -382,7 +382,7 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
                     const answer = q.options.find(o => o.value === answers[q.id]);
                     return (
                       <div key={q.id} className="flex items-center gap-2">
-                        <Check weight="bold" className="w-4 h-4 text-green-500" />
+                        <Check weight="bold" className="w-4 h-4 text-secondary" />
                         <span className="text-sm text-foreground/80">{answer?.label}</span>
                       </div>
                     );
@@ -422,34 +422,53 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
     );
   }
 
-  // Default: Show 4 cards grid
+  // Default: Show 4 cards grid with premium design
   return (
     <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto">
       {GUIDED_CARDS.map((card, index) => (
         <motion.button
           key={card.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.4 + index * 0.1, duration: 0.5, ease: "easeOut" }}
+          whileHover={{ 
+            scale: 1.03, 
+            y: -4,
+            transition: { duration: 0.2 }
+          }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => handleCardClick(card.id)}
           className={cn(
-            "p-5 rounded-2xl bg-gradient-to-br border border-white/10 hover:border-white/20",
-            "text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
-            "backdrop-blur-sm group relative overflow-hidden",
+            "p-6 rounded-2xl bg-gradient-to-br border",
+            "text-left transition-all duration-300",
+            "backdrop-blur-xl group relative overflow-hidden",
+            "hover:shadow-xl hover:shadow-primary/10",
+            "border-white/10 hover:border-primary/30",
             card.gradient
           )}
         >
+          {/* Glow effect on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-primary/5 to-secondary/5" />
+          
           {/* Step indicator badge */}
-          <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-sm">
-            <span className="text-[10px] font-medium text-foreground/60">3 étapes</span>
+          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/10">
+            <span className="text-[10px] font-medium text-foreground/50">3 étapes</span>
           </div>
           
-          <card.icon
-            weight="duotone"
-            className={cn("w-7 h-7 mb-3 transition-transform group-hover:scale-110", card.iconColor)}
-          />
-          <p className="text-sm font-medium text-foreground">{card.title}</p>
-          <p className="text-xs text-foreground/50 mt-1">Questions guidées</p>
+          {/* Icon with animation */}
+          <motion.div
+            className="relative z-10"
+            whileHover={{ rotate: 5, scale: 1.1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <card.icon
+              weight="duotone"
+              className={cn("w-8 h-8 mb-4", card.iconColor)}
+            />
+          </motion.div>
+          
+          <p className="relative z-10 text-sm font-medium text-foreground">{card.title}</p>
+          <p className="relative z-10 text-xs text-foreground/50 mt-1.5">Questions guidées</p>
         </motion.button>
       ))}
     </div>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Copy, Check, SpeakerHigh, User as UserIcon, ArrowsClockwise } from '@phosphor-icons/react';
+import { Copy, Check, SpeakerHigh, User as UserIcon, ArrowsClockwise, Sparkle } from '@phosphor-icons/react';
 import { useState, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
@@ -134,62 +134,75 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: 
   const isUser = role === 'user';
   const isAssistant = role === 'assistant';
 
+  // User message with bubble
+  if (isUser) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 15, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="flex gap-4 justify-end"
+      >
+        <div className="max-w-[75%]">
+          <div className="rounded-2xl px-5 py-4 bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20">
+            <p className="text-sm font-light leading-relaxed">{content}</p>
+          </div>
+        </div>
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+          <UserIcon weight="fill" className="w-5 h-5 text-primary" />
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Assistant message without bubble - full width
   return (
     <motion.div
       initial={{ opacity: 0, y: 15, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={cn(
-        "flex gap-4",
-        isUser ? 'justify-end' : 'justify-start'
-      )}
+      className="flex items-start gap-4"
     >
       {/* AI Avatar with glow during streaming */}
-      {isAssistant && (
-        <motion.div 
-          className={cn(
-            "w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20 relative",
-            isStreaming && "animate-pulse-glow"
-          )}
-          animate={isStreaming ? { 
-            boxShadow: [
-              "0 0 10px 2px rgba(0, 240, 255, 0.2)",
-              "0 0 20px 4px rgba(0, 240, 255, 0.4)",
-              "0 0 10px 2px rgba(0, 240, 255, 0.2)"
-            ]
-          } : {}}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
-        </motion.div>
-      )}
+      <motion.div 
+        className={cn(
+          "w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20 relative",
+          isStreaming && "animate-pulse-glow"
+        )}
+        animate={isStreaming ? { 
+          boxShadow: [
+            "0 0 10px 2px rgba(0, 240, 255, 0.2)",
+            "0 0 20px 4px rgba(0, 240, 255, 0.4)",
+            "0 0 10px 2px rgba(0, 240, 255, 0.2)"
+          ]
+        } : {}}
+        transition={{ duration: 1.5, repeat: Infinity }}
+      >
+        <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
+      </motion.div>
       
-      {/* Message Container */}
-      <div className={cn("max-w-[75%] space-y-2", isUser && "order-first")}>
-        {/* Message Bubble */}
-        <div
-          className={cn(
-            "rounded-2xl px-5 py-4",
-            isUser
-              ? 'bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20'
-              : 'bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-sm'
-          )}
-        >
-          {isAssistant ? (
-            <MessageContent content={content} />
-          ) : (
-            <p className="text-sm font-light leading-relaxed">{content}</p>
-          )}
+      {/* Message Content - No bubble, full width */}
+      <div className="flex-1 space-y-2 pt-1">
+        {/* Label VitaSync AI */}
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkle weight="fill" className="w-3.5 h-3.5 text-primary" />
+          <span className="text-xs font-medium text-foreground/50">VitaSync AI</span>
         </div>
 
-        {/* Action buttons for assistant messages */}
-        {isAssistant && content && !isStreaming && (
+        {/* Message content without background */}
+        <div className="text-foreground/90">
+          <MessageContent content={content} />
+        </div>
+
+        {/* Action buttons */}
+        {content && !isStreaming && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="flex items-center gap-1 px-2"
+            className="flex items-center gap-1 pt-2"
           >
             <CopyButton content={content} />
             <TTSButton content={content} />
@@ -205,13 +218,6 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: 
           </motion.div>
         )}
       </div>
-
-      {/* User Avatar */}
-      {isUser && (
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
-          <UserIcon weight="fill" className="w-5 h-5 text-primary" />
-        </div>
-      )}
     </motion.div>
   );
 }

@@ -6,10 +6,12 @@ import {
   CaretLeft,
   CaretRight,
   Calendar,
-  Clock
+  Clock,
+  MagnifyingGlass,
+  X
 } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 interface Conversation {
   id: string;
@@ -70,7 +72,30 @@ export function ChatSidebar({
   onCreateNew,
   onDelete
 }: ChatSidebarProps) {
-  const groupedConversations = useMemo(() => groupConversations(conversations), [conversations]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filter conversations based on search term
+  const filteredConversations = useMemo(() => {
+    if (!searchTerm.trim()) return conversations;
+    const term = searchTerm.toLowerCase();
+    return conversations.filter(conv => 
+      conv.title?.toLowerCase().includes(term)
+    );
+  }, [conversations, searchTerm]);
+
+  const groupedConversations = useMemo(() => groupConversations(filteredConversations), [filteredConversations]);
+
+  // Highlight matching text
+  const highlightMatch = (text: string) => {
+    if (!searchTerm.trim()) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, i) => 
+      regex.test(part) ? (
+        <span key={i} className="bg-primary/30 text-primary rounded px-0.5">{part}</span>
+      ) : part
+    );
+  };
 
   return (
     <motion.div 
@@ -145,6 +170,44 @@ export function ChatSidebar({
         )}
       </button>
 
+      {/* Search bar */}
+      {!isCollapsed && (
+        <div className="px-3 pb-3">
+          <div className="relative">
+            <MagnifyingGlass 
+              weight="light" 
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" 
+            />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Rechercher..."
+              className={cn(
+                "w-full pl-9 pr-8 py-2.5 rounded-xl",
+                "bg-white/5 border border-white/10",
+                "text-sm font-light text-foreground placeholder:text-foreground/40",
+                "focus:outline-none focus:border-primary/40 focus:bg-white/8",
+                "transition-all duration-200"
+              )}
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-white/10 transition-colors"
+              >
+                <X weight="bold" className="w-3 h-3 text-foreground/40" />
+              </button>
+            )}
+          </div>
+          {searchTerm && (
+            <p className="text-xs text-foreground/40 mt-2 px-1">
+              {filteredConversations.length} résultat{filteredConversations.length !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Scrollable conversations list */}
       <div className="flex-1 overflow-y-auto px-2 pb-4">
         {groupedConversations.map((group, groupIndex) => (
@@ -200,7 +263,7 @@ export function ChatSidebar({
                   {!isCollapsed && (
                     <>
                       <span className="flex-1 truncate text-sm font-light">
-                        {conv.title || 'Conversation'}
+                        {highlightMatch(conv.title || 'Conversation')}
                       </span>
                       <button
                         onClick={(e) => onDelete(conv.id, e)}

@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { TypingIndicator } from './TypingIndicator';
-import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, type ChatInputRef } from './chat';
+import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, type AIModel, type ChatInputRef } from './chat';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -26,6 +26,9 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
 // Official VitaSync PNG Logo
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
+// Default model
+const DEFAULT_MODEL = AI_MODELS.find(m => m.model === 'google/gemini-3-flash-preview') || AI_MODELS[2];
+
 export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
   const { healthProfile } = useHealthProfile();
@@ -35,6 +38,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [hasCalledFirstMessage, setHasCalledFirstMessage] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<AIModel>(DEFAULT_MODEL);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<ChatInputRef>(null);
 
@@ -141,10 +145,11 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.data.session?.access_token}`,
         },
-        body: JSON.stringify({
-          messages: [...messages, { role: 'user', content: userMessage }],
-        }),
-      });
+      body: JSON.stringify({
+        messages: [...messages, { role: 'user', content: userMessage }],
+        model: selectedModel.model,
+      }),
+    });
 
       if (!response.ok) {
         throw new Error('Erreur de communication avec le coach');
@@ -216,6 +221,14 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative min-w-0">
+        {/* Header with Model Selector */}
+        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+          <ChatModelSelector 
+            selectedModel={selectedModel} 
+            onModelChange={setSelectedModel} 
+          />
+        </div>
+
         {isNewConversation ? (
           <ChatWelcomeScreen
             firstName={firstName}
@@ -237,16 +250,9 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 ))}
               </AnimatePresence>
 
-              {/* Typing Indicator */}
+              {/* Typing Indicator - without bubble */}
               {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20 animate-pulse-glow">
-                    <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 backdrop-blur-sm">
-                    <TypingIndicator />
-                  </div>
-                </div>
+                <TypingIndicator />
               )}
               <div ref={messagesEndRef} />
             </div>

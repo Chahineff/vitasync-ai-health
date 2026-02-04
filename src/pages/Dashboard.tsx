@@ -87,10 +87,10 @@ const Dashboard = () => {
     icon: Question
   }];
 
-  // Redirect to auth if not logged in
+  // Redirect to auth if not logged in - but don't render until checked
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/auth?mode=signin");
+      navigate("/auth?mode=signin", { replace: true });
     }
   }, [user, loading, navigate]);
 
@@ -100,9 +100,22 @@ const Dashboard = () => {
       navigate("/onboarding");
     }
   }, [user, loading, healthProfile, healthProfileLoading, navigate]);
+
+  // Persist sidebar collapsed state
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));
   }, [sidebarCollapsed]);
+
+  // Early return: Show skeleton while loading or if no user (prevents flash of dashboard UI)
+  // This comes AFTER all hooks to comply with React hooks rules
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (!user) {
+    // Return skeleton during redirect to prevent flash of dashboard
+    return <DashboardSkeleton />;
+  }
   const handleSectionChange = (section: Section) => {
     if (section === activeSection && section !== "product") return;
     setIsTransitioning(true);

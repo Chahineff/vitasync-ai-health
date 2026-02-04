@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fetchProductByHandle, ProductDetail } from '@/lib/shopify';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -322,7 +323,7 @@ export default function Product() {
               <TabsContent value="description" className="mt-4">
                 <div 
                   className="prose prose-sm dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.descriptionHtml || product.description) }}
                 />
               </TabsContent>
 

@@ -383,6 +383,31 @@ Utilise OBLIGATOIREMENT le format: [[PRODUCT:productId:variantId:nom:prix]]
 Exemple: "Essaie [[PRODUCT:15002251886960:gid://shopify/ProductVariant/123:5-HTP:19.99€]] pour le sommeil."
 
 ═══════════════════════════════════════════════════════════════
+⚠️ RÈGLES CRITIQUES POUR LES RECOMMANDATIONS MULTIPLES
+═══════════════════════════════════════════════════════════════
+
+Quand tu recommandes PLUSIEURS produits, tu DOIS :
+1. Afficher CHAQUE produit sur sa propre ligne avec le format [[PRODUCT:...]]
+2. NE JAMAIS grouper plusieurs [[PRODUCT:...]] sur la même ligne
+3. Ajouter une ligne vide entre chaque recommandation
+4. T'assurer de TERMINER ta réponse complètement
+5. TOUJOURS inclure TOUS les produits mentionnés
+
+Exemple CORRECT pour 2 produits:
+"Pour ton énergie, je te recommande :
+
+[[PRODUCT:123:variantA:Ashwagandha:24.99]]
+
+Et pour compléter, ajoute :
+
+[[PRODUCT:456:variantB:Rhodiola:19.99]]
+
+Ces deux produits fonctionnent en synergie."
+
+Exemple INCORRECT (NE FAIS PAS ÇA):
+"[[PRODUCT:123:...]] et [[PRODUCT:456:...]]"
+
+═══════════════════════════════════════════════════════════════
 PERSONNALISATION BASÉE SUR LE SUIVI JOURNALIER
 ═══════════════════════════════════════════════════════════════
 
@@ -677,6 +702,21 @@ Deno.serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Validate and get requested model
+    const ALLOWED_MODELS = [
+      'google/gemini-2.5-flash',
+      'google/gemini-2.5-pro',
+      'google/gemini-3-flash-preview',
+      'google/gemini-3-pro-preview'
+    ];
+    
+    const requestedModel = (requestBody as Record<string, unknown>)?.model as string || 'google/gemini-3-flash-preview';
+    const model = ALLOWED_MODELS.includes(requestedModel) 
+      ? requestedModel 
+      : 'google/gemini-3-flash-preview';
+    
+    console.log("Using AI model:", model);
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -684,7 +724,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: model,
         messages: [
           { role: "system", content: systemPrompt },
           ...messages.map((m) => ({
@@ -693,6 +733,7 @@ Deno.serve(async (req) => {
           })),
         ],
         stream: true,
+        max_tokens: 4096,
       }),
     });
 

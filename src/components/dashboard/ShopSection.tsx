@@ -62,10 +62,19 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory, sortOption, priceRange]);
 
-  // Scroll to top when page changes
+  // Scroll to top when page changes - target the main dashboard container
   useEffect(() => {
-    if (shopContainerRef.current) {
-      shopContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    // Try multiple strategies to find the scrollable container
+    const mainContainer = document.querySelector('main .overflow-auto');
+    if (mainContainer) {
+      mainContainer.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Fallback to the shop container ref
+      if (shopContainerRef.current) {
+        shopContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      // Also try scrolling window as last resort
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [currentPage]);
 

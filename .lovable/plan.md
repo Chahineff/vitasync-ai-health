@@ -1,197 +1,178 @@
 
+# Plan d'amélioration : Multilingue complet + Switch de saveurs instantané
 
-# Plan d'amelioration de la Boutique VitaSync
+## Problèmes identifiés
 
-## Problemes identifies
+### 1. Multilingue incomplet
+Après analyse approfondie, j'ai identifié que le système i18n existe mais de nombreux composants n'utilisent pas les traductions :
 
-Apres analyse du code et des donnees Shopify, j'ai identifie les problemes suivants :
+| Composant | Problème |
+|-----------|----------|
+| `ProfileSection.tsx` | Labels "Paramètres", "Prénom", "Nom", etc. codés en dur |
+| `FAQSection.tsx` | Questions/réponses en français uniquement |
+| `ChatInterface.tsx` | Suggestions ("Améliorer mon sommeil", etc.) en français |
+| Tous les composants PDP | Texte en français partout |
+| `useTranslation.ts` | Langue par défaut = 'fr' au lieu de 'en' |
 
-1. **Multilangue non fonctionnel dans le Dashboard** : Le systeme i18n fonctionne uniquement sur la landing page (Navbar), mais le dashboard utilise du texte code en dur en francais
-2. **Pas de regroupement des produits par saveurs** : Les produits comme "Energy Powder (Fruit Punch)", "Energy Powder (Strawberry Shortcake)" apparaissent separement au lieu d'etre regroupes
-3. **Grille non optimale** : Actuellement 1-2-3 colonnes, au lieu de 3 mobile / 4 desktop
-4. **Pas de pagination** : Tous les produits s'affichent d'un coup
-5. **Recherche basique** : Requiert le nom exact, pas de recherche interactive
-6. **Filtres limites** : Seulement categories, manque prix, tri A-Z
-
-## Categories definies
-
-Basees sur les productType Shopify existants, je propose ces mega-categories :
-
-| Mega-Categorie | Types Shopify inclus |
-|----------------|---------------------|
-| Sport | Proteins, Muscle Builders, Pre-Workout, Intra-Workout, Post-Workout Recovery |
-| Bien-etre | Specialty Supplements, Stress & Relaxation, Sleep Support |
-| Sante Digestive | Digestive Support, Gut Health |
-| Vitamines | Vitamins & Minerals |
-| Cerveau & Focus | Brain & Cognitive |
-| Poids | Weight Management |
-| Champignons | Mushroom Products, Bee Products |
-| Os & Articulations | Bone, Joint & Cartilage |
-| Autre | Tous les autres types |
-
-## Solution proposee
-
-### Etape 1 : Ajouter les traductions du Dashboard
-
-Modifier `src/lib/i18n.ts` pour ajouter les cles de traduction du dashboard et de la boutique en FR/EN/ES
-
-### Etape 2 : Creer le composant de recherche interactive
-
-Nouveau fichier : `src/components/dashboard/shop/SearchOverlay.tsx`
-- Barre de recherche qui s'agrandit au focus
-- Recherche fuzzy (tolere les fautes, recherche partielle)
-- Affiche les resultats avec images en temps reel
-- Maximum 6 resultats dans l'overlay
-- Ferme automatiquement quand on clique ailleurs
-
-### Etape 3 : Creer le systeme de filtres avances
-
-Nouveau fichier : `src/components/dashboard/shop/ShopFilters.tsx`
-- Tabs de mega-categories en haut (Sport, Bien-etre, etc.)
-- Dropdown de tri : A-Z, Z-A, Prix croissant, Prix decroissant
-- Slider de prix (min-max)
-- Bouton de reinitialisation des filtres
-
-### Etape 4 : Creer le composant ProductGroupCard
-
-Nouveau fichier : `src/components/dashboard/shop/ProductGroupCard.tsx`
-- Affiche un groupe de produits (ex: toutes les saveurs de Whey)
-- Badge "X saveurs" si plusieurs produits groupes
-- Au hover sur desktop : montre les autres saveurs disponibles
-- Image change selon la saveur survolee
-- Au clic : ouvre la fiche produit avec le selecteur de saveurs
-
-### Etape 5 : Creer le hook de regroupement des produits
-
-Nouveau fichier : `src/hooks/useProductGroups.ts`
-- Logique de regroupement basee sur le titre de base
-- Detecte les patterns : "Nom (Saveur)", "Nom - Saveur"
-- Retourne des groupes au lieu de produits individuels
-
-### Etape 6 : Refondre ShopSection avec pagination
-
-Modifier `src/components/dashboard/ShopSection.tsx`
-- Integrer les nouveaux composants
-- Grille : 3 colonnes mobile / 4 colonnes desktop
-- Pagination : 20 produits par page
-- Navigation premiere/precedente/suivante/derniere page
-- Compteur "Page X sur Y" et "X produits trouves"
-
-## Structure de la nouvelle boutique
+### 2. Switch de saveurs lent
+Le problème vient du flux actuel dans `ProductDetailMaster.tsx` :
 
 ```text
-+------------------------------------------------------------------+
-|  Boutique                              [Recherche...] [Panier]   |
-+------------------------------------------------------------------+
-|  [Tous] [Sport] [Bien-etre] [Digestif] [Vitamines] [Focus] ...   |
-+------------------------------------------------------------------+
-|  Trier: [A-Z v]   Prix: [-----|-----]   [Reinitialiser]          |
-+------------------------------------------------------------------+
-|                                                                   |
-|  +----------+  +----------+  +----------+  +----------+          |
-|  |  WHEY    |  |  ENERGY  |  | CREATINE |  |  BCAA    |          |
-|  | PROTEIN  |  |  POWDER  |  |          |  |          |          |
-|  |          |  |          |  |          |  |          |          |
-|  | 2 saveurs|  | 3 saveurs|  |          |  |          |          |
-|  | 34.90 EUR|  | 29.90 EUR|  | 33.90 EUR|  | 28.90 EUR|          |
-|  +----------+  +----------+  +----------+  +----------+          |
-|                                                                   |
-|  +----------+  +----------+  +----------+  +----------+          |
-|  |          |  |          |  |          |  |          |          |
-|  |   ...    |  |   ...    |  |   ...    |  |   ...    |          |
-|  +----------+  +----------+  +----------+  +----------+          |
-|                                                                   |
-|              [<] Page 1 sur 4 [>]   |  73 produits               |
-+------------------------------------------------------------------+
+Clic sur saveur → onFlavorChange(handle) → handle change
+    → useEffect déclenché → setLoading(true) → Skeleton affiché
+    → fetchProductByHandle(handle) → Requête API Shopify (~500ms-1s)
+    → setProduct(data) → setLoading(false) → Nouveau rendu
 ```
 
-## Recherche interactive (overlay)
+**Le problème** : Les produits sont déjà chargés dans `allProducts` mais pas utilisés pour le switch !
 
+## Solution proposée
+
+### Étape 1 : Rendre le switch de saveurs instantané
+
+**Nouvelle architecture :**
 ```text
-+------------------------------------------------------------------+
-|  [Q Rechercher un produit...                                 X]  |
-+------------------------------------------------------------------+
-|  +--------+  Whey Protein Isolate                                |
-|  |  IMG   |  Proteins - 34.90 EUR                                |
-|  +--------+                                                       |
-|  +--------+  Whey Protein Concentrate                            |
-|  |  IMG   |  Proteins - 29.90 EUR                                |
-|  +--------+                                                       |
-|  +--------+  Weight Gainer                                        |
-|  |  IMG   |  Weight Management - 45.90 EUR                       |
-|  +--------+                                                       |
-+------------------------------------------------------------------+
+1. Charger TOUS les produits du groupe au premier chargement
+2. Stocker les données complètes de chaque saveur
+3. Au clic sur une saveur → simplement changer le state (pas de fetch)
 ```
 
-## Fichiers a creer/modifier
+**Modifications dans `ProductDetailMaster.tsx` :**
+- Créer un state `productsByHandle: Map<string, ProductDetail>` pour stocker tous les produits liés
+- Au chargement initial, fetcher tous les produits du groupe en parallèle
+- Quand on clique sur une saveur, utiliser les données déjà en mémoire
+- Transition fluide sans loading state
 
-| Fichier | Action | Description |
-|---------|--------|-------------|
-| `src/lib/i18n.ts` | Modifier | Ajouter traductions dashboard + boutique |
-| `src/components/dashboard/shop/SearchOverlay.tsx` | Creer | Recherche interactive avec resultats |
-| `src/components/dashboard/shop/ShopFilters.tsx` | Creer | Tabs categories + tri + slider prix |
-| `src/components/dashboard/shop/ProductGroupCard.tsx` | Creer | Carte produit avec saveurs groupees |
-| `src/components/dashboard/shop/Pagination.tsx` | Creer | Composant pagination |
-| `src/components/dashboard/shop/index.ts` | Creer | Exports des composants shop |
-| `src/hooks/useProductGroups.ts` | Creer | Hook de regroupement produits |
-| `src/components/dashboard/ShopSection.tsx` | Modifier | Integrer tous les nouveaux composants |
-| `src/components/dashboard/MobileBottomNav.tsx` | Modifier | Ajouter traductions |
-| `src/pages/Dashboard.tsx` | Modifier | Ajouter traductions |
+**Code conceptuel :**
+```typescript
+// Au lieu de recharger à chaque changement de handle
+const [productsByHandle, setProductsByHandle] = useState<Map<string, ProductDetail>>(new Map());
+const [currentHandle, setCurrentHandle] = useState(handle);
 
-## Details techniques
+// Charger tous les produits du groupe une seule fois
+useEffect(() => {
+  const loadAllRelatedProducts = async () => {
+    // Fetch le produit principal
+    const mainProduct = await fetchProductByHandle(handle);
+    // Identifier les produits liés (mêmes saveurs)
+    const relatedHandles = findRelatedHandles(allProducts, mainProduct);
+    // Fetch tous en parallèle
+    const allRelated = await Promise.all(
+      relatedHandles.map(h => fetchProductByHandle(h))
+    );
+    // Stocker dans la Map
+    const map = new Map();
+    allRelated.forEach(p => map.set(p.handle, p));
+    setProductsByHandle(map);
+  };
+  loadAllRelatedProducts();
+}, [handle]); // Seulement au premier chargement
 
-### Algorithme de regroupement des produits
+// Switch instantané
+const handleFlavorSwitch = (newHandle: string) => {
+  setCurrentHandle(newHandle); // Pas de loading !
+};
 
-```text
-Pour chaque produit:
-  1. Extraire le titre de base (sans suffixe saveur)
-  2. Patterns detectes:
-     - "Nom (Saveur)" -> base = "Nom", flavor = "Saveur"
-     - "Nom - Saveur" -> base = "Nom", flavor = "Saveur"
-  3. Grouper par titre de base
-  4. Si groupe > 1 produit : afficher comme groupe avec saveurs
-  5. Si groupe = 1 produit : afficher normalement
+// Produit affiché = celui dans la Map
+const product = productsByHandle.get(currentHandle);
 ```
 
-### Recherche fuzzy
+### Étape 2 : Compléter les traductions i18n
+
+**Nouvelles clés à ajouter dans `src/lib/i18n.ts` :**
 
 ```text
-La recherche matchera si:
-  - Le terme est inclus dans le titre (insensible a la casse)
-  - Le terme est inclus dans la description
-  - Le terme est inclus dans le type de produit
-  - Match partiel (ex: "whey" trouve "Whey Protein")
-  - Tolere les espaces supplementaires
+Catégorie "settings" :
+- settings.title, settings.subtitle
+- settings.firstName, settings.lastName, settings.email, settings.dateOfBirth
+- settings.avatarChange, settings.emailCantChange
+- settings.save, settings.saving, settings.years
+
+Catégorie "pdp" (Product Detail Page) :
+- pdp.backToShop, pdp.howToTake, pdp.dosage, pdp.timing, pdp.notes
+- pdp.duration, pdp.coachTip, pdp.shipping, pdp.returns, pdp.support
+- pdp.disclaimer, pdp.flavorVariant, pdp.size, pdp.inStock, pdp.outOfStock
+- pdp.addToCart, pdp.added, pdp.subscribeAndSave, pdp.comingSoon
+
+Catégorie "faq" :
+- Toutes les questions/réponses (faq.q1, faq.a1, etc.)
+
+Catégorie "coach" :
+- coach.suggestion1, coach.suggestion2, etc.
 ```
 
-### Mega-categories mapping
+### Étape 3 : Changer la langue par défaut à l'anglais
 
-```text
-const CATEGORY_MAPPING = {
-  sport: [
-    "Proteins", "Muscle Builders", "Pre-Workout Supplements",
-    "Intra-Workout Supplements", "Post-Workout Recovery"
-  ],
-  wellness: [
-    "Specialty Supplements", "Stress & Relaxation", 
-    "Sleep Support", "Sexual & Reproductive Wellness"
-  ],
-  digestive: ["Digestive Support"],
-  vitamins: ["Vitamins & Minerals"],
-  brain: ["Brain & Cognitive"],
-  weight: ["Weight Management"],
-  mushrooms: ["Mushroom Products", "Bee Products"],
-  bones: ["Bone, Joint & Cartilage"],
+**Modification dans `useTranslation.ts` :**
+```typescript
+export const useI18n = create<I18nStore>()(
+  persist(
+    (set, get) => ({
+      locale: 'en', // Changé de 'fr' à 'en'
+      // ...
+    }),
+    // ...
+  )
+);
+
+export function detectBrowserLocale(): Locale {
+  // ...
+  return 'en'; // Fallback changé de 'fr' à 'en'
 }
 ```
 
-## Avantages de cette approche
+### Étape 4 : Ajouter sélecteur de langue dans les Paramètres
 
-1. **Produits regroupes** : Les saveurs sont dans une seule carte, plus clair pour l'utilisateur
-2. **Recherche intuitive** : Pas besoin du nom exact, affichage temps reel
-3. **Navigation par categories** : Acces rapide aux types de produits
-4. **Tri flexible** : Par nom ou par prix
-5. **Pagination** : Chargement plus rapide, navigation claire
-6. **Multilangue** : Interface traduite en FR/EN/ES
-7. **Responsive** : 3 colonnes mobile, 4 desktop
+**Nouvelle section dans `ProfileSection.tsx` :**
+```text
++----------------------------------------+
+| 🌐 Langue / Language                   |
+|                                        |
+| [🇬🇧 English] [🇫🇷 Français] [🇪🇸 Español] |
++----------------------------------------+
+```
 
+## Fichiers à modifier
+
+| Fichier | Action | Description |
+|---------|--------|-------------|
+| `src/lib/i18n.ts` | Modifier | Ajouter ~150 nouvelles clés de traduction |
+| `src/hooks/useTranslation.ts` | Modifier | Changer langue par défaut à 'en' |
+| `src/components/dashboard/ProfileSection.tsx` | Modifier | Utiliser t(), ajouter sélecteur de langue |
+| `src/components/dashboard/pdp/ProductDetailMaster.tsx` | Modifier | Preload des saveurs, switch instantané |
+| `src/components/dashboard/pdp/ProductPurchaseBox.tsx` | Modifier | Utiliser t() pour tous les textes |
+| `src/components/dashboard/pdp/HowToTake.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/PDPFooter.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/IngredientsLabel.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/QualitySourcing.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/SafetyCautions.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/ScienceSection.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/ProductFAQ.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/ProductReviews.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/pdp/BuildYourStack.tsx` | Modifier | Utiliser t() |
+| `src/components/dashboard/ChatInterface.tsx` | Modifier | Utiliser t() pour suggestions |
+| `src/components/sections/FAQSection.tsx` | Modifier | Utiliser t() pour FAQ |
+
+## Avantages
+
+1. **Switch de saveurs instantané** : Les données sont préchargées, pas de latence réseau
+2. **Expérience fluide** : Pas de skeleton/loading entre les saveurs
+3. **Multilingue complet** : Tout le site traduit en 3 langues
+4. **Langue par défaut anglais** : Plus accessible internationalement
+5. **Sélecteur dans les paramètres** : L'utilisateur peut changer la langue facilement
+
+## Détails techniques
+
+### Performance du preload
+- Environ 2-5 produits maximum par groupe de saveurs
+- Fetch parallèle avec `Promise.all`
+- Total ~1-2 secondes au premier chargement, puis 0ms pour les switches
+
+### Structure des traductions
+```text
+translations = {
+  en: { "pdp.backToShop": "Back to shop", ... },
+  fr: { "pdp.backToShop": "Retour à la boutique", ... },
+  es: { "pdp.backToShop": "Volver a la tienda", ... }
+}
+```

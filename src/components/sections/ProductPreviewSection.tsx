@@ -1,9 +1,11 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export const ProductPreviewSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation();
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -36,10 +38,10 @@ export const ProductPreviewSection = () => {
           className="text-center mb-8 md:mb-12 lg:mb-16"
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-3 md:mb-4 px-2">
-            Votre <span className="text-primary">Dashboard</span> Personnel
+            {t("productPreview.title")} <span className="text-primary">{t("productPreview.titleHighlight")}</span> {t("productPreview.titleEnd")}
           </h2>
           <p className="text-foreground/60 text-sm md:text-base lg:text-lg max-w-2xl mx-auto font-light px-4">
-            Une interface intuitive et élégante pour suivre votre santé au quotidien
+            {t("productPreview.subtitle")}
           </p>
         </motion.div>
 
@@ -109,7 +111,7 @@ export const ProductPreviewSection = () => {
                 className="px-6 py-3 rounded-full bg-gradient-to-r from-primary to-secondary text-white font-medium text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
                 onClick={() => window.location.href = '/auth'}
               >
-                Explorer le dashboard
+                {t("productPreview.cta")}
               </motion.button>
             </motion.div>
           </div>

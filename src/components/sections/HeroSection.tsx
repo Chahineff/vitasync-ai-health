@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const { t } = useTranslation();
 
   // Parallax effect based on scroll - Hero fades, scales down, and blurs as user scrolls
   const { scrollYProgress } = useScroll({
@@ -57,7 +59,7 @@ export function HeroSection() {
         >
           <span className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-white/10 border border-white/20 text-xs md:text-sm text-primary mb-6 md:mb-8 backdrop-blur-md shadow-lg">
             <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-secondary animate-pulse" />
-            Nouveau : Analyse vocale IA disponible
+            {t("hero.badge")}
           </span>
         </motion.div>
 
@@ -67,8 +69,8 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-[-0.04em] text-foreground mb-4 md:mb-6 leading-[1.1] hero-text-shadow"
         >
-          Votre Santé,{" "}
-          <span className="gradient-text-hero">Propulsée par l'Intelligence Artificielle</span>
+          {t("hero.title")}{" "}
+          <span className="gradient-text-hero">{t("hero.titleHighlight")}</span>
         </motion.h1>
 
         <motion.p
@@ -77,7 +79,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="text-base md:text-lg lg:text-xl xl:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-2"
         >
-          VitaSync analyse vos besoins en temps réel pour créer la routine de compléments parfaite, adaptée à votre mode de vie.
+          {t("hero.subtitle")}
         </motion.p>
 
         <motion.div
@@ -90,13 +92,13 @@ export function HeroSection() {
             to="/auth?mode=signup" 
             className="btn-hero-glass text-white text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-10 w-full sm:w-auto"
           >
-            Démarrer mon bilan gratuit
+            {t("hero.cta")}
           </Link>
           <a 
             href="#how-it-works" 
             className="btn-hero-secondary text-foreground text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-10 w-full sm:w-auto"
           >
-            Comment ça marche
+            {t("hero.secondary")}
           </a>
         </motion.div>
       </motion.div>

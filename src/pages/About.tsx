@@ -10,38 +10,43 @@ import {
   ShieldCheck, 
   Users 
 } from "@phosphor-icons/react";
+import { useTranslation } from "@/hooks/useTranslation";
 
-const values = [
-  {
-    icon: Brain,
-    title: "Innovation",
-    description: "Nous repoussons les limites de l'IA pour créer des solutions de santé révolutionnaires.",
-  },
-  {
-    icon: Heart,
-    title: "Bienveillance",
-    description: "Chaque recommandation est pensée pour votre bien-être à long terme.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Transparence",
-    description: "Vos données vous appartiennent. Nous garantissons une confidentialité totale.",
-  },
-  {
-    icon: Users,
-    title: "Accessibilité",
-    description: "La santé personnalisée ne doit pas être un luxe réservé à quelques-uns.",
-  },
-];
-
-const team = [
-  { name: "Dr. Sarah Chen", role: "CEO & Co-fondatrice", bio: "PhD en bioinformatique, ex-Google Health" },
-  { name: "Marc Durand", role: "CTO & Co-fondateur", bio: "Expert IA, ex-DeepMind" },
-  { name: "Dr. Émilie Petit", role: "Directrice Scientifique", bio: "Médecin nutritionniste, 15 ans d'expérience" },
-  { name: "Antoine Moreau", role: "VP Produit", bio: "Ex-Alan, spécialiste HealthTech" },
-];
+const valueIcons = [Brain, Heart, ShieldCheck, Users];
 
 const About = () => {
+  const { t } = useTranslation();
+
+  const values = [
+    {
+      icon: Brain,
+      title: t("about.value1.title"),
+      description: t("about.value1.description"),
+    },
+    {
+      icon: Heart,
+      title: t("about.value2.title"),
+      description: t("about.value2.description"),
+    },
+    {
+      icon: ShieldCheck,
+      title: t("about.value3.title"),
+      description: t("about.value3.description"),
+    },
+    {
+      icon: Users,
+      title: t("about.value4.title"),
+      description: t("about.value4.description"),
+    },
+  ];
+
+  const team = [
+    { name: "Dr. Sarah Chen", role: "CEO & Co-fondatrice", bio: "PhD en bioinformatique, ex-Google Health" },
+    { name: "Marc Durand", role: "CTO & Co-fondateur", bio: "Expert IA, ex-DeepMind" },
+    { name: "Dr. Émilie Petit", role: "Directrice Scientifique", bio: "Médecin nutritionniste, 15 ans d'expérience" },
+    { name: "Antoine Moreau", role: "VP Produit", bio: "Ex-Alan, spécialiste HealthTech" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <FloatingThemeToggle />
@@ -57,14 +62,14 @@ const About = () => {
               className="max-w-3xl mx-auto text-center"
             >
               <span className="text-sm text-primary uppercase tracking-widest mb-4 block">
-                Notre mission
+                {t("about.badge")}
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground mb-6">
-                La santé propulsée par{" "}
-                <span className="gradient-text">l'Intelligence Artificielle</span>
+                {t("about.title")}{" "}
+                <span className="gradient-text">{t("about.titleHighlight")}</span>
               </h1>
               <p className="text-lg text-foreground/60">
-                Chez VitaSync, nous croyons que chaque individu mérite un accompagnement santé personnalisé, intelligent et accessible.
+                {t("about.subtitle")}
               </p>
             </motion.div>
           </div>
@@ -77,21 +82,15 @@ const About = () => {
               <ScrollReveal>
                 <div>
                   <span className="text-sm text-secondary uppercase tracking-widest mb-4 block">
-                    Notre histoire
+                    {t("about.storyBadge")}
                   </span>
                   <h2 className="text-3xl md:text-4xl font-light tracking-tight text-foreground mb-6">
-                    Née d'une frustration, construite avec passion
+                    {t("about.storyTitle")}
                   </h2>
                   <div className="space-y-4 text-foreground/60">
-                    <p>
-                      VitaSync est née en 2023 d'un constat simple : malgré les avancées scientifiques, l'accès à des conseils nutritionnels vraiment personnalisés reste réservé à une élite.
-                    </p>
-                    <p>
-                      Nos fondateurs, issus du monde médical et de l'intelligence artificielle, ont uni leurs expertises pour créer un coach santé capable de comprendre les besoins uniques de chaque individu.
-                    </p>
-                    <p>
-                      Aujourd'hui, notre IA a analysé plus de 500 000 profils et continue d'apprendre pour offrir des recommandations toujours plus précises.
-                    </p>
+                    <p>{t("about.storyP1")}</p>
+                    <p>{t("about.storyP2")}</p>
+                    <p>{t("about.storyP3")}</p>
                   </div>
                 </div>
               </ScrollReveal>
@@ -100,19 +99,19 @@ const About = () => {
                   <div className="grid grid-cols-2 gap-8 text-center">
                     <div>
                       <span className="text-4xl md:text-5xl font-light gradient-text">500K+</span>
-                      <p className="text-sm text-foreground/50 mt-2">Profils analysés</p>
+                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat1")}</p>
                     </div>
                     <div>
                       <span className="text-4xl md:text-5xl font-light gradient-text-reverse">95%</span>
-                      <p className="text-sm text-foreground/50 mt-2">Satisfaction client</p>
+                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat2")}</p>
                     </div>
                     <div>
                       <span className="text-4xl md:text-5xl font-light gradient-text">2M+</span>
-                      <p className="text-sm text-foreground/50 mt-2">Recommandations IA</p>
+                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat3")}</p>
                     </div>
                     <div>
                       <span className="text-4xl md:text-5xl font-light gradient-text-reverse">50+</span>
-                      <p className="text-sm text-foreground/50 mt-2">Experts santé</p>
+                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat4")}</p>
                     </div>
                   </div>
                 </GlassCard>
@@ -127,10 +126,10 @@ const About = () => {
             <ScrollReveal>
               <div className="text-center mb-16">
                 <span className="text-sm text-primary uppercase tracking-widest mb-4 block">
-                  Nos valeurs
+                  {t("about.valuesBadge")}
                 </span>
                 <h2 className="text-3xl md:text-4xl font-light tracking-tight text-foreground">
-                  Ce qui nous guide au quotidien
+                  {t("about.valuesTitle")}
                 </h2>
               </div>
             </ScrollReveal>
@@ -157,10 +156,10 @@ const About = () => {
             <ScrollReveal>
               <div className="text-center mb-16">
                 <span className="text-sm text-secondary uppercase tracking-widest mb-4 block">
-                  L'équipe
+                  {t("about.teamBadge")}
                 </span>
                 <h2 className="text-3xl md:text-4xl font-light tracking-tight text-foreground">
-                  Les experts derrière VitaSync
+                  {t("about.teamTitle")}
                 </h2>
               </div>
             </ScrollReveal>
@@ -190,13 +189,13 @@ const About = () => {
             <ScrollReveal>
               <GlassCard className="max-w-3xl mx-auto text-center p-12">
                 <h2 className="text-3xl md:text-4xl font-light tracking-tight text-foreground mb-4">
-                  Prêt à transformer votre santé ?
+                  {t("about.ctaTitle")}
                 </h2>
                 <p className="text-lg text-foreground/60 mb-8">
-                  Rejoignez les milliers de personnes qui ont déjà fait confiance à VitaSync.
+                  {t("about.ctaSubtitle")}
                 </p>
                 <a href="/#pricing" className="btn-neumorphic text-primary-foreground">
-                  Commencer gratuitement
+                  {t("about.ctaCta")}
                 </a>
               </GlassCard>
             </ScrollReveal>

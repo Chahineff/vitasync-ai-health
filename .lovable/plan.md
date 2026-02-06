@@ -1,39 +1,57 @@
 
 
-# Fix: Boutique Shopify - Produits ne s'affichent pas
+# Corrections IA : Recommandations Shop + Coach
 
-## Probleme identifie
+## Probleme 1 : AI Recommendations dans la Boutique
 
-Les produits ne se chargent pas car le **token Shopify Storefront** est vide dans les requetes API. Voici ce qui se passe :
+### Constat actuel
+- La grille est figee a 3 colonnes (`grid-cols-3`), meme si l'IA renvoie 2 ou 4 produits
+- Le catalogue de produits est **code en dur** dans l'edge function (15 produits statiques avec des handles fictifs) au lieu d'utiliser le vrai catalogue Shopify
+- Le modele utilise est `gemini-3-flash-preview` au lieu de `gemini-3-pro-preview`
+- Le bouton Refresh permet de generer de nouvelles recommandations a volonte, sans respecter la limite d'1 par jour
+- Aucune analyse de l'historique de conversation avec le Coach IA
 
-1. Lors du dernier correctif de securite, le token a ete deplace dans une variable d'environnement `VITE_SHOPIFY_STOREFRONT_TOKEN`
-2. Le code utilise `import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN` avec un fallback vide (`''`)
-3. La variable n'est pas injectee correctement au moment du build, donc le token est toujours vide
-4. Shopify rejette la requete avec une erreur HTTP 400
+### Corrections prevues
 
-Preuve dans les logs reseau :
-```
-x-shopify-storefront-access-token:    (vide!)
-Response: {"errors":[{"message":"Online Store channel is locked."}]}
-```
+**Edge Function `ai-shop-recommendations/index.ts`** :
+- Remplacer le catalogue statique par un appel reel a l'API Shopify Storefront (meme logique que dans `ai-coach/index.ts`) pour recuperer titres, descriptions, types, tags, prix et disponibilite
+- Changer le modele de `google/gemini-3-flash-preview` a `google/gemini-3-pro-preview`
+- Modifier le prompt pour demander entre 2 et 4 produits (au lieu de toujours 3), en laissant l'IA decider du nombre optimal selon le profil
+- Ajouter la recuperation des dernieres conversations avec le Coach IA (5 derniers messages) pour enrichir le contexte de recommandation
+- Le format de reponse JSON passe de `{"recommendations": [...]}` a `{"recommendations": [...]}` mais sans limitation forcee a 3
 
-## Solution
+**Widget `AIRecommendationsWidget.tsx`** :
+- Rendre la grille responsive : `grid-cols-2` pour 2 produits, `grid-cols-3` pour 3, `grid-cols-4` (ou `grid-cols-2 md:grid-cols-4`) pour 4
+- Supprimer le fallback aleatoire quand l'IA ne renvoie pas assez de produits (ne pas remplir avec des produits random)
+- **Desactiver le bouton Refresh** : une fois le cache du jour rempli, le bouton ne declenche plus de nouvel appel IA. Il affiche un toast "Recommandations deja generees aujourd'hui"
+- Accepter 2 a 4 produits au lieu de forcer 3
 
-Restaurer le token Storefront directement dans le code source (`src/lib/shopify.ts`). Ce token est un **token public** (Storefront Access Token) concu pour etre utilise cote client -- il n'est pas un secret sensible. Shopify le documente explicitement comme safe pour le frontend.
+## Probleme 2 : AI Coach - Changement de modele
 
-### Modification unique
+### Constat actuel
+Le mapping des modeles est **deja correctement implemente** :
+- VitaSync 2.0 Flash = `google/gemini-3-flash-preview`
+- VitaSync 2.0 Pro = `google/gemini-3-pro-preview`
+- VitaSync 1.0 Flash = `google/gemini-2.5-flash`
+- VitaSync 1.0 Pro = `google/gemini-2.5-pro`
 
-**Fichier** : `src/lib/shopify.ts` (ligne 7)
+Le frontend envoie bien `selectedModel.model` dans le body de la requete, et l'edge function le valide contre la liste `ALLOWED_MODELS` avant de l'utiliser. **Aucune modification necessaire** pour cette partie, ca fonctionne deja reellement.
 
-Avant :
-```typescript
-const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '';
-```
+## Details techniques
 
-Apres :
-```typescript
-const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || 'd0643cf1a9ae581e7470496ef0b4cb75';
-```
+### Fichiers modifies
 
-Cela garantit que meme si la variable d'environnement n'est pas disponible au build, le token par defaut sera utilise -- exactement comme c'etait le cas avant le correctif de securite.
+1. **`supabase/functions/ai-shop-recommendations/index.ts`** -- Refonte majeure :
+   - Ajout de `fetchShopifyCatalog()` (reutilisation de la logique de `ai-coach`)
+   - Ajout de la recuperation des conversations recentes de l'utilisateur
+   - Changement du modele vers `google/gemini-3-pro-preview`
+   - Prompt enrichi avec descriptions completes des produits + historique coach
+   - Reponse IA flexible (2-4 produits)
 
+2. **`src/components/dashboard/shop/AIRecommendationsWidget.tsx`** :
+   - Grille adaptative selon le nombre de produits
+   - Suppression du remplissage aleatoire
+   - Bouton Refresh bloque si cache du jour valide (affiche un toast)
+   - Accepte entre 2 et 4 produits
+
+### Aucun changement de schema de base de donnees requis

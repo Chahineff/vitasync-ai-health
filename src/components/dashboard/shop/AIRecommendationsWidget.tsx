@@ -50,7 +50,6 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
 
   const loadRecommendations = async () => {
     try {
-      // Check cache first
       const cachedData = localStorage.getItem(CACHE_KEY);
       if (cachedData) {
         const cached: CachedRecommendations = JSON.parse(cachedData);
@@ -60,8 +59,6 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
           return;
         }
       }
-
-      // Fetch fresh recommendations
       await fetchAIRecommendations();
     } catch (error) {
       console.error('Failed to load recommendations:', error);
@@ -72,10 +69,8 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
   const fetchAIRecommendations = async () => {
     setLoading(true);
     try {
-      // Fetch all products
       const allProducts = await fetchProducts(100);
 
-      // Call the AI edge function
       const { data, error } = await supabase.functions.invoke('ai-shop-recommendations', {
         body: {}
       });
@@ -83,10 +78,10 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
       if (error) throw error;
 
       const recommendedHandles: string[] = data?.recommendations || [];
-      
-      // Map handles to products
+
+      // Map handles to real products — no random fallback
       const recommendedProducts: RecommendedProduct[] = [];
-      for (const handle of recommendedHandles.slice(0, 3)) {
+      for (const handle of recommendedHandles.slice(0, 4)) {
         const product = allProducts.find(p => p.node.handle === handle);
         if (product) {
           const variant = product.node.variants.edges[0]?.node;
@@ -104,28 +99,6 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
         }
       }
 
-      // If AI didn't return enough, fill with random popular products
-      if (recommendedProducts.length < 3) {
-        const shuffled = [...allProducts].sort(() => Math.random() - 0.5);
-        for (const product of shuffled) {
-          if (recommendedProducts.length >= 3) break;
-          if (!recommendedProducts.find(p => p.handle === product.node.handle)) {
-            const variant = product.node.variants.edges[0]?.node;
-            const image = product.node.images.edges[0]?.node;
-            recommendedProducts.push({
-              handle: product.node.handle,
-              title: product.node.title,
-              price: variant?.price?.amount || product.node.priceRange.minVariantPrice.amount,
-              currency: variant?.price?.currencyCode || product.node.priceRange.minVariantPrice.currencyCode,
-              imageUrl: image?.url || '',
-              productType: product.node.productType || '',
-              variantId: variant?.id || '',
-              fullProduct: product
-            });
-          }
-        }
-      }
-
       // Cache the results
       const cacheData: CachedRecommendations = {
         date: new Date().toISOString().split('T')[0],
@@ -137,35 +110,26 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
       setRecommendations(recommendedProducts);
     } catch (error) {
       console.error('AI recommendations error:', error);
-      // Fallback to random products on error
-      try {
-        const allProducts = await fetchProducts(50);
-        const shuffled = [...allProducts].sort(() => Math.random() - 0.5).slice(0, 3);
-        const fallbackProducts: RecommendedProduct[] = shuffled.map(product => {
-          const variant = product.node.variants.edges[0]?.node;
-          const image = product.node.images.edges[0]?.node;
-          return {
-            handle: product.node.handle,
-            title: product.node.title,
-            price: variant?.price?.amount || product.node.priceRange.minVariantPrice.amount,
-            currency: variant?.price?.currencyCode || product.node.priceRange.minVariantPrice.currencyCode,
-            imageUrl: image?.url || '',
-            productType: product.node.productType || '',
-            variantId: variant?.id || '',
-            fullProduct: product
-          };
-        });
-        setRecommendations(fallbackProducts);
-      } catch {
-        setRecommendations([]);
-      }
+      setRecommendations([]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleRefresh = () => {
-    localStorage.removeItem(CACHE_KEY);
+    // Check if cache is still valid (1 per day limit)
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    if (cachedData) {
+      try {
+        const cached: CachedRecommendations = JSON.parse(cachedData);
+        if (isCacheValid(cached) && cached.products.length > 0) {
+          toast.info(t('shop.recommendationsAlreadyGenerated') || 'Recommandations déjà générées aujourd\'hui', {
+            position: 'top-center',
+          });
+          return;
+        }
+      } catch { /* ignore parse error, allow refresh */ }
+    }
     hasInitialized.current = false;
     fetchAIRecommendations();
   };
@@ -197,11 +161,18 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
           return next;
         });
       }, 2000);
-    } catch (error) {
+    } catch {
       toast.error(t('shop.addError'));
     } finally {
       setAddingToCart(null);
     }
+  };
+
+  // Responsive grid classes based on product count
+  const getGridCols = (count: number) => {
+    if (count <= 2) return 'grid-cols-2';
+    if (count === 3) return 'grid-cols-3';
+    return 'grid-cols-2 md:grid-cols-4';
   };
 
   if (!user) return null;
@@ -259,7 +230,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
             key="products"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-3 gap-3"
+            className={`grid ${getGridCols(recommendations.length)} gap-3`}
           >
             {recommendations.map((product, index) => (
               <motion.div

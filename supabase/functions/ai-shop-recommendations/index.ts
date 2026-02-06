@@ -6,6 +6,105 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Shopify config
+const SHOPIFY_STORE_DOMAIN = "vitasync2.myshopify.com";
+const SHOPIFY_API_VERSION = "2025-07";
+const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
+
+interface ShopifyProductNode {
+  id: string;
+  title: string;
+  description: string;
+  handle: string;
+  productType: string;
+  tags: string[];
+  vendor: string;
+  variants: {
+    edges: Array<{
+      node: {
+        id: string;
+        price: { amount: string; currencyCode: string };
+        availableForSale: boolean;
+      };
+    }>;
+  };
+}
+
+async function fetchShopifyCatalog(): Promise<{ catalog: string; handles: string[] }> {
+  const storefrontToken = Deno.env.get("SHOPIFY_STOREFRONT_ACCESS_TOKEN");
+  if (!storefrontToken) {
+    console.warn("SHOPIFY_STOREFRONT_ACCESS_TOKEN not configured");
+    return { catalog: "Catalogue non disponible.", handles: [] };
+  }
+
+  try {
+    const query = `
+      query {
+        products(first: 100) {
+          edges {
+            node {
+              id
+              title
+              description
+              handle
+              productType
+              tags
+              vendor
+              variants(first: 1) {
+                edges {
+                  node {
+                    id
+                    price { amount currencyCode }
+                    availableForSale
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await fetch(SHOPIFY_STOREFRONT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Storefront-Access-Token": storefrontToken,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      console.error("Shopify API error:", response.status);
+      return { catalog: "Catalogue non disponible.", handles: [] };
+    }
+
+    const data = await response.json();
+    const products: Array<{ node: ShopifyProductNode }> = data?.data?.products?.edges || [];
+    if (products.length === 0) {
+      return { catalog: "Aucun produit.", handles: [] };
+    }
+
+    const handles: string[] = [];
+    const lines = products.map((edge) => {
+      const p = edge.node;
+      const variant = p.variants.edges[0]?.node;
+      const price = variant?.price?.amount || "0";
+      const inStock = variant?.availableForSale ? "En stock" : "Rupture";
+      handles.push(p.handle);
+      return `- handle: "${p.handle}" | ${p.title} | ${p.productType || "N/A"} | ${price}$ | ${inStock}\n  Description: ${p.description.slice(0, 200)}\n  Tags: ${(p.tags || []).join(", ")}`;
+    });
+
+    return {
+      catalog: `CATALOGUE (${products.length} produits):\n${lines.join("\n\n")}`,
+      handles,
+    };
+  } catch (error) {
+    console.error("Error fetching Shopify catalog:", error);
+    return { catalog: "Catalogue non disponible.", handles: [] };
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -16,7 +115,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get user from auth header
+    // Auth
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -24,10 +123,8 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
@@ -35,95 +132,83 @@ serve(async (req) => {
       });
     }
 
-    // Fetch user health profile
-    const { data: healthProfile } = await supabase
-      .from("user_health_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
-
-    // Fetch recent check-ins (last 7 days)
+    // Fetch in parallel: health profile, check-ins, conversations, Shopify catalog
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
-    const { data: checkins } = await supabase
-      .from("daily_checkins")
-      .select("*")
-      .eq("user_id", user.id)
-      .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
-      .order("checkin_date", { ascending: false });
 
-    // Prepare user context for AI
-    const userContext = {
-      healthGoals: healthProfile?.health_goals || [],
-      currentIssues: healthProfile?.current_issues || [],
-      activityLevel: healthProfile?.activity_level || "moderate",
-      dietType: healthProfile?.diet_type || "omnivore",
-      allergies: healthProfile?.allergies || [],
-      sleepQuality: healthProfile?.sleep_quality || "average",
-      stressLevel: healthProfile?.stress_level || "medium",
-      sportTypes: healthProfile?.sport_types || [],
-      recentTrends: {
-        avgSleep: checkins?.length ? checkins.reduce((sum, c) => sum + (c.sleep_quality || 5), 0) / checkins.length : 5,
-        avgEnergy: checkins?.length ? checkins.reduce((sum, c) => sum + (c.energy_level || 5), 0) / checkins.length : 5,
-        avgStress: checkins?.length ? checkins.reduce((sum, c) => sum + (c.stress_level || 5), 0) / checkins.length : 5,
+    const [healthProfileRes, checkinsRes, conversationsRes, shopifyData] = await Promise.all([
+      supabase.from("user_health_profiles").select("*").eq("user_id", user.id).single(),
+      supabase.from("daily_checkins").select("*").eq("user_id", user.id)
+        .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
+        .order("checkin_date", { ascending: false }),
+      // Get last conversation's recent messages
+      supabase.from("conversations").select("id").eq("user_id", user.id)
+        .order("updated_at", { ascending: false }).limit(1),
+      fetchShopifyCatalog(),
+    ]);
+
+    const healthProfile = healthProfileRes.data;
+    const checkins = checkinsRes.data || [];
+
+    // Fetch last 10 messages from latest conversation
+    let conversationContext = "";
+    const lastConv = conversationsRes.data?.[0];
+    if (lastConv) {
+      const { data: messages } = await supabase
+        .from("messages")
+        .select("role, content")
+        .eq("conversation_id", lastConv.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (messages && messages.length > 0) {
+        conversationContext = messages.reverse().map((m) =>
+          `${m.role === "user" ? "Utilisateur" : "Coach"}: ${m.content.slice(0, 150)}`
+        ).join("\n");
       }
-    };
+    }
 
-    // Product catalog with handles (simplified - in production, fetch from Shopify)
-    const productCatalog = [
-      { handle: "whey-protein-chocolate", category: "sport", keywords: ["sport", "muscle", "protein", "recovery"] },
-      { handle: "whey-protein-vanilla", category: "sport", keywords: ["sport", "muscle", "protein", "recovery"] },
-      { handle: "omega-3-fish-oil", category: "wellness", keywords: ["heart", "brain", "inflammation", "focus"] },
-      { handle: "magnesium-bisglycinate", category: "wellness", keywords: ["sleep", "stress", "relaxation", "muscles"] },
-      { handle: "vitamin-d3-k2", category: "vitamins", keywords: ["immunity", "bones", "energy", "mood"] },
-      { handle: "ashwagandha-extract", category: "wellness", keywords: ["stress", "anxiety", "energy", "adaptogen"] },
-      { handle: "creatine-monohydrate", category: "sport", keywords: ["sport", "strength", "power", "muscle"] },
-      { handle: "probiotics-50-billion", category: "digestive", keywords: ["digestion", "gut", "immunity", "bloating"] },
-      { handle: "multivitamin-complete", category: "vitamins", keywords: ["general", "energy", "immunity", "wellbeing"] },
-      { handle: "zinc-picolinate", category: "vitamins", keywords: ["immunity", "skin", "hormones", "recovery"] },
-      { handle: "lions-mane-mushroom", category: "brain", keywords: ["focus", "memory", "brain", "cognition"] },
-      { handle: "melatonin-3mg", category: "wellness", keywords: ["sleep", "jet-lag", "circadian", "rest"] },
-      { handle: "bcaa-powder", category: "sport", keywords: ["sport", "recovery", "endurance", "muscle"] },
-      { handle: "collagen-peptides", category: "wellness", keywords: ["skin", "joints", "hair", "nails"] },
-      { handle: "l-theanine", category: "brain", keywords: ["calm", "focus", "stress", "relaxation"] },
-    ];
+    // Build user context
+    const avgSleep = checkins.length ? checkins.reduce((s, c) => s + (c.sleep_quality || 5), 0) / checkins.length : 5;
+    const avgEnergy = checkins.length ? checkins.reduce((s, c) => s + (c.energy_level || 5), 0) / checkins.length : 5;
+    const avgStress = checkins.length ? checkins.reduce((s, c) => s + (c.stress_level || 5), 0) / checkins.length : 5;
 
-    // Build AI prompt
-    const systemPrompt = `Tu es VitaSync AI, un expert en nutrition et compléments alimentaires. 
-Ton rôle est de recommander 3 produits du catalogue qui correspondent le mieux au profil de l'utilisateur.
+    const systemPrompt = `Tu es VitaSync AI, expert en nutrition et compléments alimentaires.
+Ton rôle: analyser le profil de l'utilisateur et recommander entre 2 et 4 produits du catalogue Shopify réel.
 
-Profil utilisateur:
-- Objectifs santé: ${userContext.healthGoals.join(", ") || "Non spécifié"}
-- Problèmes actuels: ${userContext.currentIssues.join(", ") || "Aucun"}
-- Niveau d'activité: ${userContext.activityLevel}
-- Type de régime: ${userContext.dietType}
-- Allergies: ${userContext.allergies.join(", ") || "Aucune"}
-- Qualité de sommeil: ${userContext.sleepQuality}
-- Niveau de stress: ${userContext.stressLevel}
-- Sports pratiqués: ${userContext.sportTypes.join(", ") || "Aucun"}
-- Tendances récentes (7 jours):
-  - Sommeil moyen: ${userContext.recentTrends.avgSleep.toFixed(1)}/10
-  - Énergie moyenne: ${userContext.recentTrends.avgEnergy.toFixed(1)}/10
-  - Stress moyen: ${userContext.recentTrends.avgStress.toFixed(1)}/10
+═══ PROFIL UTILISATEUR ═══
+- Objectifs santé: ${(healthProfile?.health_goals || []).join(", ") || "Non spécifié"}
+- Problèmes actuels: ${(healthProfile?.current_issues || []).join(", ") || "Aucun"}
+- Niveau d'activité: ${healthProfile?.activity_level || "modéré"}
+- Type de régime: ${healthProfile?.diet_type || "omnivore"}
+- Allergies: ${(healthProfile?.allergies || []).join(", ") || "Aucune"}
+- Qualité de sommeil: ${healthProfile?.sleep_quality || "moyenne"}
+- Niveau de stress: ${healthProfile?.stress_level || "moyen"}
+- Sports: ${(healthProfile?.sport_types || []).join(", ") || "Aucun"}
+- Tendances (7j): Sommeil ${avgSleep.toFixed(1)}/10, Énergie ${avgEnergy.toFixed(1)}/10, Stress ${avgStress.toFixed(1)}/10
 
-Catalogue disponible:
-${productCatalog.map(p => `- ${p.handle} (${p.category}): ${p.keywords.join(", ")}`).join("\n")}
+${conversationContext ? `═══ HISTORIQUE COACH IA (derniers échanges) ═══\n${conversationContext}\n` : ""}
+═══ ${shopifyData.catalog} ═══
 
-IMPORTANT: Réponds UNIQUEMENT avec un JSON valide contenant exactement 3 handles de produits, sans explication.
-Format: {"recommendations": ["handle1", "handle2", "handle3"]}`;
+INSTRUCTIONS:
+1. Analyse le profil, les tendances de santé et l'historique de conversation
+2. Choisis entre 2 et 4 produits les PLUS pertinents (pas toujours le même nombre)
+3. Privilégie les produits en stock
+4. Réponds UNIQUEMENT avec un JSON valide, sans explication
+5. Utilise les HANDLES réels du catalogue
+
+Format: {"recommendations": ["handle1", "handle2"]}
+ou: {"recommendations": ["handle1", "handle2", "handle3"]}
+ou: {"recommendations": ["handle1", "handle2", "handle3", "handle4"]}`;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
     if (!LOVABLE_API_KEY) {
-      // Fallback: return recommendations based on simple logic
-      const fallbackRecommendations = selectFallbackProducts(userContext, productCatalog);
-      return new Response(JSON.stringify({ recommendations: fallbackRecommendations }), {
+      // Fallback without AI
+      const fallback = shopifyData.handles.slice(0, 3);
+      return new Response(JSON.stringify({ recommendations: fallback }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Call Lovable AI
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -131,27 +216,32 @@ Format: {"recommendations": ["handle1", "handle2", "handle3"]}`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-3-pro-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: "Recommande-moi 3 produits adaptés à mon profil." }
+          { role: "user", content: "Recommande-moi les produits les plus adaptés à mon profil." },
         ],
         temperature: 0.3,
       }),
     });
 
     if (!aiResponse.ok) {
-      console.error("AI error:", await aiResponse.text());
-      const fallbackRecommendations = selectFallbackProducts(userContext, productCatalog);
-      return new Response(JSON.stringify({ recommendations: fallbackRecommendations }), {
+      console.error("AI error:", aiResponse.status, await aiResponse.text());
+      if (aiResponse.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const fallback = shopifyData.handles.slice(0, 3);
+      return new Response(JSON.stringify({ recommendations: fallback }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const aiData = await aiResponse.json();
     const content = aiData.choices?.[0]?.message?.content || "";
-    
-    // Parse JSON from AI response
+
     let recommendations: string[] = [];
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -161,31 +251,18 @@ Format: {"recommendations": ["handle1", "handle2", "handle3"]}`;
       }
     } catch (parseError) {
       console.error("Parse error:", parseError);
-      recommendations = selectFallbackProducts(userContext, productCatalog);
     }
 
-    // Validate recommendations exist in catalog
-    const validRecommendations = recommendations.filter(handle => 
-      productCatalog.some(p => p.handle === handle)
-    ).slice(0, 3);
-
-    // If not enough valid recommendations, fill with fallback
-    if (validRecommendations.length < 3) {
-      const fallback = selectFallbackProducts(userContext, productCatalog);
-      for (const handle of fallback) {
-        if (validRecommendations.length >= 3) break;
-        if (!validRecommendations.includes(handle)) {
-          validRecommendations.push(handle);
-        }
-      }
-    }
+    // Validate against real catalog handles
+    const validRecommendations = recommendations
+      .filter((handle) => shopifyData.handles.includes(handle))
+      .slice(0, 4);
 
     console.log("AI Recommendations:", validRecommendations);
 
     return new Response(JSON.stringify({ recommendations: validRecommendations }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-
   } catch (error: unknown) {
     console.error("Error:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -195,56 +272,3 @@ Format: {"recommendations": ["handle1", "handle2", "handle3"]}`;
     });
   }
 });
-
-function selectFallbackProducts(
-  userContext: any,
-  catalog: { handle: string; category: string; keywords: string[] }[]
-): string[] {
-  const scores: { handle: string; score: number }[] = [];
-
-  for (const product of catalog) {
-    let score = 0;
-
-    // Score based on health goals
-    for (const goal of userContext.healthGoals) {
-      const goalLower = goal.toLowerCase();
-      if (product.keywords.some(k => goalLower.includes(k) || k.includes(goalLower))) {
-        score += 10;
-      }
-    }
-
-    // Score based on activity level
-    if (userContext.activityLevel === "high" && product.category === "sport") {
-      score += 5;
-    }
-
-    // Score based on sleep quality
-    if (userContext.sleepQuality === "poor" && product.keywords.includes("sleep")) {
-      score += 8;
-    }
-
-    // Score based on stress level
-    if (userContext.stressLevel === "high" && product.keywords.some(k => ["stress", "relaxation", "calm"].includes(k))) {
-      score += 8;
-    }
-
-    // Score based on recent trends
-    if (userContext.recentTrends.avgSleep < 5 && product.keywords.includes("sleep")) {
-      score += 5;
-    }
-    if (userContext.recentTrends.avgEnergy < 5 && product.keywords.includes("energy")) {
-      score += 5;
-    }
-    if (userContext.recentTrends.avgStress > 6 && product.keywords.includes("stress")) {
-      score += 5;
-    }
-
-    scores.push({ handle: product.handle, score });
-  }
-
-  // Sort by score and return top 3
-  return scores
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
-    .map(s => s.handle);
-}

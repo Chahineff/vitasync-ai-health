@@ -1,57 +1,98 @@
 
 
-# Corrections IA : Recommandations Shop + Coach
+# Refonte du Suivi des Complements
 
-## Probleme 1 : AI Recommendations dans la Boutique
+## Problemes identifies
 
-### Constat actuel
-- La grille est figee a 3 colonnes (`grid-cols-3`), meme si l'IA renvoie 2 ou 4 produits
-- Le catalogue de produits est **code en dur** dans l'edge function (15 produits statiques avec des handles fictifs) au lieu d'utiliser le vrai catalogue Shopify
-- Le modele utilise est `gemini-3-flash-preview` au lieu de `gemini-3-pro-preview`
-- Le bouton Refresh permet de generer de nouvelles recommandations a volonte, sans respecter la limite d'1 par jour
-- Aucune analyse de l'historique de conversation avec le Coach IA
+1. **Noms de produits incorrects** : La table `supplement_tracking` stocke parfois des references Shopify brutes (ex: `//shopify/ProductVariant/53169275704`) au lieu du vrai nom du produit. Il faut resoudre ce probleme a l'affichage en fetching le nom reel depuis Shopify via le `shopify_product_id`.
 
-### Corrections prevues
+2. **Pas d'images produit** : La checklist actuelle n'affiche que du texte, sans miniature du produit.
 
-**Edge Function `ai-shop-recommendations/index.ts`** :
-- Remplacer le catalogue statique par un appel reel a l'API Shopify Storefront (meme logique que dans `ai-coach/index.ts`) pour recuperer titres, descriptions, types, tags, prix et disponibilite
-- Changer le modele de `google/gemini-3-flash-preview` a `google/gemini-3-pro-preview`
-- Modifier le prompt pour demander entre 2 et 4 produits (au lieu de toujours 3), en laissant l'IA decider du nombre optimal selon le profil
-- Ajouter la recuperation des dernieres conversations avec le Coach IA (5 derniers messages) pour enrichir le contexte de recommandation
-- Le format de reponse JSON passe de `{"recommendations": [...]}` a `{"recommendations": [...]}` mais sans limitation forcee a 3
+3. **Pas de gestion manuelle** : Le bouton "+" en haut a droite ne fait rien. Il n'y a pas de modale pour ajouter manuellement un complement, ni de bouton pour supprimer.
 
-**Widget `AIRecommendationsWidget.tsx`** :
-- Rendre la grille responsive : `grid-cols-2` pour 2 produits, `grid-cols-3` pour 3, `grid-cols-4` (ou `grid-cols-2 md:grid-cols-4`) pour 4
-- Supprimer le fallback aleatoire quand l'IA ne renvoie pas assez de produits (ne pas remplir avec des produits random)
-- **Desactiver le bouton Refresh** : une fois le cache du jour rempli, le bouton ne declenche plus de nouvel appel IA. Il affiche un toast "Recommandations deja generees aujourd'hui"
-- Accepter 2 a 4 produits au lieu de forcer 3
+4. **Widget trop petit** : Le tracker est dans une grille `grid-cols-2` avec le ProgressChart sur la page home. Sur la page "supplements", il est limite a `max-w-2xl`.
 
-## Probleme 2 : AI Coach - Changement de modele
+5. **Pas d'analyse IA** : Aucun panneau d'insights IA sur la regularite et l'utilite des complements.
 
-### Constat actuel
-Le mapping des modeles est **deja correctement implemente** :
-- VitaSync 2.0 Flash = `google/gemini-3-flash-preview`
-- VitaSync 2.0 Pro = `google/gemini-3-pro-preview`
-- VitaSync 1.0 Flash = `google/gemini-2.5-flash`
-- VitaSync 1.0 Pro = `google/gemini-2.5-pro`
+---
 
-Le frontend envoie bien `selectedModel.model` dans le body de la requete, et l'edge function le valide contre la liste `ALLOWED_MODELS` avant de l'utiliser. **Aucune modification necessaire** pour cette partie, ca fonctionne deja reellement.
+## Solution proposee
+
+### 1. Affichage correct des noms + images produit
+
+**Fichier : `src/components/dashboard/SupplementTrackerEnhanced.tsx`**
+
+- Chaque `SupplementItem` recoit le `shopify_product_id` en plus du `product_name`
+- Au montage du composant, on fetch les details produit depuis Shopify (`fetchProductById`) pour recuperer :
+  - Le **vrai titre** du produit (remplace les references cassees)
+  - La **miniature** (premiere image)
+- Un cache local (Map) evite de refetch a chaque render
+- L'image s'affiche en 32x32px arrondies a gauche de la checkbox
+
+### 2. Ajout/Suppression manuelle de complements
+
+**Fichier : `src/components/dashboard/SupplementTrackerEnhanced.tsx`** (+ nouveau composant)
+
+- **Bouton "+"** : ouvre une modale/sheet permettant de :
+  - Chercher un produit dans le catalogue Shopify (champ de recherche)
+  - Choisir le moment de prise (matin/soir)
+  - Optionnellement saisir un dosage
+  - Confirmer l'ajout via `addSupplement()`
+- **Bouton supprimer** : un swipe ou un petit bouton "X" sur chaque `SupplementItem` pour appeler `removeSupplement(id)`
+- Un nouveau composant `AddSupplementModal.tsx` sera cree
+
+### 3. Layout elargi avec panneau IA
+
+**Fichier : `src/pages/Dashboard.tsx`**
+
+- Section "supplements" : retirer le `max-w-2xl`, utiliser toute la largeur disponible
+- Layout en deux colonnes sur desktop :
+  - **Gauche (~60%)** : Le tracker existant (checklist + tabs jour/semaine/mois)
+  - **Droite (~40%)** : Nouveau panneau "Analyse IA" avec les insights
+
+**Page Home** : Le tracker reste dans la grille 2 colonnes mais sans le panneau IA (trop compact).
+
+### 4. Panneau d'insights IA (Gemini 3 Pro)
+
+**Nouveau fichier : `src/components/dashboard/SupplementAIInsights.tsx`**
+
+- Affiche l'analyse de l'IA sur :
+  - La regularite de prise des complements (basee sur les logs des 7-30 derniers jours)
+  - L'utilite de chaque complement par rapport au profil de sante
+  - Des recommandations d'ajustement
+- Appel a une **nouvelle edge function** `supplement-insights`
+- Cache d'un jour via `localStorage` (cle `supplement-insights-date`)
+- Bouton "Rafraichir" desactive si deja genere aujourd'hui
+
+**Nouveau fichier : `supabase/functions/supplement-insights/index.ts`**
+
+- Modele : `google/gemini-3-pro-preview`
+- Donnees injectees dans le prompt :
+  - Profil de sante utilisateur (`user_health_profiles`)
+  - Complements suivis actifs (`supplement_tracking`)
+  - Logs de prise des 30 derniers jours (`supplement_logs`)
+  - Check-ins quotidiens des 7 derniers jours (`daily_checkins`)
+  - Derniers echanges avec le Coach IA (10 derniers messages)
+- Reponse structuree via tool calling :
+  - `regularity_score` (0-100)
+  - `regularity_comment` (texte court)
+  - `supplement_reviews` (pour chaque complement : utilite, commentaire)
+  - `recommendations` (texte general)
+
+---
 
 ## Details techniques
 
+### Fichiers crees
+1. `src/components/dashboard/AddSupplementModal.tsx` -- Modale d'ajout manuel de complement
+2. `src/components/dashboard/SupplementAIInsights.tsx` -- Panneau d'analyse IA
+3. `supabase/functions/supplement-insights/index.ts` -- Edge function pour les insights IA
+
 ### Fichiers modifies
+1. `src/components/dashboard/SupplementTrackerEnhanced.tsx` -- Images, noms corrects, bouton supprimer, bouton "+" fonctionnel
+2. `src/pages/Dashboard.tsx` -- Layout elargi pour la section supplements (2 colonnes)
+3. `supabase/config.toml` -- Ajout de la config pour `supplement-insights`
 
-1. **`supabase/functions/ai-shop-recommendations/index.ts`** -- Refonte majeure :
-   - Ajout de `fetchShopifyCatalog()` (reutilisation de la logique de `ai-coach`)
-   - Ajout de la recuperation des conversations recentes de l'utilisateur
-   - Changement du modele vers `google/gemini-3-pro-preview`
-   - Prompt enrichi avec descriptions completes des produits + historique coach
-   - Reponse IA flexible (2-4 produits)
+### Pas de changement de schema de base de donnees requis
+La table `supplement_tracking` a deja toutes les colonnes necessaires (`shopify_product_id`, `product_name`, `dosage`, `time_of_day`, `active`).
 
-2. **`src/components/dashboard/shop/AIRecommendationsWidget.tsx`** :
-   - Grille adaptative selon le nombre de produits
-   - Suppression du remplissage aleatoire
-   - Bouton Refresh bloque si cache du jour valide (affiche un toast)
-   - Accepte entre 2 et 4 produits
-
-### Aucun changement de schema de base de donnees requis

@@ -1,5 +1,6 @@
 // Dashboard VitaSync - Premium SaaS Interface
 import { useState, useEffect } from "react";
+import { SupplementAIInsights } from "@/components/dashboard/SupplementAIInsights";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -291,9 +292,16 @@ const Dashboard = () => {
             y: 0
           }} exit={{
             opacity: 0
-          }} className="max-w-2xl">
+          }}>
                   <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("dashboard.supplements")}</h2>
-                  <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={() => handleSectionChange("coach")} />
+                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <div className="lg:col-span-3">
+                      <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={() => handleSectionChange("coach")} />
+                    </div>
+                    <div className="lg:col-span-2">
+                      <SupplementAIInsights />
+                    </div>
+                  </div>
                 </motion.div>}
               {activeSection === "shop" && <motion.div key="shop" initial={{
             opacity: 0,

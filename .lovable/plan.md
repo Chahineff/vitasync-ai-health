@@ -1,98 +1,86 @@
 
 
-# Refonte du Suivi des Complements
+# Corrections : Suivi des complements + Bouton "Ajouter au suivi" du Coach IA
 
 ## Problemes identifies
 
-1. **Noms de produits incorrects** : La table `supplement_tracking` stocke parfois des references Shopify brutes (ex: `//shopify/ProductVariant/53169275704`) au lieu du vrai nom du produit. Il faut resoudre ce probleme a l'affichage en fetching le nom reel depuis Shopify via le `shopify_product_id`.
+### 1. Bouton "+" pas assez visible
+Le bouton "+" est en haut a droite du tracker, petit et discret. L'utilisateur le souhaite en bas a droite, plus visible, style FAB (Floating Action Button).
 
-2. **Pas d'images produit** : La checklist actuelle n'affiche que du texte, sans miniature du produit.
+### 2. Modale d'ajout : options de moment limitees
+La modale `AddSupplementModal` ne propose que "Matin" et "Soir". Il manque "Midi" et "Heure specifique".
 
-3. **Pas de gestion manuelle** : Le bouton "+" en haut a droite ne fait rien. Il n'y a pas de modale pour ajouter manuellement un complement, ni de bouton pour supprimer.
+### 3. Bouton "Suivi" du Coach IA : time_of_day toujours "morning"
+Dans `ProductRecommendationCard.tsx`, le bouton "Ajouter au suivi" force `time_of_day: 'morning'` sans possibilite de personnaliser. L'IA devrait pouvoir determiner le meilleur moment de prise selon le produit.
 
-4. **Widget trop petit** : Le tracker est dans une grille `grid-cols-2` avec le ProgressChart sur la page home. Sur la page "supplements", il est limite a `max-w-2xl`.
-
-5. **Pas d'analyse IA** : Aucun panneau d'insights IA sur la regularite et l'utilite des complements.
+### 4. Le tracker ne gere que "morning" et "evening"
+Le composant `SupplementTrackerEnhanced` filtre uniquement `morning` et `evening`. Les complements avec `noon` ou une heure specifique ne s'afficheraient pas.
 
 ---
 
-## Solution proposee
+## Solution
 
-### 1. Affichage correct des noms + images produit
+### A. Bouton "+" flottant en bas a droite
 
 **Fichier : `src/components/dashboard/SupplementTrackerEnhanced.tsx`**
 
-- Chaque `SupplementItem` recoit le `shopify_product_id` en plus du `product_name`
-- Au montage du composant, on fetch les details produit depuis Shopify (`fetchProductById`) pour recuperer :
-  - Le **vrai titre** du produit (remplace les references cassees)
-  - La **miniature** (premiere image)
-- Un cache local (Map) evite de refetch a chaque render
-- L'image s'affiche en 32x32px arrondies a gauche de la checkbox
+- Supprimer le petit bouton "+" du header
+- Ajouter un FAB (Floating Action Button) en bas a droite du composant (position sticky/absolute), rond, avec icone "+", couleur primary
+- Le FAB ouvre la meme modale `AddSupplementModal`
 
-### 2. Ajout/Suppression manuelle de complements
+### B. Options de moment elargies dans la modale
 
-**Fichier : `src/components/dashboard/SupplementTrackerEnhanced.tsx`** (+ nouveau composant)
+**Fichier : `src/components/dashboard/AddSupplementModal.tsx`**
 
-- **Bouton "+"** : ouvre une modale/sheet permettant de :
-  - Chercher un produit dans le catalogue Shopify (champ de recherche)
-  - Choisir le moment de prise (matin/soir)
-  - Optionnellement saisir un dosage
-  - Confirmer l'ajout via `addSupplement()`
-- **Bouton supprimer** : un swipe ou un petit bouton "X" sur chaque `SupplementItem` pour appeler `removeSupplement(id)`
-- Un nouveau composant `AddSupplementModal.tsx` sera cree
+- Ajouter 4 options au lieu de 2 : **Matin**, **Midi**, **Soir**, **Heure specifique**
+- Si "Heure specifique" est selectionne, afficher un champ de saisie d'heure (input type="time")
+- Le `time_of_day` stocke sera : `morning`, `noon`, `evening`, ou `custom:HH:MM`
 
-### 3. Layout elargi avec panneau IA
+### C. Tracker : afficher les 3 groupes + heures specifiques
 
-**Fichier : `src/pages/Dashboard.tsx`**
+**Fichier : `src/components/dashboard/SupplementTrackerEnhanced.tsx`**
 
-- Section "supplements" : retirer le `max-w-2xl`, utiliser toute la largeur disponible
-- Layout en deux colonnes sur desktop :
-  - **Gauche (~60%)** : Le tracker existant (checklist + tabs jour/semaine/mois)
-  - **Droite (~40%)** : Nouveau panneau "Analyse IA" avec les insights
+- Ajouter un groupe "Midi" (icone Soleil) entre Matin et Soir
+- Ajouter un groupe "Heure specifique" pour les complements avec `time_of_day` commencant par `custom:`
+- Afficher l'heure a cote du nom du complement pour les heures specifiques
 
-**Page Home** : Le tracker reste dans la grille 2 colonnes mais sans le panneau IA (trop compact).
+### D. Coach IA : le bouton "Suivi" determine intelligemment le moment
 
-### 4. Panneau d'insights IA (Gemini 3 Pro)
+**Fichier : `src/components/dashboard/ProductRecommendationCard.tsx`**
 
-**Nouveau fichier : `src/components/dashboard/SupplementAIInsights.tsx`**
+- Au lieu de forcer `time_of_day: 'morning'`, deduire le moment optimal en fonction du **type de produit** et de sa **description** :
+  - Produits contenant "sleep", "sommeil", "melatonin", "relaxation", "night" -> `evening`
+  - Produits contenant "pre-workout", "energy", "caffeine", "matin" -> `morning`
+  - Produits contenant "lunch", "midi", "digestion" -> `noon`
+  - Par defaut -> `morning`
+- Cette logique sera une fonction utilitaire simple `inferTimeOfDay(title: string, description: string): string`
 
-- Affiche l'analyse de l'IA sur :
-  - La regularite de prise des complements (basee sur les logs des 7-30 derniers jours)
-  - L'utilite de chaque complement par rapport au profil de sante
-  - Des recommandations d'ajustement
-- Appel a une **nouvelle edge function** `supplement-insights`
-- Cache d'un jour via `localStorage` (cle `supplement-insights-date`)
-- Bouton "Rafraichir" desactive si deja genere aujourd'hui
+### E. Coach IA : l'IA peut suggerer le moment via le system prompt
 
-**Nouveau fichier : `supabase/functions/supplement-insights/index.ts`**
+**Fichier : `supabase/functions/ai-coach/index.ts`**
 
-- Modele : `google/gemini-3-pro-preview`
-- Donnees injectees dans le prompt :
-  - Profil de sante utilisateur (`user_health_profiles`)
-  - Complements suivis actifs (`supplement_tracking`)
-  - Logs de prise des 30 derniers jours (`supplement_logs`)
-  - Check-ins quotidiens des 7 derniers jours (`daily_checkins`)
-  - Derniers echanges avec le Coach IA (10 derniers messages)
-- Reponse structuree via tool calling :
-  - `regularity_score` (0-100)
-  - `regularity_comment` (texte court)
-  - `supplement_reviews` (pour chaque complement : utilite, commentaire)
-  - `recommendations` (texte general)
+- Ajouter dans les instructions du system prompt que lorsqu'un produit est recommande, l'IA doit mentionner dans son texte le moment de prise ideal (matin, midi, soir)
+- Pas besoin de tool calling supplementaire : la logique cote client (`inferTimeOfDay`) s'en chargera automatiquement
 
 ---
 
 ## Details techniques
 
-### Fichiers crees
-1. `src/components/dashboard/AddSupplementModal.tsx` -- Modale d'ajout manuel de complement
-2. `src/components/dashboard/SupplementAIInsights.tsx` -- Panneau d'analyse IA
-3. `supabase/functions/supplement-insights/index.ts` -- Edge function pour les insights IA
-
 ### Fichiers modifies
-1. `src/components/dashboard/SupplementTrackerEnhanced.tsx` -- Images, noms corrects, bouton supprimer, bouton "+" fonctionnel
-2. `src/pages/Dashboard.tsx` -- Layout elargi pour la section supplements (2 colonnes)
-3. `supabase/config.toml` -- Ajout de la config pour `supplement-insights`
 
-### Pas de changement de schema de base de donnees requis
-La table `supplement_tracking` a deja toutes les colonnes necessaires (`shopify_product_id`, `product_name`, `dosage`, `time_of_day`, `active`).
+1. **`src/components/dashboard/SupplementTrackerEnhanced.tsx`**
+   - Suppression du bouton "+" du header
+   - Ajout d'un FAB en bas a droite (position relative au conteneur)
+   - Ajout des groupes "Midi" et "Heure specifique"
+
+2. **`src/components/dashboard/AddSupplementModal.tsx`**
+   - 4 options de moment : Matin / Midi / Soir / Heure specifique
+   - Champ time picker conditionnel
+
+3. **`src/components/dashboard/ProductRecommendationCard.tsx`**
+   - Fonction `inferTimeOfDay()` pour deduire le moment de prise
+   - Utilisation dans `handleAddToTracking`
+
+### Aucun changement de schema de base de donnees
+Le champ `time_of_day` est un `text` libre, il accepte deja n'importe quelle valeur.
 

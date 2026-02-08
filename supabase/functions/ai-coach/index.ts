@@ -382,6 +382,14 @@ QUAND TU RECOMMANDES UN PRODUIT:
 Utilise OBLIGATOIREMENT le format: [[PRODUCT:productId:variantId:nom:prix]]
 Exemple: "Essaie [[PRODUCT:15002251886960:gid://shopify/ProductVariant/123:5-HTP:19.99€]] pour le sommeil."
 
+⏰ MOMENT DE PRISE OBLIGATOIRE:
+Quand tu recommandes un produit, mentionne TOUJOURS le moment de prise idéal :
+• Produits sommeil/relaxation/mélatonine/5-HTP → "à prendre le soir"
+• Produits énergie/pre-workout/caféine → "à prendre le matin"
+• Produits digestion/probiotiques → "à prendre le midi"
+• Vitamines/minéraux/créatine/protéines → "à prendre le matin"
+Cela permet au système d'ajouter automatiquement le complément au bon créneau dans le suivi quotidien.
+
 ═══════════════════════════════════════════════════════════════
 ⚠️ RÈGLES CRITIQUES POUR LES RECOMMANDATIONS MULTIPLES
 ═══════════════════════════════════════════════════════════════

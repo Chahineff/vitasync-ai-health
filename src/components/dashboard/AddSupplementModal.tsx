@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MagnifyingGlass, Sun, Moon, Plus, SpinnerGap, Pill } from '@phosphor-icons/react';
+import { X, MagnifyingGlass, Sun, Moon, Plus, SpinnerGap, Pill, Clock } from '@phosphor-icons/react';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { Input } from '@/components/ui/input';
 
@@ -17,12 +17,15 @@ interface AddSupplementModalProps {
   }) => Promise<{ error: Error | null }>;
 }
 
+type TimeOption = 'morning' | 'noon' | 'evening' | 'custom';
+
 export function AddSupplementModal({ open, onClose, onAdd }: AddSupplementModalProps) {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<ShopifyProduct | null>(null);
-  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'evening'>('morning');
+  const [timeOption, setTimeOption] = useState<TimeOption>('morning');
+  const [customTime, setCustomTime] = useState('12:00');
   const [dosage, setDosage] = useState('');
   const [adding, setAdding] = useState(false);
 
@@ -34,17 +37,22 @@ export function AddSupplementModal({ open, onClose, onAdd }: AddSupplementModalP
         setLoading(false);
       }).catch(() => setLoading(false));
     } else {
-      // Reset state when closed
       setSelectedProduct(null);
       setSearch('');
       setDosage('');
-      setTimeOfDay('morning');
+      setTimeOption('morning');
+      setCustomTime('12:00');
     }
   }, [open]);
 
   const filteredProducts = products.filter(p =>
     p.node.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  const getTimeOfDayValue = (): string => {
+    if (timeOption === 'custom') return `custom:${customTime}`;
+    return timeOption;
+  };
 
   const handleAdd = async () => {
     if (!selectedProduct) return;
@@ -54,7 +62,7 @@ export function AddSupplementModal({ open, onClose, onAdd }: AddSupplementModalP
       product_name: selectedProduct.node.title,
       shopify_product_id: productId,
       dosage: dosage || null,
-      time_of_day: timeOfDay,
+      time_of_day: getTimeOfDayValue(),
       recommended_by_ai: false,
       active: true,
     });
@@ -63,6 +71,13 @@ export function AddSupplementModal({ open, onClose, onAdd }: AddSupplementModalP
   };
 
   if (!open) return null;
+
+  const timeOptions: { value: TimeOption; label: string; icon: React.ReactNode; activeClass: string }[] = [
+    { value: 'morning', label: 'Matin', icon: <Sun weight="light" className="w-4 h-4" />, activeClass: 'bg-secondary/10 border-secondary/30 text-secondary' },
+    { value: 'noon', label: 'Midi', icon: <Sun weight="fill" className="w-4 h-4" />, activeClass: 'bg-amber-500/10 border-amber-500/30 text-amber-500' },
+    { value: 'evening', label: 'Soir', icon: <Moon weight="light" className="w-4 h-4" />, activeClass: 'bg-primary/10 border-primary/30 text-primary' },
+    { value: 'custom', label: 'Heure', icon: <Clock weight="light" className="w-4 h-4" />, activeClass: 'bg-accent/20 border-accent/30 text-accent-foreground' },
+  ];
 
   return (
     <AnimatePresence>
@@ -116,35 +131,44 @@ export function AddSupplementModal({ open, onClose, onAdd }: AddSupplementModalP
                 </div>
               </div>
 
-              {/* Time of day */}
+              {/* Time of day - 4 options */}
               <div>
                 <label className="text-xs font-medium text-foreground/60 uppercase tracking-wide mb-2 block">
                   Moment de prise
                 </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => setTimeOfDay('morning')}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
-                      timeOfDay === 'morning'
-                        ? 'bg-secondary/10 border-secondary/30 text-secondary'
-                        : 'bg-white/5 border-white/10 text-foreground/60 hover:bg-white/10'
-                    }`}
-                  >
-                    <Sun weight="light" className="w-5 h-5" />
-                    <span className="text-sm font-light">Matin</span>
-                  </button>
-                  <button
-                    onClick={() => setTimeOfDay('evening')}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
-                      timeOfDay === 'evening'
-                        ? 'bg-primary/10 border-primary/30 text-primary'
-                        : 'bg-white/5 border-white/10 text-foreground/60 hover:bg-white/10'
-                    }`}
-                  >
-                    <Moon weight="light" className="w-5 h-5" />
-                    <span className="text-sm font-light">Soir</span>
-                  </button>
+                <div className="grid grid-cols-4 gap-2">
+                  {timeOptions.map(opt => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setTimeOption(opt.value)}
+                      className={`flex flex-col items-center justify-center gap-1 p-3 rounded-xl border transition-all ${
+                        timeOption === opt.value
+                          ? opt.activeClass
+                          : 'bg-white/5 border-white/10 text-foreground/60 hover:bg-white/10'
+                      }`}
+                    >
+                      {opt.icon}
+                      <span className="text-xs font-light">{opt.label}</span>
+                    </button>
+                  ))}
                 </div>
+
+                {/* Custom time picker */}
+                {timeOption === 'custom' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-3"
+                  >
+                    <Input
+                      type="time"
+                      value={customTime}
+                      onChange={e => setCustomTime(e.target.value)}
+                      className="bg-white/5 border-white/10"
+                    />
+                  </motion.div>
+                )}
               </div>
 
               {/* Dosage */}

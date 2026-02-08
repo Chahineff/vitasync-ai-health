@@ -10,6 +10,7 @@ import {
   ParsedSubscriptionBlock,
   SUBSCRIPTION_DISCOUNT_RATE 
 } from '@/lib/subscription-calculator';
+import { inferTimeOfDay } from '@/lib/infer-time-of-day';
 import { SubscriptionCard } from './SubscriptionCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -142,11 +143,15 @@ export function ProductRecommendationCard({ product }: ProductRecommendationCard
     
     setIsAddingToTracking(true);
     try {
+      const bestTime = inferTimeOfDay(
+        productData.title,
+        productData.fullProduct.node.description || ''
+      );
       const { error } = await addSupplement({
         shopify_product_id: product.productId,
         product_name: productData.title,
         dosage: null,
-        time_of_day: 'morning',
+        time_of_day: bestTime,
         recommended_by_ai: true,
         active: true
       });

@@ -14,6 +14,14 @@ interface SupplementTrackerEnhancedProps {
   onStartDiagnostic?: () => void;
 }
 
+/** Parse custom:HH:MM to display time */
+function formatCustomTime(timeOfDay: string): string {
+  if (timeOfDay.startsWith('custom:')) {
+    return timeOfDay.replace('custom:', '');
+  }
+  return timeOfDay;
+}
+
 export function SupplementTrackerEnhanced({ 
   showAwaitingState = false, 
   onStartDiagnostic 
@@ -34,7 +42,6 @@ export function SupplementTrackerEnhanced({
     progressPercent
   } = useSupplementTracking();
 
-  // Resolve real product names & images from Shopify
   const shopifyIds = supplements.map(s => s.shopify_product_id);
   const { getProduct, loading: resolving } = useShopifyProductResolver(shopifyIds);
 
@@ -48,7 +55,16 @@ export function SupplementTrackerEnhanced({
   }
 
   const morningSupplements = supplements.filter(s => s.time_of_day === 'morning');
+  const noonSupplements = supplements.filter(s => s.time_of_day === 'noon');
   const eveningSupplements = supplements.filter(s => s.time_of_day === 'evening');
+  const customSupplements = supplements.filter(s => s.time_of_day?.startsWith('custom:'));
+
+  const groups = [
+    { key: 'morning', label: 'Matin', icon: <Sun weight="light" className="w-4 h-4 text-secondary" />, items: morningSupplements },
+    { key: 'noon', label: 'Midi', icon: <Sun weight="fill" className="w-4 h-4 text-amber-500" />, items: noonSupplements },
+    { key: 'evening', label: 'Soir', icon: <Moon weight="light" className="w-4 h-4 text-primary" />, items: eveningSupplements },
+    { key: 'custom', label: 'Heure spécifique', icon: <Clock weight="light" className="w-4 h-4 text-foreground/60" />, items: customSupplements },
+  ];
 
   return (
     <>
@@ -56,9 +72,9 @@ export function SupplementTrackerEnhanced({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="glass-card-premium rounded-3xl p-6 h-full border border-white/10"
+        className="glass-card-premium rounded-3xl p-6 h-full border border-white/10 relative"
       >
-        {/* Header */}
+        {/* Header - no add button here anymore */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
@@ -73,12 +89,6 @@ export function SupplementTrackerEnhanced({
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-          >
-            <Plus weight="light" className="w-5 h-5 text-foreground/60" />
-          </button>
         </div>
 
         {/* Tabs */}
@@ -140,17 +150,17 @@ export function SupplementTrackerEnhanced({
                     </button>
                   </div>
                 ) : (
-                  <>
-                    {morningSupplements.length > 0 && (
-                      <div className="mb-4">
+                  <div className="space-y-4">
+                    {groups.map(group => group.items.length > 0 && (
+                      <div key={group.key}>
                         <div className="flex items-center gap-2 mb-3">
-                          <Sun weight="light" className="w-4 h-4 text-secondary" />
+                          {group.icon}
                           <span className="text-xs font-medium text-foreground/60 uppercase tracking-wide">
-                            Matin
+                            {group.label}
                           </span>
                         </div>
                         <div className="space-y-2">
-                          {morningSupplements.map(supplement => {
+                          {group.items.map(supplement => {
                             const resolved = getProduct(supplement.shopify_product_id);
                             return (
                               <SupplementItem
@@ -162,41 +172,14 @@ export function SupplementTrackerEnhanced({
                                 onToggle={() => toggleSupplementTaken(supplement.id)}
                                 onRemove={() => removeSupplement(supplement.id)}
                                 loading={loading}
+                                customTime={group.key === 'custom' ? formatCustomTime(supplement.time_of_day) : undefined}
                               />
                             );
                           })}
                         </div>
                       </div>
-                    )}
-
-                    {eveningSupplements.length > 0 && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-3">
-                          <Moon weight="light" className="w-4 h-4 text-primary" />
-                          <span className="text-xs font-medium text-foreground/60 uppercase tracking-wide">
-                            Soir
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {eveningSupplements.map(supplement => {
-                            const resolved = getProduct(supplement.shopify_product_id);
-                            return (
-                              <SupplementItem
-                                key={supplement.id}
-                                name={resolved?.title || supplement.product_name}
-                                dosage={supplement.dosage}
-                                imageUrl={resolved?.imageUrl}
-                                taken={isSupplementTakenToday(supplement.id)}
-                                onToggle={() => toggleSupplementTaken(supplement.id)}
-                                onRemove={() => removeSupplement(supplement.id)}
-                                loading={loading}
-                              />
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </>
+                    ))}
+                  </div>
                 )}
               </motion.div>
             </TabsContent>
@@ -222,6 +205,15 @@ export function SupplementTrackerEnhanced({
             </TabsContent>
           </AnimatePresence>
         </Tabs>
+
+        {/* FAB - Floating Action Button */}
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="absolute bottom-5 right-5 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center z-10"
+          aria-label="Ajouter un complément"
+        >
+          <Plus weight="bold" className="w-5 h-5" />
+        </button>
       </motion.div>
 
       <AddSupplementModal
@@ -241,12 +233,13 @@ interface SupplementItemProps {
   onToggle: () => void;
   onRemove: () => void;
   loading: boolean;
+  customTime?: string;
 }
 
-function SupplementItem({ name, dosage, imageUrl, taken, onToggle, onRemove, loading }: SupplementItemProps) {
+function SupplementItem({ name, dosage, imageUrl, taken, onToggle, onRemove, loading, customTime }: SupplementItemProps) {
   return (
     <div
-      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
+      className={`group w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
         taken
           ? 'bg-secondary/10 border border-secondary/30'
           : 'bg-white/5 border border-white/10 hover:bg-white/10'
@@ -267,7 +260,6 @@ function SupplementItem({ name, dosage, imageUrl, taken, onToggle, onRemove, loa
           {taken && <Check weight="bold" className="w-4 h-4" />}
         </div>
 
-        {/* Product image */}
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -288,9 +280,17 @@ function SupplementItem({ name, dosage, imageUrl, taken, onToggle, onRemove, loa
           >
             {name}
           </span>
-          {dosage && (
-            <span className="text-xs text-foreground/40">{dosage}</span>
-          )}
+          <div className="flex items-center gap-2">
+            {dosage && (
+              <span className="text-xs text-foreground/40">{dosage}</span>
+            )}
+            {customTime && (
+              <span className="text-xs text-foreground/40 flex items-center gap-1">
+                <Clock weight="light" className="w-3 h-3" />
+                {customTime}
+              </span>
+            )}
+          </div>
         </div>
       </button>
 

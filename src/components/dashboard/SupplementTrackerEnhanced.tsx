@@ -2,12 +2,19 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pill, Check, Clock, Sun, Moon, Plus, ChartBar, CalendarBlank, X } from '@phosphor-icons/react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AwaitingAnalysis } from './AwaitingAnalysis';
 import { WeeklyChart } from './WeeklyChart';
 import { MonthlyChart } from './MonthlyChart';
 import { AddSupplementModal } from './AddSupplementModal';
 import { useSupplementTracking } from '@/hooks/useSupplementTracking';
 import { useShopifyProductResolver } from '@/hooks/useShopifyProductResolver';
+
+/** Parse custom:HH:MM to display time */
+function formatCustomTime(timeOfDay: string): string {
+  if (timeOfDay.startsWith('custom:')) {
+    return timeOfDay.replace('custom:', '');
+  }
+  return timeOfDay;
+}
 
 export function SupplementTrackerEnhanced() {
   const [activeTab, setActiveTab] = useState('day');

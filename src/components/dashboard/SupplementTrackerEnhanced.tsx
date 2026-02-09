@@ -2,17 +2,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pill, Check, Clock, Sun, Moon, Plus, ChartBar, CalendarBlank, X } from '@phosphor-icons/react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AwaitingAnalysis } from './AwaitingAnalysis';
 import { WeeklyChart } from './WeeklyChart';
 import { MonthlyChart } from './MonthlyChart';
 import { AddSupplementModal } from './AddSupplementModal';
 import { useSupplementTracking } from '@/hooks/useSupplementTracking';
 import { useShopifyProductResolver } from '@/hooks/useShopifyProductResolver';
-
-interface SupplementTrackerEnhancedProps {
-  showAwaitingState?: boolean;
-  onStartDiagnostic?: () => void;
-}
 
 /** Parse custom:HH:MM to display time */
 function formatCustomTime(timeOfDay: string): string {
@@ -22,10 +16,7 @@ function formatCustomTime(timeOfDay: string): string {
   return timeOfDay;
 }
 
-export function SupplementTrackerEnhanced({ 
-  showAwaitingState = false, 
-  onStartDiagnostic 
-}: SupplementTrackerEnhancedProps) {
+export function SupplementTrackerEnhanced() {
   const [activeTab, setActiveTab] = useState('day');
   const [showAddModal, setShowAddModal] = useState(false);
   const { 
@@ -45,14 +36,6 @@ export function SupplementTrackerEnhanced({
   const shopifyIds = supplements.map(s => s.shopify_product_id);
   const { getProduct, loading: resolving } = useShopifyProductResolver(shopifyIds);
 
-  if (showAwaitingState && onStartDiagnostic) {
-    return (
-      <AwaitingAnalysis 
-        title="Compléments du jour" 
-        onStartDiagnostic={onStartDiagnostic} 
-      />
-    );
-  }
 
   const morningSupplements = supplements.filter(s => s.time_of_day === 'morning');
   const noonSupplements = supplements.filter(s => s.time_of_day === 'noon');
@@ -206,13 +189,16 @@ export function SupplementTrackerEnhanced({
           </AnimatePresence>
         </Tabs>
 
-        {/* FAB - Floating Action Button */}
+        {/* FAB - Floating Action Button with hover expand */}
         <button
           onClick={() => setShowAddModal(true)}
-          className="absolute bottom-5 right-5 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center z-10"
-          aria-label="Ajouter un complément"
+          className="group absolute bottom-5 right-5 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 ease-out flex items-center justify-center z-10 px-3 hover:px-5 min-w-12"
+          aria-label="Ajouter au suivi"
         >
-          <Plus weight="bold" className="w-5 h-5" />
+          <Plus weight="bold" className="w-5 h-5 flex-shrink-0" />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-[10rem] group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-out text-sm font-medium">
+            Ajouter au suivi
+          </span>
         </button>
       </motion.div>
 

@@ -9,23 +9,7 @@ import { AddSupplementModal } from './AddSupplementModal';
 import { useSupplementTracking } from '@/hooks/useSupplementTracking';
 import { useShopifyProductResolver } from '@/hooks/useShopifyProductResolver';
 
-interface SupplementTrackerEnhancedProps {
-  showAwaitingState?: boolean;
-  onStartDiagnostic?: () => void;
-}
-
-/** Parse custom:HH:MM to display time */
-function formatCustomTime(timeOfDay: string): string {
-  if (timeOfDay.startsWith('custom:')) {
-    return timeOfDay.replace('custom:', '');
-  }
-  return timeOfDay;
-}
-
-export function SupplementTrackerEnhanced({ 
-  showAwaitingState = false, 
-  onStartDiagnostic 
-}: SupplementTrackerEnhancedProps) {
+export function SupplementTrackerEnhanced() {
   const [activeTab, setActiveTab] = useState('day');
   const [showAddModal, setShowAddModal] = useState(false);
   const { 

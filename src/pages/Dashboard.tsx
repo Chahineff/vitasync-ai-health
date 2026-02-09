@@ -388,7 +388,7 @@ const DashboardHome = ({
     <DailyCheckinWidget />
     <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
+      <SupplementTrackerEnhanced />
       <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
     </div>
   </motion.div>;

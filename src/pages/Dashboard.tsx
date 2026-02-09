@@ -296,7 +296,7 @@ const Dashboard = () => {
                   <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("dashboard.supplements")}</h2>
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div className="lg:col-span-3">
-                      <SupplementTrackerEnhanced showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={() => handleSectionChange("coach")} />
+                      <SupplementTrackerEnhanced />
                     </div>
                     <div className="lg:col-span-2">
                       <SupplementAIInsights />

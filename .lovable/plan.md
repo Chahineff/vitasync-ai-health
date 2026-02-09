@@ -1,66 +1,31 @@
 
 
-# Corrections : Suivi des complements + Bouton "Ajouter au suivi" du Coach IA
+# Corrections du Suivi des Complements
 
-## Problemes identifies
+## Probleme principal : le tracker demande de "Lancer le diagnostic" alors que l'utilisateur a deja des complements
 
-### 1. Bouton "+" pas assez visible
-Le bouton "+" est en haut a droite du tracker, petit et discret. L'utilisateur le souhaite en bas a droite, plus visible, style FAB (Floating Action Button).
+### Cause racine
+Dans `Dashboard.tsx`, la prop `showAwaitingState` est conditionnee par `hasInteractedWithCoach`, un simple `useState(false)` qui se reinitialise a chaque chargement de page. Resultat : **a chaque visite du dashboard, le tracker affiche "Lancer le diagnostic"** au lieu de la checklist, meme si l'utilisateur a deja des complements en base.
 
-### 2. Modale d'ajout : options de moment limitees
-La modale `AddSupplementModal` ne propose que "Matin" et "Soir". Il manque "Midi" et "Heure specifique".
+### Correction
+Remplacer la logique `showAwaitingState={!hasInteractedWithCoach}` par une verification reelle : si l'utilisateur a au moins un supplement actif dans la table `supplement_tracking`, on affiche la checklist directement. L'etat "Awaiting" ne s'affiche que si **aucun** supplement n'est enregistre.
 
-### 3. Bouton "Suivi" du Coach IA : time_of_day toujours "morning"
-Dans `ProductRecommendationCard.tsx`, le bouton "Ajouter au suivi" force `time_of_day: 'morning'` sans possibilite de personnaliser. L'IA devrait pouvoir determiner le meilleur moment de prise selon le produit.
-
-### 4. Le tracker ne gere que "morning" et "evening"
-Le composant `SupplementTrackerEnhanced` filtre uniquement `morning` et `evening`. Les complements avec `noon` ou une heure specifique ne s'afficheraient pas.
+Pour cela, `SupplementTrackerEnhanced` n'a plus besoin des props `showAwaitingState` et `onStartDiagnostic` venant du parent. Il determinera lui-meme s'il doit afficher l'etat vide (0 supplements) ou la checklist, en se basant sur les donnees reelles du hook `useSupplementTracking`.
 
 ---
 
-## Solution
+## Autres corrections
 
-### A. Bouton "+" flottant en bas a droite
+### 1. Donnees persistantes et reset a minuit
+Le systeme actuel fonctionne deja correctement : les logs sont dans `supplement_logs` avec une date, et le hook filtre par "aujourd'hui". La checklist se reinitialise automatiquement a minuit car les logs du jour precedent ne correspondent plus au filtre. **Aucun changement necessaire** sur cette partie.
 
-**Fichier : `src/components/dashboard/SupplementTrackerEnhanced.tsx`**
+### 2. FAB avec animation au survol
+Le bouton "+" actuel est positionne en `absolute bottom-5 right-5` dans le conteneur du tracker. Il sera modifie pour :
+- Rester en position `fixed bottom-8 right-8` dans la section "supplements" (pas dans le home)
+- Au survol, s'etendre en pilule avec le texte "Ajouter au suivi" via une animation CSS
 
-- Supprimer le petit bouton "+" du header
-- Ajouter un FAB (Floating Action Button) en bas a droite du composant (position sticky/absolute), rond, avec icone "+", couleur primary
-- Le FAB ouvre la meme modale `AddSupplementModal`
-
-### B. Options de moment elargies dans la modale
-
-**Fichier : `src/components/dashboard/AddSupplementModal.tsx`**
-
-- Ajouter 4 options au lieu de 2 : **Matin**, **Midi**, **Soir**, **Heure specifique**
-- Si "Heure specifique" est selectionne, afficher un champ de saisie d'heure (input type="time")
-- Le `time_of_day` stocke sera : `morning`, `noon`, `evening`, ou `custom:HH:MM`
-
-### C. Tracker : afficher les 3 groupes + heures specifiques
-
-**Fichier : `src/components/dashboard/SupplementTrackerEnhanced.tsx`**
-
-- Ajouter un groupe "Midi" (icone Soleil) entre Matin et Soir
-- Ajouter un groupe "Heure specifique" pour les complements avec `time_of_day` commencant par `custom:`
-- Afficher l'heure a cote du nom du complement pour les heures specifiques
-
-### D. Coach IA : le bouton "Suivi" determine intelligemment le moment
-
-**Fichier : `src/components/dashboard/ProductRecommendationCard.tsx`**
-
-- Au lieu de forcer `time_of_day: 'morning'`, deduire le moment optimal en fonction du **type de produit** et de sa **description** :
-  - Produits contenant "sleep", "sommeil", "melatonin", "relaxation", "night" -> `evening`
-  - Produits contenant "pre-workout", "energy", "caffeine", "matin" -> `morning`
-  - Produits contenant "lunch", "midi", "digestion" -> `noon`
-  - Par defaut -> `morning`
-- Cette logique sera une fonction utilitaire simple `inferTimeOfDay(title: string, description: string): string`
-
-### E. Coach IA : l'IA peut suggerer le moment via le system prompt
-
-**Fichier : `supabase/functions/ai-coach/index.ts`**
-
-- Ajouter dans les instructions du system prompt que lorsqu'un produit est recommande, l'IA doit mentionner dans son texte le moment de prise ideal (matin, midi, soir)
-- Pas besoin de tool calling supplementaire : la logique cote client (`inferTimeOfDay`) s'en chargera automatiquement
+### 3. Enregistrement automatique des non-prises (historique 30 jours)
+Actuellement, seules les prises sont enregistrees (on cree un log quand on coche). Les "non-prises" sont implicites (absence de log). C'est suffisant pour les statistiques : si un jour n'a pas de log pour un supplement, c'est qu'il n'a pas ete pris. Les graphiques Semaine et Mois calculent deja les pourcentages de cette maniere. **Pas de changement de schema necessaire.**
 
 ---
 
@@ -68,19 +33,14 @@ Le composant `SupplementTrackerEnhanced` filtre uniquement `morning` et `evening
 
 ### Fichiers modifies
 
-1. **`src/components/dashboard/SupplementTrackerEnhanced.tsx`**
-   - Suppression du bouton "+" du header
-   - Ajout d'un FAB en bas a droite (position relative au conteneur)
-   - Ajout des groupes "Midi" et "Heure specifique"
+1. **`src/pages/Dashboard.tsx`**
+   - Section "home" : remplacer `showAwaitingState={!hasInteractedWithCoach}` par `showAwaitingState={false}` (le tracker gere son etat vide lui-meme)
+   - Section "supplements" : meme chose, supprimer `showAwaitingState` et `onStartDiagnostic`
 
-2. **`src/components/dashboard/AddSupplementModal.tsx`**
-   - 4 options de moment : Matin / Midi / Soir / Heure specifique
-   - Champ time picker conditionnel
+2. **`src/components/dashboard/SupplementTrackerEnhanced.tsx`**
+   - Supprimer les props `showAwaitingState` et `onStartDiagnostic` (plus de dependance sur l'etat "coach")
+   - Supprimer le bloc conditionnel `if (showAwaitingState && onStartDiagnostic)` qui retournait `AwaitingAnalysis`
+   - L'etat vide (0 supplements) est deja gere dans le composant avec le message "Aucun complement ajoute" et le bouton "Ajouter un complement"
+   - Modifier le FAB : au survol, transition de rond a pilule avec texte "Ajouter au suivi" (animation width + opacite du texte)
 
-3. **`src/components/dashboard/ProductRecommendationCard.tsx`**
-   - Fonction `inferTimeOfDay()` pour deduire le moment de prise
-   - Utilisation dans `handleAddToTracking`
-
-### Aucun changement de schema de base de donnees
-Le champ `time_of_day` est un `text` libre, il accepte deja n'importe quelle valeur.
-
+### Aucun changement de schema de base de donnees requis

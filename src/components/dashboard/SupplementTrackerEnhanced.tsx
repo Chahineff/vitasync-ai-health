@@ -29,14 +29,6 @@ export function SupplementTrackerEnhanced() {
   const shopifyIds = supplements.map(s => s.shopify_product_id);
   const { getProduct, loading: resolving } = useShopifyProductResolver(shopifyIds);
 
-  if (showAwaitingState && onStartDiagnostic) {
-    return (
-      <AwaitingAnalysis 
-        title="Compléments du jour" 
-        onStartDiagnostic={onStartDiagnostic} 
-      />
-    );
-  }
 
   const morningSupplements = supplements.filter(s => s.time_of_day === 'morning');
   const noonSupplements = supplements.filter(s => s.time_of_day === 'noon');

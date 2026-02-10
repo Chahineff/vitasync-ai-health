@@ -25,13 +25,15 @@ interface ProductPurchaseBoxProps {
   parsedData: ParsedProductData | null;
   relatedProducts?: Array<{ flavor: string; handle: string }>;
   onFlavorChange?: (handle: string) => void;
+  enrichedSummary?: string | null;
 }
 
 export function ProductPurchaseBox({ 
   product, 
   parsedData, 
   relatedProducts,
-  onFlavorChange 
+  onFlavorChange,
+  enrichedSummary,
 }: ProductPurchaseBoxProps) {
   const { t } = useTranslation();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
@@ -99,7 +101,7 @@ export function ProductPurchaseBox({
             {product.vendor}
           </p>
         )}
-        <h1 className="text-2xl lg:text-3xl font-semibold text-foreground leading-tight">
+        <h1 className="text-3xl lg:text-4xl font-bold text-foreground leading-tight tracking-tight">
           {product.title}
         </h1>
         {product.productType && (
@@ -109,10 +111,10 @@ export function ProductPurchaseBox({
         )}
       </div>
 
-      {/* Subtitle / Promise */}
-      {parsedData?.benefits?.[0] && (
-        <p className="text-foreground/70 font-light">
-          {parsedData.benefits[0]}
+      {/* Enriched Summary or first benefit */}
+      {(enrichedSummary || parsedData?.benefits?.[0]) && (
+        <p className="text-foreground/70 font-light leading-relaxed">
+          {enrichedSummary || parsedData?.benefits?.[0]}
         </p>
       )}
 

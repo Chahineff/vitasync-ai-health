@@ -112,6 +112,60 @@ export type Database = {
           },
         ]
       }
+      product_enriched_data: {
+        Row: {
+          best_for_tags: string[] | null
+          coach_tip: string | null
+          created_at: string
+          faq: Json | null
+          id: string
+          ingredients_detailed: Json | null
+          key_benefits: Json | null
+          pdf_filename: string | null
+          quality_info: Json | null
+          safety_warnings: Json | null
+          science_data: Json | null
+          shopify_product_title: string
+          suggested_use: Json | null
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          best_for_tags?: string[] | null
+          coach_tip?: string | null
+          created_at?: string
+          faq?: Json | null
+          id?: string
+          ingredients_detailed?: Json | null
+          key_benefits?: Json | null
+          pdf_filename?: string | null
+          quality_info?: Json | null
+          safety_warnings?: Json | null
+          science_data?: Json | null
+          shopify_product_title: string
+          suggested_use?: Json | null
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          best_for_tags?: string[] | null
+          coach_tip?: string | null
+          created_at?: string
+          faq?: Json | null
+          id?: string
+          ingredients_detailed?: Json | null
+          key_benefits?: Json | null
+          pdf_filename?: string | null
+          quality_info?: Json | null
+          safety_warnings?: Json | null
+          science_data?: Json | null
+          shopify_product_title?: string
+          suggested_use?: Json | null
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

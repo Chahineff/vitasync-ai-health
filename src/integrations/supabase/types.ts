@@ -112,6 +112,60 @@ export type Database = {
           },
         ]
       }
+      product_knowledge: {
+        Row: {
+          clinical_references: Json | null
+          created_at: string | null
+          efficacy_score: string | null
+          id: string
+          ingredients_analysis: Json | null
+          key_findings: Json | null
+          product_handle: string | null
+          product_name: string
+          raw_content: string | null
+          regulatory_status: Json | null
+          safety_warnings: Json | null
+          shopify_product_id: string | null
+          synergies: Json | null
+          tldr: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          clinical_references?: Json | null
+          created_at?: string | null
+          efficacy_score?: string | null
+          id?: string
+          ingredients_analysis?: Json | null
+          key_findings?: Json | null
+          product_handle?: string | null
+          product_name: string
+          raw_content?: string | null
+          regulatory_status?: Json | null
+          safety_warnings?: Json | null
+          shopify_product_id?: string | null
+          synergies?: Json | null
+          tldr?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          clinical_references?: Json | null
+          created_at?: string | null
+          efficacy_score?: string | null
+          id?: string
+          ingredients_analysis?: Json | null
+          key_findings?: Json | null
+          product_handle?: string | null
+          product_name?: string
+          raw_content?: string | null
+          regulatory_status?: Json | null
+          safety_warnings?: Json | null
+          shopify_product_id?: string | null
+          synergies?: Json | null
+          tldr?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

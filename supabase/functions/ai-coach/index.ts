@@ -558,7 +558,9 @@ function buildEnrichedSystemPrompt(
     onboarding_completed?: boolean;
   } | null,
   catalog: string,
-  trends: Trends | null
+  trends: Trends | null,
+  userSupplements: UserSupplement[] = [],
+  enrichedProducts: EnrichedProductSummary[] = []
 ): string {
   const contextParts: string[] = [];
   

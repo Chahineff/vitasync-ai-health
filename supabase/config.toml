@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.supplement-insights]
 verify_jwt = false
+
+[functions.parse-product-pdfs]
+verify_jwt = false

@@ -152,6 +152,113 @@ RAPPEL: Utilise [[PRODUCT:id:variantId:nom:prix]] pour recommander`;
   }
 }
 
+// Fetch user's active supplements from supplement_tracking
+interface UserSupplement {
+  product_name: string;
+  dosage: string | null;
+  time_of_day: string | null;
+  recommended_by_ai: boolean | null;
+}
+
+// deno-lint-ignore no-explicit-any
+async function fetchUserSupplements(supabase: any, userId: string): Promise<UserSupplement[]> {
+  const { data, error } = await supabase
+    .from("supplement_tracking")
+    .select("product_name, dosage, time_of_day, recommended_by_ai")
+    .eq("user_id", userId)
+    .eq("active", true);
+
+  if (error) {
+    console.error("Error fetching user supplements:", error);
+    return [];
+  }
+  return data || [];
+}
+
+// Fetch condensed enriched product data (scientific knowledge base)
+interface EnrichedProductSummary {
+  shopify_product_title: string;
+  summary: string | null;
+  key_benefits: unknown;
+  ingredients_detailed: unknown;
+  safety_warnings: unknown;
+  suggested_use: unknown;
+  best_for_tags: string[] | null;
+  coach_tip: string | null;
+}
+
+// deno-lint-ignore no-explicit-any
+async function fetchEnrichedProductData(supabase: any): Promise<EnrichedProductSummary[]> {
+  const { data, error } = await supabase
+    .from("product_enriched_data")
+    .select("shopify_product_title, summary, key_benefits, ingredients_detailed, safety_warnings, suggested_use, best_for_tags, coach_tip");
+
+  if (error) {
+    console.error("Error fetching enriched product data:", error);
+    return [];
+  }
+  return data || [];
+}
+
+function formatUserSupplements(supplements: UserSupplement[]): string {
+  if (supplements.length === 0) return "Aucun complément suivi actuellement.";
+
+  return supplements.map(s => {
+    const timeLabel = s.time_of_day === 'morning' ? '🌅 Matin' :
+      s.time_of_day === 'noon' ? '☀️ Midi' :
+      s.time_of_day === 'evening' ? '🌙 Soir' :
+      s.time_of_day?.startsWith('custom:') ? `⏰ ${s.time_of_day.replace('custom:', '')}` :
+      '❓ Non défini';
+    const dose = s.dosage || 'Non précisé';
+    const aiTag = s.recommended_by_ai ? ' [Reco IA]' : '';
+    return `- ${s.product_name} | ${dose} | ${timeLabel}${aiTag}`;
+  }).join('\n');
+}
+
+function formatEnrichedProducts(products: EnrichedProductSummary[]): string {
+  if (products.length === 0) return "Base de connaissances non disponible.";
+
+  return products.map(p => {
+    const parts: string[] = [`📌 ${p.shopify_product_title}`];
+
+    if (p.summary) {
+      const short = p.summary.length > 60 ? p.summary.slice(0, 60) + '…' : p.summary;
+      parts.push(`  ${short}`);
+    }
+
+    if (p.best_for_tags?.length) {
+      parts.push(`  Tags: ${p.best_for_tags.slice(0, 5).join(', ')}`);
+    }
+
+    // Extract key ingredient names only (condensed)
+    if (p.ingredients_detailed && Array.isArray(p.ingredients_detailed)) {
+      const names = (p.ingredients_detailed as Array<{ name?: string }>)
+        .slice(0, 4)
+        .map(i => i.name || '')
+        .filter(Boolean);
+      if (names.length) parts.push(`  Ingrédients clés: ${names.join(', ')}`);
+    }
+
+    // Safety warnings condensed
+    if (p.safety_warnings) {
+      const warnings = p.safety_warnings as { contraindications?: string[]; interactions?: string[] };
+      if (warnings.contraindications?.length) {
+        parts.push(`  ⚠️ CI: ${warnings.contraindications.slice(0, 3).join('; ')}`);
+      }
+      if (warnings.interactions?.length) {
+        parts.push(`  ⚠️ Interactions: ${warnings.interactions.slice(0, 3).join('; ')}`);
+      }
+    }
+
+    if (p.coach_tip) {
+      const tip = p.coach_tip.length > 80 ? p.coach_tip.slice(0, 80) + '…' : p.coach_tip;
+      parts.push(`  💡 Tip: ${tip}`);
+    }
+
+    return parts.join('\n');
+  }).join('\n\n');
+}
+
 // Fetch recent check-ins for the user (last 7 days)
 interface DailyCheckin {
   sleep_quality: number | null;
@@ -450,7 +557,9 @@ function buildEnrichedSystemPrompt(
     onboarding_completed?: boolean;
   } | null,
   catalog: string,
-  trends: Trends | null
+  trends: Trends | null,
+  userSupplements: UserSupplement[] = [],
+  enrichedProducts: EnrichedProductSummary[] = []
 ): string {
   const contextParts: string[] = [];
   
@@ -544,6 +653,31 @@ ${catalog}`;
 PROFIL UTILISATEUR ACTUEL
 ═══════════════════════════════════════════════════════════════
 ${contextParts.join("\n")}`;
+  }
+
+  // Inject user's current supplements
+  fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+COMPLÉMENTS ACTUELS DE L'UTILISATEUR (suivi actif)
+═══════════════════════════════════════════════════════════════
+${formatUserSupplements(userSupplements)}
+
+DIRECTIVES COMPLÉMENTS ACTUELS:
+• Ne recommande PAS un produit que l'utilisateur prend déjà (évite les doublons)
+• Vérifie les interactions possibles entre compléments actuels et toute nouvelle recommandation
+• Si l'utilisateur demande un produit qu'il prend déjà → informe-le et propose un ajustement de dosage si pertinent`;
+
+  // Inject scientific knowledge base (condensed)
+  if (enrichedProducts.length > 0) {
+    fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+BASE DE CONNAISSANCES SCIENTIFIQUES (${enrichedProducts.length} fiches produits)
+═══════════════════════════════════════════════════════════════
+${formatEnrichedProducts(enrichedProducts)}
+
+DIRECTIVES DONNÉES SCIENTIFIQUES:
+• Cite les données réelles (ingrédients, dosages, études) quand tu parles d'un produit
+• Utilise les contre-indications et interactions pour alerter l'utilisateur si son profil (allergies, conditions médicales) est concerné
+• Mentionne le "coach tip" quand il est pertinent pour la question posée
+• Si l'utilisateur pose une question spécifique sur un produit, utilise le résumé et les tags pour répondre précisément`;
   }
 
   return fullPrompt;
@@ -650,8 +784,14 @@ Deno.serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log("Authenticated user:", userId);
 
-    // Fetch user profile, health profile, check-ins, and Shopify catalog in parallel
-    const [userProfileResult, healthProfileResult, recentCheckins, catalog] = await Promise.all([
+    // Fetch user profile, health profile, check-ins, supplements, enriched data, and Shopify catalog in parallel
+    // Use service role client for enriched data (public table, no RLS filtering needed)
+    const serviceClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    const [userProfileResult, healthProfileResult, recentCheckins, catalog, userSupplements, enrichedProducts] = await Promise.all([
       supabaseClient
         .from("profiles")
         .select("first_name, last_name")
@@ -663,7 +803,9 @@ Deno.serve(async (req) => {
         .eq("user_id", userId)
         .single(),
       fetchRecentCheckins(supabaseClient, userId),
-      fetchShopifyCatalog()
+      fetchShopifyCatalog(),
+      fetchUserSupplements(supabaseClient, userId),
+      fetchEnrichedProductData(serviceClient)
     ]);
 
     const userProfile = userProfileResult.data;
@@ -672,9 +814,11 @@ Deno.serve(async (req) => {
 
     console.log("Check-in trends:", trends);
     console.log("Quiz completed:", healthProfile?.onboarding_completed);
+    console.log("User supplements:", userSupplements.length);
+    console.log("Enriched products loaded:", enrichedProducts.length);
 
-    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends);
-    console.log("System prompt built with trends:", trends ? `Sleep: ${trends.avgSleep.toFixed(1)}, Energy: ${trends.avgEnergy.toFixed(1)}, Stress: ${trends.avgStress.toFixed(1)}` : "No trends");
+    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends, userSupplements, enrichedProducts);
+    console.log("System prompt length:", systemPrompt.length, "chars");
 
     // Parse and validate request body
     let requestBody: unknown;

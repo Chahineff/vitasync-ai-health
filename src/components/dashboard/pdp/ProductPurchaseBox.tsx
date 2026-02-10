@@ -32,7 +32,8 @@ export function ProductPurchaseBox({
   product, 
   parsedData, 
   relatedProducts,
-  onFlavorChange 
+  onFlavorChange,
+  enrichedSummary,
 }: ProductPurchaseBoxProps) {
   const { t } = useTranslation();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);

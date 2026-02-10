@@ -67,25 +67,41 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
 
+    // Accept batch_size param (default 8 to stay within timeout)
+    let batchSize = 8;
+    try {
+      const body = await req.json();
+      if (body.batch_size) batchSize = Math.min(body.batch_size, 15);
+    } catch { /* no body is fine */ }
+
     const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+    // Get already-processed filenames
+    const { data: existing } = await supabase
+      .from("product_enriched_data")
+      .select("pdf_filename");
+    const processedFiles = new Set((existing || []).map(e => e.pdf_filename));
 
     // List all PDFs in the folder
     const { data: files, error: listError } = await supabase.storage
       .from(BUCKET)
-      .list(FOLDER, { limit: 100 });
+      .list(FOLDER, { limit: 200 });
 
     if (listError) throw new Error(`Failed to list files: ${listError.message}`);
 
-    const pdfFiles = (files || []).filter((f) =>
+    const allPdfFiles = (files || []).filter((f) =>
       f.name.toLowerCase().endsWith(".pdf")
     );
 
-    console.log(`Found ${pdfFiles.length} PDF files to process`);
+    // Filter out already-processed
+    const pdfFiles = allPdfFiles.filter(f => !processedFiles.has(f.name));
 
+    console.log(`Found ${allPdfFiles.length} total PDFs, ${pdfFiles.length} remaining, processing batch of ${batchSize}`);
+
+    const batch = pdfFiles.slice(0, batchSize);
     const results: Array<{ file: string; status: string; title?: string; error?: string }> = [];
 
-    // Process each PDF sequentially to avoid rate limits
-    for (const file of pdfFiles) {
+    for (const file of batch) {
       const filePath = `${FOLDER}/${file.name}`;
       console.log(`Processing: ${filePath}`);
 

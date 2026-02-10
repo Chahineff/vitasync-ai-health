@@ -224,8 +224,9 @@ serve(async (req) => {
       }
     }
 
+    const remaining = pdfFiles.length - batch.length;
     return new Response(
-      JSON.stringify({ processed: results.length, results }),
+      JSON.stringify({ processed: results.length, remaining, total: allPdfFiles.length, results }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

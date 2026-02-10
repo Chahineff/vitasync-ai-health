@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, ArrowSquareOut, Lightbulb, ShieldCheck, Warning, FlaskConical } from '@phosphor-icons/react';
+import { BookOpen, ArrowSquareOut, Lightbulb, ShieldCheck, Warning, Flask } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 

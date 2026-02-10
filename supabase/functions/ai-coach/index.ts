@@ -650,8 +650,14 @@ Deno.serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log("Authenticated user:", userId);
 
-    // Fetch user profile, health profile, check-ins, and Shopify catalog in parallel
-    const [userProfileResult, healthProfileResult, recentCheckins, catalog] = await Promise.all([
+    // Create service role client for product_knowledge (public read)
+    const serviceClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Fetch user profile, health profile, check-ins, Shopify catalog, and product knowledge in parallel
+    const [userProfileResult, healthProfileResult, recentCheckins, catalog, productKnowledgeResult] = await Promise.all([
       supabaseClient
         .from("profiles")
         .select("first_name, last_name")
@@ -663,17 +669,39 @@ Deno.serve(async (req) => {
         .eq("user_id", userId)
         .single(),
       fetchRecentCheckins(supabaseClient, userId),
-      fetchShopifyCatalog()
+      fetchShopifyCatalog(),
+      serviceClient
+        .from("product_knowledge")
+        .select("product_name, product_handle, tldr, key_findings, safety_warnings, efficacy_score, synergies")
     ]);
 
     const userProfile = userProfileResult.data;
     const healthProfile = healthProfileResult.data;
     const trends = calculateTrends(recentCheckins);
+    const productKnowledge = productKnowledgeResult.data || [];
 
     console.log("Check-in trends:", trends);
     console.log("Quiz completed:", healthProfile?.onboarding_completed);
+    console.log("Product knowledge entries:", productKnowledge.length);
 
-    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends);
+    // Build product knowledge context for the AI
+    let knowledgeContext = "";
+    if (productKnowledge.length > 0) {
+      const knowledgeLines = productKnowledge.map((pk: any) => {
+        const findings = (pk.key_findings || []).slice(0, 3).map((f: any) => f.finding).join("; ");
+        const warnings = (pk.safety_warnings || []).filter((w: any) => w.level === 'danger').map((w: any) => w.warning).join("; ");
+        return `• ${pk.product_name} (${pk.product_handle}) | Efficacité: ${pk.efficacy_score || 'N/A'}\n  TL;DR: ${(pk.tldr || '').slice(0, 200)}\n  Études: ${findings}\n  ${warnings ? '⚠️ DANGERS: ' + warnings : ''}`;
+      });
+      knowledgeContext = `\n\n═══════════════════════════════════════════════════════════════
+BASE DE CONNAISSANCES SCIENTIFIQUES VITASYNC
+═══════════════════════════════════════════════════════════════
+Utilise ces données RÉELLES pour répondre aux questions sur les produits.
+Ne donne JAMAIS d'informations génériques quand tu as des données spécifiques ci-dessous.
+
+${knowledgeLines.join("\n\n")}`;
+    }
+
+    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends) + knowledgeContext;
     console.log("System prompt built with trends:", trends ? `Sleep: ${trends.avgSleep.toFixed(1)}, Energy: ${trends.avgEnergy.toFixed(1)}, Stress: ${trends.avgStress.toFixed(1)}` : "No trends");
 
     // Parse and validate request body

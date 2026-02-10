@@ -25,6 +25,7 @@ interface ProductPurchaseBoxProps {
   parsedData: ParsedProductData | null;
   relatedProducts?: Array<{ flavor: string; handle: string }>;
   onFlavorChange?: (handle: string) => void;
+  enrichedSummary?: string | null;
 }
 
 export function ProductPurchaseBox({ 

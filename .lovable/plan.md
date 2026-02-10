@@ -1,142 +1,46 @@
 
 
-# Plan : Base de Connaissances Scientifiques Produits
+# Corrections du Suivi des Complements
 
-## Objectif
-Creer une table `product_knowledge` dans la base de donnees pour stocker les donnees scientifiques extraites des rapports de recherche, puis connecter cette base a toutes les IA (Coach, Recommandations) et aux fiches produits (PDP).
+## Probleme principal : le tracker demande de "Lancer le diagnostic" alors que l'utilisateur a deja des complements
 
-## Etape 1 : Creer la table `product_knowledge`
+### Cause racine
+Dans `Dashboard.tsx`, la prop `showAwaitingState` est conditionnee par `hasInteractedWithCoach`, un simple `useState(false)` qui se reinitialise a chaque chargement de page. Resultat : **a chaque visite du dashboard, le tracker affiche "Lancer le diagnostic"** au lieu de la checklist, meme si l'utilisateur a deja des complements en base.
 
-Nouvelle table avec les colonnes suivantes :
+### Correction
+Remplacer la logique `showAwaitingState={!hasInteractedWithCoach}` par une verification reelle : si l'utilisateur a au moins un supplement actif dans la table `supplement_tracking`, on affiche la checklist directement. L'etat "Awaiting" ne s'affiche que si **aucun** supplement n'est enregistre.
 
-| Colonne | Type | Description |
-|---------|------|-------------|
-| `id` | uuid | Cle primaire |
-| `shopify_product_id` | text | ID Shopify du produit (ex: "15002251886960") |
-| `product_name` | text | Nom du produit (ex: "5-HTP") |
-| `product_handle` | text | Handle Shopify pour le lien PDP |
-| `tldr` | text | Resume scientifique en 2-3 phrases |
-| `key_findings` | jsonb | Liste des conclusions cles des etudes |
-| `ingredients_analysis` | jsonb | Analyse detaillee des ingredients (dosages reels vs cliniques) |
-| `clinical_references` | jsonb | Sources scientifiques (titre, journal, annee, URL) |
-| `safety_warnings` | jsonb | Avertissements et contre-indications specifiques |
-| `regulatory_status` | jsonb | Statut reglementaire (FDA, EFSA, etc.) |
-| `efficacy_score` | text | Evaluation globale (ex: "modere", "fort", "faible") |
-| `synergies` | jsonb | Produits complementaires recommandes |
-| `raw_content` | text | Contenu brut du rapport de recherche |
-| `created_at` | timestamptz | Date de creation |
-| `updated_at` | timestamptz | Date de mise a jour |
+Pour cela, `SupplementTrackerEnhanced` n'a plus besoin des props `showAwaitingState` et `onStartDiagnostic` venant du parent. Il determinera lui-meme s'il doit afficher l'etat vide (0 supplements) ou la checklist, en se basant sur les donnees reelles du hook `useSupplementTracking`.
 
-Politique RLS : lecture publique (tous les utilisateurs connectes), ecriture reservee aux admins via service_role.
+---
 
-## Etape 2 : Peupler la table avec les 10 premiers rapports
+## Autres corrections
 
-Je lirai le contenu complet de chaque fichier .txt uploade et j'extrairai les donnees structurees pour les 10 produits :
+### 1. Donnees persistantes et reset a minuit
+Le systeme actuel fonctionne deja correctement : les logs sont dans `supplement_logs` avec une date, et le hook filtre par "aujourd'hui". La checklist se reinitialise automatiquement a minuit car les logs du jour precedent ne correspondent plus au filtre. **Aucun changement necessaire** sur cette partie.
 
-1. **5-HTP** -> shopify ID 15002251886960
-2. **Brain & Focus Formula** -> shopify ID 15009468121456
-3. **Complete Multivitamin** -> shopify ID 15013981389168
-4. **Bone & Heart Support** -> shopify ID 15009469825392
-5. **Mushroom Extract Complex** -> (a identifier dans le catalogue)
-6. **Alpha Energy** -> shopify ID 15009468744048
-7. **BCAA Post Workout** -> shopify ID 15009463599472
-8. **Bee Bread Powder** -> shopify ID 15014339969392
-9. **Bee Pearl** -> shopify ID 15002782138736
-10. **Birch Chaga Truffles** -> shopify ID 15012318413168
+### 2. FAB avec animation au survol
+Le bouton "+" actuel est positionne en `absolute bottom-5 right-5` dans le conteneur du tracker. Il sera modifie pour :
+- Rester en position `fixed bottom-8 right-8` dans la section "supplements" (pas dans le home)
+- Au survol, s'etendre en pilule avec le texte "Ajouter au suivi" via une animation CSS
 
-## Etape 3 : Enrichir la section "Science" des fiches produits (PDP)
-
-Modifier `ScienceSection.tsx` pour :
-- Accepter un `productHandle` ou `shopifyProductId` en prop
-- Requeter la table `product_knowledge` pour ce produit
-- Remplacer les placeholders actuels par les vraies donnees :
-  - TL;DR personnalise
-  - Conclusions d'etudes reelles
-  - Sources scientifiques avec vrais liens/titres
-  - Score d'efficacite
-- Afficher un etat de chargement et un fallback si pas de donnees
-
-## Etape 4 : Enrichir le Coach IA
-
-Modifier l'Edge Function `ai-coach` pour :
-- Requeter `product_knowledge` quand l'utilisateur pose une question sur un produit specifique
-- Injecter le `tldr`, les `key_findings` et `safety_warnings` dans le contexte de l'IA
-- Permettre a l'IA de donner des reponses basees sur de vraies donnees scientifiques au lieu de reponses generiques
-
-## Etape 5 : Enrichir les recommandations IA
-
-Modifier l'Edge Function `ai-shop-recommendations` pour :
-- Acceder aux `efficacy_score`, `synergies` et `safety_warnings` lors de la generation de recommandations
-- Eviter de recommander des produits avec des alertes de securite pertinentes pour le profil de l'utilisateur
+### 3. Enregistrement automatique des non-prises (historique 30 jours)
+Actuellement, seules les prises sont enregistrees (on cree un log quand on coche). Les "non-prises" sont implicites (absence de log). C'est suffisant pour les statistiques : si un jour n'a pas de log pour un supplement, c'est qu'il n'a pas ete pris. Les graphiques Semaine et Mois calculent deja les pourcentages de cette maniere. **Pas de changement de schema necessaire.**
 
 ---
 
 ## Details techniques
 
-### Migration SQL
-
-```sql
-CREATE TABLE public.product_knowledge (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  shopify_product_id text,
-  product_name text NOT NULL,
-  product_handle text,
-  tldr text,
-  key_findings jsonb DEFAULT '[]',
-  ingredients_analysis jsonb DEFAULT '[]',
-  clinical_references jsonb DEFAULT '[]',
-  safety_warnings jsonb DEFAULT '[]',
-  regulatory_status jsonb DEFAULT '{}',
-  efficacy_score text,
-  synergies jsonb DEFAULT '[]',
-  raw_content text,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE public.product_knowledge ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Authenticated users can read product knowledge"
-  ON public.product_knowledge FOR SELECT
-  TO authenticated USING (true);
-
-CREATE UNIQUE INDEX idx_product_knowledge_handle
-  ON public.product_knowledge(product_handle);
-```
-
-### Structure JSON des donnees extraites
-
-Chaque rapport sera structure ainsi :
-
-```text
-key_findings: [
-  { "finding": "Le dosage de X est sous-clinique...", "confidence": "high" },
-  ...
-]
-
-clinical_references: [
-  { "title": "...", "journal": "...", "year": 2024, "url": "..." },
-  ...
-]
-
-safety_warnings: [
-  { "level": "caution", "warning": "Interaction avec les ISRS", "detail": "..." },
-  ...
-]
-
-synergies: [
-  { "product_handle": "vitamin-d3", "reason": "Synergie pour absorption calcium" },
-  ...
-]
-```
-
 ### Fichiers modifies
 
-| Fichier | Modification |
-|---------|-------------|
-| Migration SQL | Nouvelle table `product_knowledge` |
-| `src/components/dashboard/pdp/ScienceSection.tsx` | Remplacer placeholders par donnees reelles de la DB |
-| `src/components/dashboard/pdp/ProductDetailMaster.tsx` | Passer le handle a ScienceSection |
-| `supabase/functions/ai-coach/index.ts` | Requeter product_knowledge pour enrichir le contexte |
-| `supabase/functions/ai-shop-recommendations/index.ts` | Utiliser les donnees scientifiques pour les recommandations |
+1. **`src/pages/Dashboard.tsx`**
+   - Section "home" : remplacer `showAwaitingState={!hasInteractedWithCoach}` par `showAwaitingState={false}` (le tracker gere son etat vide lui-meme)
+   - Section "supplements" : meme chose, supprimer `showAwaitingState` et `onStartDiagnostic`
 
+2. **`src/components/dashboard/SupplementTrackerEnhanced.tsx`**
+   - Supprimer les props `showAwaitingState` et `onStartDiagnostic` (plus de dependance sur l'etat "coach")
+   - Supprimer le bloc conditionnel `if (showAwaitingState && onStartDiagnostic)` qui retournait `AwaitingAnalysis`
+   - L'etat vide (0 supplements) est deja gere dans le composant avec le message "Aucun complement ajoute" et le bouton "Ajouter un complement"
+   - Modifier le FAB : au survol, transition de rond a pilule avec texte "Ajouter au suivi" (animation width + opacite du texte)
+
+### Aucun changement de schema de base de donnees requis

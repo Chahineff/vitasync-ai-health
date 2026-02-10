@@ -132,19 +132,19 @@ serve(async (req) => {
       });
     }
 
-    // Fetch in parallel: health profile, check-ins, conversations, Shopify catalog, product knowledge
+    // Fetch in parallel: health profile, check-ins, conversations, Shopify catalog
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const [healthProfileRes, checkinsRes, conversationsRes, shopifyData, productKnowledgeRes] = await Promise.all([
+    const [healthProfileRes, checkinsRes, conversationsRes, shopifyData] = await Promise.all([
       supabase.from("user_health_profiles").select("*").eq("user_id", user.id).single(),
       supabase.from("daily_checkins").select("*").eq("user_id", user.id)
         .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
         .order("checkin_date", { ascending: false }),
+      // Get last conversation's recent messages
       supabase.from("conversations").select("id").eq("user_id", user.id)
         .order("updated_at", { ascending: false }).limit(1),
       fetchShopifyCatalog(),
-      supabase.from("product_knowledge").select("product_handle, efficacy_score, safety_warnings, synergies, tldr"),
     ]);
 
     const healthProfile = healthProfileRes.data;
@@ -172,18 +172,6 @@ serve(async (req) => {
     const avgEnergy = checkins.length ? checkins.reduce((s, c) => s + (c.energy_level || 5), 0) / checkins.length : 5;
     const avgStress = checkins.length ? checkins.reduce((s, c) => s + (c.stress_level || 5), 0) / checkins.length : 5;
 
-    // Build product knowledge context
-    const pkData = productKnowledgeRes.data || [];
-    let knowledgeSection = "";
-    if (pkData.length > 0) {
-      const pkLines = pkData.map((pk: any) => {
-        const warnings = (pk.safety_warnings || []).filter((w: any) => w.level === 'danger').map((w: any) => w.warning).join("; ");
-        const syns = (pk.synergies || []).map((s: any) => s.product_handle).join(", ");
-        return `- ${pk.product_handle}: Efficacité=${pk.efficacy_score || 'N/A'}${warnings ? ' | ⚠️' + warnings : ''}${syns ? ' | Synergies: ' + syns : ''}`;
-      });
-      knowledgeSection = `\n═══ DONNÉES SCIENTIFIQUES PRODUITS ═══\nUtilise ces données pour prioriser les produits à forte efficacité et éviter ceux avec des alertes de sécurité pertinentes.\n${pkLines.join("\n")}\n`;
-    }
-
     const systemPrompt = `Tu es VitaSync AI, expert en nutrition et compléments alimentaires.
 Ton rôle: analyser le profil de l'utilisateur et recommander entre 2 et 4 produits du catalogue Shopify réel.
 
@@ -198,17 +186,15 @@ Ton rôle: analyser le profil de l'utilisateur et recommander entre 2 et 4 produ
 - Sports: ${(healthProfile?.sport_types || []).join(", ") || "Aucun"}
 - Tendances (7j): Sommeil ${avgSleep.toFixed(1)}/10, Énergie ${avgEnergy.toFixed(1)}/10, Stress ${avgStress.toFixed(1)}/10
 
-${conversationContext ? `═══ HISTORIQUE COACH IA (derniers échanges) ═══\n${conversationContext}\n` : ""}${knowledgeSection}═══ ${shopifyData.catalog} ═══
+${conversationContext ? `═══ HISTORIQUE COACH IA (derniers échanges) ═══\n${conversationContext}\n` : ""}
+═══ ${shopifyData.catalog} ═══
 
 INSTRUCTIONS:
 1. Analyse le profil, les tendances de santé et l'historique de conversation
-2. Utilise les DONNÉES SCIENTIFIQUES pour prioriser les produits à forte efficacité
-3. ÉVITE de recommander des produits avec des alertes de sécurité (⚠️) pertinentes pour le profil de l'utilisateur (allergies, conditions)
-4. Privilégie les synergies entre produits
-5. Choisis entre 2 et 4 produits les PLUS pertinents
-6. Privilégie les produits en stock
-7. Réponds UNIQUEMENT avec un JSON valide, sans explication
-8. Utilise les HANDLES réels du catalogue
+2. Choisis entre 2 et 4 produits les PLUS pertinents (pas toujours le même nombre)
+3. Privilégie les produits en stock
+4. Réponds UNIQUEMENT avec un JSON valide, sans explication
+5. Utilise les HANDLES réels du catalogue
 
 Format: {"recommendations": ["handle1", "handle2"]}
 ou: {"recommendations": ["handle1", "handle2", "handle3"]}

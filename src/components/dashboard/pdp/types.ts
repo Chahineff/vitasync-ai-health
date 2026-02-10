@@ -58,3 +58,59 @@ export interface SourcePlaceholder {
   title: string;
   url: string;
 }
+
+// Enriched data types from product_enriched_data table
+export interface EnrichedKeyBenefit {
+  title: string;
+  description: string;
+  icon_hint: string;
+}
+
+export interface EnrichedIngredient {
+  name: string;
+  dosage: string;
+  role: string;
+  source: string;
+}
+
+export interface EnrichedSuggestedUse {
+  dosage: string;
+  timing: string;
+  with_food: boolean;
+  notes: string;
+}
+
+export interface EnrichedScienceData {
+  tldr: string;
+  study_bullets: string[];
+  sources: Array<{ title: string; url: string; year: string }>;
+}
+
+export interface EnrichedSafetyWarnings {
+  contraindications: string[];
+  interactions: string[];
+  pregnancy_safe: boolean;
+  allergens: string[];
+}
+
+export interface EnrichedQualityInfo {
+  certifications: string[];
+  manufacturing: string;
+  testing: string;
+}
+
+export interface EnrichedProductData {
+  id: string;
+  shopify_product_title: string;
+  pdf_filename: string | null;
+  summary: string | null;
+  key_benefits: EnrichedKeyBenefit[];
+  ingredients_detailed: EnrichedIngredient[];
+  suggested_use: EnrichedSuggestedUse;
+  science_data: EnrichedScienceData;
+  safety_warnings: EnrichedSafetyWarnings;
+  best_for_tags: string[];
+  quality_info: EnrichedQualityInfo;
+  faq: FAQItem[];
+  coach_tip: string | null;
+}

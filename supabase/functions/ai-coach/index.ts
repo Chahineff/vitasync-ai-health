@@ -656,6 +656,31 @@ PROFIL UTILISATEUR ACTUEL
 ${contextParts.join("\n")}`;
   }
 
+  // Inject user's current supplements
+  fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+COMPLÉMENTS ACTUELS DE L'UTILISATEUR (suivi actif)
+═══════════════════════════════════════════════════════════════
+${formatUserSupplements(userSupplements)}
+
+DIRECTIVES COMPLÉMENTS ACTUELS:
+• Ne recommande PAS un produit que l'utilisateur prend déjà (évite les doublons)
+• Vérifie les interactions possibles entre compléments actuels et toute nouvelle recommandation
+• Si l'utilisateur demande un produit qu'il prend déjà → informe-le et propose un ajustement de dosage si pertinent`;
+
+  // Inject scientific knowledge base (condensed)
+  if (enrichedProducts.length > 0) {
+    fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+BASE DE CONNAISSANCES SCIENTIFIQUES (${enrichedProducts.length} fiches produits)
+═══════════════════════════════════════════════════════════════
+${formatEnrichedProducts(enrichedProducts)}
+
+DIRECTIVES DONNÉES SCIENTIFIQUES:
+• Cite les données réelles (ingrédients, dosages, études) quand tu parles d'un produit
+• Utilise les contre-indications et interactions pour alerter l'utilisateur si son profil (allergies, conditions médicales) est concerné
+• Mentionne le "coach tip" quand il est pertinent pour la question posée
+• Si l'utilisateur pose une question spécifique sur un produit, utilise le résumé et les tags pour répondre précisément`;
+  }
+
   return fullPrompt;
 }
 

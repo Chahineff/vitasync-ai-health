@@ -122,7 +122,7 @@ export function ScienceSection({ productTitle, productHandle }: ScienceSectionPr
       {knowledge.key_findings?.length > 0 && (
         <div className="space-y-3">
           <p className="text-sm text-foreground/60 font-medium flex items-center gap-2">
-            <FlaskConical weight="light" className="w-4 h-4" />
+            <Flask weight="light" className="w-4 h-4" />
             Ce que disent les études :
           </p>
           <ul className="space-y-2">

@@ -385,7 +385,7 @@ export function ProductDetailMaster({
         <div className="border-t border-border/30" />
 
         {/* 8. Science (Simplified) */}
-        <ScienceSection productTitle={product.title} />
+        <ScienceSection productTitle={product.title} productHandle={currentHandle} />
 
         {/* Divider */}
         <div className="border-t border-border/30" />

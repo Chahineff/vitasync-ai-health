@@ -132,19 +132,19 @@ serve(async (req) => {
       });
     }
 
-    // Fetch in parallel: health profile, check-ins, conversations, Shopify catalog
+    // Fetch in parallel: health profile, check-ins, conversations, Shopify catalog, product knowledge
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const [healthProfileRes, checkinsRes, conversationsRes, shopifyData] = await Promise.all([
+    const [healthProfileRes, checkinsRes, conversationsRes, shopifyData, productKnowledgeRes] = await Promise.all([
       supabase.from("user_health_profiles").select("*").eq("user_id", user.id).single(),
       supabase.from("daily_checkins").select("*").eq("user_id", user.id)
         .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
         .order("checkin_date", { ascending: false }),
-      // Get last conversation's recent messages
       supabase.from("conversations").select("id").eq("user_id", user.id)
         .order("updated_at", { ascending: false }).limit(1),
       fetchShopifyCatalog(),
+      supabase.from("product_knowledge").select("product_handle, efficacy_score, safety_warnings, synergies, tldr"),
     ]);
 
     const healthProfile = healthProfileRes.data;

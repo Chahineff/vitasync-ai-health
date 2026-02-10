@@ -1,0 +1,567 @@
+MONOGRAPHIE D'EXPERTISE : ANALYSE
+CLINIQUE, PHARMACOLOGIQUE ET
+RÉGLEMENTAIRE DU COMPLEXE "BONE
+& HEART SUPPORT" (SUPLIFUL)
+Date du rapport : 31 Mai 2026
+Sujet : Analyse technique approfondie de la formulation "Bone & Heart Support" (Supliful /
+Vitalabs)
+Classification : Rapport d'Expertise en Nutraceutique, Biochimie Clinique et Affaires
+Réglementaires
+Mots-clés : Cholécalciférol, Ménaquinone-7, Carbonate de Calcium, BioPerine®, Calcification
+Vasculaire, Paradoxe du Calcium, Réglementation FDA/EFSA, Interactions
+Pharmacocinétiques.
+1. Introduction et Contextualisation du Marché
+L'industrie des compléments alimentaires traverse une période de mutation profonde,
+caractérisée par l'émergence de modèles de distribution décentralisés tels que le
+"dropshipping" et l'impression à la demande ("Print-on-Demand"), dont la plateforme Supliful
+est une illustration paradigmatique. Ce modèle permet la commercialisation rapide de
+formulations pré-existantes ("Stock Formulas") sous des marques blanches, démocratisant
+l'accès au marché pour de nouveaux acteurs mais complexifiant la traçabilité et l'expertise
+technique perçue par le consommateur final. Dans ce contexte, l'analyse rigoureuse des
+produits devient un impératif de santé publique et de sécurité réglementaire.
+Le présent rapport d'expertise se propose de disséquer, avec une granularité clinique et
+physico-chimique, le produit référencé sous la dénomination "Bone & Heart Support
+Capsules" dans le catalogue Supliful. Ce produit s'inscrit dans un segment de marché en
+pleine expansion : la santé cardiovasculaire et osseuse intégrative. Il répond à une
+problématique physiopathologique majeure du vieillissement, connue sous le nom de
+"Paradoxe du Calcium", où la déminéralisation osseuse (ostéoporose) coexiste
+paradoxalement avec une minéralisation ectopique des tissus mous, notamment vasculaire
+(médiacalcose).
+L'objectif de cette monographie est triple. Premièrement, établir la "Vérité Produit" en
+
+déconstruisant la formulation qualitative et quantitative, les sources d'ingrédients et les
+technologies de biodisponibilité employées, notamment l'utilisation brevetée de la BioPerine®.
+Deuxièmement, évaluer la pertinence clinique des dosages au regard de la littérature
+scientifique actuelle (2024-2026), en analysant les mécanismes synergiques entre la Vitamine
+D3, la Vitamine K2 (MK-7) et le Calcium. Enfin, mener une analyse réglementaire comparative
+stricte entre le cadre permissif nord-américain (FDA/DSHEA) et le cadre restrictif européen
+(EFSA/DGCCRF), mettant en lumière les obstacles majeurs à la commercialisation
+internationale de cette formulation "haute puissance". Cette analyse servira de document de
+référence pour les professionnels de santé, les formulateurs et les responsables
+réglementaires souhaitant naviguer dans la complexité de ce produit hybride.
+2. Chapitre I : Caractérisation Physico-Chimique et
+Galénique
+La première étape de toute expertise technique réside dans l'établissement précis de
+l'identité du produit. Au-delà des allégations marketing, il convient d'examiner la matérialité
+biochimique de la formulation "Bone & Heart Support". L'analyse croisée des données
+fournisseurs, des étiquettes produits et des fiches techniques disponibles permet de
+reconstituer l'architecture moléculaire exacte de ce complexe.1
+2.1 Formulation Quantitative et Qualitative Détaillée
+Le produit se présente sous la forme de capsules végétales (Veggie Capsules), une forme
+galénique privilégiée pour répondre à la demande croissante de produits sans dérivés
+animaux. L'analyse des "Supplement Facts" révèle une formulation quadripartite synergique.
+Les dosages rapportés ci-dessous correspondent à une unité de prise, soit une (1) capsule.
+Ingrédient Forme Dosage par % Valeur Fonction
+Actif Chimique Capsule Quotidienne Physiologique
+Spécifique (DV - USA) Ciblée
+Vitamine D3 Cholécalciférol 125 mcg (5000 625% Homéostasie
+UI) calcique,
+immunité,
+expression
+génique
+Vitamine K2 Ménaquinone- 100 mcg ~83% Carboxylation
+7 (MK-7) de
+l'Ostéocalcine
+
+et de la
+protéine MGP
+Calcium Carbonate de 210 mg 16% Substrat
+Calcium (élémentaire) minéral
+osseux,
+signalisation
+cellulaire
+BioPerine® Extrait de 5 mg N/A Enhancer de
+Piper nigrum biodisponibilité
+(fruit) (Thermocondu
+cteur)
+Analyse des Excipients et de l'Enveloppe : La matrice galénique est constituée de
+Cellulose Microcristalline comme agent de charge et diluant, assurant l'uniformité de
+contenu, et d'Hypromellose (hydroxypropylméthylcellulose) pour l'enveloppe de la capsule.
+Le stéarate de magnésium et le dioxyde de silicium sont également présents comme agents
+d'écoulement et lubrifiants industriels dans certaines variantes de fabrication observées chez
+le fournisseur présumé (Vitalabs), bien que la tendance "Clean Label" incite à leur réduction.4
+La formulation est déclarée sans gluten, sans lactose, sans soja et sans hormones, répondant
+aux critères d'exclusion les plus courants.7
+2.2 Analyse Critique du Choix des Sels et Formes Chimiques
+La qualité d'un complément alimentaire ne se juge pas uniquement à la quantité d'actifs, mais
+à la nature chimique des sels utilisés, qui détermine la pharmacocinétique et la tolérance.
+2.2.1 Le Choix du Carbonate de Calcium
+Le produit contient 210 mg de calcium élémentaire sous forme de Carbonate de Calcium. Ce
+choix technique appelle une critique nuancée. Le carbonate de calcium ( ) est le sel
+de calcium le plus courant et le plus dense en calcium élémentaire (environ 40% en poids), ce
+qui permet d'incorporer une dose significative dans une capsule de taille raisonnable (Taille 0
+ou 00) sans compromettre l'observance. Cependant, sa solubilité est pH-dépendante. Il
+nécessite un environnement gastrique acide pour se dissocier en ions calcium absorbables (
+) et en dioxyde de carbone ( ).
+L'équation de dissolution est la suivante :
+
+Cette caractéristique pose un défi pharmacocinétique pour les populations cibles âgées,
+souvent sujettes à l'achlorhydrie ou traitées par des inhibiteurs de la pompe à protons (IPP),
+chez qui l'absorption du carbonate peut être drastiquement réduite par rapport à des sels
+comme le citrate de calcium.9 Le choix du carbonate semble ici dicté par des contraintes de
+volume galénique et de coût, plutôt que par l'optimum pharmacologique absolu, bien que le
+dosage modéré (210 mg) atténue les risques de saturation des transporteurs intestinaux.
+2.2.2 La Supériorité de la Ménaquinone-7 (MK-7)
+L'inclusion de la Vitamine K2 sous forme de MK-7 (Menaquinone-7) constitue un point fort
+majeur de la formulation. Contrairement à la forme MK-4 (Menaquinone-4), qui est
+synthétique et possède une demi-vie plasmatique très courte (quelques heures), nécessitant
+des prises multiples et massives (45 mg/jour au Japon), la MK-7, issue de la fermentation
+(généralement du Bacillus subtilis natto) ou de synthèse stéréospécifique, présente une
+lipophilie supérieure et une demi-vie étendue à environ 72 heures.13 Cette pharmacocinétique
+permet une accumulation stable dans les tissus périphériques et une activation continue des
+protéines vitamine K-dépendantes (VKDPs) avec une prise quotidienne unique.
+2.3 Posologie et Charge Pharmacologique Journalière
+La posologie suggérée par le distributeur Supliful est de une (1) capsule, deux fois par jour,
+à prendre 20 à 30 minutes avant un repas.1 Cette recommandation double de facto les
+apports journaliers, portant les totaux à :
+● Vitamine D3 : 10 000 UI (250 µg) par jour.
+● Vitamine K2 (MK-7) : 200 µg par jour.
+● Calcium : 420 mg par jour.
+● BioPerine® : 10 mg par jour.
+Cette posologie place le produit dans la catégorie des "High Potency Supplements". Comme
+nous le verrons dans l'analyse réglementaire, ce niveau de dosage, en particulier pour la
+Vitamine D3 (10 000 UI), sort du cadre nutritionnel standard pour entrer dans une zone de
+supplémentation thérapeutique ou de "biohacking" agressif, soulevant des questions
+cruciales de sécurité et de conformité, particulièrement sur le marché européen.16 La mention
+"prendre avant un repas" est techniquement discutable pour une formule liposoluble (D3, K2) ;
+une prise pendant un repas contenant des lipides serait pharmacologiquement plus
+judicieuse pour stimuler la sécrétion de sels biliaires nécessaires à la formation des micelles
+d'absorption.18
+3. Chapitre II : Mécanismes d'Action et Pertinence
+
+Clinique
+L'architecture de la formulation "Bone & Heart Support" repose sur une compréhension
+sophistiquée de la biologie osseuse et vasculaire. Elle vise à résoudre le "Paradoxe du
+Calcium" par une approche synergique tripartie : Transport (D3), Direction (K2) et Substrat
+(Calcium), le tout potentialisé par un bio-enhancer (BioPerine).
+3.1 Le Paradoxe du Calcium : Fondement Scientifique
+Le "Paradoxe du Calcium" décrit le phénomène clinique où une supplémentation calcique
+inadéquate peut simultanément ne pas corriger l'ostéoporose et accélérer l'athérosclérose.
+Les données épidémiologiques et les méta-analyses suggèrent qu'un apport élevé en
+calcium, en l'absence de régulateurs appropriés, peut conduire à une précipitation ectopique
+de phosphate de calcium (hydroxyapatite) dans la tunique média des artères, rigidifiant le
+système vasculaire et augmentant la charge de travail cardiaque (Pulse Wave Velocity).19
+3.1.1 La Vitamine D3 comme Initiateur
+Le cholécalciférol (D3) est hydroxyle dans le foie en 25(OH)D (calcifédiol) puis dans le rein en
+1,25(OH)2D (calcitriol), l'hormone active. Le calcitriol se lie au récepteur de la vitamine D
+(VDR) dans l'entérocyte, induisant l'expression des canaux calciques TRPV6 et de la protéine
+de transport Calbindine-D9k. Cela augmente l'absorption intestinale du calcium de 10-15%
+(basal) à 30-40%.23 Cependant, la Vitamine D3 seule augmente la calcémie sans garantir
+l'intégration osseuse du minéral. À haute dose (5000-10000 UI), elle peut même stimuler la
+résorption osseuse si les apports en K2 sont insuffisants, en stimulant la différenciation des
+ostéoclastes via l'axe RANKL.24
+3.1.2 La Vitamine K2 comme Régulateur Directionnel
+C'est ici que la formulation prend tout son sens. La Vitamine K2 (MK-7) agit comme cofacteur
+enzymatique de la gamma-glutamyl carboxylase (GGCX). Cette enzyme convertit les résidus
+glutamate (Glu) en résidus gamma-carboxyglutamate (Gla) sur des protéines spécifiques :
+1. L'Ostéocalcine (OC) : Une fois carboxylée (cOC) dans l'os, elle acquiert une haute
+affinité pour les ions calcium, facilitant leur cristallisation dans la matrice de collagène
+osseuse. Sans K2, l'ostéocalcine reste sous-carboxylée (ucOC) et inactive.26
+2. La Matrix Gla Protein (MGP) : Synthétisée par les cellules musculaires lisses vasculaires
+et les chondrocytes, la MGP est le plus puissant inhibiteur physiologique de la
+calcification vasculaire. Une fois activée par la K2, elle se lie aux cristaux de calcium
+naissants dans la paroi artérielle et empêche leur croissance. La carence en K2 laisse la
+MGP inactive (dp-ucMGP), ce qui est un facteur de risque indépendant de mortalité
+cardiovasculaire et de rigidité artérielle.14
+L'étude de Knapen et al. (2015), citée implicitement par la logique du produit, a démontré que
+180 µg de MK-7 par jour pendant 3 ans réduisaient significativement la rigidité artérielle chez
+
+les femmes ménopausées.14 Avec 2 capsules par jour (200 µg), le produit "Bone & Heart
+Support" se positionne exactement dans cette fenêtre thérapeutique efficace.
+3.2 La Technologie BioPerine® : Maximisation de la Biodisponibilité
+L'ajout de 5 mg de BioPerine® (extrait standardisé de Piper nigrum contenant au moins 95%
+de pipérine) n'est pas anecdotique. Il répond à une problématique pharmacocinétique
+précise. La pipérine agit par plusieurs mécanismes pour augmenter la biodisponibilité des
+nutriments (concept de "bio-enhancement") :
+1. Modulation de la glycoprotéine-P (P-gp) : La pipérine inhibe cette pompe d'efflux
+située dans l'épithélium intestinal, empêchant le rejet des molécules absorbées vers la
+lumière intestinale.
+2. Inhibition de la glucuronidation : Elle inhibe l'enzyme UDP-glucuronosyltransférase,
+retardant la métabolisation hépatique et intestinale de premier passage, prolongeant
+ainsi la demi-vie des actifs.31
+3. Thermogenèse intestinale : Elle pourrait augmenter la perméabilité membranaire des
+cellules épithéliales par altération de la dynamique lipidique.33
+Bien que les études les plus célèbres concernent la curcumine (+2000% d'absorption), des
+recherches indiquent que la BioPerine® améliore également l'absorption des vitamines
+liposolubles comme le bêta-carotène, la coenzyme Q10 et potentiellement la Vitamine D3 et le
+Calcium, en facilitant le transport actif et passif.33 Dans le cas du carbonate de calcium, dont
+l'absorption est laborieuse, la BioPerine® pourrait théoriquement compenser partiellement les
+limitations liées au pH gastrique, bien que les preuves directes sur le carbonate de calcium
+soient moins abondantes que pour les phytonutriments.
+3.3 Évaluation des Dosages de Vitamine D3
+Le dosage de 5000 UI (125 µg) par capsule est très élevé par rapport aux standards
+historiques.
+● Justification Clinique : De nombreuses études récentes et experts (Holick, Heaney)
+suggèrent que les doses de 400-800 UI sont obsolètes pour atteindre des taux sériques
+optimaux (>30-40 ng/mL). Des doses de 2000 à 5000 UI sont souvent nécessaires pour
+corriger une hypovitaminose D, fréquente dans les latitudes septentrionales ou chez les
+personnes à peau pigmentée ou en surpoids (séquestration dans le tissu adipeux).37
+● Risque de Toxicité : La toxicité de la vitamine D est rare mais réelle (hypercalcémie,
+néphrocalcinose). L'EFSA a fixé la limite de sécurité (UL) à 4000 UI (100 µg)/jour pour les
+adultes.40 Le produit dépasse cette limite dès la première capsule (125 µg). Avec deux
+capsules (250 µg), on entre dans une zone nécessitant une surveillance biologique
+périodique de la calcémie et de la calciurie pour éviter les dépôts rénaux, surtout en
+présence de calcium exogène.41
+
+4. Chapitre III : Profil de Sécurité et Interactions
+Pharmacologiques
+L'analyse de sécurité révèle des contre-indications majeures qui doivent être communiquées
+avec clarté, sous peine de responsabilité légale pour le distributeur.
+4.1 Interaction Critique avec les Antivitamines K (AVK)
+C'est le risque toxicologique absolu de ce produit. La Vitamine K2 (MK-7) interagit directement
+avec les anticoagulants oraux de la famille des coumarines (Warfarine,
+Acénocoumarol/Sintrom, Fluindione/Previscan).
+● Mécanisme : Les AVK agissent en inhibant l'enzyme VKOR (Vitamin K Epoxide
+Reductase), bloquant le recyclage de la vitamine K nécessaire à l'activation des facteurs
+de coagulation (II, VII, IX, X). Un apport exogène de Vitamine K (même 100 µg) peut
+"court-circuiter" ce blocage en fournissant de la vitamine K réduite, réactivant la
+coagulation et faisant chuter l'INR (International Normalized Ratio).
+● Conséquence : Risque thrombotique majeur (AVC, embolie pulmonaire) chez un patient
+sous AVK dont le traitement serait déséquilibré. Une contre-indication formelle doit
+figurer sur l'étiquetage pour les patients sous anticoagulants coumariniques. Les
+anticoagulants oraux directs (AOD) comme le rivaroxaban ou l'apixaban ne sont pas
+concernés car ils n'agissent pas via le cycle de la vitamine K.43
+4.2 Risque de Lithiase Rénale et Hypercalcémie
+L'association de 10 000 UI de Vitamine D3 et de calcium, bien que modérée en calcium
+élémentaire, augmente la charge calcique filtrée par le rein. Chez des sujets prédisposés
+(hypercalciurie idiopathique, antécédents de lithiase), cela peut favoriser la précipitation de
+cristaux d'oxalate ou de phosphate de calcium.
+● Facteur Aggravant : Le carbonate de calcium est plus lithogène que le citrate de
+calcium car il réduit moins l'excrétion urinaire d'oxalate et n'apporte pas de citrate
+(inhibiteur de cristallisation).46
+● Facteur Protecteur : La Vitamine K2 pourrait théoriquement réduire ce risque en
+favorisant l'utilisation osseuse du calcium, mais les preuves cliniques sur la prévention
+des calculs rénaux par la K2 sont encore émergentes. L'hydratation reste la mesure
+préventive clé.
+4.3 Tolérance Digestive et BioPerine®
+Bien que la BioPerine® améliore l'absorption, la pipérine est un composé piquant qui peut
+irriter la muqueuse gastrique chez les sujets sensibles ou souffrant de gastrite/RGO. La prise
+au cours d'un repas est donc doublement justifiée : pour protéger l'estomac et pour
+solubiliser les vitamines liposolubles.31
+
+5. Chapitre IV : Analyse Réglementaire Comparative
+(USA vs UE)
+La viabilité commerciale de ce produit dépend strictement de la juridiction cible. Il existe un
+fossé réglementaire profond entre les États-Unis et l'Union Européenne concernant les
+dosages de Vitamine D3 et les allégations de santé.
+5.1 Cadre Réglementaire États-Unis (FDA / FTC)
+Sur le marché domestique américain, le produit "Bone & Heart Support" est parfaitement
+conforme aux dispositions du Dietary Supplement Health and Education Act (DSHEA) de 1994.
+● Statut : Complément alimentaire (Dietary Supplement).
+● Limites de Dosage : La FDA n'impose pas de limite maximale stricte a priori pour la
+Vitamine D3 dans les suppléments, tant que le fabricant peut justifier la sécurité
+("Safety"). Des dosages de 5000 UI et même 10 000 UI sont monnaie courante et
+acceptés sur le marché US.
+● Allégations : Les allégations de type "Structure/Function" (ex: "Supports heart health",
+"Promotes strong bones") sont autorisées sans validation préalable de la FDA, à
+condition d'inclure la mention légale obligatoire (Disclaimer) : "These statements have not
+been evaluated by the Food and Drug Administration. This product is not intended to
+diagnose, treat, cure, or prevent any disease.".49
+● Étiquetage : Le panneau "Supplement Facts" doit respecter le format 21 CFR 101.36, ce
+qui est le cas pour les étiquettes Supliful standard.
+5.2 Cadre Réglementaire Union Européenne (EFSA / États Membres)
+L'importation ou la vente de ce produit en Europe se heurte à des barrières réglementaires
+significatives, rendant sa commercialisation en l'état risquée, voire illégale dans certains pays.
+5.2.1 Le Problème du Surdosage en Vitamine D3 (UL)
+L'Autorité Européenne de Sécurité des Aliments (EFSA) a établi une Limite Supérieure de
+Sécurité (Tolerable Upper Intake Level - UL) pour la Vitamine D à 100 µg/jour (4000 UI)
+pour les adultes et adolescents.40
+● Non-Conformité : Une seule capsule contient 125 µg (5000 UI), dépassant l'UL de 25%.
+La dose journalière recommandée de 2 capsules (250 µg) dépasse l'UL de 150%.
+● Variations Nationales des Limites Maximales Autorisées : Bien que l'harmonisation
+soit en cours, les limites nationales pour les compléments alimentaires varient :
+○ France (DGCCRF) : Historiquement très stricte. Bien que des tolérances existent, la
+recommandation officielle reste souvent alignée sur l'UL ou inférieure sans dossier de
+sécurité spécifique. Un dosage de 125 µg par unité de prise est susceptible d'être
+qualifié de médicament par fonction ou présentation, ou simplement rejeté pour
+
+dépassement des seuils de sécurité nutritionnelle.41
+○ Belgique (SPF Santé Publique) : La Belgique a adopté une approche pragmatique
+mais réglementée. L'Arrêté Royal a relevé la limite maximale à 75 µg (3000 UI) pour
+les compléments alimentaires. Le produit à 125 µg est donc non conforme et illégal à
+la vente en Belgique.54
+○ Italie (Ministero della Salute) : L'Italie est plus libérale, acceptant souvent des
+dosages jusqu'à 50 µg (2000 UI) et tolérant parfois plus haut sur justification, mais
+5000 UI reste dans une zone de haute vigilance nécessitant souvent un statut
+quasi-médical.56
+○ Allemagne (BfR) : Le BfR recommande des limites très basses (20 µg/jour dans les
+suppléments), rendant ce produit clairement hors normes.41
+5.2.2 Le Rejet de l'Allégation "Santé Cardiaque" pour la Vitamine K2
+Un obstacle marketing majeur en UE concerne le nom même du produit : "Bone & Heart
+Support".
+● Décision EFSA : L'EFSA a évalué et rejeté l'allégation de santé liant la Vitamine K2 à la
+"santé cardiaque" ou à la "fonction des vaisseaux sanguins" (Opinion ID 125), considérant
+que les preuves de causalité étaient insuffisantes au moment de l'évaluation.60
+● Conséquence Légale : Il est interdit en Europe d'utiliser une allégation de santé non
+autorisée. Utiliser le terme "Heart Support" sur l'étiquette pour un produit à base de K2
+(sans Thiamine B1 ou EPA/DHA qui eux ont des allégations cœur autorisées) constitue
+une infraction au Règlement (CE) n° 1924/2006.62 Le produit risquerait un retrait immédiat
+du marché ou un blocage en douane pour étiquetage trompeur. Seules les allégations
+"Maintien d'une ossature normale" et "Coagulation sanguine normale" sont permises
+pour la K2.
+6. Chapitre V : Synthèse et Recommandations
+Stratégiques
+6.1 Bilan Technique
+Le produit "Bone & Heart Support Capsules" est une formulation scientifiquement robuste,
+supérieure aux standards du marché de masse grâce à l'inclusion de Vitamine K2 MK-7 à dose
+efficace et de BioPerine®. Le choix du carbonate de calcium est un compromis économique et
+volumétrique acceptable, compensé par la technologie d'absorption. Cependant, le dosage
+de 5000 UI de D3 par capsule en fait un "produit de niche" thérapeutique plutôt qu'un
+complément grand public universel.
+6.2 Matrice de Risques et Opportunités
+
+Dimension Évaluation Commentaire Expert
+Efficacité Clinique Élevée Synergie D3/K2 bien dosée
+pour l'axe ostéo-vasculaire.
+Sécurité (Population Modérée Risque d'hypercalciurie à
+Générale) long terme avec 10 000
+UI/jour.
+Sécurité (Populations Critique Danger mortel potentiel
+Spécifiques) pour les patients sous AVK
+(Warfarine).
+Conformité USA Totale Conforme DSHEA.
+Attention aux claims
+"Disease" (ne pas
+mentionner
+athérosclérose).
+Conformité UE Nulle Surdosage D3 (>UL) et
+Allégation "Heart" interdite.
+6.3 Recommandations Opérationnelles
+1. Pour le Marché Américain :
+○ Maintenir la formule actuelle qui est compétitive.
+○ Ajouter un "Boxed Warning" (Avertissement encadré) volontaire sur l'étiquette
+concernant l'interaction avec la Warfarine/Coumadine.
+○ Conseiller une surveillance des taux de Vitamine D après 3 à 6 mois d'utilisation
+continue à 2 capsules/jour.
+2. Pour une Entrée sur le Marché Européen (Adaptation Nécessaire) :
+○ Reformulation : Réduire la Vitamine D3 à 2000 UI (50 µg) ou 3000 UI (75 µg) par
+capsule pour respecter les plafonds belge et italien et se rapprocher de l'UL EFSA.
+○ Rebranding : Changer le nom en "Bone & Vascular Support" (plus risqué) ou
+simplement "K2+D3 Complex". Supprimer toute référence explicite au "Cœur" sauf si
+de la Thiamine (Vitamine B1) est ajoutée à la formule (la B1 autorise l'allégation
+"contribue à une fonction cardiaque normale").
+○ Notification : Procéder à la notification de mise sur le marché (ex: procédure
+Téléicare en France, FoodSup en Belgique) avec un dossier justifiant la sécurité des
+doses.
+
+Conclusion
+Le "Bone & Heart Support" de Supliful incarne la divergence transatlantique en matière de
+nutraceutique : une formulation d'avant-garde et puissante aux USA, qui devient un produit
+problématique et surdosé une fois franchi l'Atlantique. Son utilisation doit être réservée à des
+adultes avertis, en dehors de tout traitement anticoagulant, et idéalement sous supervision
+biologique pour les cures prolongées. L'expertise confirme la haute qualité des choix
+d'ingrédients (MK-7, BioPerine), mais souligne la nécessité impérieuse d'une gestion
+réglementaire différenciée selon les zones géographiques.
+Fin de la Monographie
+Sources des citations
+1. Bone & Heart Support Supplements - GenoPalate, consulté le janvier 31, 2026,
+https://www.genopalate.com/products/bone-heart-support
+2. Bone & Heart Support - Supliful, consulté le janvier 31, 2026,
+https://supliful.com/catalog/bone-heart-support-capsules
+3. Vitamin K2 + D3, 60 Capsules - eBay, consulté le janvier 31, 2026,
+https://www.ebay.com/itm/134843110856
+4. Catalog | Complete Multivitamin - Supliful, consulté le janvier 31, 2026,
+https://supliful.com/catalog/complete-multivitamin-capsules
+5. Highly Absorbable Calcium Supplement - Promotes Bone Density - CardioTabs,
+consulté le janvier 31, 2026, https://www.cardiotabs.com/bone-essentials.html
+6. Bone Support Formula | Fullscript, consulté le janvier 31, 2026,
+https://fullscript.com/catalog/products/bone-support-formula-180-tabs
+7. Bone & Heart Support - Vitamin D3 K2 - apache star, consulté le janvier 31, 2026,
+https://apachestar.com/products/bone-heart-support
+8. Vitamin K2 + D3 Supplement (60 Capsules) - Escape Comfort Outdoors, consulté
+le janvier 31, 2026,
+https://www.escapecomfortod.com/product/vitamin-k2-d3-supplement-60-caps
+ules/
+9. Effect of calcium carbonate particle size on calcium absorption and retention in
+adolescent girls - Experts@Minnesota, consulté le janvier 31, 2026,
+https://experts.umn.edu/en/publications/effect-of-calcium-carbonate-particle-siz
+e-on-calcium-absorption-a/
+10. A comparative study of calcium absorption following a single serving
+administration of calcium carbonate powder versus calcium citrate tablets in
+healthy premenopausal women, consulté le janvier 31, 2026,
+https://foodandnutritionresearch.net/index.php/fnr/article/view/672
+11. Using the best form of calcium: Carbonate vs Citrate - Feel, consulté le janvier 31,
+2026,
+https://wearefeel.com/en-us/blogs/learn/best-form-of-calcium-carbonate-vs-citr
+ate
+
+12. Meta-analysis of calcium bioavailability: a comparison of calcium citrate with
+calcium carbonate - PubMed, consulté le janvier 31, 2026,
+https://pubmed.ncbi.nlm.nih.gov/11329115/
+13. Vitamin K2 Dosage for Osteoporosis Treatment and Prevention - Melio-guide,
+consulté le janvier 31, 2026,
+https://melioguide.com/osteoporosis-nutrition/vitamin-k2-for-osteoporosis/
+14. Growing Evidence of a Proven Mechanism Shows Vitamin K2 Can Impact Health
+Conditions Beyond Bone and Cardiovascular - PMC - PubMed Central, consulté
+le janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC8483258/
+15. The effect of vitamin K2 supplementation on bone turnover biochemical markers
+in postmenopausal osteoporosis patients: a systematic review and meta-analysis
+- Frontiers, consulté le janvier 31, 2026,
+https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2025.17
+03116/full
+16. Vitamin D3 K2 5000 IU | Immune System & Bone Support | 125mcg D3, 100mcg
+K2 MK7, 210mg Calcium | Bioperine | 3rd-Party Tested - GoSupps.com, consulté le
+janvier 31, 2026,
+https://www.gosupps.com/vitamin-d3-k2-5000-iu-immune-system-strong-bone
+s-teeth-support-supplement-vitamin-d3-125mcg-vitamin-k2-mk7-100mcg-calci
+um-210mg-with-bioperine-3rd-party-tested-60-capsules.html
+17. Scientific opinion on the tolerable upper intake level for vitamin D, including the
+derivation of a conversion factor for calcidiol monohydrate - PubMed Central,
+consulté le janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC10407748/
+18. Vitamin D 3 Bioaccessibility from Supplements and Foods—Gastric pH Effect
+Using a Static In Vitro Gastrointestinal Model - MDPI, consulté le janvier 31, 2026,
+https://www.mdpi.com/1420-3049/29/5/1153
+19. The Dual Role of Vitamin K2 in “Bone-Vascular Crosstalk”: Opposite Effects on
+Bone Loss and Vascular Calcification - PMC - PubMed Central, consulté le janvier
+31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC8067793/
+20. Role of vitamin K2 in bone-vascular crosstalk - Hogrefe eContent, consulté le
+janvier 31, 2026, https://econtent.hogrefe.com/doi/10.1024/0300-9831/a000761
+21. Vitamin K Properties in Stroke and Alzheimer's Disease: A Janus Bifrons in
+Protection and Prevention - PubMed Central, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11901974/
+22. Vitamin K2 + D3: Solve the Calcium Paradox for Stronger Bones - Human
+Performance Hub, consulté le janvier 31, 2026,
+https://humanperformancehub.co.uk/resources/vitamin-k2-d3-calcium-paradox-
+bone-health/
+23. Calcium Paradox, Vitamin D and Vitamin K2 | Mose, consulté le janvier 31, 2026,
+https://www.obgynia.com/obgyn/index.php/obgynia/article/view/757
+24. Investigating the Effects and Mechanisms of Combined Vitamin D and K
+Supplementation in Postmenopausal Women: An Up-to-Date Comprehensive
+Review of Clinical Studies - PMC - NIH, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11279569/
+25. What is the role of vitamin K2 (Vitamin K2) in regulating calcium metabolism? -
+
+Dr.Oracle, consulté le janvier 31, 2026,
+https://www.droracle.ai/articles/577791/what-is-the-role-of-vitamin-k2-vitamin-k
+2
+26. Calcium Paradox, Vitamin D and Vitamin K2 - Indonesian Journal of Obstetrics &
+Gynecology Science, consulté le janvier 31, 2026,
+https://www.obgynia.com/obgyn/index.php/obgynia/article/download/757/pdf
+27. Proper Calcium Use: Vitamin K2 as a Promoter of Bone and Cardiovascular Health
+- PMC, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC4566462/
+28. Vitamin K2 MK-7 and Cardiovascular Calcification - Nutraceutical Business
+Review, consulté le janvier 31, 2026,
+https://nutraceuticalbusinessreview.com/vitamin-k2-mk-7-and-cardiovascular-ca
+lcification-147750
+29. Effects of One-Year Menaquinone-7 Supplementation on Vascular Stiffness and
+Blood Pressure in Post-Menopausal Women - MDPI, consulté le janvier 31, 2026,
+https://www.mdpi.com/2072-6643/17/5/815
+30. Vitamin K2—a neglected player in cardiovascular health: a narrative review - PMC,
+consulté le janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC8596038/
+31. Bioperine: A Supplement for Increased Nutrient Absorption - Nutrabio, consulté le
+janvier 31, 2026,
+https://nutrabio.com/blogs/endurelite/bioperine-benefits-dosage-and-side-effec
+ts
+32. A Systematic Review of Piperine as a Bioavailability Enhancer - ResearchGate,
+consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/370157496_A_Systematic_Review_of_Pi
+perine_as_a_Bioavailability_Enhancer
+33. Iron and Physical Activity: Bioavailability Enhancers, Properties of Black Pepper
+(Bioperine®) and Potential Applications - PubMed Central, consulté le janvier 31,
+2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC7353321/
+34. Learn About Bioperine® in 5 Minutes | Feel - Wellness, Reimagined, consulté le
+janvier 31, 2026,
+https://wearefeel.com/en-us/blogs/learn/what-is-bioperine-piperine-vitamins-min
+erals
+35. Curcumin + BioPerine + Vitamin D3 - NUTREND – The Power of Nutrition | Official
+Website, consulté le janvier 31, 2026,
+https://www.nutrend.eu/article/curcumin-bioperine-vitamin-d3
+36. Enhanced intestinal uptake of iron, zinc and calcium in rats fed pungent spice
+principles--piperine, capsaicin and ginger (Zingiber officinale) - PubMed, consulté
+le janvier 31, 2026, https://pubmed.ncbi.nlm.nih.gov/23332714/
+37. Wonder Labs Vitamin D3+K2, 5,000 IU for Healthy Immune System, consulté le
+janvier 31, 2026,
+https://www.walmart.com/ip/Vitamin-D-5-000-IU-Vitamin-D3-K2-Support-a-Hea
+lthy-Immune-System-Essential-for-Strong-Bones-Heart-Health-and-Calcium-Di
+stribution/502183199?classType=REGULAR
+38. Noophoric D3 K2 Vitamin 5000 IU - Vitamin K2 100 mcg Liberia | Ubuy, consulté le
+
+janvier 31, 2026,
+https://www.liberia.ubuy.com/product/IX4LGYKCI-vitamin-d3-k2-5000-iu-d3-100
+mcg-k2-mk7-bioperine-for-absorption-bone-immune-support-gluten-free-non
+-gmo?st=es
+39. Vitamin D: Evidence-Based Health Benefits and Recommendations for Population
+Guidelines - MDPI, consulté le janvier 31, 2026,
+https://www.mdpi.com/2072-6643/17/2/277
+40. Dietary reference values - EFSA - European Union, consulté le janvier 31, 2026,
+https://www.efsa.europa.eu/en/topics/topic/dietary-reference-values
+41. High single doses of vitamin D via food supplements at intervals of days or weeks
+associated with health risks, consulté le janvier 31, 2026,
+https://www.bfr.bund.de/en/opinions/high-single-doses-of-vitamin-d-via-food-su
+pplements-at-intervals-of-days-or-weeks-associated-with-health-risks/
+42. It's time for new rules on vitamin D food supplements - PMC - NIH, consulté le
+janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC3853542/
+43. What are the guidelines for using Vitamin K2 in patients on anticoagulant therapy,
+such as warfarin? - Dr.Oracle, consulté le janvier 31, 2026,
+https://www.droracle.ai/articles/289619/what-are-the-guidelines-for-using-vitami
+n-k2-in
+44. Vitamin K2 and Warfarin Interactions - Drugs.com, consulté le janvier 31, 2026,
+https://www.drugs.com/drug-interactions/vitamin-k2-with-warfarin-4087-19568-
+2311-0.html
+45. Effect of vitamin K2 on the anticoagulant activity of warfarin during the
+perioperative period of catheter ablation: Population analysis of retrospective
+clinical data - PMC - NIH, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC4972987/
+46. Calcium Citrate Versus Calcium Carbonate in the Management of Chronic
+Hypoparathyroidism: A Randomized, Double‐Blind, Crossover Clinical Trial -
+PubMed Central, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC9542059/
+47. Study Details | NCT03425747 | Efficacy of Calcium Citrate Versus Calcium
+Carbonate for the Management of Chronic Hypoparathyroidism |
+ClinicalTrials.gov, consulté le janvier 31, 2026,
+https://www.clinicaltrials.gov/study/NCT03425747
+48. Mayo Clinic Q and A: Kidney stones and calcium, consulté le janvier 31, 2026,
+https://newsnetwork.mayoclinic.org/discussion/mayo-clinic-q-and-a-kidney-ston
+es-and-calcium/
+49. TikTok Product Category Qualification - Supliful Help Center, consulté le janvier
+31, 2026,
+https://help.supliful.com/en/articles/10090587-tiktok-product-category-qualificat
+ion
+50. Role of vitamin K2 in bone-vascular crosstalk - IMR Press, consulté le janvier 31,
+2026, https://www.imrpress.com/journal/IJVNR/94/2/10.1024/0300-9831/a000761
+51. Overview on Tolerable Upper Intake Levels as derived by the Scientific
+Committee on Food (SCF) and the EFSA Panel on, consulté le janvier 31, 2026,
+
+https://www.efsa.europa.eu/sites/default/files/2024-05/ul-summary-report.pdf
+52. Les compléments alimentaires, nécessité d'une consommation éclairée - Anses,
+consulté le janvier 31, 2026,
+https://www.anses.fr/fr/content/les-complements-alimentaires-necessite-dune-c
+onsommation-eclairee
+53. Compléments alimentaires et réglementation : ce qu'il faut savoir en 2026 -
+Nutrilogist, consulté le janvier 31, 2026,
+https://nutrilogist.com/blogs/actualites/complements-alimentaires-reglementatio
+n
+54. NEW BELGIAN DECREE ON NUTRIENTS PUBLISHED - Food Compliance
+International, consulté le janvier 31, 2026,
+https://foodcomplianceinternational.com/industry-insight/news/1013-new-belgia
+n-decree-on-nutrients-published
+55. Intake of Fat-Soluble Vitamins in the Belgian Population: Adequacy and
+Contribution of Foods, Fortified Foods and Supplements - MDPI, consulté le
+janvier 31, 2026, https://www.mdpi.com/2072-6643/9/8/860
+56. Definition of maximum daily amounts of vitamins and minerals allowed in food
+supplements: scientific rationale and European regulatory frameworks - NIH,
+consulté le janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC12703604/
+57. Maximum intake levels of vitamins and caffeine - FoodTimes, consulté le janvier
+31, 2026,
+https://www.foodtimes.eu/consumers-and-health/maximum-intake-levels-of-vita
+mins-and-caffeine/
+58. Safety Profile of Vitamin D in Italy: An Analysis of Spontaneous Reports of Adverse
+Reactions Related to Drugs and Food Supplements - MDPI, consulté le janvier 31,
+2026, https://www.mdpi.com/2077-0383/12/14/4726
+59. Update: Planned EU maximum levels for vitamins, minerals and trace elements,
+consulté le janvier 31, 2026,
+https://www.eurofins.de/food-analysis/food-news/food-testing-news/planned-eu
+-maximum-levels-for-vitamins-minerals-and-trace-elements/
+60. EFSA Panel on Dietetic Products, Nutrition and Allergies (NDA); Scientific Opinion
+on the substantiation of a health claim relat, consulté le janvier 31, 2026,
+https://backend.orbit.dtu.dk/ws/portalfiles/portal/9665600/69CDBd01.pdf
+61. EFSA Panel on Dietetic Products, Nutrition and Allergies (NDA); Scientific Opinion
+on the substantiation of a health claim related to vitamin K2 and contribution to
+the normal function of the heart and blood vessels (ID 125, further assessment)
+pursuant to Article 13(1) of Regulation (EC) No 1924/2006 - DTU Research
+Database, consulté le janvier 31, 2026,
+https://orbit.dtu.dk/en/publications/efsa-panel-on-dietetic-products-nutrition-an
+d-allergies-nda-scien-15/
+62. Full List of EFSA Health Claims - Nutraceuticals Group, consulté le janvier 31, 2026,
+https://nutraceuticalsgroup.com/uk/full-list-of-efsa-health-claims

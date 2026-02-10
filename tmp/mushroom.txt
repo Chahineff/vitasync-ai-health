@@ -1,0 +1,440 @@
+MONOGRAPHIE D'EXPERTISE : ANALYSE
+STRATÉGIQUE ET TECHNIQUE DU
+COMPLEXE D'EXTRAITS DE
+CHAMPIGNONS (GUMMIES) SUPLIFUL
+Date du rapport : 31 Janvier 2026
+Objet : Évaluation approfondie de la formulation "Mushroom Extract Complex"
+(Vitalabs/Supliful)
+Cadre Méthodologique : Vérité Produit, Pharmacodynamique Clinique, Toxicologie &
+Conformité Réglementaire Internationale
+1. INTRODUCTION ET CONTEXTE DU MARCHÉ : L'ÈRE
+DE LA "MYCO-CONFISERIE"
+L'industrie nutraceutique traverse actuellement un changement de paradigme majeur,
+caractérisé par la convergence de la mycothérapie traditionnelle et des formats de délivrance
+hédonistes ("delivery systems"). Le segment des "Mushroom Gummies" (gommes aux
+champignons) connaît une croissance exponentielle, alimentée par la demande
+post-pandémique pour des solutions d'immunité et de santé cognitive (nootropiques). Ce
+rapport se penche spécifiquement sur le produit "Mushroom Extract Complex Gummies"
+distribué via la plateforme d'impression à la demande Supliful et fabriqué par Vitalabs.1
+Ce produit se positionne à l'intersection de deux réalités conflictuelles : la promesse d'une
+mycothérapie clinique (basée sur des champignons comme le Reishi ou le Lion's Mane) et les
+contraintes physico-chimiques d'une matrice de confiserie gélifiée. Dans un contexte où la
+FDA et les autorités européennes (EFSA) intensifient leur surveillance sur les produits à base
+de champignons en raison de problèmes de conformité et de sécurité émergents 3, une
+analyse rigoureuse dépasse la simple lecture de l'étiquette.
+Ce document d'expertise déploie une analyse en trois dimensions :
+1. Vérité Produit (Product Truth) : Une dissection de la formulation, de la nature réelle
+des extraits "10:1" et de la matrice excipiente.
+2. Preuves d'Efficacité (Evidence of Efficacy) : Une confrontation des dosages du
+produit avec les données des essais cliniques randomisés (RCTs).
+3. Sécurité & Conformité (Safety & Compliance) : Une cartographie des risques
+réglementaires, notamment le statut "Novel Food" dans l'UE et les exigences de
+
+substantiation de la FTC aux USA.
+2. CHAPITRE I : VÉRITÉ PRODUIT (PRODUCT TRUTH)
+La "Vérité Produit" ne se définit pas par le marketing, mais par la réalité moléculaire et les
+standards industriels. Dans le modèle de "Private Label" opéré par Supliful, le revendeur n'a
+pas de contrôle direct sur la chaîne d'approvisionnement, ce qui rend l'analyse des
+spécifications du fabricant d'origine (Vitalabs) critique.
+2.1 Analyse de la Matrice Active : Le "Mélange Propriétaire"
+Le cœur de la formulation repose sur un "Mushroom Extract Blend" (Mélange d'Extraits de
+Champignons). L'examen du panneau "Supplement Facts" révèle une architecture de
+formulation complexe mais révélatrice.
+2.1.1 Déconstruction Quantitative
+L'étiquette indique un poids total de 250 mg pour le mélange actif par portion de 2 gommes.1
+Ce mélange comprend dix espèces distinctes :
+1. Maitake (Grifola frondosa)
+2. Shiitake (Lentinula edodes)
+3. Lion's Mane (Hericium erinaceus)
+4. Reishi (Ganoderma lucidum)
+5. Cordyceps (Cordyceps militaris)
+6. Chaga (Inonotus obliquus)
+7. Turkey Tail (Trametes versicolor)
+8. White Button (Agaricus bisporus)
+9. Black Fungus (Auricularia auricula-judae)
+10. Royal Sun Mushroom (Agaricus subrufescens)
+Insight Critique sur la Densité de Dosage : Dans les mélanges propriétaires où les
+quantités individuelles ne sont pas divulguées, la répartition est souvent équiproportionnelle
+ou décroissante. En assumant une répartition égale pour maximiser la diversité affichée,
+chaque portion de 2 gommes contient théoriquement 25 mg de chaque extrait.5 Cette
+densité de 25 mg par ingrédient place le produit dans la catégorie des formulations à
+"saupoudrage" (Fairy Dusting).6 Contrairement aux monographies cliniques qui exigent des
+grammes, nous sommes ici dans l'ordre du milligramme, une distinction fondamentale pour la
+pharmacocinétique du produit.
+2.1.2 La Sémantique de l'Extrait "10:1 Fruiting Body"
+L'étiquette spécifie l'utilisation d'extraits de corps de fructification (Fruiting Body) avec un
+ratio de 10:1.1
+
+● L'Avantage du Corps Fructifère : L'utilisation exclusive de corps fructifères est un
+indicateur qualitatif positif par rapport aux produits utilisant de la "biomasse mycélienne
+sur grain" (Mycelium on Grain - MOG). La biomasse mycélienne contient souvent jusqu'à
+60-70% d'amidon résiduel du substrat (riz, avoine) et une faible teneur en composés
+fongiques secondaires.8 Le choix du corps fructifère suggère une volonté d'éliminer les
+fillers amylacés.
+● Le Mythe de la Puissance du Ratio : Le ratio 10:1 signifie que 10 kg de champignons
+frais (contenant ~90% d'eau) sont utilisés pour produire 1 kg d'extrait sec. Bien que cela
+concentre la matière sèche, cela ne garantit pas la concentration des bioactifs
+(bêta-glucanes, triterpènes).10 Sans une standardisation analytique affichée (par
+exemple "titré à >30% de bêta-glucanes"), le ratio 10:1 reste une métrique de rendement
+de production et non une preuve de puissance pharmacologique. Un extrait 10:1 mal
+traité thermiquement peut avoir dégradé ses protéines et polysaccharides.11
+2.2 La Matrice Galénique : Contraintes de la Forme "Gummy"
+La forme gomme impose des limitations techniques qui influencent directement la stabilité et
+la biodisponibilité des actifs.
+● Excipients et Charge Glycémique : Les premiers ingrédients sont le sirop de glucose et
+le sucre, totalisant 5 g de sucres ajoutés par portion.1 Pour un produit de santé, cette
+charge glycémique est significative. Elle peut être contre-productive pour les utilisateurs
+cherchant à réguler leur glycémie via des champignons comme le Maitake ou le Chaga.2
+● Système Gélifiant (Pectine vs Gélatine) : Le produit utilise la pectine 2, un
+polysaccharide végétal, ce qui permet les allégations "Vegan" et "Végétarien". La pectine
+offre une libération des arômes supérieure à la gélatine mais nécessite un contrôle précis
+du pH (via l'acide citrique et le citrate de sodium présents) pour gélifier.12
+● Stabilité Thermique des Actifs : La production de gommes implique la cuisson du sirop
+à des températures élevées (>100°C) avant l'ajout des actifs. Bien que les bêta-glucanes
+soient structurellement stables à la chaleur (résistant souvent jusqu'à 135°C lors des
+processus d'extraction) 13, d'autres composés comme les vitamines hydrosolubles ou
+certains triterpènes volatils du Reishi peuvent subir une dégradation. De plus,
+l'environnement acide de la gomme à la pectine (pH ~3.5) peut hydrolyser certains
+polysaccharides complexes sur la durée de stockage.11
+2.3 Transparence et Traçabilité (Modèle Vitalabs)
+Supliful agit comme un intermédiaire technologique. Le fabricant physique est Vitalabs, basé
+en Géorgie, USA.1
+● Certifications Tiers : Vitalabs opère dans une installation certifiée NSF et conforme aux
+cGMP (Current Good Manufacturing Practices).1 Cela garantit que le produit est fabriqué
+dans des conditions sanitaires contrôlées, minimisant les risques de contamination
+microbiologique.
+
+● L'Opacité des Certificats d'Analyse (CoA) : Un point faible critique du modèle
+"On-Demand" est l'absence de CoA spécifique au lot accessible au revendeur ou au
+consommateur final. Bien que Vitalabs effectue des tests internes 16, le revendeur (Brand
+Owner) assume la responsabilité légale de la conformité sans voir les résultats de test
+pour chaque lot expédié.15 Dans un contexte où des enquêtes récentes ont trouvé des
+contaminants non déclarés (comme la psilocybine ou des drogues de synthèse) dans des
+gommes "nootropiques" vendues en station-service 3, cette opacité constitue un risque
+de réputation majeur.
+3. CHAPITRE II : PREUVES D'EFFICACITÉ (EVIDENCE
+OF EFFICACY)
+Ce chapitre confronte la réalité dosimétrique du produit (25 mg par champignon) à la
+littérature scientifique. Nous utilisons une approche de "Gap Analysis" (analyse d'écart) pour
+évaluer la plausibilité des effets revendiqués.
+3.1 Lion's Mane (Hericium erinaceus) : Le Fossé Cognitif
+Le Lion's Mane est inclus pour ses promesses sur la mémoire, la concentration et la
+neurogenèse (via le NGF - Nerve Growth Factor).
+● Données Cliniques de Référence : Les essais cliniques humains positifs sur la fonction
+cognitive utilisent des doses de 1 000 mg à 3 000 mg de poudre de corps fructifère par
+jour sur des périodes de 12 à 16 semaines.19 Une étude de Mori et al. (2009) a utilisé 3
+g/jour pour améliorer le déclin cognitif léger.
+● Analyse du Produit : Avec 25 mg d'extrait (même 10:1, équivalent théorique à 250 mg
+brut), la dose fournie est 40 à 120 fois inférieure à la dose clinique efficace. De plus, les
+érinacines (les plus puissants stimulateurs de NGF) se trouvent principalement dans le
+mycélium, alors que ce produit utilise le corps fructifère (riche en héricénones, moins
+puissantes pour le NGF).22
+● Verdict d'Expert : L'allégation d'amélioration cognitive ("Boosts memory and focus") est
+scientifiquement insoutenable à cette dose. Il s'agit d'un dosage "d'étiquette" sans
+pertinence physiologique pour la neuroplasticité.
+3.2 Reishi (Ganoderma lucidum) : L'Immunité Silencieuse
+Le Reishi est valorisé pour ses propriétés immunomodulatrices (bêta-glucanes) et
+adaptogènes/calmantes (triterpènes).
+● Données Cliniques de Référence : Pour des effets tangibles sur l'immunité ou la fatigue,
+les études utilisent entre 1 440 mg et 5 400 mg d'extrait par jour.24 Les triterpènes,
+responsables de l'effet "calmant" et du soutien du sommeil, sont extrêmement amers.
+● Analyse du Produit : La dose de 25 mg est négligeable par rapport aux standards
+
+cliniques. De plus, la saveur "Framboise" sucrée du produit suggère une très faible teneur
+en triterpènes amers, ou une élimination de ces composés lors de l'extraction (les extraits
+aqueux ne contiennent pas de triterpènes, qui sont solubles dans l'éthanol).26
+● Verdict d'Expert : Inefficace pour la modulation du stress ou le soutien immunitaire
+profond. L'absence d'amertume confirme l'absence probable de spectre complet
+bioactif.
+3.3 Cordyceps (C. militaris) : Énergie et ATP
+Le Cordyceps est censé améliorer la production d'ATP et la VO2 max.
+● Données Cliniques de Référence : Les études sur la performance athlétique valident
+des doses de 1 000 mg à 4 000 mg par jour.27 La cordycépine, le marqueur actif du C.
+militaris, nécessite des concentrations significatives pour agir.
+● Analyse du Produit : Avec 25 mg, l'apport en adénosine et cordycépine est
+anecdotique. Il est impossible d'influencer le métabolisme énergétique mitochondrial
+avec <1% de la dose clinique.29
+● Verdict d'Expert : Les allégations de "Performance Athlétique" ou d'augmentation
+d'énergie reposent sur la renommée de l'ingrédient, non sur la formulation du produit.
+3.4 Turkey Tail (Trametes versicolor) : Le Standard Oncologique
+Manqué
+Le Turkey Tail est célèbre pour le Krestin (PSK), un médicament anticancéreux approuvé au
+Japon.
+● Données Cliniques de Référence : Le dosage standard de PSK en oncologie intégrative
+est strictement de 3 000 mg (3 g) par jour.30
+● Analyse du Produit : La présence de 25 mg n'offre aucune commune mesure avec les
+applications thérapeutiques. Même en tant que prébiotique (nourriture pour le
+microbiote), cette quantité est insuffisante comparée aux grammes de fibres nécessaires
+pour moduler la flore intestinale.32
+3.5 Analyse Comparative : Dosage Clinique vs Réalité Produit
+Le tableau ci-dessous illustre le "Gap Thérapeutique" critique :
+Champignon Dose Clinique Dose Produit Facteur de Sources
+Efficace Supliful (2 Sous-Dosage
+(Minimale) gummies)
+Lion's Mane 1 000 mg 25 mg x 40 19
+
+Reishi 1 440 mg 25 mg x 57 24
+Cordyceps 1 000 mg 25 mg x 40 27
+Turkey Tail 3 000 mg 25 mg x 120 30
+Maitake 2 000 mg 25 mg x 80 33
+Conclusion sur l'Efficacité : Le produit repose sur un concept de "synergie théorique" non
+prouvée pour justifier des micro-dosages. Bien que la biodisponibilité des extraits dans une
+matrice de gomme soit acceptable (similaire aux gélules si bien mastiquée 34), la quantité
+absolue de principe actif est insuffisante pour déclencher les mécanismes pharmacologiques
+décrits dans la littérature (activation des récepteurs Dectin-1, synthèse de NGF, etc.). Le
+produit doit être considéré comme un aliment fonctionnel de découverte ("Novelty Product")
+et non comme un supplément thérapeutique.
+4. CHAPITRE III : SÉCURITÉ ET CONFORMITÉ (SAFETY
+& COMPLIANCE)
+Ce chapitre expose les risques légaux majeurs pour les revendeurs, en distinguant le marché
+américain (FDA) et le marché européen (EFSA).
+4.1 La Barrière Réglementaire Européenne : Le "Novel Food"
+L'exportation de ce produit vers l'UE ou le Royaume-Uni expose le revendeur à des risques de
+saisie et de non-conformité immédiate en raison du règlement (UE) 2015/2283 sur les
+nouveaux aliments (Novel Foods).
+4.1.1 Ingrédients Non Autorisés (Red Flags)
+Plusieurs ingrédients de ce complexe n'ont pas d'historique de consommation significatif dans
+l'UE avant 1997 et sont donc interdits sans autorisation spécifique :
+1. Turkey Tail (Trametes versicolor) :
+○ Statut : Classé comme Novel Food non autorisé dans les compléments
+alimentaires.4
+○ Conséquence : Les produits contenant du Turkey Tail sont régulièrement retirés du
+marché européen ou bloqués en douane. Des notifications RASFF (Rapid Alert
+System for Food and Feed) ont été émises à ce sujet.36 C'est un point de blocage
+absolu.
+2. Cordyceps militaris :
+
+○ Statut : Non Autorisé / Problématique. Alors que le Cordyceps sinensis bénéficie
+d'une tolérance, le C. militaris (utilisé ici) est souvent considéré comme Novel Food
+non autorisé.37 Des saisies récentes (avril 2024) confirment ce risque.37
+3. Agaricus subrufescens (Royal Sun) :
+○ Statut : Incertain / Novel Food. Souvent confondu avec Agaricus blazei, son statut
+nécessite une vérification rigoureuse, mais il a fait l'objet d'évaluations Novel Food
+restrictives.39
+4.1.2 Ingrédients Autorisés (Green Flags)
+Certains ingrédients ont récemment vu leur statut clarifié favorablement :
+● Lion's Mane & Chaga : Les extraits aqueux de corps fructifères ont été confirmés
+comme "Not Novel" (autorisés) dans les compléments alimentaires par les autorités
+finlandaises et européennes.40 Cependant, cela ne valide pas le produit entier si un seul
+ingrédient (comme le Turkey Tail) est non conforme.
+4.2 Cadre Réglementaire USA (FDA/FTC)
+Aux États-Unis, le produit est conforme au DSHEA (Dietary Supplement Health and Education
+Act) en tant que complément alimentaire, mais la vigilance est requise sur les allégations.
+● Allégations Structure/Fonction : Les phrases comme "Supports immune health" ou
+"Promotes cognitive function" sont autorisées si accompagnées du disclaimer FDA
+obligatoire ("These statements have not been evaluated...").42
+● Risque de Substantiation (FTC) : La FTC exige que les publicités soient étayées par des
+preuves. Utiliser des études cliniques réalisées avec 3 g de champignons pour vendre un
+produit à 25 mg constitue une pratique de "publicité trompeuse" potentielle. Le
+revendeur s'expose à des actions de la FTC s'il ne peut prouver que sa dose spécifique
+est efficace.44
+● Contexte de Vigilance FDA : La FDA a émis des avertissements sévères en 2024 contre
+des gommes aux champignons ("microdosing") contenant des substances illégales non
+déclarées (psilocybine, muscimol).3 Bien que le produit Vitalabs soit exempt de ces
+substances (fabrication GMP), le terme "Mushroom Gummies" est actuellement un "red
+flag" pour les inspecteurs, augmentant la probabilité de contrôles.
+4.3 Toxicologie et Qualité
+● Métaux Lourds : Les champignons sont des hyper-accumulateurs de métaux lourds
+(plomb, cadmium, arsenic, mercure).46 La concentration d'extraits 10:1 multiplie
+théoriquement la teneur en métaux lourds par 10 si la purification n'est pas adéquate. La
+certification GMP de Vitalabs inclut des tests de métaux lourds 16, mais l'absence de CoA
+public laisse une zone d'ombre pour le consommateur.
+● Oxalates (Chaga) : Le Chaga contient des niveaux très élevés d'oxalates, pouvant
+causer des dommages rénaux (néphropathie).47 Bien que la dose de 25 mg soit faible, le
+
+risque cumulatif existe pour les personnes prédisposées aux calculs rénaux.
+● Allergènes : Le produit est fabriqué dans une usine traitant des allergènes majeurs (lait,
+soja, blé, crustacés).1 L'avertissement de contamination croisée est présent sur
+l'étiquette, ce qui protège légalement le fabricant mais restreint la cible consommateur
+(inadapté aux allergiques sévères).
+5. CONCLUSION ET RECOMMANDATIONS
+STRATÉGIQUES
+L'analyse approfondie du "Mushroom Extract Complex Gummies" de Supliful révèle un produit
+conçu pour l'attrait commercial ("Trend-Surfing") plutôt que pour l'efficacité clinique.
+Synthèse des Découvertes
+1. Formulation : Un mélange complexe de 10 champignons sous forme d'extraits 10:1 de
+corps fructifères. La matrice "Gummy" est végétalienne (pectine) mais riche en sucre.
+2. Efficacité : Le produit souffre d'un sous-dosage critique (Fairy Dusting). Avec ~25 mg
+par ingrédient, les doses sont 40 à 120 fois inférieures aux seuils thérapeutiques validés
+par la science. L'efficacité repose sur un effet placebo ou de soutien nutritionnel mineur,
+et non sur une pharmacodynamique robuste.
+3. Conformité : Le produit est non conforme pour la vente dans l'UE/UK en raison de la
+présence d'ingrédients Novel Food non autorisés (Turkey Tail, Cordyceps militaris). Il est
+viable aux USA sous réserve de modérer les allégations marketing.
+Recommandations pour les Revendeurs (Brand Owners)
+● Ciblage Géographique : Restreindre strictement la vente aux États-Unis. Ne pas
+expédier ce produit en Europe ou au Royaume-Uni sous peine de saisies douanières et
+de sanctions réglementaires.
+● Marketing Responsable : Éviter les allégations "Nootropiques puissants" ou "Traitement
+de l'anxiété". Se concentrer sur des messages de "Bien-être général", "Découverte des
+champignons" et "Style de vie". Ne pas citer d'études cliniques sur le cancer ou
+Alzheimer, car le produit ne contient pas les doses utilisées dans ces études.
+● Gestion de la Qualité : Demander périodiquement à Supliful/Vitalabs un exemple de
+CoA (Certificat d'Analyse) pour un lot récent afin de documenter la conformité en métaux
+lourds, une diligence raisonnable en cas de contrôle.
+● Positionnement : Ce produit est un excellent "produit d'appel" (entry-level) pour des
+consommateurs curieux, mais ne doit pas être vendu comme une solution thérapeutique
+à des utilisateurs avertis ou cherchant des résultats cliniques précis.
+Le "Mushroom Extract Complex" est, en définitive, une introduction ludique au monde des
+champignons fonctionnels, dont la valeur réside davantage dans son format pratique et sa
+
+diversité botanique que dans sa puissance brute.
+Sources des citations
+1. Mushroom Extract Complex Gummy - Gummies and Chewables - Private Label
+Vitamins & Nutritional Supplements - Vitalabs, consulté le janvier 31, 2026,
+https://www.vitalabs.com/private-label-product/vitamins-nutrition/gummies-and-
+chewables-for-sale/mushroom-extract-complex-gummy-60-gummies/1291
+2. Catalog | Mushroom Extract Complex | Supliful, consulté le janvier 31, 2026,
+https://supliful.com/catalog/mushroom-extract-gummies
+3. Severe Illness Potentially Associated with Consuming Edibles - KDHE -
+Kansas.gov, consulté le janvier 31, 2026,
+https://www.kdhe.ks.gov/m/newsflash/home/detail/1167
+4. Why Is Turkey Tail Mushroom Being Banned In The UK? - Mogo Farm, consulté le
+janvier 31, 2026,
+https://mogofarm.co.uk/blogs/mushroom-library/the-outlaw-ancient-fungus-why
+-is-turkey-tail-mushroom-being-banned-in-the-uk
+5. Mushroom gummies relieve fatigue antioxidant anti-inflammatory properties
+180pcs | eBay, consulté le janvier 31, 2026,
+https://www.ebay.com/itm/236426568672
+6. Pros and Cons of Nootropics - Quality Ingredients Vs. Inferior Imitations | Mind
+Lab Pro®, consulté le janvier 31, 2026,
+https://www.mindlabpro.com/blogs/nootropics/pros-and-cons-of-nootropics-qu
+ality-ingredients-vs-inferior-imitations
+7. Blood sugar support supplements become more versatile | Nutritional Outlook,
+consulté le janvier 31, 2026,
+https://www.nutritionaloutlook.com/view/blood-sugar-support-supplements-bec
+ome-more-versatile
+8. MUD\WTR Mushrooms—Separating Fact From Fiction, consulté le janvier 31, 2026,
+https://mudwtr.com/blogs/trends-with-benefits/mudwtr-mushrooms-seperating-
+facts-from-fiction
+9. Mycelium vs Fruiting Body Extract in Mushrooms: Which Is Better? - Gaia Herbs,
+consulté le janvier 31, 2026,
+https://www.gaiaherbs.com/blogs/seeds-of-knowledge/mushroom-mycelium-vs-
+fruiting-bodies
+10. What Are Mushroom Extract Ratios? The Truth About Potency & Quality, consulté
+le janvier 31, 2026,
+https://selectingredients.com/blog/what-are-mushroom-extract-ratios
+11. Stability of Beta-Glucans During Processing | Request PDF - ResearchGate,
+consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/394103641_Stability_of_Beta-Glucans_
+During_Processing
+12. How to make a better gummy with gelatin or pectin - SupplySide Supplement
+Journal, consulté le janvier 31, 2026,
+https://www.supplysidesj.com/manufacturing/how-to-make-a-better-gummy-wit
+
+h-gelatin-or-pectin
+13. Processing and Prebiotics Characteristics of β-Glucan Extract from Highland
+Barley - MDPI, consulté le janvier 31, 2026,
+https://www.mdpi.com/2076-3417/8/9/1481
+14. Effect of the Modifications on the Physicochemical and Biological Properties of
+β-Glucan—A Critical Review - NIH, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC6983044/
+15. Understanding Product Certifications & Registrations | Supliful Help Center,
+consulté le janvier 31, 2026,
+https://help.supliful.com/en/articles/11161756-understanding-product-certificatio
+ns-registrations
+16. Vitalabs, consulté le janvier 31, 2026,
+https://m.media-amazon.com/images/I/B1qUSTa1RQL.pdf
+17. Product catalog - Supliful, consulté le janvier 31, 2026, https://supliful.com/catalog
+18. Notes from the Field: Schedule I Substances Identified in Nootropic Gummies
+Containing Amanita muscaria or Other Mushrooms — Charlottesville, Virginia,
+2023–2024 | MMWR - CDC, consulté le janvier 31, 2026,
+https://www.cdc.gov/mmwr/volumes/73/wr/mm7328a3.htm
+19. Lion's Mane benefits, dosage, and side effects - Examine.com, consulté le janvier
+31, 2026, https://examine.com/supplements/lionsmane/
+20. Lion's Mane & Your Brain | Cognitive Vitality - Alzheimer's Drug Discovery
+Foundation, consulté le janvier 31, 2026,
+https://www.alzdiscovery.org/cognitive-vitality/ratings/lions-mane
+21. Finding the Right Lion's Mane Dosage: Health & Wellness - Real Mushrooms,
+consulté le janvier 31, 2026,
+https://realmushrooms.com/blogs/rm/lions-mane-dosage
+22. Fruiting Body or Mycelium? Navigating the Mushroom Extract Debate - Select
+Ingredients, consulté le janvier 31, 2026,
+https://selectingredients.com/blog/fruiting-body-or-mycelium
+23. Lion's Mane Dosage: How Much to Take Per Day? | Mind Lab Pro®, consulté le
+janvier 31, 2026,
+https://www.mindlabpro.com/blogs/nootropics/lions-mane-dosage
+24. Reishi Mushroom: Overview, Uses, Side Effects, Precautions, Interactions, Dosing
+and Reviews - WebMD, consulté le janvier 31, 2026,
+https://www.webmd.com/vitamins/ai/ingredientmono-905/reishi-mushroom
+25. What is Reishi Mushrooms: Benefits, Risks, How to use [2025 Nutritionist
+Reviewed] - Feel, consulté le janvier 31, 2026,
+https://wearefeel.com/blogs/learn/what-is-reishi-mushroom-benefits-risks-how-t
+o-use-nutritionist-reviewed
+26. Reishi benefits, dosage, and side effects - Examine.com, consulté le janvier 31,
+2026, https://examine.com/supplements/reishi/
+27. Cordyceps: Overview, Uses, Side Effects, Precautions, Interactions, Dosing and
+Reviews, consulté le janvier 31, 2026,
+https://www.webmd.com/vitamins/ai/ingredientmono-602/cordyceps
+28. Cordyceps militaris improves tolerance to high intensity exercise after acute and
+
+chronic supplementation - NIH, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC5236007/
+29. The Recommended Cordyceps Dosage to Achieve Your Health & Wellness Goals,
+consulté le janvier 31, 2026,
+https://ommushrooms.com/blogs/blog/cordyceps-dosage-m2
+30. Turkey Tail Mushrooms - Alzheimer's Drug Discovery Foundation, consulté le
+janvier 31, 2026,
+https://www.alzdiscovery.org/uploads/cognitive_vitality_media/Turkey_Tail_Mushr
+ooms.pdf
+31. Turkey Tail Mushroom: Overview, Uses, Side Effects, Precautions, Interactions,
+Dosing and Reviews - WebMD, consulté le janvier 31, 2026,
+https://www.webmd.com/vitamins/ai/ingredientmono-648/turkey-tail-mushroom
+32. Finding the Right Dose: A Guide to Turkey Tail Extract Dosage - Eversio Wellness,
+consulté le janvier 31, 2026,
+https://www.eversiowellness.com/en-us/blogs/wellness-articles/finding-the-right
+-dose-a-guide-to-turkey-tail-extract-dosage
+33. The Recommended Maitake Dosage for Health & Wellness Benefits, consulté le
+janvier 31, 2026, https://ommushrooms.com/blogs/blog/maitake-dosage-m2
+34. Expert Advice to Consider Before You Take Mushroom Gummies - CNET, consulté
+le janvier 31, 2026,
+https://www.cnet.com/health/nutrition/mushroom-gummies-expert-advice-on-si
+de-effects-and-benefits/
+35. From chaga to cordyceps: functional mushroom novel food rules explained -
+Hooley Brown, consulté le janvier 31, 2026,
+https://www.hooleybrown.com/blog-post/functional-mushroom-novel-food-rule
+s-explained
+36. Notification 2025.9090 Unauthorized Novel Food Turkey Tail (Trametes versicolor)
+in Food Supplement - RASFF Window - Notification detail, consulté le janvier 31,
+2026, https://webgate.ec.europa.eu/rasff-window/screen/notification/804358
+37. Notification 2024.2611 Nieautoryzowana nowa żywność (Cordyceps militaris) w
+suplemencie diety UK// Unauthorized novel food (Cordyceps militaris) in food
+supplement from UK - RASFF Window - Notification detail, consulté le janvier 31,
+2026, https://webgate.ec.europa.eu/rasff-window/screen/notification/674503
+38. 6 Best Cordyceps Sinensis supplements to Buy - Smeets & Graas, consulté le
+janvier 31, 2026, https://www.smeetsengraas.nl/en/category/cordyceps/
+39. Application for consultation to determine the status of a novel food, pursuant to
+Article 4(2) of the Regulation (EU) 2015/2283 - European Union, consulté le janvier
+31, 2026,
+https://food.ec.europa.eu/system/files/2019-10/novel-food_consult-status_agaric
+us-blazei_aesan.pdf
+40. Application for consultation to determine the status of a novel food pursuant to
+Article 4(2) of the Regulation (EU) 2015/2283, consulté le janvier 31, 2026,
+https://food.ec.europa.eu/document/download/1db081b3-c497-4349-85f9-5347f
+2989ca8_en?filename=novel-food_consult-status_lions-mane-extract-powder.p
+df&prefLang=nl
+
+41. Novel Food Europe Updates: Summary from February 2025 - Rosapharma,
+consulté le janvier 31, 2026,
+https://rosapharma.pt/novel-food-europe-updates-summary-from-february-202
+5/
+42. Mushroom Extract Complex - Check My Body Health USA, consulté le janvier 31,
+2026, https://us.checkmybodyhealth.com/products/mushroom-extract-complex
+43. Label Content Requirements for Dietary Supplements - Supliful Help Center,
+consulté le janvier 31, 2026,
+https://help.supliful.com/en/articles/8727396-label-content-requirements-for-diet
+ary-supplements
+44. Dietary Supplements: An Advertising Guide for Industry - Federal Trade
+Commission, consulté le janvier 31, 2026,
+https://www.ftc.gov/system/files/documents/plain-language/bus09-dietary-suppl
+ements-advertising-guide-industry.pdf
+45. Letter to Industry on the Use of Amanita Muscaria or its Constituents in Food |
+FDA, consulté le janvier 31, 2026,
+https://www.fda.gov/food/post-market-determinations-use-substance-not-gras/l
+etter-industry-use-amanita-muscaria-or-its-constituents-food
+46. Health risk assessment of exposure to toxic elements resulting from consumption
+of dried wild-grown mushrooms available for sale - PubMed Central, consulté le
+janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC8221490/
+47. Chaga Benefits: A Science, Health, & Supplement Guide - Real Mushrooms,
+consulté le janvier 31, 2026,
+https://realmushrooms.com/blogs/rm/chaga-mushroom-benefits

@@ -1,0 +1,523 @@
+Comprehensive Technical Monograph on
+BCAA Post Workout Powder
+(Honeydew/Watermelon): Molecular
+Dynamics, Ergogenic Efficacy, and
+Global Regulatory Integration in the
+2025-2026 Evolving Landscape
+The optimization of athletic recovery has transitioned from basic protein ingestion to a highly
+specialized modulation of metabolic signaling pathways. Within this paradigm, the Supliful
+BCAA Post Workout Powder (Honeydew/Watermelon) serves as a critical case study in the
+strategic formulation of branched-chain amino acids (BCAAs), L-glutamine, and vitamin B6 to
+facilitate rapid tissue repair and metabolic re-equilibration.1 In the contemporary market of
+2025 and 2026, the value proposition of such supplements is no longer purely grounded in the
+provision of "building blocks" for muscle but in their capacity to function as signaling
+molecules that dictate the rate of protein turnover and the resilience of the central nervous
+system during and after high-intensity exercise.2
+Structural Characterization and Formulatory Integrity
+The "Product Truth" of the Honeydew/Watermelon BCAA formulation resides in its molecular
+stoichiometry. The blend is anchored by 5,000 mg of BCAAs in a 2:1:1 ratio, prioritizing
+L-leucine as the primary anabolic trigger.1 This ratio is fundamental because leucine
+possesses a unique capacity to activate protein synthesis through the mechanistic Target of
+Rapamycin Complex 1 (mTORC1) at concentrations that isoleucine and valine cannot match.3
+The inclusion of L-glutamine further expands the functional scope of the product, addressing
+the net nitrogen deficit often observed in post-exercise states.1
+Component Mass Molecular Physiological Role
+Specification Formula
+L-Leucine 2,500 mg mTORC1 agonist;
+protein synthesis
+initiator
+
+L-Isoleucine 1,250 mg Glucose uptake
+modulator; muscle
+repair
+L-Valine 1,250 mg Energy substrate;
+tissue growth
+L-Glutamine 1,000 mg Nitrogen donor;
+immune/gut
+support
+Vitamin B6 2.5 mg Amino acid
+transamination
+cofactor
+Sodium (as Sea Trace Osmotic balance;
+Salt) rehydration
+Potassium Trace Intracellular fluid
+management
+The technical execution of the Honeydew/Watermelon flavor profile involves a sophisticated
+arrangement of citric acid, silicon dioxide, and high-intensity sweeteners such as sucralose
+and acesulfame potassium to achieve palatability without compromising glycemic control.1
+The use of botanical colorants like beet powder and grape skin extract reflects a necessary
+shift toward "clean label" compliance, satisfying consumer demand for the removal of
+synthetic dyes in professional-grade supplements.1
+The Supliful "On-Demand" Manufacturing Paradigm
+Operating within the Supliful distribution framework introduces specific regulatory and quality
+assurance dynamics. Unlike traditional inventory-heavy models, the on-demand or white-label
+approach requires the brand owner to assume ultimate responsibility for label accuracy and
+cGMP (current Good Manufacturing Practice) compliance.12 All Supliful facilities are
+FDA-registered, adhering to 21 CFR Part 111, which dictates stringent controls over raw
+material identity and batch uniformity.12 For the BCAA Post Workout Powder, this means every
+batch is technically supported by a Certificate of Analysis (COA) that verifies ingredient
+concentration and ensures the absence of contaminants like heavy metals or undeclared
+prohibited substances.12 In an era where 15-25% of sports supplements have historically been
+found to contain undeclared substances, this rigorous batch-testing protocol is a
+
+non-negotiable requirement for professional peer-level trust.9
+Molecular Signaling and Biochemical Pathways
+The Leucine-mTORC1 Axis: A Signaling Deep Dive
+The ergogenic efficacy of the formulation is largely a function of leucine-mediated signaling.
+Leucine serves as more than a substrate; it is a metabolic signal that communicates nutrient
+availability to the cell. Upon ingestion, leucine binds to the protein Sestrin2, which, in a
+nutrient-deprived state, acts as an inhibitor of the GATOR2 complex.6 The binding of leucine
+causes Sestrin2 to dissociate, allowing GATOR2 to activate the Rag GTPases, which then
+recruit mTORC1 to the lysosomal surface.3
+Once localized to the lysosome, mTORC1 is activated by the Rheb protein, leading to the
+phosphorylation of two critical downstream targets:
+1. p70S6K (p70 Ribosomal Protein S6 Kinase): This enzyme enhances the translation of
+mRNAs that encode components of the protein synthetic machinery, thereby increasing
+the cell's capacity for protein production.6
+2. 4E-BP1 (Eukaryotic Initiation Factor 4E-Binding Protein 1): In its unphosphorylated
+state, 4E-BP1 inhibits the initiation of translation. mTORC1-mediated phosphorylation
+releases this inhibition, allowing for the assembly of the translation initiation complex.19
+This molecular "switch" is what defines the "post-workout" window. By providing exogenous
+BCAAs immediately following the mechanical stress of exercise, the formulation synergizes
+with the exercise-induced increase in blood flow and amino acid transporter (LAT1/SLC3A2)
+expression to maximize the anabolic response.4
+Vitamin B6 and the Transamination Commitment
+A frequent oversight in amino acid supplementation is the neglect of necessary enzymatic
+cofactors. The Supliful formulation addresses this through the inclusion of 2.5 mg of Vitamin
+B6 as Pyridoxine HCl.1 Pyridoxine is the precursor to Pyridoxal-5'-Phosphate (PLP), the
+essential cofactor for branched-chain aminotransferases (BCAT).23 The metabolic fate of
+BCAAs is distinct from other amino acids; they are primarily metabolized in skeletal muscle
+rather than the liver.2
+The transamination reaction catalyzed by PLP-dependent BCAT converts BCAAs into their
+corresponding branched-chain -keto acids (BCKAs) while transferring the amino group to
+-ketoglutarate to form glutamate.2 This step is critical for several reasons:
+● Nitrogen Economy: The resulting glutamate serves as a precursor for the synthesis of
+glutamine and alanine, which are essential for nitrogen transport and hepatic
+
+gluconeogenesis.2
+● Anaplerosis: The carbon skeletons (BCKAs) are further oxidized by the BCKDH complex
+to produce acetyl-CoA and succinyl-CoA, which enter the TCA cycle to replenish ATP
+during recovery.2
+● Metabolic Regulation: BCKDH activity is regulated by phosphorylation; Vitamin B6
+presence ensures that BCAA breakdown is efficient, preventing the accumulation of toxic
+intermediates that have been linked in some models to metabolic dysfunction.2
+Clinical Recovery: Mitigating Muscle Damage and
+Fatigue
+Attenuation of Indirect Biomarkers: CK, LDH, and Myoglobin
+The most robust evidence for BCAA supplementation lies in its ability to reduce
+Exercise-Induced Muscle Damage (EIMD). While the impact on absolute muscle size can be
+confounded by total protein intake, the acceleration of biomarker recovery is significant.29
+Meta-analyses of randomized controlled trials (RCTs) involving both trained and untrained
+populations demonstrate that BCAA ingestion significantly lowers the post-exercise rise in
+serum Creatine Kinase (CK) and Lactate Dehydrogenase (LDH).29
+Biomarker Recovery Peak BCAA Effect vs. Clinical
+Placebo Significance
+Creatine Kinase 24-48 Hours Significant Reduced
+(CK) Reduction (p < Sarcolemmal
+0.05) Leakage
+Lactate 48 Hours Significant Attenuation of
+Dehydrogenase Reduction 32 Cellular Damage
+Myoglobin 24 Hours Moderate Preservation of
+Reduction 30 Muscle Integrity
+Delayed Onset 24-72 Hours Strong Reduction Improved Training
+Muscle Soreness (p < 0.01) Frequency
+The Supliful BCAA formulation's Honeydew/Watermelon profile is designed to be consumed
+during or immediately after exercise, which aligns with research suggesting that the "wash-in"
+period of amino acid availability is crucial for preventing the secondary inflammatory response
+
+that occurs 24 to 48 hours after eccentric loading.29
+Central Fatigue and the Tryptophan Competition Paradox
+Beyond the peripheral muscle, BCAAs exert a profound influence on the "Central Fatigue
+Hypothesis." During prolonged or intense exercise, the concentration of free fatty acids in the
+blood increases, displacing tryptophan from its binding site on albumin.34 This leads to an
+elevated plasma concentration of free tryptophan relative to BCAAs.22 Both tryptophan and
+BCAAs utilize the same Large Neutral Amino Acid Transporter (LAT1) to cross the blood-brain
+barrier.4
+When the BCAA/Tryptophan ratio declines, more tryptophan enters the brain, where it is
+converted into 5-hydroxytryptamine (5-HT), commonly known as serotonin.34 Elevated
+cerebral serotonin is associated with increased perception of effort, lethargy, and a reduction
+in neural drive.34 Supplementing with the 5,000 mg BCAA blend provided in the Supliful
+formulation serves to maintain the plasma BCAA/Tryptophan ratio, thereby competitively
+inhibiting tryptophan transport and potentially delaying the onset of central fatigue.3
+However, the "paradox" emerges from recent 2024 and 2025 research suggesting that BCAAs
+also competitively inhibit tyrosine transport, which is the precursor for dopamine.22 Because
+dopamine is a primary driver of motivation and motor coordination, excessive BCAA
+supplementation without balanced tyrosine intake could theoretically dampen the very
+performance it aims to support.37 This highlights the importance of using the product as a
+"post-workout" or "intra-workout" tool specifically aimed at the recovery window rather than
+as a general all-day supplement.
+Metabolic Health: The 2025 Mendelian Randomization
+Paradigm Shift
+For several years, a significant controversy existed regarding the link between elevated BCAA
+levels and insulin resistance (IR). In late 2025, a landmark bidirectional Mendelian
+Randomization (MR) study utilizing data from approximately 250,000 UK Biobank participants
+provided a definitive clarification.40
+The study found that while there is a strong correlation between high BCAA levels and IR, the
+direction of causality is largely reversed from previous assumptions. The analysis indicated
+that poor metabolic health causes an elevation in BCAA levels, likely due to the
+downregulation of BCAA catabolic enzymes (BCKDH) in adipose and liver tissue during
+obesity and pre-diabetes.40
+Metabolic Trait Relationship to Causal Direction Significance
+
+BCAA (P-value)
+Body Mass Index Higher BMI → Consequence
+(BMI) Higher BCAA
+Triglycerides (TG) Higher TG ↔ Bidirectional
+Higher BCAA
+Insulin Resistance Higher IR → Higher Consequence
+BCAA
+Type 2 Diabetes Higher Risk → Consequence
+Risk Higher BCAA
+This research is highly relevant to the users of Supliful BCAA Post Workout Powder. It suggests
+that in healthy, active individuals, the exogenous intake of BCAAs does not induce insulin
+resistance.40 Conversely, for athletes, BCAA supplementation may support metabolic flexibility
+by providing alternative energy substrates and supporting the synthesis of insulin-sensitizing
+metabolites like -aminoisobutyric acid (BAIBA) and 3-hydroxyisobutyrate (3-HIB).6
+Safety, Toxicology, and Population-Specific
+Considerations
+Renal and Hepatic Safety Profiles
+The safety of BCAAs and L-Glutamine is well-documented for the general population. Clinical
+doses of up to 12 grams per day have been demonstrated to be safe for continuous use over
+two years.44 In the context of liver disease, BCAA supplementation is actually a recommended
+therapeutic intervention.19 Patients with advanced cirrhosis often exhibit a "Fischer Ratio"
+(BCAA/Aromatic Amino Acid ratio) imbalance, which contributes to hepatic encephalopathy
+(HE).9 Formulations like the Supliful blend provide the necessary BCAAs to support
+extrahepatic ammonia detoxification via muscle glutamine synthesis.9
+However, for individuals with pre-existing Chronic Kidney Disease (CKD), the intake of any
+concentrated amino acid supplement must be supervised. While BCAAs do not appear to
+induce glomerular hyperfiltration in the same manner as certain whole proteins, the metabolic
+burden of nitrogen excretion remains a factor for those with severely reduced eGFR.27
+Neurological Contraindications: ALS and MSUD
+
+A critical safety warning is the association between high-dose BCAA supplementation and
+accelerated decline in patients with Amyotrophic Lateral Sclerosis (ALS).44 Multiple studies
+have reported that BCAA intake in the ALS population is linked to respiratory failure and
+higher mortality rates.44 Furthermore, those with the rare genetic disorder Maple Syrup Urine
+Disease (MSUD) must strictly avoid this product, as their inability to oxidize BCKAs can lead to
+life-threatening seizures and developmental delays.4
+Vitamin B6 Toxicity Thresholds
+While the 2.5 mg of Vitamin B6 included in each serving is well within safe limits, consumers
+must be aware of the cumulative effects of multiple "stacked" supplements. The 95th
+percentile of B6 intake in the U.S. is estimated at 6-10 mg/day, whereas the Upper Limit (UL)
+for adults is set at 100 mg/day.51 Chronic intake exceeding 200 mg/day—often seen in
+consumers taking multiple pre-workouts and post-workouts—can lead to sensory neuropathy
+characterized by poor coordination and numbness.51
+Regulatory Compliance and Global Market Strategy
+(2025-2026)
+FDA "Healthy" Definition and 2025 Enforcement
+A pivotal shift in the U.S. regulatory landscape occurred on February 25, 2025, with the FDA's
+"Final Rule" regarding the voluntary use of the term "healthy" on food and supplement
+labels.55 Under this new framework, products must contribute significantly to a food group
+equivalent while strictly limiting "Nutrients to Limit" (NTL), specifically added sugar, sodium,
+and saturated fat.55
+For the Supliful BCAA Post Workout Powder:
+● Added Sugars: Compliant, as the product utilizes sucralose and acesulfame potassium.1
+● Sodium: The formulation includes sea salt for rehydration; labels must ensure the sodium
+content remains below 10% of the Daily Value (230mg) per serving to qualify for
+"healthy" claims in some contexts.55
+● Structure/Function Claims: Claims like "Enhanced athletic performance" and "Faster
+muscle recovery" are permitted under DSHEA 1994, provided they are truthful and
+non-misleading.59
+In December 2025, the FDA further announced "Enforcement Discretion" regarding the
+placement of the mandatory DSHEA disclaimer. While previously required on every panel
+where a claim appeared, the agency now allows the disclaimer to appear once on the label,
+provided it is prominently displayed and linked to each claim with a symbol.59
+
+EFSA and the European Union Perspective
+In the EU, the European Food Safety Authority (EFSA) maintains a more rigid stance. While
+protein (and by extension, individual amino acids) is recognized for contributing to muscle
+maintenance, specific ergogenic health claims for BCAAs are still largely "on-hold" or rejected
+under Article 13.1.62 Consequently, marketing in the EU often focuses on the authorized claims
+for Vitamin B6, which include:
+● Reduction of tiredness and fatigue.26
+● Contribution to normal cysteine synthesis.66
+● Contribution to normal protein and glycogen metabolism.65
+Industrial Synthesis and Environmental Sustainability
+The BCAAs and L-Glutamine utilized in the Supliful formulation are typically produced via
+microbial fermentation rather than chemical extraction from animal hair or feathers.65 The
+Ajinomoto-style fermentation process—often designated as "plant-based" or
+"vegan-friendly"—uses vegetable carbohydrates as a raw material for bacteria (such as
+Corynebacterium glutamicum) to synthesize the amino acids.64 This transition toward
+fermentation-based amino acids not only satisfies the growing vegan demographic but also
+aligns with the "Make America Healthy Again" (MAHA) movement's focus on reducing
+ultra-processed ingredients and synthetic chemical residues in the food supply.58
+Conclusion: Strategic Implementation for
+High-Performance Recovery
+The Supliful BCAA Post Workout Powder (Honeydew/Watermelon) represents a scientifically
+grounded approach to post-exercise recovery. By integrating 5,000 mg of BCAAs in a
+leucine-heavy 2:1:1 ratio with 1,000 mg of L-glutamine and a requisite B6 cofactor, the
+formulation addresses the dual needs of mTORC1 activation and nitrogenous waste
+management.
+The shift in metabolic understanding provided by the 2025 Mendelian Randomization research
+offers a new level of confidence for athletes, exonerating supplemental BCAAs from a causal
+role in insulin resistance. However, the efficacy of the product remains tied to its timing and
+context; as a post-workout recovery aid, it maximizes the physiological "anabolic window," but
+it should not be viewed as a replacement for high-quality, whole-food protein sources
+throughout the rest of the day.
+In the 2026 regulatory environment, the success of the brand holder using Supliful depends
+on a commitment to transparency—utilizing batch-specific COAs and adhering to the updated
+FDA "healthy" and DSHEA disclaimer standards. For professional peers and elite athletes, this
+formula provides a reliable, sugar-free mechanism to mitigate EIMD, attenuate DOMS, and
+
+combat central fatigue, thereby enabling the consistency and training volume necessary for
+peak human performance.
+Sources des citations
+1. BCAA Post Workout Powder (Honeydew/Watermelon) - Supliful, consulté le
+janvier 31, 2026,
+https://supliful.com/catalog/bcaa-post-workout-powder-honeydew-watermelon
+2. Branched‐chain amino acid metabolism: Pathophysiological mechanism and
+therapeutic intervention in metabolic diseases - PMC - NIH, consulté le janvier 31,
+2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC11711082
+3. Branched-Chain Amino Acids and Inflammation Management in ..., consulté le
+janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC12029984/
+4. Unveiling the Maze: Branched-Chain Amino Acids Fueling the Dynamics of
+Cancer Metabolism and Progression - PubMed Central, consulté le janvier 31,
+2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC12153561/
+5. Catalog | BCAA Post Workout Powder (Honeydew/Watermelon ..., consulté le
+janvier 31, 2026,
+https://supliful.com/catalog/bcaa-post-workout-powder-honeydew-watermelon
+#nutrition-facts
+6. Branched-Chain Amino Acids (BCAAs): Revisiting Their Role in Sport and Health,
+consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/387890956_Branched-Chain_Amino_A
+cids_BCAAs_Revisiting_Their_Role_in_Sport_and_Health
+7. The Effect of Oral Pure Branched-Chain Amino Acid Supplementation on Exercise
+Performance and Body Composition: A Systematic Review - PubMed Central,
+consulté le janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC12674588/
+8. (PDF) The Role of Glutamine in Muscle Regeneration and Recovery: A Literature
+Review, consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/390780968_The_Role_of_Glutamine_in
+_Muscle_Regeneration_and_Recovery_A_Literature_Review
+9. What are the benefits and risks of branch chain amino acids (BCAAs)
+supplementation for patients with liver disease or those engaged in strenuous
+physical activity? - Dr.Oracle, consulté le janvier 31, 2026,
+https://www.droracle.ai/articles/730633/what-are-the-benefits-and-risks-of-bran
+ch-chain
+10. BCAA (Honeydew/Watermelon) - eBay, consulté le janvier 31, 2026,
+https://www.ebay.com/itm/126436617538
+11. Recherche Créatine Monohydrate _ Vérité, Efficacité, Sécurité.pdf
+12. Understanding Product Certifications & Registrations | Supliful Help Center,
+consulté le janvier 31, 2026,
+https://help.supliful.com/en/articles/11161756-understanding-product-certificatio
+ns-registrations
+13. Sell Your Own Fitness Supplements Online | Supliful, consulté le janvier 31, 2026,
+https://supliful.com/sell/fitness-supplements
+
+14. Supplfull Review: On-Demand Supplements, Risks & Fit - Blue Ocean Regulatory
+Inc., consulté le janvier 31, 2026,
+https://www.blueoceanregulatory.com/blog/a-review-of-supliful-by-compliance-
+expert
+15. Proposition 65: What You Need to Know | Supliful Help Center, consulté le janvier
+31, 2026,
+https://help.supliful.com/en/articles/9768235-proposition-65-what-you-need-to-k
+now
+16. Order Private-Label Products in Bulk – No Minimums - Supliful, consulté le janvier
+31, 2026, https://supliful.com/solutions/bulk-ordering-wholesale
+17. Branched-chain Amino Acids: Catabolism in Skeletal Muscle and Implications for
+Muscle and Whole-body Metabolism - PubMed Central, consulté le janvier 31,
+2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC8329528/
+18. Elevated BCAA catabolism reverses the effect of branched-chain ketoacids on
+glucose transport in mTORC1-dependent manner in L6 myotubes | Journal of
+Nutritional Science - Cambridge University Press & Assessment, consulté le
+janvier 31, 2026,
+https://www.cambridge.org/core/journals/journal-of-nutritional-science/article/ele
+vated-bcaa-catabolism-reverses-the-effect-of-branchedchain-ketoacids-on-glu
+cose-transport-in-mtorc1dependent-manner-in-l6-myotubes/C4671BBAD84C92
+558546DD174B3A7B0D
+19. Branched-chain amino acids in liver diseases - Tajiri - Translational
+Gastroenterology and Hepatology, consulté le janvier 31, 2026,
+https://tgh.amegroups.org/article/view/4432/html
+20. The effects of vitamin B6 on the nutritional support of BCAAs-enriched amino
+acids formula in rats with partial gastrectomy - PubMed, consulté le janvier 31,
+2026, https://pubmed.ncbi.nlm.nih.gov/37104913/
+21. Unveiling the Maze: Branched-Chain Amino Acids Fueling the Dynamics of
+Cancer Metabolism and Progression - Preprints.org, consulté le janvier 31, 2026,
+https://www.preprints.org/manuscript/202504.1718
+22. Branched-Chain Amino Acids in Parkinson's Disease: Molecular Mechanisms and
+Therapeutic Potential - MDPI, consulté le janvier 31, 2026,
+https://www.mdpi.com/1422-0067/26/14/6992
+23. Transamination - Wikipedia, consulté le janvier 31, 2026,
+https://en.wikipedia.org/wiki/Transamination
+24. Acute consumption of a branched chain amino acid and vitamin B-6 containing
+sports drink does not improve multiple sprint exercise performance, but
+increases post-exercise blood glucose - PMC - PubMed Central, consulté le
+janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC10740374/
+25. Biomedical aspects of pyridoxal 5'-phosphate availability - ResearchGate,
+consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/51895367_Biomedical_aspects_of_pyrid
+oxal_5'-phosphate_availability
+26. BCAA Powder® Caffeine Free - Bio-Synergy, consulté le janvier 31, 2026,
+https://bio-synergy.uk/products/bio-synergy-bcaa-powder%C2%AE-caffeine-fre
+
+e
+27. Fueling Kidney Recovery: Boosting BCAA Metabolism to Overcome Nephrotoxic
+AKI - NIH, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC12087460/
+28. Sodium-glucose cotransporter 2 inhibitors—but not insulin—enhance renal
+branched-chain amino acid catabolism - Frontiers, consulté le janvier 31, 2026,
+https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2025.17
+06838/full
+29. Attenuating Muscle Damage Biomarkers and Muscle Soreness After an
+Exercise-Induced Muscle Damage with Branched-Chain Amino Acid (BCAA)
+Supplementation: A Systematic Review and Meta-analysis with Meta-regression -
+Coventry University, consulté le janvier 31, 2026,
+https://pureportal.coventry.ac.uk/en/publications/attenuating-muscle-damage-bi
+omarkers-and-muscle-soreness-after-an/
+30. The effect of branched-chain amino acid on muscle damage markers and
+performance following strenuous exercise: a systematic review and
+meta-analysis - Canadian Science Publishing, consulté le janvier 31, 2026,
+https://cdnsciencepub.com/doi/10.1139/apnm-2021-0110?uid=2d053c82s16
+31. Effect of Timing of Branched-Chain Amino Acid Supplementation on Muscle
+Recovery after Resistance Training in Healthy Males - PubMed Central, consulté le
+janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC12033860/
+32. Effect of branched-chain amino acids (BCAA) supplementation on muscle
+soreness and muscle damage factors after exercise in healthy adults: a
+systematic review and meta-analysis - Journal of Translational Medical Research,
+consulté le janvier 31, 2026, http://journal.bums.ac.ir/article-1-3434-en.html
+33. Branched-Chain Amino Acid Supplementation in Sports. A Literature Review on
+Its Role in Mitigating Muscle Soreness and Enhancing, consulté le janvier 31, 2026,
+https://discoveryjournals.org/medicalscience/current_issue/v29/n163/e164ms3705
+.pdf?
+34. How do branched-chain amino acids affect central fatigue and tryptophan
+metabolism during exercise? - Consensus, consulté le janvier 31, 2026,
+https://consensus.app/search/how-do-branched-chain-amino-acids-affect-centr
+al-f/hkSniAQbRImXmZysPvCKcg/
+35. The role of neurotransmitters (serotonin and dopamine) in central nervous system
+fatigue during prolonged exercise, consulté le janvier 31, 2026,
+https://nass.atu.ac.ir/article_16797_bf41e19a30e16e972bdd3b52173223ab.pdf
+36. What are the effects of branched-chain amino acid supplementation on
+tryptophan metabolism during exercise? - Consensus, consulté le janvier 31,
+2026,
+https://consensus.app/search/what-are-the-effects-of-branched-chain-amino-a
+cid-/NUQtiW4xQOWTyYTa1tTIBA/
+37. Oral branched-chain amino acid supplements that reduce brain serotonin during
+exercise in rats also lower brain catecholamines | Request PDF - ResearchGate,
+consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/254261615_Oral_branched-chain_amin
+
+o_acid_supplements_that_reduce_brain_serotonin_during_exercise_in_rats_also_l
+ower_brain_catecholamines
+38. The effect of acute branched-chain amino acids ingestion on rate of force
+development in different time intervals: a controlled crossover study - Frontiers,
+consulté le janvier 31, 2026,
+https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2024.1463202/f
+ull
+39. The effect of acute branched-chain amino acids ingestion on rate of force
+development in different time intervals: a controlled crossover study - PMC -
+PubMed Central, consulté le janvier 31, 2026,
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11750653/
+40. Bidirectional Mendelian Randomization Indicates Causal Relationships Between
+Circulating Branched-Chain Amino Acids and Metabolic Health - American
+Diabetes Association, consulté le janvier 31, 2026,
+https://diabetesjournals.org/diabetes/article/74/10/1863/162993/Bidirectional-Men
+delian-Randomization-Indicates
+41. Bidirectional Mendelian Randomization Indicates Causal Relationships Between
+Circulating Branched-Chain Amino Acids and Metabolic Health - PubMed,
+consulté le janvier 31, 2026, https://pubmed.ncbi.nlm.nih.gov/40680056/
+42. Bidirectional Mendelian Randomization Indicates Causal Relationships Between
+Circulating Branched-Chain Amino Acids and Metabolic Health - American
+Diabetes Association, consulté le janvier 31, 2026,
+https://diabetesjournals.org/diabetes/article-pdf/74/10/1863/837498/db241162.pdf
+43. Bidirectional Mendelian randomization indicates causal relationships between
+circulating branched-chain amino acids and metabolic health - American
+Diabetes Association, consulté le janvier 31, 2026,
+https://diabetesjournals.figshare.com/articles/figure/_b_Bidirectional_Mendelian_r
+andomization_indicates_causal_relationships_between_circulating_branched-cha
+in_amino_acids_and_metabolic_health_b_/29437421
+44. Branched-Chain Amino Acids (Bcaa) – Uses, Side Effects, and More - WebMD,
+consulté le janvier 31, 2026,
+https://www.webmd.com/vitamins/ai/ingredientmono-1005/branched-chain-amin
+o-acids
+45. Systematic review with meta‐analysis: Branched‐chain amino acid
+supplementation in liver disease - ResearchGate, consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/365492473_Systematic_review_with_m
+eta-analysis_branched-chain_amino_acid_supplementation_in_liver_disease
+46. Fueling the Failing Liver—ACG Clinical Guideline: Malnutrition and Nutritional
+Recommendations in Liver Disease - American College of Gastroenterology,
+consulté le janvier 31, 2026,
+https://gi.org/journals-publications/ebgi/duong_sierra_may2025/
+47. Branched-chain Amino Acids as Pharmacological Nutrients in Chronic Liver
+Disease, consulté le janvier 31, 2026, https://links.lww.com/HEP/G126
+48. Do branched-chain amino acids (BCAAs) help people with cirrhosis and hepatic
+encephalopathy (a brain disorder caused by severe liver disease)? | Cochrane,
+
+consulté le janvier 31, 2026,
+https://www.cochrane.org/evidence/CD001939_do-branched-chain-amino-acids
+-bcaas-help-people-cirrhosis-and-hepatic-encephalopathy-brain-disorder
+49. KIDNEY HEALTH IN SPORT: INVESTIGATING THE INFLUENCE OF CREATINE,
+CITRULLINE, L-ARGININE, BETA-ALANINE AND BRANCHED CHAIN AMINO ACIDS
+(BCAA) ON RENAL FUNCTION | International Journal of Innovative Technologies
+in Social Science, consulté le janvier 31, 2026,
+https://rsglobal.pl/index.php/ijitss/article/view/3442
+50. SAT-593 Assessing The Impact Of Varying Bcaa Intake And Catabolic Capacity
+On The Severity Of Diabetic Kidney Disease In Male Zsf1 Rats - PMC - NIH,
+consulté le janvier 31, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC12544460/
+51. Vitamin B6 (Pyridoxine) - StatPearls - NCBI Bookshelf, consulté le janvier 31, 2026,
+https://www.ncbi.nlm.nih.gov/books/NBK557436/
+52. Chapter: 7 Vitamin B6 - National Academies of Sciences, Engineering, and
+Medicine, consulté le janvier 31, 2026,
+https://www.nationalacademies.org/read/6015/chapter/9
+53. Vitamin B6: Overview, Uses, Side Effects, Precautions, Interactions, Dosing and
+Reviews, consulté le janvier 31, 2026,
+https://www.webmd.com/vitamins/ai/ingredientmono-934/pyridoxine-vitamin-b6
+54. Pyridoxine deficiency and toxicity - MedLink Neurology, consulté le janvier 31,
+2026, https://www.medlink.com/articles/pyridoxine-deficiency-and-toxicity
+55. FDA Labeling “Healthy” Claim Effective Feb. 25th 2025 | NC State Extension,
+consulté le janvier 31, 2026,
+https://foodbusiness.ces.ncsu.edu/2025/02/fda-labeling-healthy-claim-effective-
+feb-25th-2025/
+56. Food Labeling: Nutrient Content Claims; Definition of Term “Healthy” - Federal
+Register, consulté le janvier 31, 2026,
+https://www.federalregister.gov/documents/2025/02/25/2025-03118/food-labelin
+g-nutrient-content-claims-definition-of-term-healthy
+57. Webinar on the Updated “Healthy” Claim - 04/10/2025 | FDA, consulté le janvier
+31, 2026,
+https://www.fda.gov/food/workshops-meetings-webinars-food-and-dietary-sup
+plements/webinar-updated-healthy-claim-04102025
+58. 2025 Food and Supplements Outlook: FDA Human Foods Program's Last Acts
+Before the New Administration | Insights | Sidley Austin LLP, consulté le janvier 31,
+2026,
+https://www.sidley.com/en/insights/newsupdates/2025/01/2025-food-and-supple
+ments-outlook
+59. FDA Notifies Industry of Enforcement Discretion Regarding DSHEA Disclaimer on
+Dietary Supplement Labels - Hogan Lovells, consulté le janvier 31, 2026,
+https://www.hoganlovells.com/en/publications/fda-notifies-industry-of-enforcem
+ent-discretion-regarding-dshea-disclaimer-on-dietary
+60. US FDA Makes Enforcement Discretion Official For Accepted Supplement Label
+Disclaimer Practice - Citeline News & Insights, consulté le janvier 31, 2026,
+https://insights.citeline.com/hbw-insight/wellness/policy-and-regulation/recalls/us
+
+-fda-makes-enforcement-discretion-official-for-accepted-supplement-label-dis
+claimer-practice-X35QDZWXCZFGVCPR4PRSCDOFZY/
+61. FDA Issues Letter on DSHEA Disclaimer Amendment, Industry Responds - Vitamin
+Retailer, consulté le janvier 31, 2026,
+https://vitaminretailer.com/fda-issues-letter-on-dshea-disclaimer-amendment-in
+dustry-responds/
+62. BENNETT, COLEMAN & CO. LTD. | Estd. MDCCCXXXVIII | VOL. 76 NO. 210 | NEW
+DELHI | WEDNESDAY, SEPTEMBER 3, 2025 - Chronicle Club, consulté le janvier 31,
+2026,
+https://chronicleclub.in/storage/uploads/1756876229-times-of-india-03-septemb
+er-2025.pdf
+63. Characterising the use of botanical food supplements among prevalent food
+supplement users and on social media - Queen's University Belfast, consulté le
+janvier 31, 2026,
+https://pureadmin.qub.ac.uk/ws/portalfiles/portal/467765080/McDaid_Bridin_Thesi
+s_1062023.pdf
+64. Health claims (art. 13) - EFSA - European Union, consulté le janvier 31, 2026,
+https://www.efsa.europa.eu/en/topics/health-claims-art-13
+65. NAMEDSPORT BCAA 2:1:1, Supplement based on Branched Amino Acids and
+Vitamin B6, consulté le janvier 31, 2026, https://www.ebay.com/itm/277614223716
+66. Effects of dietary vitamin B6 on the skeletal muscle protein metabolism of
+growing rabbits, consulté le janvier 31, 2026,
+https://www.researchgate.net/publication/308626444_Effects_of_dietary_vitamin
+_B6_on_the_skeletal_muscle_protein_metabolism_of_growing_rabbits
+67. Nicotinamide and Pyridoxine in Muscle Aging: Nutritional Regulation of Redox,
+Inflammation, and Regeneration - PMC - PubMed Central, consulté le janvier 31,
+2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC12383212/
+68. BCAA amino acids with electrolytes and endurance salts - S-C-Nutrition, consulté
+le janvier 31, 2026,
+https://www.s-c-nutrition.com/product/amino-acids-bcaa-electrolytes/
+69. FDA Enforcement Review: Looking Back at 2025 and Bracing for Continued
+Unpredictability in 2026 | Insights | Ropes & Gray LLP, consulté le janvier 31, 2026,
+https://www.ropesgray.com/en/insights/alerts/2026/01/fda-enforcement-review-l
+ooking-back-at-2025-and-bracing-for-continued-unpredictability-in-2026

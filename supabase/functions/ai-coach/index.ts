@@ -785,8 +785,14 @@ Deno.serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log("Authenticated user:", userId);
 
-    // Fetch user profile, health profile, check-ins, and Shopify catalog in parallel
-    const [userProfileResult, healthProfileResult, recentCheckins, catalog] = await Promise.all([
+    // Fetch user profile, health profile, check-ins, supplements, enriched data, and Shopify catalog in parallel
+    // Use service role client for enriched data (public table, no RLS filtering needed)
+    const serviceClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    const [userProfileResult, healthProfileResult, recentCheckins, catalog, userSupplements, enrichedProducts] = await Promise.all([
       supabaseClient
         .from("profiles")
         .select("first_name, last_name")
@@ -798,7 +804,9 @@ Deno.serve(async (req) => {
         .eq("user_id", userId)
         .single(),
       fetchRecentCheckins(supabaseClient, userId),
-      fetchShopifyCatalog()
+      fetchShopifyCatalog(),
+      fetchUserSupplements(supabaseClient, userId),
+      fetchEnrichedProductData(serviceClient)
     ]);
 
     const userProfile = userProfileResult.data;
@@ -807,9 +815,11 @@ Deno.serve(async (req) => {
 
     console.log("Check-in trends:", trends);
     console.log("Quiz completed:", healthProfile?.onboarding_completed);
+    console.log("User supplements:", userSupplements.length);
+    console.log("Enriched products loaded:", enrichedProducts.length);
 
-    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends);
-    console.log("System prompt built with trends:", trends ? `Sleep: ${trends.avgSleep.toFixed(1)}, Energy: ${trends.avgEnergy.toFixed(1)}, Stress: ${trends.avgStress.toFixed(1)}` : "No trends");
+    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends, userSupplements, enrichedProducts);
+    console.log("System prompt length:", systemPrompt.length, "chars");
 
     // Parse and validate request body
     let requestBody: unknown;

@@ -1,46 +1,109 @@
 
+# Enrichissement des Fiches Produits avec les Donnees PDF
 
-# Corrections du Suivi des Complements
+## Vue d'ensemble
 
-## Probleme principal : le tracker demande de "Lancer le diagnostic" alors que l'utilisateur a deja des complements
+Les PDFs stockes dans le bucket "vitasyncdata" contiennent des recherches detaillees pour chaque produit (ingredients, dosages, etudes scientifiques, precautions, etc.). Actuellement, le PDP utilise des donnees generiques ou des placeholders (section "Science" avec de faux liens, "What It Does" avec des benefices derives des tags, etc.).
 
-### Cause racine
-Dans `Dashboard.tsx`, la prop `showAwaitingState` est conditionnee par `hasInteractedWithCoach`, un simple `useState(false)` qui se reinitialise a chaque chargement de page. Resultat : **a chaque visite du dashboard, le tracker affiche "Lancer le diagnostic"** au lieu de la checklist, meme si l'utilisateur a deja des complements en base.
-
-### Correction
-Remplacer la logique `showAwaitingState={!hasInteractedWithCoach}` par une verification reelle : si l'utilisateur a au moins un supplement actif dans la table `supplement_tracking`, on affiche la checklist directement. L'etat "Awaiting" ne s'affiche que si **aucun** supplement n'est enregistre.
-
-Pour cela, `SupplementTrackerEnhanced` n'a plus besoin des props `showAwaitingState` et `onStartDiagnostic` venant du parent. Il determinera lui-meme s'il doit afficher l'etat vide (0 supplements) ou la checklist, en se basant sur les donnees reelles du hook `useSupplementTracking`.
+L'objectif est de :
+1. Creer une Edge Function qui lit les PDFs, les envoie a un modele IA pour extraction structuree, et stocke les donnees enrichies en base
+2. Mettre a jour le PDP pour afficher ces vraies donnees
+3. Redesigner le PDP inspire du style epure de l'image de reference (layout spacieux, typographie audacieuse, hierarchie visuelle forte)
 
 ---
 
-## Autres corrections
+## Architecture
 
-### 1. Donnees persistantes et reset a minuit
-Le systeme actuel fonctionne deja correctement : les logs sont dans `supplement_logs` avec une date, et le hook filtre par "aujourd'hui". La checklist se reinitialise automatiquement a minuit car les logs du jour precedent ne correspondent plus au filtre. **Aucun changement necessaire** sur cette partie.
+### Etape 1 : Table de donnees produit enrichies
 
-### 2. FAB avec animation au survol
-Le bouton "+" actuel est positionne en `absolute bottom-5 right-5` dans le conteneur du tracker. Il sera modifie pour :
-- Rester en position `fixed bottom-8 right-8` dans la section "supplements" (pas dans le home)
-- Au survol, s'etendre en pilule avec le texte "Ajouter au suivi" via une animation CSS
+Creer une table `product_enriched_data` avec les colonnes suivantes :
 
-### 3. Enregistrement automatique des non-prises (historique 30 jours)
-Actuellement, seules les prises sont enregistrees (on cree un log quand on coche). Les "non-prises" sont implicites (absence de log). C'est suffisant pour les statistiques : si un jour n'a pas de log pour un supplement, c'est qu'il n'a pas ete pris. Les graphiques Semaine et Mois calculent deja les pourcentages de cette maniere. **Pas de changement de schema necessaire.**
+- `id` (uuid, PK)
+- `shopify_product_title` (text, unique) -- pour matcher avec les produits Shopify
+- `pdf_filename` (text) -- nom du PDF source
+- `summary` (text) -- resume court du produit (2-3 phrases)
+- `key_benefits` (jsonb) -- tableau de { title, description, icon_hint }
+- `ingredients_detailed` (jsonb) -- tableau de { name, dosage, role, source }
+- `suggested_use` (jsonb) -- { dosage, timing, with_food, notes }
+- `science_data` (jsonb) -- { tldr, study_bullets: [], sources: [{ title, url, year }] }
+- `safety_warnings` (jsonb) -- { contraindications: [], interactions: [], pregnancy_safe, allergens: [] }
+- `best_for_tags` (text[]) -- ex: ["Athletes", "Stress Relief"]
+- `quality_info` (jsonb) -- { certifications: [], manufacturing, testing }
+- `faq` (jsonb) -- tableau de { question, answer }
+- `coach_tip` (text) -- conseil personnalise du coach IA
+- `created_at` / `updated_at` (timestamps)
+
+RLS : lecture publique (les fiches sont visibles par tous), ecriture limitee au service_role.
+
+### Etape 2 : Edge Function `parse-product-pdfs`
+
+Une Edge Function qui :
+1. Liste tous les PDFs du bucket `vitasyncdata/VitaSync_Product_Data/`
+2. Pour chaque PDF, telecharge le contenu binaire
+3. Envoie le contenu au modele IA (Gemini 2.5 Flash via Lovable AI) avec un prompt structure demandant d'extraire les informations dans le format JSON defini
+4. Insere/met a jour la ligne dans `product_enriched_data`
+
+Le matching PDF -> produit Shopify sera fait par le titre extrait du PDF (l'IA l'extraira du contenu) ou par le nom du fichier.
+
+L'Edge Function sera invoquee manuellement (via un appel HTTP) et pourra traiter tous les PDFs en batch.
+
+**Note importante** : Les PDFs binaires ne peuvent pas etre lus directement par du texte. L'Edge Function utilisera `pdf-parse` ou enverra le PDF en base64 a l'IA multimodale (Gemini) qui sait lire les PDFs.
+
+### Etape 3 : Mise a jour du PDP
+
+Le `ProductDetailMaster` chargera les donnees enrichies depuis `product_enriched_data` en plus des donnees Shopify. Chaque section sera mise a jour :
+
+**Sections impactees :**
+
+1. **WhatItDoes** : Remplacer les benefices generiques par `key_benefits` reels avec descriptions detaillees
+2. **HowToTake** : Utiliser `suggested_use` structure (dosage precis, moment optimal, avec/sans nourriture)
+3. **IngredientsLabel** : Afficher `ingredients_detailed` avec dosage et role de chaque ingredient
+4. **ScienceSection** : Remplacer les placeholders par de vrais `study_bullets` et `sources` avec liens reels
+5. **SafetyCautions** : Afficher les vraies `contraindications`, `interactions` et allergenes
+6. **QualitySourcing** : Utiliser `quality_info` reelles (certifications, lieu de fabrication, tests)
+7. **ProductFAQ** : Remplacer les FAQ generiques par les `faq` reelles extraites des PDFs
+8. **QuickBenefitsStrip** : Utiliser `best_for_tags` reels
+9. **ProductPurchaseBox** : Afficher le `summary` reel comme sous-titre
+
+### Etape 4 : Redesign du PDP (inspire de l'image de reference)
+
+En s'inspirant du design de reference (Speko shoes) :
+
+- **Layout Hero** : Galerie d'images plus grande (8/12 colonnes au lieu de 7/12), avec la Purchase Box plus compacte et sticky
+- **Typographie audacieuse** : Titre produit en tres grande taille (text-4xl lg:text-5xl), font-bold, avec un espacement serre
+- **Fond neutre** : Sections alternees avec fond leger (bg-muted/10) et fond blanc pour creer un rythme visuel
+- **Navigation numerotee** : Optionnel, un indicateur de section sur le cote droit (01, 02, 03...) comme dans le design de reference
+- **Selecteur de variantes visuellement riche** : Pastilles couleur pour les saveurs au lieu de boutons texte
+- **Sections plus aérées** : Plus d'espacement vertical (py-12 au lieu de py-8), max-w-4xl pour le texte
+- **Barre d'annonce en haut** : "Livraison gratuite des 50EUR" (optionnel)
 
 ---
 
-## Details techniques
+## Fichiers a creer
 
-### Fichiers modifies
+1. `supabase/functions/parse-product-pdfs/index.ts` -- Edge Function de parsing batch
+2. Migration SQL pour la table `product_enriched_data`
 
-1. **`src/pages/Dashboard.tsx`**
-   - Section "home" : remplacer `showAwaitingState={!hasInteractedWithCoach}` par `showAwaitingState={false}` (le tracker gere son etat vide lui-meme)
-   - Section "supplements" : meme chose, supprimer `showAwaitingState` et `onStartDiagnostic`
+## Fichiers a modifier
 
-2. **`src/components/dashboard/SupplementTrackerEnhanced.tsx`**
-   - Supprimer les props `showAwaitingState` et `onStartDiagnostic` (plus de dependance sur l'etat "coach")
-   - Supprimer le bloc conditionnel `if (showAwaitingState && onStartDiagnostic)` qui retournait `AwaitingAnalysis`
-   - L'etat vide (0 supplements) est deja gere dans le composant avec le message "Aucun complement ajoute" et le bouton "Ajouter un complement"
-   - Modifier le FAB : au survol, transition de rond a pilule avec texte "Ajouter au suivi" (animation width + opacite du texte)
+1. `src/components/dashboard/pdp/ProductDetailMaster.tsx` -- charger les donnees enrichies, nouveau layout
+2. `src/components/dashboard/pdp/WhatItDoes.tsx` -- donnees reelles + redesign
+3. `src/components/dashboard/pdp/HowToTake.tsx` -- donnees structurees reelles
+4. `src/components/dashboard/pdp/IngredientsLabel.tsx` -- ingredients detailles
+5. `src/components/dashboard/pdp/ScienceSection.tsx` -- vrais etudes et sources
+6. `src/components/dashboard/pdp/SafetyCautions.tsx` -- vraies precautions
+7. `src/components/dashboard/pdp/QualitySourcing.tsx` -- vraies certifications
+8. `src/components/dashboard/pdp/ProductFAQ.tsx` -- vraies FAQ
+9. `src/components/dashboard/pdp/QuickBenefitsStrip.tsx` -- vrais tags
+10. `src/components/dashboard/pdp/ProductPurchaseBox.tsx` -- redesign + resume reel
+11. `src/components/dashboard/pdp/ProductGallery.tsx` -- galerie agrandie
+12. `src/components/dashboard/pdp/types.ts` -- nouveaux types pour les donnees enrichies
 
-### Aucun changement de schema de base de donnees requis
+## Ordre d'execution
+
+1. Creer la table `product_enriched_data` (migration SQL)
+2. Creer l'Edge Function `parse-product-pdfs`
+3. Deployer et executer l'Edge Function pour parser tous les PDFs
+4. Modifier le `ProductDetailMaster` pour charger les donnees enrichies
+5. Mettre a jour chaque section du PDP avec les donnees reelles
+6. Appliquer le redesign sur toutes les sections

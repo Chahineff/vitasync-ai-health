@@ -222,9 +222,8 @@ function formatEnrichedProducts(products: EnrichedProductSummary[]): string {
     const parts: string[] = [`📌 ${p.shopify_product_title}`];
 
     if (p.summary) {
-      // Truncate summary to ~80 chars
-      const short = p.summary.length > 100 ? p.summary.slice(0, 100) + '…' : p.summary;
-      parts.push(`  Résumé: ${short}`);
+      const short = p.summary.length > 60 ? p.summary.slice(0, 60) + '…' : p.summary;
+      parts.push(`  ${short}`);
     }
 
     if (p.best_for_tags?.length) {

@@ -1,54 +1,71 @@
 
-# Deux ameliorations PDP : Reviews Judge.me + "Show more" Sources
+# Adaptation Mobile Complete du Dashboard VitaSync
+
+## Contexte
+
+Le dashboard fonctionne bien sur desktop mais plusieurs sections ne sont pas optimisees pour les ecrans mobiles (< 768px). L'objectif est d'adapter chaque section pour offrir une experience native et fluide sur smartphone.
 
 ---
 
-## 1. Integrer les reviews Judge.me (vraies donnees)
+## Sections a adapter
 
-Judge.me stocke les donnees de reviews dans les **metafields Shopify standard** accessibles via le Storefront API :
-- `reviews.rating` : note moyenne (ex: "4.3") avec scale_min/scale_max
-- `reviews.rating_count` : nombre total d'avis (ex: "125")
+### 1. Shop (ShopSection + ProductGroupCard)
 
-### Changements techniques
+**Problemes actuels :**
+- Grille 3 colonnes sur mobile = cartes produits trop etroites
+- Bouton "Ajouter au panier" avec texte trop large dans les cartes
+- Les selecteurs de saveurs (flavor chips) sont difficilement cliquables
+- Header de la boutique pas assez compact
 
-**`src/lib/shopify.ts`** -- Ajouter les metafields Judge.me a la requete GraphQL `PRODUCT_BY_HANDLE_QUERY` :
+**Corrections :**
+- Passer la grille de `grid-cols-3` a `grid-cols-2` sur mobile (< 768px), garder 3 colonnes tablette et 4 desktop
+- Dans `ProductGroupCard` : masquer le texte du bouton panier sur mobile (icone seule), reduire le padding
+- Reduire la taille des chips de saveur sur petits ecrans
+- Compacter le header (titre + sous-titre sur une seule ligne)
 
-```text
-reviewRating: metafield(namespace: "reviews", key: "rating") {
-  value
-  type
-}
-reviewCount: metafield(namespace: "reviews", key: "rating_count") {
-  value
-  type
-}
-```
+### 2. Settings (ProfileSection + HealthProfileSection)
 
-Et mettre a jour l'interface `ProductDetail` pour inclure ces deux champs.
+**Problemes actuels :**
+- Le formulaire `grid-cols-2` pour prenom/nom reste en 2 colonnes sur mobile
+- Le titre "Mon Profil Sante" et son bouton "Modifier" peuvent se chevaucher
+- Les cartes du profil sante restent en `sm:grid-cols-2` mais le padding est excessif sur petit ecran
 
-**`src/components/dashboard/pdp/ProductReviews.tsx`** -- Remplacer les placeholders statiques par les vraies donnees :
-- Afficher la note moyenne (etoiles remplies dynamiquement)
-- Afficher le nombre total de reviews
-- Calculer les barres de distribution (Judge.me ne fournit pas la distribution par etoile via metafields, on affichera uniquement la moyenne + le total)
-- Si aucune review : garder le placeholder actuel "No reviews yet"
+**Corrections :**
+- Forcer `grid-cols-1` sur mobile pour le formulaire prenom/nom
+- Reduire le padding des glass-cards de `p-8` a `p-4` sur mobile (via responsive `p-4 md:p-8`)
+- Adapter l'en-tete du profil sante (flex-col sur mobile avec bouton pleine largeur)
 
-**`src/components/dashboard/pdp/ProductDetailMaster.tsx`** -- Passer les nouvelles props `reviewRating` et `reviewCount` au composant `ProductReviews`.
+### 3. Coach IA (ChatInterface + ChatSidebar)
 
-**Note importante** : Judge.me ne fournit PAS les textes individuels des reviews via les metafields Shopify. Seuls la note moyenne et le nombre d'avis sont disponibles. Pour afficher les textes, il faudrait utiliser l'API Judge.me directement (necessite une cle API). Pour l'instant, on affichera la note + le compteur, et les cartes de reviews resteront en placeholder avec un lien "Read reviews on Judge.me".
+**Problemes actuels :**
+- La sidebar du chat est cachee (`hidden md:flex`) = pas d'acces a l'historique sur mobile
+- La hauteur `h-[calc(100vh-2rem)]` ne tient pas compte du bottom nav (80px)
+- Le padding de l'input bar est trop genereux sur mobile
 
----
+**Corrections :**
+- Ajuster la hauteur pour tenir compte de la bottom nav : `h-[calc(100vh-8rem)]` sur mobile
+- Reduire le padding de la zone de messages et de l'input bar sur mobile
+- Ajouter un bouton hamburger dans le header du chat pour ouvrir la sidebar en overlay sur mobile (sheet/drawer)
 
-## 2. Bouton "Show more" pour les sources scientifiques
+### 4. Supplements (SupplementTrackerEnhanced + SupplementAIInsights)
 
-Actuellement, toutes les sources sont affichees d'un coup dans `ScienceSection.tsx`. Certains produits ont beaucoup de sources.
+**Problemes actuels :**
+- Le layout `lg:grid-cols-5` (3+2) s'empile bien en une colonne mais les cartes internes gardent un padding excessif
+- Les onglets (Jour/Semaine/Mois) et les boutons d'action manquent de taille tactile
 
-### Changement technique
+**Corrections :**
+- S'assurer que les targets tactiles font au minimum 44px de hauteur
+- Reduire le padding interne des cartes supplement sur mobile
 
-**`src/components/dashboard/pdp/ScienceSection.tsx`** :
-- Afficher les 3 premieres sources par defaut
-- Ajouter un bouton "Show more sources" qui revele le reste
-- Animation douce a l'expansion (transition CSS)
-- Si 3 sources ou moins : pas de bouton
+### 5. Home (DashboardHome)
+
+**Problemes actuels :**
+- Le titre de bienvenue est trop long sur mobile
+- La grille `grid-cols-1 lg:grid-cols-2` fonctionne mais les widgets internes ont des paddings trop larges
+
+**Corrections :**
+- Reduire la taille du titre de `text-2xl` a `text-xl` sur les plus petits ecrans
+- Ajuster les paddings des widgets (QuickCoachWidget notamment : `p-6 lg:p-8` deja OK, verifier DailyCheckinWidget)
 
 ---
 
@@ -56,7 +73,20 @@ Actuellement, toutes les sources sont affichees d'un coup dans `ScienceSection.t
 
 | Fichier | Modification |
 |---|---|
-| `src/lib/shopify.ts` | Ajout metafields `reviewRating` + `reviewCount` dans la requete GraphQL + interface `ProductDetail` |
-| `src/components/dashboard/pdp/ProductReviews.tsx` | Affichage dynamique note moyenne + nombre d'avis Judge.me |
-| `src/components/dashboard/pdp/ProductDetailMaster.tsx` | Passer les props reviews au composant |
-| `src/components/dashboard/pdp/ScienceSection.tsx` | Afficher 3 sources par defaut + bouton "Show more" |
+| `src/components/dashboard/ShopSection.tsx` | Grille responsive `grid-cols-2 md:grid-cols-3 lg:grid-cols-4`, header compact |
+| `src/components/dashboard/shop/ProductGroupCard.tsx` | Bouton panier icone-seule sur mobile, padding reduit, chips plus petites |
+| `src/components/dashboard/ProfileSection.tsx` | Formulaire 1 colonne sur mobile, padding responsive |
+| `src/components/dashboard/HealthProfileSection.tsx` | Padding responsive, en-tete adaptatif |
+| `src/components/dashboard/ChatInterface.tsx` | Hauteur ajustee pour bottom nav, bouton sidebar mobile, padding responsive |
+| `src/components/dashboard/chat/ChatSidebar.tsx` | Mode overlay (sheet) sur mobile au lieu de `hidden md:flex` |
+| `src/components/dashboard/SupplementTrackerEnhanced.tsx` | Padding responsive, targets tactiles 44px min |
+| `src/pages/Dashboard.tsx` | Ajustements mineurs des paddings et titres home |
+
+---
+
+## Principes respectes
+
+- Mobile-first : les changements ciblent les breakpoints `md:` et `lg:` pour ne pas casser le desktop
+- Pas de nouvelles dependances
+- Conservation du design "Bio-Tech Luxury" (glassmorphism, rounded-3xl, etc.)
+- Targets tactiles minimum 44px conformes aux guidelines iOS/Android

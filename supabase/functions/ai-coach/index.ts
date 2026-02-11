@@ -856,18 +856,27 @@ Deno.serve(async (req) => {
 
     // Validate and get requested model
     const ALLOWED_MODELS = [
-      'google/gemini-2.5-flash',
-      'google/gemini-2.5-pro',
-      'google/gemini-3-flash-preview',
-      'google/gemini-3-pro-preview'
+      'openai/gpt-5-nano',
+      'openai/gpt-5-mini',
+      'openai/gpt-5',
+      'openai/gpt-5.2'
     ];
     
-    const requestedModel = (requestBody as Record<string, unknown>)?.model as string || 'google/gemini-3-flash-preview';
+    const requestedModel = (requestBody as Record<string, unknown>)?.model as string || 'openai/gpt-5-nano';
     const model = ALLOWED_MODELS.includes(requestedModel) 
       ? requestedModel 
-      : 'google/gemini-3-flash-preview';
+      : 'openai/gpt-5-nano';
     
-    console.log("Using AI model:", model);
+    // Set max_tokens based on model
+    const modelMaxTokens: Record<string, number> = {
+      'openai/gpt-5-nano': 2048,
+      'openai/gpt-5-mini': 4096,
+      'openai/gpt-5': 6144,
+      'openai/gpt-5.2': 8192,
+    };
+    const maxTokens = modelMaxTokens[model] || 2048;
+    
+    console.log("Using AI model:", model, "max_tokens:", maxTokens);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -885,7 +894,7 @@ Deno.serve(async (req) => {
           })),
         ],
         stream: true,
-        max_tokens: 4096,
+        max_tokens: maxTokens,
       }),
     });
 

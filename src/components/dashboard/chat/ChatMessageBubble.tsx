@@ -5,12 +5,14 @@ import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { ProductRecommendationCard, parseProductRecommendations, SubscriptionCard } from '../ProductRecommendationCard';
+import { ThinkingBlock } from './ThinkingBlock';
 
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
 interface ChatMessageBubbleProps {
   role: 'user' | 'assistant';
   content: string;
+  thinking?: string;
   isStreaming?: boolean;
   onRegenerate?: () => void;
 }
@@ -118,7 +120,7 @@ function CopyButton({ content }: { content: string }) {
   );
 }
 
-export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: ChatMessageBubbleProps) {
+export function ChatMessageBubble({ role, content, thinking, isStreaming, onRegenerate }: ChatMessageBubbleProps) {
   const isUser = role === 'user';
 
   if (isUser) {
@@ -176,6 +178,10 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: 
           <Sparkle weight="fill" className="w-3.5 h-3.5 text-primary" />
           <span className="text-xs font-medium text-foreground/50">VitaSync AI</span>
         </div>
+
+        {thinking && (
+          <ThinkingBlock thinking={thinking} isStreaming={isStreaming} />
+        )}
 
         <div className="text-foreground/90">
           <MessageContent content={content} isStreaming={isStreaming} />

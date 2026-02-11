@@ -7,8 +7,10 @@ import {
   X, 
   File as FileIcon,
   Stop,
-  Globe
+  Globe,
+  Person
 } from '@phosphor-icons/react';
+import { BodyMapModal } from './BodyMapModal';
 import { cn } from '@/lib/utils';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -48,6 +50,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
     const [filePreview, setFilePreview] = useState<string | null>(null);
     const [isFocused, setIsFocused] = useState(false);
     const [voiceLang, setVoiceLang] = useState('fr-FR');
+    const [bodyMapOpen, setBodyMapOpen] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const MAX_CHARS = 4000;
@@ -266,6 +269,19 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
                   <Paperclip weight="light" className="w-5 h-5" />
                 </button>
 
+                {/* Body Map Button */}
+                <button
+                  type="button"
+                  onClick={() => setBodyMapOpen(true)}
+                  className={cn(
+                    "p-2.5 rounded-xl transition-all duration-200",
+                    "text-foreground/50 hover:text-foreground/80 hover:bg-white/10"
+                  )}
+                  title="Carte corporelle"
+                >
+                  <Person weight="light" className="w-5 h-5" />
+                </button>
+
                 {/* Voice Language Selector */}
                 <Popover>
                   <PopoverTrigger asChild>
@@ -368,6 +384,15 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
         <p className="text-center text-xs text-foreground/30 mt-4">
           VitaSync AI peut afficher des informations inexactes. Vérifiez les conseils importants.
         </p>
+
+        {/* Body Map Modal */}
+        <BodyMapModal
+          open={bodyMapOpen}
+          onOpenChange={setBodyMapOpen}
+          onSubmit={(message) => {
+            onSubmit(message);
+          }}
+        />
       </div>
     );
   }

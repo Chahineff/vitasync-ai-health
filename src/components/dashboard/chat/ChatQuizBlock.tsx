@@ -88,10 +88,27 @@ export function ChatQuizBlock({ quiz, onComplete }: ChatQuizBlockProps) {
   
   if (completed) {
     return (
-      <div className="p-4 rounded-xl bg-secondary/10 border border-secondary/20 text-center">
-        <Check weight="bold" className="w-6 h-6 text-secondary mx-auto mb-2" />
-        <p className="text-sm text-foreground/70">Quiz terminé ! Analyse en cours...</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="p-5 rounded-2xl bg-gradient-to-br from-secondary/15 to-primary/10 border border-secondary/20 text-center space-y-3"
+      >
+        <div className="flex items-center justify-center gap-2">
+          <Check weight="bold" className="w-6 h-6 text-secondary" />
+          <h4 className="text-sm font-semibold text-foreground">Quiz terminé !</h4>
+        </div>
+        <p className="text-xs text-foreground/60">L'IA analyse vos réponses et prépare ses recommandations personnalisées...</p>
+        <div className="flex justify-center gap-1 pt-1">
+          {[0, 1, 2].map(i => (
+            <motion.div
+              key={i}
+              className="w-1.5 h-1.5 rounded-full bg-primary"
+              animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+              transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+            />
+          ))}
+        </div>
+      </motion.div>
     );
   }
   

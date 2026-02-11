@@ -307,6 +307,10 @@ export function parseProductRecommendations(content: string): {
   const cleanedText = text
     .replace(/\[\[PRODUCT:[^\]]*\]\]/g, '') // Remove any remaining malformed tags
     .replace(/\[\[PRODUCT:[^\]]*$/g, '')     // Remove unclosed tags at end
+    .replace(/\[\[PROD[^\]]*$/g, '')         // Remove partial tag starts
+    .replace(/\[\[P[^\]]*$/g, '')            // Remove very early partial tags
+    .replace(/\bproduit\s*:\s*$/gi, '')      // Remove orphan "produit:" at end
+    .replace(/\bproduit\s*:\s*\n/gi, '\n')   // Remove orphan "produit:" mid-text
     .replace(/^\s*\n/gm, '\n')               // Clean up extra blank lines
     .trim();
   

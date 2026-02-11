@@ -1,12 +1,17 @@
-import { BookOpen, ArrowSquareOut, Lightbulb } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { BookOpen, ArrowSquareOut, Lightbulb, CaretDown } from '@phosphor-icons/react';
 import { EnrichedScienceData } from './types';
+import { Button } from '@/components/ui/button';
 
 interface ScienceSectionProps {
   productTitle: string;
   enrichedScience?: EnrichedScienceData;
 }
 
+const INITIAL_SOURCES_COUNT = 3;
+
 export function ScienceSection({ productTitle, enrichedScience }: ScienceSectionProps) {
+  const [showAllSources, setShowAllSources] = useState(false);
   const hasEnriched = enrichedScience && enrichedScience.study_bullets?.length > 0;
 
   const studyBullets = hasEnriched
@@ -61,30 +66,45 @@ export function ScienceSection({ productTitle, enrichedScience }: ScienceSection
       </div>
 
       {/* Sources */}
-      {sources.length > 0 && (
-        <div className="space-y-3">
-          <p className="text-sm text-foreground/60 font-medium">Sources & références:</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {sources.map((source, index) => (
-              <a
-                key={index}
-                href={source.url || '#'}
-                target={source.url ? '_blank' : undefined}
-                rel={source.url ? 'noopener noreferrer' : undefined}
-                className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors group"
+      {sources.length > 0 && (() => {
+        const visibleSources = showAllSources ? sources : sources.slice(0, INITIAL_SOURCES_COUNT);
+        const hasMore = sources.length > INITIAL_SOURCES_COUNT;
+        return (
+          <div className="space-y-3">
+            <p className="text-sm text-foreground/60 font-medium">Sources & références:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {visibleSources.map((source, index) => (
+                <a
+                  key={index}
+                  href={source.url || '#'}
+                  target={source.url ? '_blank' : undefined}
+                  rel={source.url ? 'noopener noreferrer' : undefined}
+                  className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors group"
+                >
+                  <ArrowSquareOut weight="light" className="w-4 h-4 text-foreground/40 group-hover:text-primary transition-colors flex-shrink-0" />
+                  <span className="text-sm text-foreground/60 font-light truncate group-hover:text-foreground transition-colors">
+                    {source.title}
+                  </span>
+                  {source.year && (
+                    <span className="text-xs text-foreground/30 flex-shrink-0">({source.year})</span>
+                  )}
+                </a>
+              ))}
+            </div>
+            {hasMore && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowAllSources(!showAllSources)}
+                className="gap-2 text-primary hover:text-primary/80"
               >
-                <ArrowSquareOut weight="light" className="w-4 h-4 text-foreground/40 group-hover:text-primary transition-colors flex-shrink-0" />
-                <span className="text-sm text-foreground/60 font-light truncate group-hover:text-foreground transition-colors">
-                  {source.title}
-                </span>
-                {source.year && (
-                  <span className="text-xs text-foreground/30 flex-shrink-0">({source.year})</span>
-                )}
-              </a>
-            ))}
+                {showAllSources ? 'Voir moins' : `Voir plus de sources (${sources.length - INITIAL_SOURCES_COUNT})`}
+                <CaretDown weight="light" className={`w-4 h-4 transition-transform ${showAllSources ? 'rotate-180' : ''}`} />
+              </Button>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       <p className="text-xs text-foreground/40 font-light">
         Ces informations sont fournies à titre éducatif uniquement. Les résultats peuvent varier.

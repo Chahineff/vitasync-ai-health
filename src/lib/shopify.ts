@@ -98,6 +98,8 @@ export interface ProductDetail {
   }>;
   benefitsMetafield: { value: string; type: string } | null;
   ingredientsMetafield: { value: string; type: string } | null;
+  reviewRating: { value: string; type: string } | null;
+  reviewCount: { value: string; type: string } | null;
 }
 
 export interface ProductGroup {
@@ -246,6 +248,14 @@ const PRODUCT_BY_HANDLE_QUERY = `
         type
       }
       ingredientsMetafield: metafield(namespace: "custom", key: "ingredients") {
+        value
+        type
+      }
+      reviewRating: metafield(namespace: "reviews", key: "rating") {
+        value
+        type
+      }
+      reviewCount: metafield(namespace: "reviews", key: "rating_count") {
         value
         type
       }

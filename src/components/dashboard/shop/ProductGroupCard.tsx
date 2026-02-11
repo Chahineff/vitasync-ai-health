@@ -143,7 +143,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                     key={product.node.id}
                     onClick={(e) => handleFlavorClick(e, index)}
                     onMouseEnter={(e) => handleFlavorHover(e, index)}
-                    className={`px-2 py-1 text-xs rounded-lg transition-colors ${
+                    className={`px-1.5 py-0.5 md:px-2 md:py-1 text-[10px] md:text-xs rounded-lg transition-colors min-h-[32px] md:min-h-0 ${
                       displayIndex === index
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-white/5 text-foreground/60 hover:bg-white/10'
@@ -171,7 +171,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !selectedVariant?.availableForSale}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-2 py-2 md:px-4 rounded-xl text-sm font-medium transition-all min-h-[44px] ${
                 justAdded
                   ? 'bg-green-500/20 text-green-500'
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'
@@ -182,12 +182,12 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
               ) : justAdded ? (
                 <>
                   <Check weight="bold" className="w-4 h-4" />
-                  {t('shop.added')}
+                  <span className="hidden md:inline">{t('shop.added')}</span>
                 </>
               ) : (
                 <>
                   <ShoppingCartSimple weight="bold" className="w-4 h-4" />
-                  {t('shop.addToCart')}
+                  <span className="hidden md:inline">{t('shop.addToCart')}</span>
                 </>
               )}
             </button>

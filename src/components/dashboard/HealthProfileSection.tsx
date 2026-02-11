@@ -21,7 +21,7 @@ export function HealthProfileSection() {
 
   if (loading) {
     return (
-      <div className="glass-card rounded-2xl p-8 animate-pulse">
+      <div className="glass-card rounded-2xl p-4 md:p-8 animate-pulse">
         <div className="h-6 bg-foreground/10 rounded w-1/3 mb-4" />
         <div className="space-y-3">
           <div className="h-4 bg-foreground/10 rounded w-full" />
@@ -33,7 +33,7 @@ export function HealthProfileSection() {
 
   if (!healthProfile || !healthProfile.onboarding_completed) {
     return (
-      <div className="glass-card rounded-2xl p-8 text-center">
+      <div className="glass-card rounded-2xl p-4 md:p-8 text-center">
         <h3 className="text-lg font-medium text-foreground mb-2">
           Profil santé incomplet
         </h3>
@@ -176,9 +176,9 @@ export function HealthProfileSection() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card rounded-2xl p-8"
+      className="glass-card rounded-2xl p-4 md:p-8"
     >
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h2 className="text-xl font-medium text-foreground">
           Mon Profil Santé
         </h2>
@@ -186,7 +186,7 @@ export function HealthProfileSection() {
           variant="outline"
           size="sm"
           onClick={() => navigate("/onboarding?edit=true")}
-          className="gap-2"
+          className="gap-2 w-full sm:w-auto"
         >
           <Edit3 className="w-4 h-4" />
           Modifier

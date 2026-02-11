@@ -174,7 +174,7 @@ export function ProfileSection() {
         </div>
       </div>
 
-      <div className="glass-card rounded-2xl p-8">
+      <div className="glass-card rounded-2xl p-4 md:p-8">
         {/* Avatar Section */}
         <div className="flex flex-col items-center mb-8">
           <div className="relative">
@@ -218,7 +218,7 @@ export function ProfileSection() {
 
         {/* Profile Form */}
         <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="firstName" className="block text-sm text-foreground/70 mb-2">
                 {t("settings.firstName")}

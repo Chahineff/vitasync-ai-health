@@ -151,6 +151,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       body: JSON.stringify({
         messages: [...messages, { role: 'user', content: userMessage }],
         model: selectedModel.model,
+        modelVersion: selectedModel.version || '1.0',
       }),
     });
 

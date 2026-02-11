@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { ProductRecommendationCard, parseProductRecommendations, SubscriptionCard } from '../ProductRecommendationCard';
+import { ChatQuizBlock, parseQuizBlock } from './ChatQuizBlock';
 
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
@@ -13,20 +14,42 @@ interface ChatMessageBubbleProps {
   content: string;
   isStreaming?: boolean;
   onRegenerate?: () => void;
+  onQuizComplete?: (summary: string) => void;
 }
 
-function MessageContent({ content, isStreaming }: { content: string; isStreaming?: boolean }) {
-  const { text, products, subscription } = parseProductRecommendations(content);
+function MessageContent({ content, isStreaming, onQuizComplete }: { content: string; isStreaming?: boolean; onQuizComplete?: (summary: string) => void }) {
+  // Check for quiz blocks first
+  const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(content);
+  const { text, products, subscription } = parseProductRecommendations(quiz ? beforeQuiz : content);
   
   const streamingCursor = isStreaming ? (
     <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 align-middle animate-cursor-blink" />
   ) : null;
 
-  if (products.length === 0 && !subscription) {
+  if (products.length === 0 && !subscription && !quiz) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
         <ReactMarkdown>{content}</ReactMarkdown>
         {streamingCursor}
+      </div>
+    );
+  }
+
+  // If there's a quiz, render it
+  if (quiz) {
+    return (
+      <div className="space-y-4">
+        {beforeQuiz && (
+          <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+            <ReactMarkdown>{beforeQuiz}</ReactMarkdown>
+          </div>
+        )}
+        <ChatQuizBlock quiz={quiz} onComplete={onQuizComplete || (() => {})} />
+        {afterQuiz && (
+          <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+            <ReactMarkdown>{afterQuiz}</ReactMarkdown>
+          </div>
+        )}
       </div>
     );
   }
@@ -118,7 +141,7 @@ function CopyButton({ content }: { content: string }) {
   );
 }
 
-export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: ChatMessageBubbleProps) {
+export function ChatMessageBubble({ role, content, isStreaming, onRegenerate, onQuizComplete }: ChatMessageBubbleProps) {
   const isUser = role === 'user';
 
   if (isUser) {
@@ -155,8 +178,8 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: 
         className={cn(
           "w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20 relative"
         )}
-        animate={isStreaming ? { 
-          rotate: [0, 360],
+      animate={isStreaming ? { 
+          scale: [1, 1.05, 1],
           boxShadow: [
             "0 0 10px 2px rgba(0, 240, 255, 0.2)",
             "0 0 20px 4px rgba(0, 240, 255, 0.4)",
@@ -164,7 +187,7 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: 
           ]
         } : {}}
         transition={isStreaming ? { 
-          rotate: { duration: 3, repeat: Infinity, ease: "linear" },
+          scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
           boxShadow: { duration: 1.5, repeat: Infinity }
         } : {}}
       >
@@ -177,8 +200,12 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: 
           <span className="text-xs font-medium text-foreground/50">VitaSync AI</span>
         </div>
 
-        <div className="text-foreground/90">
-          <MessageContent content={content} isStreaming={isStreaming} />
+        <div className="text-foreground/90 relative">
+          <MessageContent content={content} isStreaming={isStreaming} onQuizComplete={onQuizComplete} />
+          {/* Gradient mask during streaming for progressive reveal */}
+          {isStreaming && (
+            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+          )}
         </div>
 
         {/* Action buttons with stagger */}

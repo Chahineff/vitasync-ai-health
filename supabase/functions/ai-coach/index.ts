@@ -482,8 +482,9 @@ RÈGLE D'OR : Conseil → Options → Achat (jamais l'inverse)
 • Ne JAMAIS dire "Achète X maintenant" en première intention
 • TOUJOURS dire "Voici 2 options, tu préfères laquelle ?"
 • Limiter les recommandations :
-  - Prospect (quiz non fait) → max 3 produits starter
-  - Client (quiz fait) → max 6 produits optimal
+  - MAXIMUM 2 PRODUITS par réponse (jamais plus !)
+  - Prospect (quiz non fait) → max 2 produits starter
+  - Client (quiz fait) → max 2 produits optimal
 
 QUAND TU RECOMMANDES UN PRODUIT:
 Utilise OBLIGATOIREMENT le format: [[PRODUCT:productId:variantId:nom:prix]]
@@ -537,7 +538,37 @@ RAPPEL IMPORTANT
 ═══════════════════════════════════════════════════════════════
 • Toujours rappeler de consulter un professionnel pour les cas sérieux
 • VitaSync = bien-être, PAS diagnostic médical
-• Respecter le budget et les préférences de l'utilisateur`;
+• Respecter le budget et les préférences de l'utilisateur
+
+═══════════════════════════════════════════════════════════════
+STYLE DE FORMATAGE (OBLIGATOIRE)
+═══════════════════════════════════════════════════════════════
+• Utilise des emojis pour rendre les réponses visuelles (⚡ énergie, 😴 sommeil, 🧠 focus, 💪 performance, etc.)
+• Structure tes réponses avec des titres Markdown (## et ###)
+• Utilise des listes à puces pour les points clés
+• Mets en **gras** les informations importantes
+• Utilise des séparateurs (---) entre les sections
+• Ne fais PAS de blocs de texte monotones
+• Limite tes recommandations à MAXIMUM 2 produits par réponse
+• Varie la taille des titres pour la hiérarchie visuelle
+
+═══════════════════════════════════════════════════════════════
+PLAYBOOK QUIZ PERSONNALISÉ (VitaSync 2.0 uniquement)
+═══════════════════════════════════════════════════════════════
+Si le modèle est version 2.0, tu peux créer un quiz interactif pour approfondir un sujet.
+Format OBLIGATOIRE :
+[[QUIZ_START]]
+TITLE: Mon Quiz Personnalisé
+Q1: Question texte ? | Option A | Option B | Option C | Option D
+Q2: Autre question ? | Choix 1 | Choix 2 | Choix 3 | Choix 4
+[[QUIZ_END]]
+
+Règles :
+• Maximum 10 questions, 4 options par question
+• Utilise un quiz quand l'utilisateur a besoin d'un diagnostic plus poussé
+• NE GÉNÈRE UN QUIZ QUE si le modèle est version 2.0 (sinon, pose des questions textuelles classiques)
+• Exemples : "Quiz Énergie", "Quiz Sommeil", "Quiz Stress", "Quiz Nutrition"`;
+
 
 function buildEnrichedSystemPrompt(
   userProfile: { first_name?: string; last_name?: string } | null,
@@ -863,11 +894,22 @@ Deno.serve(async (req) => {
     ];
     
     const requestedModel = (requestBody as Record<string, unknown>)?.model as string || 'google/gemini-3-flash-preview';
+    const modelVersion = (requestBody as Record<string, unknown>)?.modelVersion as string || '1.0';
     const model = ALLOWED_MODELS.includes(requestedModel) 
       ? requestedModel 
       : 'google/gemini-3-flash-preview';
     
-    console.log("Using AI model:", model);
+    console.log("Using AI model:", model, "version:", modelVersion);
+
+    // Conditionally add quiz capability info
+    let finalSystemPrompt = systemPrompt;
+    if (modelVersion !== '2.0') {
+      // Remove quiz playbook for non-2.0 models
+      finalSystemPrompt = finalSystemPrompt.replace(
+        /═+\nPLAYBOOK QUIZ PERSONNALISÉ[\s\S]*?Exemples : "Quiz Énergie", "Quiz Sommeil", "Quiz Stress", "Quiz Nutrition"/,
+        ''
+      );
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -878,7 +920,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: model,
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: finalSystemPrompt },
           ...messages.map((m) => ({
             role: m.role,
             content: m.content,

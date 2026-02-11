@@ -5,10 +5,7 @@ import {
   Moon,
   Leaf,
   Brain,
-  Heart,
   Lightning,
-  Barbell,
-  ShieldPlus,
   ArrowRight,
   Check,
   ClipboardText,
@@ -17,13 +14,12 @@ import {
 } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
-import { useDailyCheckin } from '@/hooks/useDailyCheckin';
 
 interface SuggestionCard {
   id: string;
   icon: React.ElementType;
   title: string;
-  category: 'sleep' | 'nutrition' | 'stress' | 'energy' | 'sport' | 'immunity' | 'digestion' | 'focus';
+  category: 'sleep' | 'nutrition' | 'stress' | 'energy';
   gradient: string;
   iconColor: string;
   questions: {
@@ -62,21 +58,48 @@ const GUIDED_CARDS: SuggestionCard[] = [
           { value: 'sensitive', label: '⚡ Très sensible' },
           { value: 'avoid', label: '🚫 Je l\'évite complètement' }
         ]
+      },
+      {
+        id: 'activity',
+        text: "Pratiquez-vous une activité physique régulière ?",
+        options: [
+          { value: 'daily', label: '🏃 Quotidien' },
+          { value: 'regular', label: '💪 3-4x semaine' },
+          { value: 'rarely', label: '🚶 Rarement' },
+          { value: 'never', label: '🛋️ Jamais' }
+        ]
+      },
+      {
+        id: 'deficiencies',
+        text: "Avez-vous des carences connues ?",
+        options: [
+          { value: 'iron', label: '🩸 Fer' },
+          { value: 'vitd', label: '☀️ Vitamine D' },
+          { value: 'vitb12', label: '💊 Vitamine B12' },
+          { value: 'none', label: '✅ Non, pas à ma connaissance' }
+        ]
       }
     ],
     getRecommendation: (answers) => {
-      const timing = answers.timing;
-      const caffeine = answers.caffeine;
       let reco = "Je cherche à booster mon énergie. ";
-      if (timing === 'morning') reco += "Je suis surtout fatigué le matin au réveil. ";
-      else if (timing === 'afternoon') reco += "J'ai un coup de barre après le déjeuner. ";
-      else if (timing === 'evening') reco += "Ma fatigue s'accumule en fin de journée. ";
+      if (answers.timing === 'morning') reco += "Je suis surtout fatigué le matin au réveil. ";
+      else if (answers.timing === 'afternoon') reco += "J'ai un coup de barre après le déjeuner. ";
+      else if (answers.timing === 'evening') reco += "Ma fatigue s'accumule en fin de journée. ";
       else reco += "Je me sens fatigué toute la journée. ";
       
-      if (caffeine === 'avoid' || caffeine === 'sensitive') {
+      if (answers.caffeine === 'avoid' || answers.caffeine === 'sensitive') {
         reco += "Je suis sensible à la caféine, je préfère des alternatives naturelles. ";
       }
-      reco += "Quels compléments me conseilles-tu ?";
+      if (answers.activity === 'daily' || answers.activity === 'regular') {
+        reco += "Je fais du sport régulièrement. ";
+      } else {
+        reco += "Je suis plutôt sédentaire. ";
+      }
+      if (answers.deficiencies !== 'none') {
+        const defMap: Record<string, string> = { iron: 'fer', vitd: 'vitamine D', vitb12: 'vitamine B12' };
+        reco += `J'ai une carence en ${defMap[answers.deficiencies] || answers.deficiencies}. `;
+      }
+      reco += "Quels sont tes conseils pour améliorer mon énergie au quotidien ?";
       return reco;
     }
   },
@@ -107,21 +130,45 @@ const GUIDED_CARDS: SuggestionCard[] = [
           { value: 'high', label: '😰 Mental très actif' },
           { value: 'very_high', label: '😫 Très anxieux' }
         ]
+      },
+      {
+        id: 'screens',
+        text: "Utilisez-vous des écrans avant de dormir ?",
+        options: [
+          { value: 'always', label: '📱 Oui, constamment' },
+          { value: 'sometimes', label: '🤷 Parfois' },
+          { value: 'rarely', label: '📖 Rarement' },
+          { value: 'never', label: '🚫 Non' }
+        ]
+      },
+      {
+        id: 'bedtime',
+        text: "À quelle heure vous couchez-vous en général ?",
+        options: [
+          { value: 'before_22', label: '🌅 Avant 22h' },
+          { value: '22_23', label: '🌙 22h-23h' },
+          { value: '23_00', label: '🕛 23h-00h' },
+          { value: 'after_midnight', label: '🌃 Après minuit' }
+        ]
       }
     ],
     getRecommendation: (answers) => {
-      const issue = answers.issue;
-      const stress = answers.stress;
       let reco = "J'ai des problèmes de sommeil. ";
-      if (issue === 'falling_asleep') reco += "J'ai du mal à m'endormir. ";
-      else if (issue === 'staying_asleep') reco += "Je me réveille souvent la nuit. ";
-      else if (issue === 'quality') reco += "Mon sommeil n'est pas réparateur. ";
+      if (answers.issue === 'falling_asleep') reco += "J'ai du mal à m'endormir. ";
+      else if (answers.issue === 'staying_asleep') reco += "Je me réveille souvent la nuit. ";
+      else if (answers.issue === 'quality') reco += "Mon sommeil n'est pas réparateur. ";
       else reco += "Mon rythme de sommeil est décalé. ";
       
-      if (stress === 'high' || stress === 'very_high') {
+      if (answers.stress === 'high' || answers.stress === 'very_high') {
         reco += "Je suis aussi assez stressé le soir. ";
       }
-      reco += "Quels compléments naturels pour améliorer mon sommeil ?";
+      if (answers.screens === 'always') {
+        reco += "J'utilise constamment mes écrans avant de dormir. ";
+      }
+      if (answers.bedtime === 'after_midnight') {
+        reco += "Je me couche souvent après minuit. ";
+      }
+      reco += "Que me recommandes-tu pour améliorer mon sommeil naturellement ?";
       return reco;
     }
   },
@@ -152,21 +199,47 @@ const GUIDED_CARDS: SuggestionCard[] = [
           { value: 'daily', label: '📅 Quotidiennement' },
           { value: 'chronic', label: '⚡ Chroniquement' }
         ]
+      },
+      {
+        id: 'relaxation',
+        text: "Pratiquez-vous des techniques de relaxation ?",
+        options: [
+          { value: 'meditation', label: '🧘 Méditation' },
+          { value: 'sport', label: '🏋️ Sport' },
+          { value: 'breathing', label: '🌬️ Respiration' },
+          { value: 'none', label: '❌ Aucune' }
+        ]
+      },
+      {
+        id: 'diet_balance',
+        text: "Votre alimentation est-elle équilibrée ?",
+        options: [
+          { value: 'very', label: '🥗 Très équilibrée' },
+          { value: 'good', label: '👍 Plutôt bien' },
+          { value: 'improvable', label: '🤔 Améliorable' },
+          { value: 'poor', label: '🍔 Pas du tout' }
+        ]
       }
     ],
     getRecommendation: (answers) => {
-      const type = answers.type;
-      const frequency = answers.frequency;
       let reco = "Je cherche à mieux gérer mon stress. ";
-      if (type === 'mental') reco += "Je rumine beaucoup. ";
-      else if (type === 'physical') reco += "J'ai des tensions physiques. ";
-      else if (type === 'emotional') reco += "J'ai tendance à l'anxiété. ";
+      if (answers.type === 'mental') reco += "Je rumine beaucoup. ";
+      else if (answers.type === 'physical') reco += "J'ai des tensions physiques. ";
+      else if (answers.type === 'emotional') reco += "J'ai tendance à l'anxiété. ";
       else reco += "Mon stress est global. ";
       
-      if (frequency === 'chronic' || frequency === 'daily') {
+      if (answers.frequency === 'chronic' || answers.frequency === 'daily') {
         reco += "C'est un problème quotidien pour moi. ";
       }
-      reco += "Quelles solutions naturelles recommandes-tu ?";
+      if (answers.relaxation === 'none') {
+        reco += "Je ne pratique aucune technique de relaxation. ";
+      } else {
+        reco += `Je pratique la ${answers.relaxation === 'meditation' ? 'méditation' : answers.relaxation === 'sport' ? 'sport' : 'respiration'}. `;
+      }
+      if (answers.diet_balance === 'poor' || answers.diet_balance === 'improvable') {
+        reco += "Mon alimentation est à améliorer. ";
+      }
+      reco += "Quelles stratégies me proposes-tu pour mieux gérer mon stress ?";
       return reco;
     }
   },
@@ -197,22 +270,48 @@ const GUIDED_CARDS: SuggestionCard[] = [
           { value: 'vegan', label: '🌱 Végan' },
           { value: 'keto', label: '🥩 Low-carb/Keto' }
         ]
+      },
+      {
+        id: 'meals',
+        text: "Combien de repas prenez-vous par jour ?",
+        options: [
+          { value: '2', label: '🍽️ 2 repas' },
+          { value: '3', label: '🍽️🍽️ 3 repas' },
+          { value: '4+', label: '🍽️🍽️🍽️ 4+ repas' },
+          { value: 'irregular', label: '🔄 Irrégulier' }
+        ]
+      },
+      {
+        id: 'intolerances',
+        text: "Avez-vous des intolérances alimentaires ?",
+        options: [
+          { value: 'gluten', label: '🌾 Gluten' },
+          { value: 'lactose', label: '🥛 Lactose' },
+          { value: 'nuts', label: '🥜 Noix' },
+          { value: 'none', label: '✅ Aucune' }
+        ]
       }
     ],
     getRecommendation: (answers) => {
-      const goal = answers.goal;
-      const diet = answers.diet;
       let reco = "Je cherche des conseils nutrition personnalisés. ";
-      if (goal === 'energy') reco += "Mon objectif est d'avoir plus d'énergie. ";
-      else if (goal === 'weight') reco += "Je veux mieux gérer mon poids. ";
-      else if (goal === 'muscle') reco += "Je veux prendre du muscle. ";
+      if (answers.goal === 'energy') reco += "Mon objectif est d'avoir plus d'énergie. ";
+      else if (answers.goal === 'weight') reco += "Je veux mieux gérer mon poids. ";
+      else if (answers.goal === 'muscle') reco += "Je veux prendre du muscle. ";
       else reco += "Je veux améliorer ma santé générale. ";
       
-      if (diet !== 'none') {
-        const dietName = diet === 'vegetarian' ? 'végétarien' : diet === 'vegan' ? 'végan' : 'low-carb';
+      if (answers.diet !== 'none') {
+        const dietName = answers.diet === 'vegetarian' ? 'végétarien' : answers.diet === 'vegan' ? 'végan' : 'low-carb';
         reco += `Je suis ${dietName}. `;
       }
-      reco += "Quels compléments me conseilles-tu ?";
+      if (answers.meals === 'irregular') {
+        reco += "Mes repas sont irréguliers. ";
+      } else {
+        reco += `Je prends ${answers.meals} repas par jour. `;
+      }
+      if (answers.intolerances !== 'none') {
+        reco += `J'ai une intolérance au ${answers.intolerances}. `;
+      }
+      reco += "Quels conseils nutritionnels personnalisés me donnes-tu ?";
       return reco;
     }
   }
@@ -230,7 +329,7 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const activeCardData = GUIDED_CARDS.find(c => c.id === activeCard);
-  const totalSteps = activeCardData ? activeCardData.questions.length + 1 : 0; // questions + recommendation
+  const totalSteps = activeCardData ? activeCardData.questions.length + 1 : 0;
 
   const handleCardClick = (cardId: string) => {
     setActiveCard(cardId);
@@ -240,7 +339,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
 
   const handleAnswerSelect = (questionId: string, value: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
-    // Auto-advance to next step after selection
     setTimeout(() => {
       setCurrentStep(prev => prev + 1);
     }, 300);
@@ -268,7 +366,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
   const currentQuestion = activeCardData?.questions[currentStep];
   const isRecommendationStep = activeCardData && currentStep >= activeCardData.questions.length;
 
-  // Render guided flow
   if (activeCard && activeCardData) {
     return (
       <motion.div
@@ -277,7 +374,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
         exit={{ opacity: 0, scale: 0.95 }}
         className="max-w-xl mx-auto"
       >
-        {/* Header with progress */}
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={handleBack}
@@ -287,7 +383,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
             <span className="text-sm">Retour</span>
           </button>
           
-          {/* Step indicator */}
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-foreground/80">
               Étape {currentStep + 1}/{totalSteps}
@@ -308,7 +403,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
           </div>
         </div>
 
-        {/* Card header */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -333,7 +427,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
           </div>
         </motion.div>
 
-        {/* Question or Recommendation */}
         <AnimatePresence mode="wait">
           {!isRecommendationStep && currentQuestion ? (
             <motion.div
@@ -374,7 +467,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              {/* Summary of answers */}
               <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                 <h4 className="text-sm font-medium text-foreground/60 mb-3">📋 Récapitulatif</h4>
                 <div className="space-y-2">
@@ -390,7 +482,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
                 </div>
               </div>
 
-              {/* CTA Buttons */}
               <div className="grid gap-3">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -422,7 +513,6 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
     );
   }
 
-  // Default: Show 4 cards grid with premium design
   return (
     <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto">
       {GUIDED_CARDS.map((card, index) => (
@@ -447,15 +537,12 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
             card.gradient
           )}
         >
-          {/* Glow effect on hover */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-primary/5 to-secondary/5" />
           
-          {/* Step indicator badge */}
           <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/10">
-            <span className="text-[10px] font-medium text-foreground/50">3 étapes</span>
+            <span className="text-[10px] font-medium text-foreground/50">5 étapes</span>
           </div>
           
-          {/* Icon with animation */}
           <motion.div
             className="relative z-10"
             whileHover={{ rotate: 5, scale: 1.1 }}
@@ -468,7 +555,10 @@ export function GuidedSuggestionCards({ onSubmitPrompt, onboardingCompleted }: G
           </motion.div>
           
           <p className="relative z-10 text-sm font-medium text-foreground">{card.title}</p>
-          <p className="relative z-10 text-xs text-foreground/50 mt-1.5">Questions guidées</p>
+          <p className="relative z-10 text-xs text-foreground/50 mt-2 flex items-center gap-1.5">
+            <Sparkle weight="fill" className="w-3 h-3 text-primary" />
+            Recommandation personnalisée
+          </p>
         </motion.button>
       ))}
     </div>

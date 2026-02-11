@@ -305,6 +305,7 @@ export function ProductDetailMaster({
 
         <ProductReviews 
           productTitle={product.title}
+          productHandle={product.handle}
           enrichedFaq={enrichedData?.faq as any}
           reviewRating={(() => {
             if (!product.reviewRating?.value) return null;

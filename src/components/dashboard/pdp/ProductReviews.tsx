@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Star, PencilSimple, ChatCircleDots, CaretDown } from '@phosphor-icons/react';
+import { Star, ChatCircleDots, CaretDown } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { FAQItem } from './types';
 
 interface ProductReviewsProps {
   productTitle: string;
+  productHandle?: string;
   enrichedFaq?: FAQItem[];
   reviewRating?: number | null;
   reviewCount?: number | null;
 }
 
-export function ProductReviews({ productTitle, enrichedFaq, reviewRating, reviewCount }: ProductReviewsProps) {
+export function ProductReviews({ productTitle, productHandle, enrichedFaq, reviewRating, reviewCount }: ProductReviewsProps) {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const faqItems = enrichedFaq?.slice(0, 4) || [];
   const hasReviews = reviewRating != null && reviewCount != null && reviewCount > 0;
@@ -77,11 +78,19 @@ export function ProductReviews({ productTitle, enrichedFaq, reviewRating, review
       </div>
 
       {/* CTAs */}
-      <div className="flex items-center gap-3 justify-center">
-        <Button variant="outline" disabled className="gap-2">
-          <PencilSimple weight="light" className="w-4 h-4" />
-          Write a Review (Coming Soon)
-        </Button>
+      <div className="flex items-center gap-3 justify-center flex-wrap">
+        {productHandle && (
+          <a
+            href={`https://vitasync2.myshopify.com/products/${productHandle}#judgeme_product_reviews`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="outline" className="gap-2">
+              <Star weight="light" className="w-4 h-4" />
+              Lire les avis sur Judge.me
+            </Button>
+          </a>
+        )}
         <Button variant="ghost" className="gap-2 text-primary">
           <ChatCircleDots weight="light" className="w-4 h-4" />
           Ask VitaSync

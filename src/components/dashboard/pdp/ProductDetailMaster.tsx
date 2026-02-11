@@ -306,6 +306,14 @@ export function ProductDetailMaster({
         <ProductReviews 
           productTitle={product.title}
           enrichedFaq={enrichedData?.faq as any}
+          reviewRating={(() => {
+            if (!product.reviewRating?.value) return null;
+            try {
+              const parsed = JSON.parse(product.reviewRating.value);
+              return parseFloat(parsed?.value ?? parsed);
+            } catch { return parseFloat(product.reviewRating.value); }
+          })()}
+          reviewCount={product.reviewCount?.value ? parseInt(product.reviewCount.value, 10) : null}
         />
 
         <BuildYourStack

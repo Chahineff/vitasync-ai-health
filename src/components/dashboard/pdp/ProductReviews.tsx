@@ -7,11 +7,16 @@ import { FAQItem } from './types';
 interface ProductReviewsProps {
   productTitle: string;
   enrichedFaq?: FAQItem[];
+  reviewRating?: number | null;
+  reviewCount?: number | null;
 }
 
-export function ProductReviews({ productTitle, enrichedFaq }: ProductReviewsProps) {
+export function ProductReviews({ productTitle, enrichedFaq, reviewRating, reviewCount }: ProductReviewsProps) {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const faqItems = enrichedFaq?.slice(0, 4) || [];
+  const hasReviews = reviewRating != null && reviewCount != null && reviewCount > 0;
+  const rating = reviewRating ?? 0;
+  const count = reviewCount ?? 0;
 
   return (
     <section className="py-6 space-y-6">
@@ -22,23 +27,28 @@ export function ProductReviews({ productTitle, enrichedFaq }: ProductReviewsProp
       {/* Summary Rating */}
       <div className="flex items-center gap-6 p-5 rounded-2xl bg-white dark:bg-muted/20 border border-[#E2E8F0] dark:border-border/30">
         <div className="text-center">
-          <div className="text-4xl font-bold text-foreground">—</div>
+          <div className="text-4xl font-bold text-foreground">{hasReviews ? rating.toFixed(1) : '—'}</div>
           <div className="flex items-center gap-1 mt-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star key={star} weight="light" className="w-4 h-4 text-foreground/20" />
-            ))}
+            {[1, 2, 3, 4, 5].map((star) => {
+              const filled = hasReviews && star <= Math.round(rating);
+              return (
+                <Star key={star} weight={filled ? 'fill' : 'light'} className={cn("w-4 h-4", filled ? 'text-amber-400' : 'text-foreground/20')} />
+              );
+            })}
           </div>
-          <p className="text-xs text-foreground/50 mt-1">No reviews yet</p>
+          <p className="text-xs text-foreground/50 mt-1">
+            {hasReviews ? `${count} avis` : 'No reviews yet'}
+          </p>
         </div>
         <div className="flex-1 space-y-1">
-          {[5, 4, 3, 2, 1].map((rating) => (
-            <div key={rating} className="flex items-center gap-2">
-              <span className="text-xs text-foreground/50 w-3">{rating}</span>
+          {[5, 4, 3, 2, 1].map((r) => (
+            <div key={r} className="flex items-center gap-2">
+              <span className="text-xs text-foreground/50 w-3">{r}</span>
               <Star weight="fill" className="w-3 h-3 text-foreground/20" />
               <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                 <div className="h-full bg-foreground/20 rounded-full" style={{ width: '0%' }} />
               </div>
-              <span className="text-xs text-foreground/30 w-6">0</span>
+              <span className="text-xs text-foreground/30 w-6">—</span>
             </div>
           ))}
         </div>

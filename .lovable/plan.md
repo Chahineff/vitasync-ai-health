@@ -1,55 +1,70 @@
 
+# Redesign PDP generique -- Applique a TOUS les produits
 
-# Enrichir le Coach IA avec le Suivi des Complements et les Donnees Scientifiques PDF
+Le design detaille fourni pour la Creatine Monohydrate sert de reference UI. L'implementation est **100% dynamique** : chaque composant s'adapte automatiquement a n'importe quel produit grace aux donnees enrichies (`product_enriched_data`) et aux donnees Shopify. Aucun contenu n'est code en dur pour la Creatine.
 
-## Objectif
+---
 
-Donner au Coach IA (Orbita) acces a deux sources de donnees supplementaires pour des conseils ultra-personnalises :
+## Fichiers a modifier (14) + 1 nouveau
 
-1. **Suivi des complements** (`supplement_tracking`) -- ce que l'utilisateur prend actuellement, ses dosages, ses horaires
-2. **Donnees scientifiques enrichies** (`product_enriched_data`) -- les 92 fiches PDF parsees (ingredients, dosages, etudes, interactions, FAQ, etc.)
+| # | Fichier | Changements principaux |
+|---|---|---|
+| 1 | `ProductDetailMaster.tsx` | Container 1200px, grille 2 colonnes egales, suppression des `border-t`, insertion CoachInsightCard, espacements 24px/16px |
+| 2 | `ProductGallery.tsx` | Badges overlay dynamiques (tags produit), fond blanc + border `#E2E8F0`, masquer slots vides (ne montrer que les vraies images) |
+| 3 | `ProductPurchaseBox.tsx` | H1 34-40px SemiBold, Trust Strip 3 items, prix 22-28px, CTA "Add to pack" Teal `#2DD4BF`, CTA secondaire "Buy once" outline, lien "Ask VitaSync", Subscribe toggle visuel, sticky `top-24` |
+| 4 | **`CoachInsightCard.tsx`** (nouveau) | Lisere gradient Teal-Blue, `enrichedData.coach_tip` ou summary, chips contextuelles (Goal/Training/Budget depuis profil utilisateur), CTA "Ask VitaSync" |
+| 5 | `WhatItDoes.tsx` | 3 cartes max, titres 16-18px SemiBold, descriptions `#475569`, suppression "Best for" tags (deplaces dans QuickBenefitsStrip) |
+| 6 | `HowToTake.tsx` | Tabs "Daily" / "Training day" / "Rest day", timeline chips AM/Post-workout/PM selectionnables (fond `#0B1220` quand actif), CTA "Add to my schedule" outline Teal |
+| 7 | `IngredientsLabel.tsx` | 4 tabs (Supplement Facts / Ingredients / Allergens / Storage), tableau facts fond `#F8FAFC` border `#E2E8F0`, bouton "Copy serving info" |
+| 8 | `QualitySourcing.tsx` | 4 cartes (Manufacturing, Testing/COA, Contaminants, Traceability), bouton "View COA" (grise + "Coming soon" si indisponible) |
+| 9 | `SafetyCautions.tsx` | Card warning simplifiee fond `#FFF7ED` border `#F59E0B`, 3 bullets max, disclaimer "Not medical advice", suppression accordeons |
+| 10 | `BuildYourStack.tsx` | Header "Pairs well with", carrousel horizontal scroll, cards compactes avec reason tag, CTA outline "Add", toast "Bundle updated" |
+| 11 | `ProductReviews.tsx` | Bouton "Ask VitaSync" ajoute, FAQ enrichies en accordeon (4 questions depuis `enrichedFaq`), structure reviews inchangee |
+| 12 | `MobileStickyCart.tsx` | Hauteur 64px + `pb-safe` iOS, CTA Teal "Add to pack", `whileTap scale 0.98`, toast "Added to your monthly stack" |
+| 13 | `QuickBenefitsStrip.tsx` | Labels EN : "Goal", "Format", "Key Ingredient", "When" |
+| 14 | `PDPFooter.tsx` | Simplifie : 2 liens ("Science & Safety", "Privacy") + micro-disclaimer |
+| 15 | `index.ts` | Export CoachInsightCard |
 
-## Ce qui change pour l'utilisateur
+---
 
-- L'IA saura exactement quels complements vous prenez deja et pourra eviter les doublons ou interactions
-- L'IA pourra citer des donnees scientifiques reelles (etudes, dosages recommandes, contre-indications) au lieu de reponses generiques
-- Les recommandations seront plus precises et contextualisees
+## Comment ca marche pour TOUS les produits
 
-## Plan technique
+Chaque section utilise des donnees dynamiques :
 
-### 1. Recuperer le suivi des complements de l'utilisateur
+- **CoachInsightCard** : affiche `enrichedData.coach_tip` (disponible pour les 92 produits enrichis), ou le `summary` en fallback
+- **Trust Strip** : genere dynamiquement depuis les certifications et tags du produit (ex: "Lab-tested" si COA existe, "Vegan" si tag present)
+- **Badges gallery** : extraits des `product.tags` Shopify (Unflavored, Micronized, Vegan, Gluten-Free, etc.)
+- **Tabs HowToTake** : le contenu de chaque tab est derive de `enrichedSuggestedUse` (dosage, timing, with_food) -- les tabs "Training day" / "Rest day" affichent des variantes de timing adaptees
+- **4 tabs Ingredients** : Supplement Facts depuis l'image, Ingredients depuis `enrichedIngredients`, Allergens depuis `enrichedSafety.allergens`, Storage depuis `enrichedQuality`
+- **Quality cards** : textes dynamiques depuis `enrichedQuality.manufacturing`, `enrichedQuality.testing`, `enrichedQuality.certifications`
+- **Safety** : bullets depuis `enrichedSafety.contraindications` + `enrichedSafety.interactions` (max 3)
+- **Cross-sell** : produits filtres depuis le catalogue complet, avec reason tags derives du `productType`
 
-Dans la Edge Function `ai-coach`, ajouter une requete vers `supplement_tracking` pour recuperer les complements actifs de l'utilisateur (nom, dosage, moment de prise, recommande par l'IA ou non).
+---
 
-### 2. Recuperer les donnees enrichies des produits (PDFs)
+## Palette de couleurs (appliquee via classes Tailwind arbitraires)
 
-Ajouter une requete vers `product_enriched_data` pour charger un resume des donnees scientifiques de chaque produit du catalogue (bienfaits, ingredients detailles, contre-indications, interactions, conseils de prise).
+| Token | Hex | Usage |
+|---|---|---|
+| Ink | `#0B1220` | Titres, chips actives |
+| Slate | `#475569` | Sous-titres, descriptions |
+| Border | `#E2E8F0` | Bordures de cartes |
+| BG | `#F8FAFC` | Fond sections, tableaux |
+| Teal | `#2DD4BF` | CTA principal uniquement |
+| Blue | `#38BDF8` | Liens "Ask VitaSync" |
+| Warning BG | `#FFF7ED` | Section safety |
+| Warning Border | `#F59E0B` | Bordure safety |
+| Chip BG | `#F1F5F9` | Badges overlay |
 
-### 3. Injecter ces donnees dans le System Prompt
+---
 
-Ajouter deux nouvelles sections au prompt systeme :
+## Ordre d'implementation
 
-- **"COMPLEMENTS ACTUELS DE L'UTILISATEUR"** -- liste des complements suivis avec dosage et horaire
-- **"BASE DE CONNAISSANCES SCIENTIFIQUES"** -- pour chaque produit enrichi : resume, ingredients cles, interactions, contre-indications, conseils de prise
-
-### 4. Mettre a jour les instructions du prompt
-
-Ajouter des directives pour que l'IA :
-- Verifie les interactions entre les complements actuels et tout nouveau produit recommande
-- Cite les donnees scientifiques reelles (etudes, dosages) quand elle parle d'un produit
-- Evite de recommander des produits que l'utilisateur prend deja
-- Alerte sur les contre-indications en fonction du profil (allergies, grossesse, etc.)
-
-### 5. Optimisation de la taille du contexte
-
-Les 92 fiches enrichies sont volumineuses. Pour rester dans les limites du contexte :
-- Charger un format condense (titre, resume, ingredients principaux, interactions, contre-indications) plutot que l'integralite des donnees
-- Limiter a environ 50-80 tokens par produit dans le prompt
-- Les FAQ et etudes detaillees seront disponibles a la demande si l'utilisateur pose une question specifique sur un produit
-
-### Fichiers modifies
-
-| Fichier | Modification |
-|---|---|
-| `supabase/functions/ai-coach/index.ts` | Ajout de `fetchUserSupplements()` et `fetchEnrichedProductData()`, injection dans `buildEnrichedSystemPrompt()`, nouvelles directives dans le prompt |
-
+1. Creer `CoachInsightCard.tsx` + exporter dans `index.ts`
+2. Modifier `ProductDetailMaster.tsx` (layout, grille, espacement, insertion CoachInsightCard)
+3. Modifier `ProductPurchaseBox.tsx` (Buy Box complet)
+4. Modifier `ProductGallery.tsx` (badges, masquer slots vides)
+5. Modifier les sections de contenu : `WhatItDoes`, `HowToTake`, `IngredientsLabel`, `QuickBenefitsStrip`
+6. Modifier les sections trust/safety : `QualitySourcing`, `SafetyCautions`
+7. Modifier les sections conversion : `BuildYourStack`, `ProductReviews`
+8. Modifier `MobileStickyCart.tsx` et `PDPFooter.tsx`

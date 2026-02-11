@@ -1,71 +1,69 @@
 
 
-# Correction des reponses tronquees et animation typewriter
+# Correction "Produit non disponible" et reponses tronquees
 
-## Problemes identifies
+## Probleme identifie
 
-1. **Reponses tronquees** : L'IA termine parfois avec "produit:" sans afficher la carte produit. Cause : `max_tokens: 4096` est insuffisant avec un system prompt de 130 000 caracteres. Le parsing nettoie les tags malformes mais le texte brut "produit:" reste visible.
+L'erreur dans la console est claire : `Error calling Shopify: Variable $id of type ID! was provided invalid value`.
 
-2. **Pas d'effet typewriter** : Le SSE met a jour le contenu directement dans le state React, ce qui affiche le texte d'un coup a chaque chunk. L'utilisateur veut un reveal progressif caractere par caractere, comme si quelqu'un tapait.
+Deux causes racines :
+
+### Cause 1 : Le regex de parsing casse les IDs contenant des colons
+
+Le variantId fourni par l'IA contient `gid://shopify/ProductVariant/53224061731184` avec des colons (`:`). Le regex actuel `([^:\]]+)` s'arrete au premier colon et capture seulement `gid` au lieu du GID complet. Le parsing est completement fausse.
+
+### Cause 2 : L'IA peut halluciner des IDs produit
+
+Meme si les IDs etaient correctement parses, l'IA genere parfois des IDs numeriques qui ne correspondent a aucun produit reel dans Shopify (ex: `15014337380720`). Appeler `fetchProductById` avec un ID invalide echoue systematiquement.
+
+---
+
+## Solution : Utiliser le cache produit partage au lieu d'appels individuels
+
+Le hook `useShopifyProductResolver` existe deja et charge TOUS les produits en une seule requete, les met en cache, et permet de resoudre n'importe quel ID (numerique ou GID) vers les donnees produit. Il faut l'utiliser dans `ProductRecommendationCard` au lieu de `fetchProductById`.
+
+De plus, il faut corriger le regex pour gerer les GIDs avec colons dans le variantId.
 
 ---
 
 ## Modifications
 
-### 1. Augmenter max_tokens (Edge Function)
+### 1. Corriger le regex de parsing (`ProductRecommendationCard.tsx`)
 
-**Fichier** : `supabase/functions/ai-coach/index.ts`
-
-- Passer `max_tokens` de `4096` a `8192` (ligne 931) pour eviter les reponses tronquees
-- Ajouter dans le system prompt une instruction explicite : "TERMINE TOUJOURS tes tags produit. Ne laisse JAMAIS un tag [[PRODUCT:...]] incomplet."
-
-### 2. Meilleur nettoyage des tags incomplets
-
-**Fichier** : `src/components/dashboard/ProductRecommendationCard.tsx`
-
-- Ameliorer le regex de nettoyage pour capturer aussi les fragments partiels comme `[[PRODUCT:` sans fermeture, ou le texte brut "produit:" orphelin en fin de message
-- Ajouter un nettoyage de `\[\[PROD` et `\[\[P` (debut de tag coupe)
-
-### 3. Systeme typewriter avec buffer progressif
-
-**Fichier** : `src/components/dashboard/ChatInterface.tsx`
-
-Implementer un systeme a deux buffers :
-
-- `fullContent` : le contenu complet recu du SSE (mis a jour en temps reel)
-- `displayedContent` : le contenu affiche a l'ecran (revele progressivement)
-
-Logique :
-- Un `useRef` stocke le contenu complet du SSE
-- Un `setInterval` (toutes les 15-20ms) ajoute 2-3 caracteres au `displayedContent`
-- Quand le SSE est termine ET que `displayedContent` rattrape `fullContent`, le streaming est "termine"
-- Le `isStreaming` passe a `false` uniquement quand le reveal est fini (pas quand le SSE finit)
-
-Cela garantit que meme si l'IA repond vite, le texte s'affiche progressivement.
-
-### 4. Masque gradient pendant le reveal
-
-**Fichier** : `src/components/dashboard/chat/ChatMessageBubble.tsx`
-
-Le masque gradient existant (lignes 206-208) reste en place. Il est deja conditionne a `isStreaming`, donc avec le nouveau systeme de buffer, il restera actif pendant toute la duree du reveal progressif.
-
----
-
-## Flux technique
-
-```text
-SSE chunks ──> fullContentRef (instantane)
-                    │
-            setInterval 15ms
-                    │
-                    v
-          displayedContent (state, +3 chars)
-                    │
-                    v
-           ChatMessageBubble
-           (isRevealing = true tant que displayed < full)
-           (masque gradient en bas)
+Remplacer le regex actuel :
 ```
+/\[\[PRODUCT:([^:\]]+):([^:\]]+):([^:\]]+):([^\]]+)\]\]/g
+```
+
+Par un regex qui gere les GIDs contenant des colons dans le variantId :
+```
+/\[\[PRODUCT:([^:\]]+):((?:gid:\/\/[^:]+|[^:\]]+)):([^:\]]+):([^\]]+)\]\]/g
+```
+
+Ce nouveau pattern autorise `gid://...` comme variantId sans casser sur les colons internes.
+
+### 2. Utiliser `useShopifyProductResolver` dans `ProductRecommendationCard.tsx`
+
+Remplacer l'appel direct a `fetchProductById` (qui echoue quand l'ID est hallucine) par une resolution via le cache partage :
+
+- Importer `useShopifyProductResolver` au niveau du composant parent (le `ChatMessageBubble` qui rend les cartes produit)
+- Ou bien dans `ProductRecommendationCard` lui-meme, utiliser le hook pour resoudre le productId
+- Le hook charge tous les produits une seule fois et les met en cache, puis fait une correspondance par ID numerique ou GID
+- Si le productId ne matche pas par ID, ajouter un fallback par nom de produit (fuzzy match sur le titre)
+
+### 3. Ajouter un fallback par nom de produit
+
+Si le productId ne se resout pas via le cache (ID hallucine), chercher le produit par son nom (`product.name` du tag) dans la liste des produits caches. Cela garantit que meme avec un mauvais ID, le produit s'affiche si le nom est correct.
+
+### 4. Simplifier le format des IDs dans le system prompt (`ai-coach/index.ts`)
+
+Changer le format du tag dans le catalogue pour utiliser uniquement des IDs numeriques (sans GID pour le variantId) :
+```
+Avant : [[PRODUCT:${productId}:${variantId}:${p.title}:${price}]]
+Apres : [[PRODUCT:${productId}:${variantNumericId}:${p.title}:${price}]]
+```
+
+Ou `variantNumericId = variant.id.split('/').pop()` pour eviter les GIDs avec colons dans le tag.
 
 ---
 
@@ -73,8 +71,6 @@ SSE chunks ──> fullContentRef (instantane)
 
 | Fichier | Modification |
 |---|---|
-| `supabase/functions/ai-coach/index.ts` | max_tokens 4096 -> 8192, instruction "ne jamais tronquer les tags" |
-| `src/components/dashboard/ProductRecommendationCard.tsx` | Nettoyage ameliore des tags partiels |
-| `src/components/dashboard/ChatInterface.tsx` | Systeme typewriter a deux buffers (fullContent + displayedContent), isStreaming etendu au reveal |
-| `src/components/dashboard/chat/ChatMessageBubble.tsx` | Aucun changement structurel, le masque gradient fonctionne deja |
+| `src/components/dashboard/ProductRecommendationCard.tsx` | Regex corrige pour GIDs, fallback par nom de produit via `useShopifyProductResolver` |
+| `supabase/functions/ai-coach/index.ts` | Utiliser des IDs numeriques (sans `gid://`) dans les tags `[[PRODUCT:...]]` du catalogue |
 

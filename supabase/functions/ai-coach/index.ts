@@ -87,7 +87,7 @@ async function fetchShopifyCatalog(): Promise<string> {
       const variant = p.variants.edges[0]?.node;
       const price = variant?.price?.amount || '0';
       const productId = p.id.split('/').pop();
-      const variantId = variant?.id || '';
+      const variantId = variant?.id?.split('/').pop() || '';
       const inStock = variant?.availableForSale ? '✓ En stock' : '⚠ Rupture';
       const tags = p.tags || [];
       

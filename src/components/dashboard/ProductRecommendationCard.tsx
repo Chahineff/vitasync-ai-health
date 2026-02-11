@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Plus, Check, SpinnerGap, Package } from '@phosphor-icons/react';
 import { useCartStore } from '@/stores/cartStore';
 import { useSupplementTracking } from '@/hooks/useSupplementTracking';
-import { fetchProductById, ShopifyProduct } from '@/lib/shopify';
+import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { toast } from 'sonner';
 import { 
   parseSubscriptionBlock, 
@@ -62,6 +62,48 @@ function ProductCardError() {
   );
 }
 
+// Module-level cache for all products (shared across instances)
+let allProductsCache: ShopifyProduct[] | null = null;
+let allProductsPromise: Promise<ShopifyProduct[]> | null = null;
+
+function ensureAllProducts(): Promise<ShopifyProduct[]> {
+  if (!allProductsPromise) {
+    allProductsPromise = fetchProducts(100).then(products => {
+      allProductsCache = products;
+      return products;
+    });
+  }
+  return allProductsPromise;
+}
+
+function findProductInCache(productId: string, productName: string): ShopifyProduct | null {
+  if (!allProductsCache) return null;
+  const numericId = productId.split('/').pop() || productId;
+  
+  // Try match by numeric ID
+  for (const p of allProductsCache) {
+    const pNumId = p.node.id.split('/').pop() || '';
+    if (pNumId === numericId) return p;
+    // Also check variant IDs
+    for (const v of p.node.variants.edges) {
+      const vNumId = v.node.id.split('/').pop() || '';
+      if (vNumId === numericId) return p;
+    }
+  }
+  
+  // Fallback: fuzzy match by product name
+  const normalizedName = productName.toLowerCase().trim();
+  for (const p of allProductsCache) {
+    if (p.node.title.toLowerCase().trim() === normalizedName) return p;
+  }
+  // Partial match
+  for (const p of allProductsCache) {
+    if (p.node.title.toLowerCase().includes(normalizedName) || normalizedName.includes(p.node.title.toLowerCase())) return p;
+  }
+  
+  return null;
+}
+
 export function ProductRecommendationCard({ product }: ProductRecommendationCardProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -74,37 +116,32 @@ export function ProductRecommendationCard({ product }: ProductRecommendationCard
   const addItem = useCartStore(state => state.addItem);
   const { addSupplement } = useSupplementTracking();
 
-  // Fetch product details from Shopify
+  // Resolve product from shared cache
   useEffect(() => {
-    const loadProductDetails = async () => {
-      setIsLoading(true);
-      setError(false);
-      
-      try {
-        const fullProduct = await fetchProductById(product.productId);
-        
-        if (fullProduct) {
-          setProductData({
-            imageUrl: fullProduct.node.images.edges[0]?.node.url || '',
-            title: fullProduct.node.title,
-            price: fullProduct.node.priceRange.minVariantPrice.amount,
-            currency: fullProduct.node.priceRange.minVariantPrice.currencyCode,
-            variantId: fullProduct.node.variants.edges[0]?.node.id || product.variantId,
-            fullProduct,
-          });
-        } else {
-          setError(true);
-        }
-      } catch (err) {
-        console.error('Error fetching product:', err);
-        setError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setIsLoading(true);
+    setError(false);
     
-    loadProductDetails();
-  }, [product.productId, product.variantId]);
+    ensureAllProducts().then(() => {
+      const found = findProductInCache(product.productId, product.name);
+      if (found) {
+        setProductData({
+          imageUrl: found.node.images.edges[0]?.node.url || '',
+          title: found.node.title,
+          price: found.node.priceRange.minVariantPrice.amount,
+          currency: found.node.priceRange.minVariantPrice.currencyCode,
+          variantId: found.node.variants.edges[0]?.node.id || product.variantId,
+          fullProduct: found,
+        });
+      } else {
+        console.warn(`Product not found in cache: ID=${product.productId}, Name=${product.name}`);
+        setError(true);
+      }
+      setIsLoading(false);
+    }).catch(() => {
+      setError(true);
+      setIsLoading(false);
+    });
+  }, [product.productId, product.name]);
 
   const handleAddToCart = async () => {
     if (!productData) return;
@@ -283,13 +320,12 @@ export function parseProductRecommendations(content: string): {
   let textToProcess = subscriptionResult.text;
   
   // Format: [[PRODUCT:productId:variantId:nom:prix]]
-  // Also handle malformed tags and clean them
-  const regex = /\[\[PRODUCT:([^:\]]+):([^:\]]+):([^:\]]+):([^\]]+)\]\]/g;
+  // Support both numeric IDs and GIDs (gid://shopify/...) which contain colons
+  const regex = /\[\[PRODUCT:((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):([^:\]]+):([^\]]+)\]\]/g;
   const products: ProductRecommendation[] = [];
   
   // Replace product tags with placeholders
   const text = textToProcess.replace(regex, (match, productId, variantId, name, price) => {
-    // Validate that we have all required parts
     if (productId && variantId && name && price) {
       products.push({ 
         productId: productId.trim(), 
@@ -299,18 +335,19 @@ export function parseProductRecommendations(content: string): {
       });
       return `__PRODUCT_${products.length - 1}__`;
     }
-    // If malformed, remove it entirely
     return '';
   });
   
-  // Clean up any remaining malformed product tags
+  // Clean up any remaining malformed product tags and orphan text
   const cleanedText = text
-    .replace(/\[\[PRODUCT:[^\]]*\]\]/g, '') // Remove any remaining malformed tags
-    .replace(/\[\[PRODUCT:[^\]]*$/g, '')     // Remove unclosed tags at end
-    .replace(/\[\[PROD[^\]]*$/g, '')         // Remove partial tag starts
-    .replace(/\[\[P[^\]]*$/g, '')            // Remove very early partial tags
-    .replace(/\bproduit\s*:\s*$/gi, '')      // Remove orphan "produit:" at end
-    .replace(/\bproduit\s*:\s*\n/gi, '\n')   // Remove orphan "produit:" mid-text
+    .replace(/\[\[PRODUCT:[^\]]*\]\]/g, '')   // Remove remaining malformed closed tags
+    .replace(/\[\[PRODUCT:[^\]]*$/gm, '')     // Remove unclosed tags at end
+    .replace(/\[\[PROD[^\]]*$/gm, '')         // Remove partial tag starts
+    .replace(/\[\[P[^\]]*$/gm, '')            // Remove very early partial tags
+    .replace(/\[\[[^\]]*$/gm, '')             // Remove any unclosed [[ at end of line
+    .replace(/\bproduit\s*:\s*$/gim, '')      // Remove orphan "produit:" at end
+    .replace(/\bproduit\s*:\s*\n/gi, '\n')    // Remove orphan "produit:" mid-text
+    .replace(/\bproduit\s*:\s*(?=\s|$)/gim, '') // Remove standalone "produit:" anywhere
     .replace(/^\s*\n/gm, '\n')               // Clean up extra blank lines
     .trim();
   

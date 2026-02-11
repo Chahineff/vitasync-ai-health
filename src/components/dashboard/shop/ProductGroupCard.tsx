@@ -62,13 +62,11 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
       onClick={() => onProductClick?.(displayProduct.node.handle)} 
       className={onProductClick ? "cursor-pointer" : ""}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => {setIsHovered(false);}}
     >
       <motion.div
         whileHover={{ y: -4 }}
-        className={`glass-card rounded-2xl overflow-hidden border border-white/10 group h-full flex flex-col relative ${
-          isHovered ? 'animate-card-shine' : ''
-        }`}
+        className="glass-card rounded-2xl overflow-hidden border border-white/10 group h-full flex flex-col relative"
       >
         {/* Image */}
         <div className="relative aspect-square bg-gradient-to-br from-white/5 to-white/10 overflow-hidden">

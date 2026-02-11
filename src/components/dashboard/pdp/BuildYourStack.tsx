@@ -1,8 +1,8 @@
-import { Plus, Stack } from '@phosphor-icons/react';
+import { Plus, Check, SpinnerGap } from '@phosphor-icons/react';
 import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
-import { useTranslation } from '@/hooks/useTranslation';
+import { useState } from 'react';
 
 interface BuildYourStackProps {
   products: ShopifyProduct[];
@@ -11,18 +11,13 @@ interface BuildYourStackProps {
 }
 
 export function BuildYourStack({ products, currentProductId, onProductClick }: BuildYourStackProps) {
-  const { t } = useTranslation();
   const addItem = useCartStore(state => state.addItem);
   
-  // Filter out current product and get up to 4 products
   const crossSellProducts = products
     .filter(p => p.node.id !== currentProductId)
-    .slice(0, 4);
+    .slice(0, 6);
 
   if (crossSellProducts.length === 0) return null;
-
-  const pairsWell = crossSellProducts.slice(0, 2);
-  const popularStack = crossSellProducts.slice(2, 4);
 
   const handleAddToCart = async (product: ShopifyProduct) => {
     const variant = product.node.variants.edges[0]?.node;
@@ -37,129 +32,100 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
         quantity: 1,
         selectedOptions: variant.selectedOptions || [],
       });
-      toast.success(t('pdp.addedToCart'), {
-        description: product.node.title,
+      toast.success('Bundle updated', {
+        description: `${product.node.title} added`,
         position: 'top-center',
       });
-    } catch (error) {
-      toast.error(t('shop.addError'));
+    } catch {
+      toast.error('Failed to add product');
     }
   };
 
+  // Derive reason tag from productType
+  const getReasonTag = (type: string): string => {
+    const t = type?.toLowerCase() || '';
+    if (t.includes('protein')) return 'Recovery';
+    if (t.includes('vitamin')) return 'Daily Health';
+    if (t.includes('mineral')) return 'Essential';
+    if (t.includes('sleep')) return 'Sleep';
+    if (t.includes('energy')) return 'Energy';
+    if (t.includes('omega') || t.includes('fish')) return 'Heart Health';
+    if (t.includes('probiotic') || t.includes('digest')) return 'Gut Health';
+    return 'Wellness';
+  };
+
   return (
-    <section className="py-8 space-y-6">
-      <div className="flex items-center gap-2">
-        <Stack weight="light" className="w-5 h-5 text-primary" />
-        <h2 className="text-xl font-semibold text-foreground">
-          {t('pdp.buildYourStack')}
-        </h2>
-      </div>
+    <section className="py-6 space-y-4">
+      <h2 className="text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
+        Pairs well with
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pairs Well With */}
-        {pairsWell.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="text-sm text-foreground/60 font-medium">{t('pdp.pairsWellWith')}</h3>
-            <div className="space-y-3">
-              {pairsWell.map((product) => (
-                <CrossSellCard 
-                  key={product.node.id} 
-                  product={product} 
-                  onAdd={() => handleAddToCart(product)}
-                  onClick={() => onProductClick?.(product.node.handle)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Popular Stack */}
-        {popularStack.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="text-sm text-foreground/60 font-medium">{t('pdp.popularStack')}</h3>
-            <div className="space-y-3">
-              {popularStack.map((product) => (
-                <CrossSellCard 
-                  key={product.node.id} 
-                  product={product} 
-                  onAdd={() => handleAddToCart(product)}
-                  onClick={() => onProductClick?.(product.node.handle)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+      {/* Horizontal scroll carousel */}
+      <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-thin -mx-2 px-2">
+        {crossSellProducts.map((product) => (
+          <CompactCrossSellCard
+            key={product.node.id}
+            product={product}
+            reasonTag={getReasonTag(product.node.productType)}
+            onAdd={() => handleAddToCart(product)}
+            onClick={() => onProductClick?.(product.node.handle)}
+          />
+        ))}
       </div>
     </section>
   );
 }
 
-interface CrossSellCardProps {
-  product: ShopifyProduct;
-  onAdd: () => void;
-  onClick: () => void;
-}
-
-function CrossSellCard({ product, onAdd, onClick }: CrossSellCardProps) {
+function CompactCrossSellCard({ product, reasonTag, onAdd, onClick }: { 
+  product: ShopifyProduct; reasonTag: string; onAdd: () => void; onClick: () => void 
+}) {
+  const [adding, setAdding] = useState(false);
   const image = product.node.images.edges[0]?.node;
   const price = product.node.priceRange.minVariantPrice;
-  
-  // Get first benefit from description
-  const benefit = product.node.description
-    ?.replace(/<[^>]+>/g, '')
-    ?.split('.')
-    ?.[0]
-    ?.trim()
-    ?.substring(0, 60) || 'Premium supplement';
+
+  const handleAdd = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAdding(true);
+    await onAdd();
+    setAdding(false);
+  };
 
   return (
-    <div className="flex items-center gap-4 p-4 rounded-2xl bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors group">
+    <div className="flex-shrink-0 w-[160px] rounded-2xl bg-[#F8FAFC] dark:bg-muted/30 border border-[#E2E8F0] dark:border-border/30 overflow-hidden">
       {/* Image */}
-      <button 
-        onClick={onClick}
-        className="w-16 h-16 rounded-xl bg-background overflow-hidden flex-shrink-0"
-      >
+      <button onClick={onClick} className="w-full aspect-square bg-white dark:bg-muted/10 p-2">
         {image ? (
-          <img 
-            src={image.url} 
-            alt={image.altText || product.node.title}
-            className="w-full h-full object-cover"
-          />
+          <img src={image.url} alt={image.altText || product.node.title} className="w-full h-full object-contain" />
         ) : (
-          <div className="w-full h-full bg-muted/50 flex items-center justify-center">
-            <span className="text-xs text-foreground/30">IMG</span>
-          </div>
+          <div className="w-full h-full flex items-center justify-center text-foreground/20 text-xs">IMG</div>
         )}
       </button>
 
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <button 
-          onClick={onClick}
-          className="text-left"
-        >
-          <h4 className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+      <div className="p-3 space-y-2">
+        {/* Reason tag */}
+        <span className="inline-block px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
+          {reasonTag}
+        </span>
+
+        {/* Title */}
+        <button onClick={onClick} className="block text-left">
+          <h4 className="text-xs font-medium text-foreground line-clamp-2 leading-tight hover:text-primary transition-colors">
             {product.node.title}
           </h4>
         </button>
-        <p className="text-xs text-foreground/50 font-light truncate">
-          {benefit}
-        </p>
-        <p className="text-sm font-semibold text-foreground mt-1">
-          {parseFloat(price.amount).toFixed(2)} €
-        </p>
-      </div>
 
-      {/* Add Button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onAdd();
-        }}
-        className="w-10 h-10 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground flex items-center justify-center transition-colors flex-shrink-0"
-      >
-        <Plus weight="bold" className="w-5 h-5" />
-      </button>
+        {/* Price + Add */}
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold text-foreground">{parseFloat(price.amount).toFixed(2)} €</span>
+          <button
+            onClick={handleAdd}
+            disabled={adding}
+            className="w-7 h-7 rounded-lg border border-[#E2E8F0] dark:border-border/50 flex items-center justify-center hover:bg-secondary hover:text-[#0B1220] hover:border-secondary transition-colors disabled:opacity-50"
+          >
+            {adding ? <SpinnerGap className="w-3.5 h-3.5 animate-spin" /> : <Plus weight="bold" className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

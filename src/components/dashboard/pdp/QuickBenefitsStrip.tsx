@@ -16,23 +16,23 @@ export function QuickBenefitsStrip({ productType, parsedData, bestForTags, enric
   const bestTime = enrichedTiming || deriveBestTime(parsedData?.suggestedUse);
 
   const items = [
-    { icon: Target, label: 'Objectif', value: goal },
+    { icon: Target, label: 'Goal', value: goal },
     { icon: Package, label: 'Format', value: format },
-    { icon: Flask, label: 'Ingrédient clé', value: keyIngredient },
-    { icon: Clock, label: 'Quand', value: bestTime },
+    { icon: Flask, label: 'Key Ingredient', value: keyIngredient },
+    { icon: Clock, label: 'When', value: bestTime },
   ].filter(item => item.value);
 
   if (items.length === 0) return null;
 
   return (
-    <section className="py-6">
-      <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+    <section className="py-4">
+      <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
         {items.map((item, index) => (
-          <div key={index} className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-muted/30 border border-border/30">
-            <item.icon weight="light" className="w-5 h-5 text-primary" />
-            <div>
-              <p className="text-xs text-foreground/50 font-light">{item.label}</p>
-              <p className="text-sm text-foreground font-medium">{item.value}</p>
+          <div key={index} className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#F1F5F9] dark:bg-muted/30 border border-[#E2E8F0] dark:border-border/30">
+            <item.icon weight="light" className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5">
+              <p className="text-xs text-foreground/50 font-light">{item.label}:</p>
+              <p className="text-xs text-foreground font-medium">{item.value}</p>
             </div>
           </div>
         ))}

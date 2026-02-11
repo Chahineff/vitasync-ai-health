@@ -51,13 +51,13 @@ export function MobileStickyCart({ product, selectedVariantIndex }: MobileSticky
       });
       
       setJustAdded(true);
-      toast.success('Produit ajouté au panier', {
+      toast.success('Added to your monthly stack', {
         description: product.title,
         position: 'top-center',
       });
       setTimeout(() => setJustAdded(false), 2000);
-    } catch (error) {
-      toast.error("Erreur lors de l'ajout au panier");
+    } catch {
+      toast.error('Failed to add to cart');
     } finally {
       setIsAdding(false);
     }
@@ -67,43 +67,40 @@ export function MobileStickyCart({ product, selectedVariantIndex }: MobileSticky
     <motion.div 
       initial={{ y: 100 }}
       animate={{ y: 0 }}
-      className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-lg border-t border-border/50 lg:hidden z-40"
+      className="fixed bottom-0 left-0 right-0 h-16 bg-background/95 backdrop-blur-lg border-t border-border/50 lg:hidden z-40 pb-[env(safe-area-inset-bottom)]"
     >
-      <div className="flex items-center gap-4 max-w-lg mx-auto">
+      <div className="flex items-center gap-4 h-full px-4 max-w-lg mx-auto">
         {/* Price */}
         <div className="flex-shrink-0">
           <p className="text-lg font-bold text-foreground">
             {parseFloat(price.amount).toFixed(2)} €
           </p>
-          {selectedVariant && !selectedVariant.availableForSale && (
-            <p className="text-xs text-destructive">Rupture</p>
-          )}
         </div>
 
-        {/* Add to Cart Button */}
+        {/* Add to pack CTA */}
         <motion.button
           onClick={handleAddToCart}
           disabled={isAdding || !selectedVariant?.availableForSale}
           whileTap={{ scale: 0.98 }}
           className={cn(
-            "flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl text-base font-semibold transition-all shadow-lg",
+            "flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-semibold transition-all",
             justAdded
               ? "bg-green-500/20 text-green-600 border border-green-500/30"
-              : "bg-primary hover:bg-primary/90 text-primary-foreground",
+              : "bg-secondary hover:bg-secondary/90 text-[#0B1220]",
             "disabled:opacity-50 disabled:cursor-not-allowed"
           )}
         >
           {isAdding ? (
-            <SpinnerGap className="w-5 h-5 animate-spin" />
+            <SpinnerGap className="w-4 h-4 animate-spin" />
           ) : justAdded ? (
             <>
-              <Check weight="bold" className="w-5 h-5" />
-              Ajouté !
+              <Check weight="bold" className="w-4 h-4" />
+              Added!
             </>
           ) : (
             <>
-              <ShoppingCartSimple weight="bold" className="w-5 h-5" />
-              Add to Cart
+              <ShoppingCartSimple weight="bold" className="w-4 h-4" />
+              Add to pack
             </>
           )}
         </motion.button>

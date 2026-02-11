@@ -14,3 +14,4 @@ export { ProductReviews } from './ProductReviews';
 export { BuildYourStack } from './BuildYourStack';
 export { PDPFooter } from './PDPFooter';
 export { MobileStickyCart } from './MobileStickyCart';
+export { CoachInsightCard } from './CoachInsightCard';

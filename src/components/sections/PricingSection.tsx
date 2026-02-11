@@ -1,4 +1,4 @@
-import { Check, X, Star } from "@phosphor-icons/react";
+import { Check, X, Star, Lightning } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -41,10 +41,11 @@ export function PricingSection() {
       ],
       cta: t("pricing.plan1.cta"),
       popular: false,
+      accent: "secondary" as const,
     },
     {
       name: t("pricing.plan2.name"),
-      price: t("pricing.premiumPrice"),
+      price: t("pricing.goPrice"),
       period: t("pricing.perMonth"),
       description: t("pricing.plan2.description"),
       features: [
@@ -56,20 +57,39 @@ export function PricingSection() {
         t("pricing.plan2.feature6"),
       ],
       cta: t("pricing.plan2.cta"),
+      popular: false,
+      accent: "primary" as const,
+    },
+    {
+      name: t("pricing.plan3.name"),
+      price: t("pricing.premiumPrice"),
+      period: t("pricing.perMonth"),
+      description: t("pricing.plan3.description"),
+      features: [
+        t("pricing.plan3.feature1"),
+        t("pricing.plan3.feature2"),
+        t("pricing.plan3.feature3"),
+        t("pricing.plan3.feature4"),
+        t("pricing.plan3.feature5"),
+        t("pricing.plan3.feature6"),
+        t("pricing.plan3.feature7"),
+      ],
+      cta: t("pricing.plan3.cta"),
       popular: true,
+      accent: "primary" as const,
     },
   ];
 
   const comparisonFeatures = [
-    { name: t("pricing.comparison.row1"), free: t("pricing.comparison.row1Free"), premium: t("pricing.comparison.row1Premium") },
-    { name: t("pricing.comparison.row2"), free: true, premium: true },
-    { name: t("pricing.comparison.row3"), free: false, premium: true },
-    { name: t("pricing.comparison.row4"), free: false, premium: true },
-    { name: t("pricing.comparison.row5"), free: t("pricing.comparison.row5Free"), premium: t("pricing.comparison.row5Premium") },
-    { name: t("pricing.comparison.row6"), free: false, premium: true },
-    { name: t("pricing.comparison.row7"), free: t("pricing.comparison.row7Free"), premium: t("pricing.comparison.row7Premium") },
-    { name: t("pricing.comparison.row8"), free: false, premium: true },
-    { name: t("pricing.comparison.row9"), free: t("pricing.comparison.row9Free"), premium: t("pricing.comparison.row9Premium") },
+    { name: t("pricing.comparison.row1"), free: t("pricing.comparison.row1Free"), go: t("pricing.comparison.row1Go"), premium: t("pricing.comparison.row1Premium") },
+    { name: t("pricing.comparison.row2"), free: true, go: true, premium: true },
+    { name: t("pricing.comparison.row3"), free: false, go: false, premium: true },
+    { name: t("pricing.comparison.row4"), free: false, go: t("pricing.comparison.row4Go"), premium: true },
+    { name: t("pricing.comparison.row5"), free: t("pricing.comparison.row5Free"), go: t("pricing.comparison.row5Go"), premium: t("pricing.comparison.row5Premium") },
+    { name: t("pricing.comparison.row6"), free: false, go: false, premium: true },
+    { name: t("pricing.comparison.row7"), free: t("pricing.comparison.row7Free"), go: t("pricing.comparison.row7Go"), premium: t("pricing.comparison.row7Premium") },
+    { name: t("pricing.comparison.row8"), free: false, go: true, premium: true },
+    { name: t("pricing.comparison.row9"), free: t("pricing.comparison.row9Free"), go: t("pricing.comparison.row9Go"), premium: t("pricing.comparison.row9Premium") },
   ];
 
   return (
@@ -91,7 +111,7 @@ export function PricingSection() {
         </ScrollReveal>
 
         {/* Plan Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 max-w-4xl mx-auto px-2 md:px-0 mb-12 md:mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto px-2 md:px-0 mb-12 md:mb-20">
           {plans.map((plan, index) => (
             <ScrollReveal key={plan.name} delay={index * 0.1}>
               <GlassCard 
@@ -113,9 +133,13 @@ export function PricingSection() {
                 <div className="p-5 md:p-8">
                   {/* Plan Header */}
                   <div className="mb-6 md:mb-8">
-                    <h3 className="text-lg md:text-xl font-light text-foreground mb-2">
-                      {plan.name}
-                    </h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      {index === 1 && <Lightning size={18} weight="fill" className="text-primary" />}
+                      {index === 2 && <Star size={18} weight="fill" className="text-primary" />}
+                      <h3 className="text-lg md:text-xl font-light text-foreground">
+                        {plan.name}
+                      </h3>
+                    </div>
                     <div className="flex items-baseline gap-1 mb-2 md:mb-3">
                       <span className="text-3xl md:text-4xl lg:text-5xl font-light text-foreground">
                         {plan.price}
@@ -171,7 +195,7 @@ export function PricingSection() {
 
         {/* Comparison Table */}
         <ScrollReveal delay={0.2}>
-          <div className="max-w-4xl mx-auto px-2 md:px-0">
+          <div className="max-w-5xl mx-auto px-2 md:px-0">
             <GlassCard className="overflow-hidden">
               <div className="p-4 md:p-6 border-b border-border/50">
                 <h3 className="text-lg md:text-xl font-light text-foreground text-center">
@@ -182,11 +206,17 @@ export function PricingSection() {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-border/50">
-                      <TableHead className="text-foreground/70 font-light w-1/2">{t("pricing.comparison.feature")}</TableHead>
-                      <TableHead className="text-center text-foreground/70 font-light w-1/4">{t("pricing.free")}</TableHead>
-                      <TableHead className="text-center text-foreground/70 font-light w-1/4">
+                      <TableHead className="text-foreground/70 font-light w-[35%]">{t("pricing.comparison.feature")}</TableHead>
+                      <TableHead className="text-center text-foreground/70 font-light w-[20%]">{t("pricing.free")}</TableHead>
+                      <TableHead className="text-center text-foreground/70 font-light w-[22%]">
                         <span className="inline-flex items-center gap-1">
-                          Premium
+                          Go AI
+                          <Lightning size={12} weight="fill" className="text-primary" />
+                        </span>
+                      </TableHead>
+                      <TableHead className="text-center text-foreground/70 font-light w-[23%]">
+                        <span className="inline-flex items-center gap-1">
+                          Premium AI
                           <Star size={12} weight="fill" className="text-primary" />
                         </span>
                       </TableHead>
@@ -200,6 +230,9 @@ export function PricingSection() {
                         </TableCell>
                         <TableCell className="text-center">
                           <FeatureValue value={feature.free} />
+                        </TableCell>
+                        <TableCell className="text-center bg-primary/[0.03]">
+                          <FeatureValue value={feature.go} />
                         </TableCell>
                         <TableCell className="text-center bg-primary/5">
                           <FeatureValue value={feature.premium} />

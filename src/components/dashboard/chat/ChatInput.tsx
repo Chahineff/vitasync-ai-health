@@ -266,22 +266,31 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
               </div>
 
               <div className="flex items-center gap-3">
-                {/* Character counter */}
-                <span className={cn(
-                  "text-xs transition-colors",
-                  input.length > MAX_CHARS * 0.9 
-                    ? "text-destructive" 
-                    : "text-foreground/30"
-                )}>
+                {/* Character counter with progressive color */}
+                <motion.span 
+                  className={cn(
+                    "text-xs transition-colors",
+                    input.length > MAX_CHARS * 0.9 
+                      ? "text-destructive font-medium" 
+                      : input.length > MAX_CHARS * 0.75
+                      ? "text-amber-500"
+                      : "text-foreground/30"
+                  )}
+                  animate={input.length > MAX_CHARS * 0.9 ? { scale: [1, 1.15, 1] } : {}}
+                  transition={{ duration: 0.3 }}
+                >
                   {input.length.toLocaleString()}/{MAX_CHARS.toLocaleString()}
-                </span>
+                </motion.span>
                 
                 {/* Send Button */}
                 <motion.button
                   type="submit"
                   disabled={!input.trim() || isLoading || disabled}
                   whileHover={{ scale: input.trim() && !isLoading ? 1.05 : 1 }}
-                  whileTap={{ scale: input.trim() && !isLoading ? 0.95 : 1 }}
+                  whileTap={input.trim() && !isLoading ? { 
+                    scale: 0.9, 
+                    rotate: -45,
+                  } : { scale: 1 }}
                   className={cn(
                     "p-3 rounded-xl transition-all duration-300",
                     input.trim() && !isLoading
@@ -291,10 +300,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
                 >
                   <PaperPlaneTilt 
                     weight="fill" 
-                    className={cn(
-                      "w-5 h-5 transition-transform duration-300",
-                      input.trim() && !isLoading && "hover:rotate-12"
-                    )} 
+                    className="w-5 h-5 transition-transform duration-300"
                   />
                 </motion.button>
               </div>

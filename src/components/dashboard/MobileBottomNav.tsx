@@ -4,13 +4,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "settings" | "help";
 
-// Custom VitaSync icon component for Coach IA
 const VitaSyncIcon = ({ className }: { className?: string }) => (
-  <img 
-    src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" 
-    alt="Coach IA" 
-    className={className || "w-5 h-5"}
-  />
+  <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="Coach IA" className={className || "w-5 h-5"} />
 );
 
 interface MobileBottomNavProps {
@@ -30,20 +25,16 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
     { id: "settings" as Section, labelKey: "dashboard.settings", icon: Gear },
   ];
 
-  // Map product section to shop for nav highlighting
   const displaySection = activeSection === "product" ? "shop" : activeSection;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-      {/* Glass background with blur */}
       <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-white/10" />
       
-      {/* Nav items */}
       <div className="relative flex items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {navItems.map((item) => {
           const isActive = displaySection === item.id;
           const Icon = item.icon;
-          // Get translated label and take first word for mobile
           const label = t(item.labelKey).split(' ')[0];
           
           return (
@@ -52,29 +43,39 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
               onClick={() => onSectionChange(item.id)}
               className="relative flex flex-col items-center gap-1 px-3 py-2 min-w-[56px]"
             >
-              {/* Active indicator */}
+              {/* Active indicator with spring bounce */}
               {isActive && (
                 <motion.div
                   layoutId="mobileNavIndicator"
                   className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/20"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                 />
               )}
               
-              {/* Icon */}
-              <Icon 
-                weight={isActive ? "fill" : "light"} 
-                className={`w-5 h-5 relative z-10 transition-colors ${
-                  isActive ? 'text-primary' : 'text-foreground/60'
-                }`}
-              />
+              {/* Icon with scale bounce */}
+              <motion.div
+                animate={isActive ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="relative z-10"
+              >
+                <Icon 
+                  weight={isActive ? "fill" : "light"} 
+                  className={`w-5 h-5 transition-colors ${
+                    isActive ? 'text-primary' : 'text-foreground/60'
+                  }`}
+                />
+              </motion.div>
               
-              {/* Label */}
-              <span className={`text-[10px] font-medium relative z-10 transition-colors ${
-                isActive ? 'text-primary' : 'text-foreground/50'
-              }`}>
+              {/* Label with slide-up */}
+              <motion.span 
+                className={`text-[10px] font-medium relative z-10 transition-colors ${
+                  isActive ? 'text-primary' : 'text-foreground/50'
+                }`}
+                animate={isActive ? { y: [4, 0], opacity: [0, 1] } : {}}
+                transition={{ duration: 0.2 }}
+              >
                 {label}
-              </span>
+              </motion.span>
             </button>
           );
         })}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCartSimple, Star, Check, SpinnerGap } from '@phosphor-icons/react';
 import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
 import { useCartStore } from '@/stores/cartStore';
@@ -18,12 +18,11 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const addItem = useCartStore(state => state.addItem);
 
   const { products, baseTitle, flavors } = group;
   const hasMultipleFlavors = flavors.length > 1;
-  
-  // Show hovered product or selected product
   const displayIndex = hoveredIndex !== null ? hoveredIndex : selectedProductIndex;
   const displayProduct = products[displayIndex];
   const mainImage = displayProduct.node.images.edges[0]?.node;
@@ -33,7 +32,6 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
     if (!selectedVariant || isAdding) return;
 
     setIsAdding(true);
@@ -59,59 +57,53 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
     }
   };
 
-  const handleCardClick = () => {
-    if (onProductClick) {
-      onProductClick(displayProduct.node.handle);
-    }
-  };
-
-  const handleFlavorHover = (e: React.MouseEvent, index: number) => {
-    e.stopPropagation();
-    setHoveredIndex(index);
-  };
-
-  const handleFlavorLeave = () => {
-    setHoveredIndex(null);
-  };
-
-  const handleFlavorClick = (e: React.MouseEvent, index: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setSelectedProductIndex(index);
-  };
-
   return (
-    <div onClick={handleCardClick} className={onProductClick ? "cursor-pointer" : ""}>
+    <div 
+      onClick={() => onProductClick?.(displayProduct.node.handle)} 
+      className={onProductClick ? "cursor-pointer" : ""}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <motion.div
         whileHover={{ y: -4 }}
-        className="glass-card rounded-2xl overflow-hidden border border-white/10 group h-full flex flex-col"
+        className={`glass-card rounded-2xl overflow-hidden border border-white/10 group h-full flex flex-col relative ${
+          isHovered ? 'animate-card-shine' : ''
+        }`}
       >
         {/* Image */}
         <div className="relative aspect-square bg-gradient-to-br from-white/5 to-white/10 overflow-hidden">
-          {mainImage ? (
-            <motion.img
-              key={displayProduct.node.id}
-              initial={{ opacity: 0.8 }}
-              animate={{ opacity: 1 }}
-              src={mainImage.url}
-              alt={mainImage.altText || baseTitle}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <ShoppingCartSimple weight="light" className="w-12 h-12 text-foreground/20" />
-            </div>
-          )}
+          <AnimatePresence mode="wait">
+            {mainImage ? (
+              <motion.img
+                key={displayProduct.node.id}
+                initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
+                transition={{ duration: 0.3 }}
+                src={mainImage.url}
+                alt={mainImage.altText || baseTitle}
+                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-110 transition-all duration-500"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <ShoppingCartSimple weight="light" className="w-12 h-12 text-foreground/20" />
+              </div>
+            )}
+          </AnimatePresence>
 
-          {/* AI Recommended Badge */}
+          {/* AI Badge with bounce-in */}
           {recommendedByAI && (
-            <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium">
+            <motion.div 
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+              className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium"
+            >
               <Star weight="fill" className="w-3 h-3" />
               {t('shop.recommended')}
-            </div>
+            </motion.div>
           )}
 
-          {/* Multiple Flavors Badge */}
           {hasMultipleFlavors && (
             <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
               {flavors.length} {t('shop.flavors')}
@@ -124,9 +116,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
           <div className="flex-1">
             <h3 className="font-medium text-foreground line-clamp-2">{baseTitle}</h3>
             {displayProduct.node.productType && (
-              <p className="text-xs text-foreground/50 mt-1">
-                {displayProduct.node.productType}
-              </p>
+              <p className="text-xs text-foreground/50 mt-1">{displayProduct.node.productType}</p>
             )}
           </div>
 
@@ -134,15 +124,15 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
           {hasMultipleFlavors && (
             <div 
               className="flex flex-wrap gap-1.5"
-              onMouseLeave={handleFlavorLeave}
+              onMouseLeave={() => setHoveredIndex(null)}
             >
               {products.slice(0, 4).map((product, index) => {
                 const flavor = getFlavorFromTitle(product.node.title);
                 return (
                   <button
                     key={product.node.id}
-                    onClick={(e) => handleFlavorClick(e, index)}
-                    onMouseEnter={(e) => handleFlavorHover(e, index)}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedProductIndex(index); }}
+                    onMouseEnter={(e) => { e.stopPropagation(); setHoveredIndex(index); }}
                     className={`px-1.5 py-0.5 md:px-2 md:py-1 text-[10px] md:text-xs rounded-lg transition-colors min-h-[32px] md:min-h-0 ${
                       displayIndex === index
                         ? 'bg-primary text-primary-foreground'
@@ -154,20 +144,16 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                 );
               })}
               {products.length > 4 && (
-                <span className="px-2 py-1 text-xs text-foreground/40">
-                  +{products.length - 4}
-                </span>
+                <span className="px-2 py-1 text-xs text-foreground/40">+{products.length - 4}</span>
               )}
             </div>
           )}
 
-          {/* Price & Add to Cart */}
+          {/* Price & Cart */}
           <div className="flex items-center justify-between pt-2">
-            <div>
-              <span className="text-lg font-semibold text-foreground">
-                {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
-              </span>
-            </div>
+            <span className="text-lg font-semibold text-foreground">
+              {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
+            </span>
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !selectedVariant?.availableForSale}
@@ -181,7 +167,13 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                 <SpinnerGap className="w-4 h-4 animate-spin" />
               ) : justAdded ? (
                 <>
-                  <Check weight="bold" className="w-4 h-4" />
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", bounce: 0.5 }}
+                  >
+                    <Check weight="bold" className="w-4 h-4" />
+                  </motion.div>
                   <span className="hidden md:inline">{t('shop.added')}</span>
                 </>
               ) : (

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { ChartDonut, TrendUp, Calendar } from '@phosphor-icons/react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { AwaitingAnalysis } from './AwaitingAnalysis';
@@ -84,7 +85,7 @@ const ProgressChart = ({ showAwaitingState = false, onStartDiagnostic }: Progres
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-light text-foreground">{adherenceRate}%</span>
+            <CountUpNumber value={adherenceRate} />
             <span className="text-xs text-foreground/50">Adhérence</span>
           </div>
         </div>
@@ -104,7 +105,7 @@ const ProgressChart = ({ showAwaitingState = false, onStartDiagnostic }: Progres
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: `${item.value}%` }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.05 }}
+                transition={{ duration: 0.6, delay: 0.3 + index * 0.08, type: "spring", bounce: 0.3 }}
                 className={`w-full rounded-t-sm ${
                   item.value === 100
                     ? 'bg-secondary'
@@ -126,5 +127,22 @@ const ProgressChart = ({ showAwaitingState = false, onStartDiagnostic }: Progres
     </motion.div>
   );
 };
+
+function CountUpNumber({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    const duration = 1000;
+    const start = performance.now();
+    const step = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setDisplay(Math.round(eased * value));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [value]);
+  return <span className="text-2xl font-light text-foreground">{display}%</span>;
+}
 
 export default ProgressChart;

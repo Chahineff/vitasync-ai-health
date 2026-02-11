@@ -261,10 +261,12 @@ const Dashboard = () => {
               {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} hasInteractedWithCoach={hasInteractedWithCoach} />}
               {activeSection === "coach" && <motion.div key="coach" initial={{
             opacity: 0,
-            y: 10
+            scale: 0.97,
+            filter: "blur(6px)"
           }} animate={{
             opacity: 1,
-            y: 0
+            scale: 1,
+            filter: "blur(0px)"
           }} exit={{
             opacity: 0
           }}>
@@ -272,10 +274,12 @@ const Dashboard = () => {
                 </motion.div>}
               {activeSection === "supplements" && <motion.div key="supplements" initial={{
             opacity: 0,
-            y: 10
+            scale: 0.97,
+            filter: "blur(6px)"
           }} animate={{
             opacity: 1,
-            y: 0
+            scale: 1,
+            filter: "blur(0px)"
           }} exit={{
             opacity: 0
           }}>
@@ -291,10 +295,12 @@ const Dashboard = () => {
                 </motion.div>}
               {activeSection === "shop" && <motion.div key="shop" initial={{
             opacity: 0,
-            y: 10
+            scale: 0.97,
+            filter: "blur(6px)"
           }} animate={{
             opacity: 1,
-            y: 0
+            scale: 1,
+            filter: "blur(0px)"
           }} exit={{
             opacity: 0
           }} className="h-full">
@@ -302,10 +308,12 @@ const Dashboard = () => {
                 </motion.div>}
               {activeSection === "product" && selectedProductHandle && <motion.div key="product" initial={{
             opacity: 0,
-            y: 10
+            scale: 0.97,
+            filter: "blur(6px)"
           }} animate={{
             opacity: 1,
-            y: 0
+            scale: 1,
+            filter: "blur(0px)"
           }} exit={{
             opacity: 0
           }} className="h-full">
@@ -313,10 +321,12 @@ const Dashboard = () => {
                 </motion.div>}
               {activeSection === "settings" && <motion.div key="settings" initial={{
             opacity: 0,
-            y: 10
+            scale: 0.97,
+            filter: "blur(6px)"
           }} animate={{
             opacity: 1,
-            y: 0
+            scale: 1,
+            filter: "blur(0px)"
           }} exit={{
             opacity: 0
           }}>
@@ -324,10 +334,12 @@ const Dashboard = () => {
                 </motion.div>}
               {activeSection === "help" && <motion.div key="help" initial={{
             opacity: 0,
-            y: 10
+            scale: 0.97,
+            filter: "blur(6px)"
           }} animate={{
             opacity: 1,
-            y: 0
+            scale: 1,
+            filter: "blur(0px)"
           }} exit={{
             opacity: 0
           }}>
@@ -358,10 +370,12 @@ const DashboardHome = ({
   } = useTranslation();
   return <motion.div initial={{
     opacity: 0,
-    y: 10
+    scale: 0.97,
+    filter: "blur(6px)"
   }} animate={{
     opacity: 1,
-    y: 0
+    scale: 1,
+    filter: "blur(0px)"
   }} exit={{
     opacity: 0
   }} className="space-y-6">
@@ -371,12 +385,18 @@ const DashboardHome = ({
       </h1>
       <p className="text-sm text-foreground/50 font-light capitalize">{formatDate()}</p>
     </div>
-    <DailyCheckinWidget />
-    <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <SupplementTrackerEnhanced />
-      <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
-    </div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.1 }}>
+      <DailyCheckinWidget />
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.22 }}>
+      <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.34 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SupplementTrackerEnhanced />
+        <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
+      </div>
+    </motion.div>
   </motion.div>;
 };
 const HelpSection = () => {

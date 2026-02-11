@@ -3,7 +3,6 @@ import { Moon, BatteryFull, Brain, TrendUp, TrendDown, Minus, PencilSimple, Plus
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useDailyCheckin } from "@/hooks/useDailyCheckin";
-import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
   icon: React.ReactNode;
@@ -11,19 +10,21 @@ interface MetricCardProps {
   value: number | null;
   trend?: number;
   invertTrend?: boolean;
+  delay?: number;
 }
 
-function MetricCard({ icon, label, value, trend, invertTrend = false }: MetricCardProps) {
+function MetricCard({ icon, label, value, trend, invertTrend = false, delay = 0 }: MetricCardProps) {
   const getTrendIcon = () => {
     if (!trend || value === null) return <Minus weight="bold" className="w-3 h-3" />;
-    
-    // For stress, higher is worse, so we invert the trend display
     const isPositive = invertTrend ? trend < value : trend > value;
-    
     return isPositive ? (
-      <TrendUp weight="bold" className="w-3 h-3 text-primary" />
+      <motion.div initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: delay + 0.3 }}>
+        <TrendUp weight="bold" className="w-3 h-3 text-primary" />
+      </motion.div>
     ) : (
-      <TrendDown weight="bold" className="w-3 h-3 text-muted-foreground" />
+      <motion.div initial={{ y: -8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: delay + 0.3 }}>
+        <TrendDown weight="bold" className="w-3 h-3 text-muted-foreground" />
+      </motion.div>
     );
   };
 
@@ -38,9 +39,21 @@ function MetricCard({ icon, label, value, trend, invertTrend = false }: MetricCa
   };
 
   return (
-    <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10">
+    <motion.div 
+      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+    >
       <div className="text-primary">{icon}</div>
-      <span className="text-2xl">{getValueDisplay(value)}</span>
+      <motion.span 
+        className="text-2xl"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: [0, 1.2, 1], opacity: 1 }}
+        transition={{ delay: delay + 0.15, duration: 0.4 }}
+      >
+        {getValueDisplay(value)}
+      </motion.span>
       <span className="text-xs text-muted-foreground">{label}</span>
       {trend !== undefined && (
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -48,7 +61,7 @@ function MetricCard({ icon, label, value, trend, invertTrend = false }: MetricCa
           <span>moy. {trend.toFixed(1)}</span>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -65,43 +78,30 @@ export function DailyCheckinWidget() {
             {todayCheckin ? "Tendances sur 7 jours" : "Comment te sens-tu aujourd'hui ?"}
           </p>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={openCheckinModal}
-          className="gap-2"
-        >
+        <Button variant="ghost" size="sm" onClick={openCheckinModal} className="gap-2">
           {todayCheckin ? (
-            <>
-              <PencilSimple weight="light" className="w-4 h-4" />
-              Modifier
-            </>
+            <><PencilSimple weight="light" className="w-4 h-4" /> Modifier</>
           ) : (
-            <>
-              <Plus weight="light" className="w-4 h-4" />
-              Remplir
-            </>
+            <><Plus weight="light" className="w-4 h-4" /> Remplir</>
           )}
         </Button>
       </div>
 
       {todayCheckin ? (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-3 gap-4"
-        >
+        <div className="grid grid-cols-3 gap-4">
           <MetricCard
             icon={<Moon weight="duotone" className="w-5 h-5" />}
             label="Sommeil"
             value={todayCheckin.sleep_quality}
             trend={trends?.avgSleep}
+            delay={0}
           />
           <MetricCard
             icon={<BatteryFull weight="duotone" className="w-5 h-5" />}
             label="Énergie"
             value={todayCheckin.energy_level}
             trend={trends?.avgEnergy}
+            delay={0.08}
           />
           <MetricCard
             icon={<Brain weight="duotone" className="w-5 h-5" />}
@@ -109,8 +109,9 @@ export function DailyCheckinWidget() {
             value={todayCheckin.stress_level}
             trend={trends?.avgStress}
             invertTrend
+            delay={0.16}
           />
-        </motion.div>
+        </div>
       ) : (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -124,26 +125,16 @@ export function DailyCheckinWidget() {
             Fais ton check-in quotidien pour suivre ta santé
           </p>
           <Button onClick={openCheckinModal} className="gap-2">
-            <Plus weight="bold" className="w-4 h-4" />
-            Commencer
+            <Plus weight="bold" className="w-4 h-4" /> Commencer
           </Button>
         </motion.div>
       )}
 
-      {/* Mood display if available */}
       {todayCheckin?.mood && (
         <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-center gap-2">
           <span className="text-sm text-muted-foreground">Humeur :</span>
           <span className="text-lg">
-            {
-              {
-                great: "😄 Super",
-                good: "😊 Bien",
-                okay: "😐 Bof",
-                bad: "😔 Pas top",
-                terrible: "😫 Difficile",
-              }[todayCheckin.mood] || todayCheckin.mood
-            }
+            {{ great: "😄 Super", good: "😊 Bien", okay: "😐 Bof", bad: "😔 Pas top", terrible: "😫 Difficile" }[todayCheckin.mood] || todayCheckin.mood}
           </span>
         </div>
       )}

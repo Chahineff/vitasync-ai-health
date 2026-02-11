@@ -130,6 +130,13 @@ export default {
         "float": "float 6s ease-in-out infinite",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "gradient-shift": "gradient-shift 8s ease infinite",
+        "shimmer-bar": "shimmer-bar 1.5s ease-in-out infinite",
+        "scan-line": "scan-line 1.5s ease-in-out infinite",
+        "success-burst": "success-burst 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "cursor-blink": "cursor-blink 1.06s step-end infinite",
+        "card-shine": "card-shine 0.6s ease-out forwards",
+        "bounce-in": "bounce-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "breathe": "breathe 2.5s ease-in-out infinite",
       },
       backgroundSize: {
         "200%": "200% 200%",

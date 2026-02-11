@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, SpinnerGap, Sparkle } from '@phosphor-icons/react';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { CartDrawer } from './CartDrawer';
@@ -232,8 +232,15 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
       {/* Products Grid */}
       <div ref={shopContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden mt-6 scroll-smooth">
         {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <SpinnerGap className="w-8 h-8 text-primary animate-spin" />
+          <div className="flex items-center justify-center h-64 gap-2">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="w-2.5 h-2.5 rounded-full bg-primary"
+                animate={{ y: [-6, 6, -6], opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
+              />
+            ))}
           </div>
         ) : (
           <>
@@ -249,25 +256,30 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
               </div>
             ) : (
               <>
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
-                >
-                  {paginatedGroups.map((group, index) => (
-                    <motion.div
-                      key={group.baseTitle}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
-                      <ProductGroupCard 
-                        group={group} 
-                        onProductClick={onProductSelect}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
+                <AnimatePresence mode="wait">
+                  <motion.div 
+                    key={currentPage}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.25 }}
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+                  >
+                    {paginatedGroups.map((group, index) => (
+                      <motion.div
+                        key={group.baseTitle}
+                        initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        transition={{ delay: index * 0.07, duration: 0.35 }}
+                      >
+                        <ProductGroupCard 
+                          group={group} 
+                          onProductClick={onProductSelect}
+                        />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
 
                 {/* Pagination */}
                 <Pagination

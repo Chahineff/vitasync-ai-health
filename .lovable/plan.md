@@ -1,71 +1,58 @@
 
-# Adaptation Mobile Complete du Dashboard VitaSync
+# Plan d'adaptation mobile et tablette du Dashboard VitaSync
 
-## Contexte
+## Problemes identifies
 
-Le dashboard fonctionne bien sur desktop mais plusieurs sections ne sont pas optimisees pour les ecrans mobiles (< 768px). L'objectif est d'adapter chaque section pour offrir une experience native et fluide sur smartphone.
+1. **Sidebar visible sur mobile/tablette** : La sidebar fixe (positionnee avec `left-4`, `z-50`) reste partiellement visible ou cause du debordement horizontal sur les ecrans < 1024px, meme avec `-translate-x-full`. Le `left-4` (16px) peut causer un decalage residuel visible.
+
+2. **Shop / PDP : debordement horizontal** : Sur mobile, le contenu du PDP et de la boutique depasse la largeur de l'ecran, obligeant a scroller horizontalement. Le container principal utilise `overflow-auto` sans contrainte `overflow-x-hidden`.
+
+3. **Settings incomplet sur mobile** : Les boutons "Help Center" et "Sign Out" n'existent que dans la sidebar desktop. Sur mobile/tablette, ces options sont inaccessibles depuis la bottom nav.
 
 ---
 
-## Sections a adapter
+## Corrections prevues
 
-### 1. Shop (ShopSection + ProductGroupCard)
+### 1. Masquer completement la sidebar sur mobile et tablette
 
-**Problemes actuels :**
-- Grille 3 colonnes sur mobile = cartes produits trop etroites
-- Bouton "Ajouter au panier" avec texte trop large dans les cartes
-- Les selecteurs de saveurs (flavor chips) sont difficilement cliquables
-- Header de la boutique pas assez compact
+**Fichier** : `src/pages/Dashboard.tsx`
 
-**Corrections :**
-- Passer la grille de `grid-cols-3` a `grid-cols-2` sur mobile (< 768px), garder 3 colonnes tablette et 4 desktop
-- Dans `ProductGroupCard` : masquer le texte du bouton panier sur mobile (icone seule), reduire le padding
-- Reduire la taille des chips de saveur sur petits ecrans
-- Compacter le header (titre + sous-titre sur une seule ligne)
+- Remplacer la visibilite de la sidebar par `hidden lg:flex` au lieu de `-translate-x-full lg:translate-x-0`. Cela elimine tout risque de debordement ou d'element partiellement visible.
+- Supprimer le bouton hamburger mobile et l'overlay associe (devenus inutiles car la bottom nav remplace la sidebar).
+- Supprimer l'import de `List` (hamburger icon) devenu inutile.
 
-### 2. Settings (ProfileSection + HealthProfileSection)
+### 2. Corriger le debordement horizontal du contenu
 
-**Problemes actuels :**
-- Le formulaire `grid-cols-2` pour prenom/nom reste en 2 colonnes sur mobile
-- Le titre "Mon Profil Sante" et son bouton "Modifier" peuvent se chevaucher
-- Les cartes du profil sante restent en `sm:grid-cols-2` mais le padding est excessif sur petit ecran
+**Fichier** : `src/pages/Dashboard.tsx`
 
-**Corrections :**
-- Forcer `grid-cols-1` sur mobile pour le formulaire prenom/nom
-- Reduire le padding des glass-cards de `p-8` a `p-4` sur mobile (via responsive `p-4 md:p-8`)
-- Adapter l'en-tete du profil sante (flex-col sur mobile avec bouton pleine largeur)
+- Ajouter `overflow-x-hidden` au container principal `<main>` pour empecher tout scroll horizontal.
+- Ajouter `max-w-full` ou `w-full overflow-hidden` sur le wrapper du contenu.
 
-### 3. Coach IA (ChatInterface + ChatSidebar)
+**Fichier** : `src/components/dashboard/pdp/ProductDetailMaster.tsx`
 
-**Problemes actuels :**
-- La sidebar du chat est cachee (`hidden md:flex`) = pas d'acces a l'historique sur mobile
-- La hauteur `h-[calc(100vh-2rem)]` ne tient pas compte du bottom nav (80px)
-- Le padding de l'input bar est trop genereux sur mobile
+- Ajouter `overflow-x-hidden` au wrapper principal du PDP (`max-w-[1200px]`).
+- S'assurer que les sections internes (galerie, purchase box, etc.) respectent `max-w-full`.
 
-**Corrections :**
-- Ajuster la hauteur pour tenir compte de la bottom nav : `h-[calc(100vh-8rem)]` sur mobile
-- Reduire le padding de la zone de messages et de l'input bar sur mobile
-- Ajouter un bouton hamburger dans le header du chat pour ouvrir la sidebar en overlay sur mobile (sheet/drawer)
+**Fichier** : `src/components/dashboard/pdp/ProductGallery.tsx`
 
-### 4. Supplements (SupplementTrackerEnhanced + SupplementAIInsights)
+- Verifier que l'image principale utilise bien `object-contain` avec des contraintes `max-w-full` pour ne jamais depasser la largeur de l'ecran.
 
-**Problemes actuels :**
-- Le layout `lg:grid-cols-5` (3+2) s'empile bien en une colonne mais les cartes internes gardent un padding excessif
-- Les onglets (Jour/Semaine/Mois) et les boutons d'action manquent de taille tactile
+**Fichier** : `src/components/dashboard/ShopSection.tsx`
 
-**Corrections :**
-- S'assurer que les targets tactiles font au minimum 44px de hauteur
-- Reduire le padding interne des cartes supplement sur mobile
+- Ajouter `overflow-x-hidden` au container de la grille produits.
 
-### 5. Home (DashboardHome)
+### 3. Ajouter Help Center et Sign Out dans les Settings (mobile/tablette)
 
-**Problemes actuels :**
-- Le titre de bienvenue est trop long sur mobile
-- La grille `grid-cols-1 lg:grid-cols-2` fonctionne mais les widgets internes ont des paddings trop larges
+**Fichier** : `src/components/dashboard/ProfileSection.tsx`
 
-**Corrections :**
-- Reduire la taille du titre de `text-2xl` a `text-xl` sur les plus petits ecrans
-- Ajuster les paddings des widgets (QuickCoachWidget notamment : `p-6 lg:p-8` deja OK, verifier DailyCheckinWidget)
+- Ajouter en bas de la section Settings (visible uniquement en dessous de `lg:`) :
+  - Un bouton "Centre d'aide" qui declenche le changement de section vers "help"
+  - Un bouton "Se deconnecter" avec style destructif
+- Cela necessite de passer deux nouvelles props a `ProfileSection` : `onNavigateToHelp` et `onSignOut`.
+
+**Fichier** : `src/pages/Dashboard.tsx`
+
+- Passer les callbacks `onNavigateToHelp` et `onSignOut` a `ProfileSection`.
 
 ---
 
@@ -73,20 +60,14 @@ Le dashboard fonctionne bien sur desktop mais plusieurs sections ne sont pas opt
 
 | Fichier | Modification |
 |---|---|
-| `src/components/dashboard/ShopSection.tsx` | Grille responsive `grid-cols-2 md:grid-cols-3 lg:grid-cols-4`, header compact |
-| `src/components/dashboard/shop/ProductGroupCard.tsx` | Bouton panier icone-seule sur mobile, padding reduit, chips plus petites |
-| `src/components/dashboard/ProfileSection.tsx` | Formulaire 1 colonne sur mobile, padding responsive |
-| `src/components/dashboard/HealthProfileSection.tsx` | Padding responsive, en-tete adaptatif |
-| `src/components/dashboard/ChatInterface.tsx` | Hauteur ajustee pour bottom nav, bouton sidebar mobile, padding responsive |
-| `src/components/dashboard/chat/ChatSidebar.tsx` | Mode overlay (sheet) sur mobile au lieu de `hidden md:flex` |
-| `src/components/dashboard/SupplementTrackerEnhanced.tsx` | Padding responsive, targets tactiles 44px min |
-| `src/pages/Dashboard.tsx` | Ajustements mineurs des paddings et titres home |
-
----
+| `src/pages/Dashboard.tsx` | Sidebar `hidden lg:flex`, suppression hamburger mobile, `overflow-x-hidden` sur main, passage de props a ProfileSection |
+| `src/components/dashboard/ProfileSection.tsx` | Ajout des boutons Help Center et Sign Out visibles uniquement sur mobile/tablette (`lg:hidden`) |
+| `src/components/dashboard/pdp/ProductDetailMaster.tsx` | `overflow-x-hidden` sur le wrapper PDP |
+| `src/components/dashboard/ShopSection.tsx` | `overflow-x-hidden` sur le container grille |
 
 ## Principes respectes
 
-- Mobile-first : les changements ciblent les breakpoints `md:` et `lg:` pour ne pas casser le desktop
-- Pas de nouvelles dependances
-- Conservation du design "Bio-Tech Luxury" (glassmorphism, rounded-3xl, etc.)
-- Targets tactiles minimum 44px conformes aux guidelines iOS/Android
+- Aucune nouvelle dependance
+- Design Bio-Tech Luxury preserve (glassmorphism, rounded-3xl)
+- Bottom nav reste la navigation principale sur mobile/tablette
+- Desktop (>= 1024px) reste inchange

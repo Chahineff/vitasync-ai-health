@@ -894,7 +894,7 @@ Deno.serve(async (req) => {
           })),
         ],
         stream: true,
-        max_tokens: maxTokens,
+        max_completion_tokens: maxTokens,
       }),
     });
 

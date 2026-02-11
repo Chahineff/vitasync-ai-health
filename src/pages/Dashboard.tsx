@@ -380,7 +380,7 @@ const DashboardHome = ({
     opacity: 0
   }} className="space-y-6">
     <div className="mb-8">
-      <h1 className="text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-1">
+      <h1 className="text-xl md:text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-1">
         {t("dashboard.hello")} <span className="text-primary font-medium">{userName}</span>, {t("dashboard.readyForRoutine")}
       </h1>
       <p className="text-sm text-foreground/50 font-light capitalize">{formatDate()}</p>

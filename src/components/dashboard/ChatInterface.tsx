@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { List } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, type AIModel, type ChatInputRef } from './chat';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -207,8 +210,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const isNewConversation = messages.length === 0;
 
   return (
-    <div className="flex h-[calc(100vh-2rem)] min-h-[600px] bg-background/30 rounded-3xl overflow-hidden border border-white/10 backdrop-blur-xl">
-      {/* Sidebar */}
+    <div className="flex h-[calc(100vh-8rem)] md:h-[calc(100vh-2rem)] min-h-[400px] md:min-h-[600px] bg-background/30 rounded-3xl overflow-hidden border border-white/10 backdrop-blur-xl">
+      {/* Sidebar - hidden on mobile, shown via sheet */}
       <ChatSidebar
         conversations={conversations}
         currentConversationId={currentConversationId}
@@ -221,8 +224,16 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative min-w-0">
-        {/* Header with Model Selector */}
-        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+        {/* Header with Model Selector + Mobile sidebar toggle */}
+        <div className="px-3 md:px-4 py-3 border-b border-white/5 flex items-center justify-between gap-2">
+          {/* Mobile sidebar trigger */}
+          <MobileChatSidebarTrigger
+            conversations={conversations}
+            currentConversationId={currentConversationId}
+            onSelectConversation={selectConversation}
+            onCreateNew={createNewConversation}
+            onDelete={deleteConversation}
+          />
           <ChatModelSelector 
             selectedModel={selectedModel} 
             onModelChange={setSelectedModel} 
@@ -260,7 +271,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         )}
 
         {/* Premium Floating Input Bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-background via-background/95 to-transparent">
+        <div className="absolute bottom-0 left-0 right-0 p-2 md:p-6 bg-gradient-to-t from-background via-background/95 to-transparent">
           <div className="max-w-3xl mx-auto">
             <ChatInput
               ref={chatInputRef}
@@ -271,5 +282,58 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+// Mobile sidebar trigger using Sheet
+function MobileChatSidebarTrigger({
+  conversations,
+  currentConversationId,
+  onSelectConversation,
+  onCreateNew,
+  onDelete,
+}: {
+  conversations: { id: string; title: string | null; created_at: string }[];
+  currentConversationId: string | null;
+  onSelectConversation: (id: string) => void;
+  onCreateNew: () => void;
+  onDelete: (id: string, e: React.MouseEvent) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  if (!isMobile) return null;
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors md:hidden"
+        aria-label="Historique des conversations"
+      >
+        <List weight="light" className="w-5 h-5 text-foreground" />
+      </button>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="left" className="w-[280px] p-0 bg-background/95 backdrop-blur-xl border-white/10">
+          <SheetTitle className="sr-only">Historique des conversations</SheetTitle>
+          <ChatSidebar
+            conversations={conversations}
+            currentConversationId={currentConversationId}
+            isCollapsed={false}
+            onToggleCollapse={() => {}}
+            onSelectConversation={(id) => {
+              onSelectConversation(id);
+              setOpen(false);
+            }}
+            onCreateNew={() => {
+              onCreateNew();
+              setOpen(false);
+            }}
+            onDelete={onDelete}
+            isMobileOverlay
+          />
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

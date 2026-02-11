@@ -15,6 +15,7 @@ interface ChatSidebarProps {
   onSelectConversation: (id: string) => void;
   onCreateNew: () => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
+  isMobileOverlay?: boolean;
 }
 
 // Group conversations by time period
@@ -72,7 +73,8 @@ export function ChatSidebar({
   onToggleCollapse,
   onSelectConversation,
   onCreateNew,
-  onDelete
+  onDelete,
+  isMobileOverlay = false,
 }: ChatSidebarProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -96,7 +98,7 @@ export function ChatSidebar({
   }} transition={{
     duration: 0.3,
     ease: "easeInOut"
-  }} className="relative h-full border-r border-white/10 flex flex-col bg-background/30 backdrop-blur-xl overflow-hidden hidden md:flex flex-shrink-0">
+  }} className={cn("relative h-full border-r border-white/10 flex flex-col bg-background/30 backdrop-blur-xl overflow-hidden flex-shrink-0", isMobileOverlay ? "flex" : "hidden md:flex")}>
       {/* Header with New Chat button */}
       <div className="p-3 flex items-center justify-between min-w-[72px]">
         <AnimatePresence mode="wait">

@@ -55,7 +55,7 @@ export function SupplementTrackerEnhanced() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="glass-card-premium rounded-3xl p-6 h-full border border-white/10 relative"
+        className="glass-card-premium rounded-3xl p-4 md:p-6 h-full border border-white/10 relative"
       >
         {/* Header - no add button here anymore */}
         <div className="flex items-center justify-between mb-4">
@@ -79,21 +79,21 @@ export function SupplementTrackerEnhanced() {
           <TabsList className="grid w-full grid-cols-3 bg-white/5 rounded-xl p-1 mb-4">
             <TabsTrigger 
               value="day" 
-              className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm"
+              className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px]"
             >
               <Sun weight="light" className="w-4 h-4 mr-1" />
               Jour
             </TabsTrigger>
             <TabsTrigger 
               value="week"
-              className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm"
+              className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px]"
             >
               <ChartBar weight="light" className="w-4 h-4 mr-1" />
               Semaine
             </TabsTrigger>
             <TabsTrigger 
               value="month"
-              className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm"
+              className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px]"
             >
               <CalendarBlank weight="light" className="w-4 h-4 mr-1" />
               Mois

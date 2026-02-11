@@ -6,13 +6,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { TypingIndicator } from './TypingIndicator';
-import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, getDefaultModelForPlan, type AIModel, type UserPlan, type ChatInputRef } from './chat';
+import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, type AIModel, type ChatInputRef } from './chat';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
-  thinking?: string;
 }
 
 interface Conversation {
@@ -30,8 +29,8 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
 // Official VitaSync PNG Logo
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
-// TODO: Replace with real user plan from profile/subscription
-const USER_PLAN: UserPlan = 'free';
+// Default model
+const DEFAULT_MODEL = AI_MODELS.find(m => m.model === 'google/gemini-3-flash-preview') || AI_MODELS[2];
 
 export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
@@ -42,7 +41,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [hasCalledFirstMessage, setHasCalledFirstMessage] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<AIModel>(getDefaultModelForPlan(USER_PLAN));
+  const [selectedModel, setSelectedModel] = useState<AIModel>(DEFAULT_MODEL);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<ChatInputRef>(null);
 
@@ -152,7 +151,6 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       body: JSON.stringify({
         messages: [...messages, { role: 'user', content: userMessage }],
         model: selectedModel.model,
-        ...(selectedModel.thinking ? { thinking: true } : {}),
       }),
     });
 
@@ -163,10 +161,8 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let assistantMessage = '';
-      let thinkingContent = '';
-      let inThinking = false;
 
-      setMessages(prev => [...prev, { role: 'assistant', content: '', thinking: '' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
       while (reader) {
         const { done, value } = await reader.read();
@@ -182,40 +178,10 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             try {
               const parsed = JSON.parse(data);
               const content = parsed.choices?.[0]?.delta?.content || '';
-              
-              // Handle <think> tags for thinking mode
-              let remaining = content;
-              while (remaining) {
-                if (inThinking) {
-                  const endIdx = remaining.indexOf('</think>');
-                  if (endIdx !== -1) {
-                    thinkingContent += remaining.slice(0, endIdx);
-                    remaining = remaining.slice(endIdx + 8);
-                    inThinking = false;
-                  } else {
-                    thinkingContent += remaining;
-                    remaining = '';
-                  }
-                } else {
-                  const startIdx = remaining.indexOf('<think>');
-                  if (startIdx !== -1) {
-                    assistantMessage += remaining.slice(0, startIdx);
-                    remaining = remaining.slice(startIdx + 7);
-                    inThinking = true;
-                  } else {
-                    assistantMessage += remaining;
-                    remaining = '';
-                  }
-                }
-              }
-
+              assistantMessage += content;
               setMessages(prev => {
                 const newMessages = [...prev];
-                newMessages[newMessages.length - 1] = { 
-                  role: 'assistant', 
-                  content: assistantMessage,
-                  thinking: thinkingContent || undefined,
-                };
+                newMessages[newMessages.length - 1] = { role: 'assistant', content: assistantMessage };
                 return newMessages;
               });
             } catch {}
@@ -270,8 +236,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           />
           <ChatModelSelector 
             selectedModel={selectedModel} 
-            onModelChange={setSelectedModel}
-            userPlan={USER_PLAN}
+            onModelChange={setSelectedModel} 
           />
         </div>
 
@@ -291,7 +256,6 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     key={index}
                     role={message.role}
                     content={message.content}
-                    thinking={message.thinking}
                     isStreaming={isLoading && index === messages.length - 1 && message.role === 'assistant'}
                   />
                 ))}
@@ -299,7 +263,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
               {/* Typing Indicator - without bubble */}
               {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                <TypingIndicator isThinkingModel={selectedModel.thinking} />
+                <TypingIndicator />
               )}
               <div ref={messagesEndRef} />
             </div>

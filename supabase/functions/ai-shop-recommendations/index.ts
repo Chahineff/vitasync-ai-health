@@ -216,7 +216,7 @@ ou: {"recommendations": ["handle1", "handle2", "handle3", "handle4"]}`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-5",
+        model: "google/gemini-3-pro-preview",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: "Recommande-moi les produits les plus adaptés à mon profil." },

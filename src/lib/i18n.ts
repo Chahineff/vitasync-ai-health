@@ -73,9 +73,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Features Section - Details
     "features.feature1.title": "Coach IA disponible 24/7",
-    "features.feature1.subtitle": "Propulsé par GPT-5",
+    "features.feature1.subtitle": "Propulsé par Gemini 3 Flash",
     "features.feature1.description": "Votre assistant personnel répond à vos questions de santé à tout moment, par chat ou par voix.",
-    "features.feature1.detail1": "Intelligence artificielle de dernière génération (OpenAI GPT-5)",
+    "features.feature1.detail1": "Intelligence artificielle de dernière génération (Google Gemini)",
     "features.feature1.detail2": "Sources médicales vérifiées et mises à jour en continu",
     "features.feature1.detail3": "Reconnaissance vocale avancée pour des échanges naturels",
     "features.feature1.detail4": "Historique de conversations sauvegardé et contextualisé",
@@ -479,13 +479,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "help.contact": "Contact",
     "help.contactDesc": "Besoin d'aide ? Notre équipe est là pour vous.",
     "help.contactUs": "Nous contacter →",
-
-    // Chat Model Selector
-    "chat.modelGroupFast": "Rapide",
-    "chat.modelGroupAdvanced": "Avancé",
-    "chat.thinking": "Réflexion en cours...",
-    "chat.thinkingDone": "Réflexion",
-    "chat.modelLocked": "Disponible avec le plan {plan}",
   },
   en: {
     // Navigation
@@ -550,9 +543,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Features Section - Details
     "features.feature1.title": "AI Coach available 24/7",
-    "features.feature1.subtitle": "Powered by GPT-5",
+    "features.feature1.subtitle": "Powered by Gemini 3 Flash",
     "features.feature1.description": "Your personal assistant answers your health questions anytime, by chat or voice.",
-    "features.feature1.detail1": "Latest generation artificial intelligence (OpenAI GPT-5)",
+    "features.feature1.detail1": "Latest generation artificial intelligence (Google Gemini)",
     "features.feature1.detail2": "Verified and continuously updated medical sources",
     "features.feature1.detail3": "Advanced voice recognition for natural exchanges",
     "features.feature1.detail4": "Saved and contextualized conversation history",
@@ -956,13 +949,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "help.contact": "Contact",
     "help.contactDesc": "Need help? Our team is here for you.",
     "help.contactUs": "Contact us →",
-
-    // Chat Model Selector
-    "chat.modelGroupFast": "Fast",
-    "chat.modelGroupAdvanced": "Advanced",
-    "chat.thinking": "Thinking...",
-    "chat.thinkingDone": "Thinking",
-    "chat.modelLocked": "Available with {plan} plan",
   },
   es: {
     // Navigation
@@ -1027,9 +1013,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Features Section - Details
     "features.feature1.title": "Coach IA disponible 24/7",
-    "features.feature1.subtitle": "Impulsado por GPT-5",
+    "features.feature1.subtitle": "Impulsado por Gemini 3 Flash",
     "features.feature1.description": "Tu asistente personal responde a tus preguntas de salud en cualquier momento, por chat o voz.",
-    "features.feature1.detail1": "Inteligencia artificial de última generación (OpenAI GPT-5)",
+    "features.feature1.detail1": "Inteligencia artificial de última generación (Google Gemini)",
     "features.feature1.detail2": "Fuentes médicas verificadas y actualizadas continuamente",
     "features.feature1.detail3": "Reconocimiento de voz avanzado para intercambios naturales",
     "features.feature1.detail4": "Historial de conversaciones guardado y contextualizado",
@@ -1433,13 +1419,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "help.contact": "Contacto",
     "help.contactDesc": "¿Necesitas ayuda? Nuestro equipo está aquí para ti.",
     "help.contactUs": "Contáctanos →",
-
-    // Chat Model Selector
-    "chat.modelGroupFast": "Rápido",
-    "chat.modelGroupAdvanced": "Avanzado",
-    "chat.thinking": "Reflexionando...",
-    "chat.thinkingDone": "Reflexión",
-    "chat.modelLocked": "Disponible con el plan {plan}",
   },
 };
 

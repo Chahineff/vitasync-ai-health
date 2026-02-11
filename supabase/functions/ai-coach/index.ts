@@ -506,8 +506,10 @@ Quand tu recommandes PLUSIEURS produits, tu DOIS :
 1. Afficher CHAQUE produit sur sa propre ligne avec le format [[PRODUCT:...]]
 2. NE JAMAIS grouper plusieurs [[PRODUCT:...]] sur la même ligne
 3. Ajouter une ligne vide entre chaque recommandation
-4. T'assurer de TERMINER ta réponse complètement
+4. T'assurer de TERMINER ta réponse complètement - NE JAMAIS laisser un tag [[PRODUCT:...]] incomplet ou tronqué
 5. TOUJOURS inclure TOUS les produits mentionnés
+6. TERMINE TOUJOURS chaque tag [[PRODUCT:productId:variantId:nom:prix]] avec les doubles crochets fermants ]]
+7. Si tu n'as pas assez de place pour un tag produit complet, NE L'INCLUS PAS du tout
 
 Exemple CORRECT pour 2 produits:
 "Pour ton énergie, je te recommande :
@@ -927,7 +929,7 @@ Deno.serve(async (req) => {
           })),
         ],
         stream: true,
-        max_tokens: 4096,
+        max_tokens: 8192,
       }),
     });
 

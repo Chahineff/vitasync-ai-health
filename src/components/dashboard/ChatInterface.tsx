@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { List } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +37,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { healthProfile } = useHealthProfile();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRevealing, setIsRevealing] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [hasCalledFirstMessage, setHasCalledFirstMessage] = useState(false);
@@ -44,6 +45,9 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [selectedModel, setSelectedModel] = useState<AIModel>(DEFAULT_MODEL);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<ChatInputRef>(null);
+  const fullContentRef = useRef('');
+  const revealIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const sseFinishedRef = useRef(false);
 
   const firstName = profile?.first_name || 'toi';
 
@@ -161,10 +165,41 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-      let assistantMessage = '';
-
+      
+      // Reset typewriter state
+      fullContentRef.current = '';
+      sseFinishedRef.current = false;
+      setIsRevealing(true);
+      
+      // Add empty assistant message
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
+      // Start reveal interval - progressively show characters
+      let displayedLength = 0;
+      revealIntervalRef.current = setInterval(() => {
+        const full = fullContentRef.current;
+        if (displayedLength < full.length) {
+          // Reveal 3-5 chars at a time for natural feel
+          const charsToAdd = Math.min(3 + Math.floor(Math.random() * 3), full.length - displayedLength);
+          displayedLength += charsToAdd;
+          const displayed = full.slice(0, displayedLength);
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = { role: 'assistant', content: displayed };
+            return newMessages;
+          });
+        } else if (sseFinishedRef.current && displayedLength >= full.length) {
+          // SSE done AND reveal caught up - finish
+          if (revealIntervalRef.current) {
+            clearInterval(revealIntervalRef.current);
+            revealIntervalRef.current = null;
+          }
+          setIsRevealing(false);
+          setIsLoading(false);
+        }
+      }, 18);
+
+      // Read SSE chunks into fullContentRef
       while (reader) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -179,16 +214,14 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             try {
               const parsed = JSON.parse(data);
               const content = parsed.choices?.[0]?.delta?.content || '';
-              assistantMessage += content;
-              setMessages(prev => {
-                const newMessages = [...prev];
-                newMessages[newMessages.length - 1] = { role: 'assistant', content: assistantMessage };
-                return newMessages;
-              });
+              fullContentRef.current += content;
             } catch {}
           }
         }
       }
+
+      sseFinishedRef.current = true;
+      const assistantMessage = fullContentRef.current;
 
       if (conversationId && assistantMessage) {
         await saveMessage(conversationId, 'assistant', assistantMessage);
@@ -199,12 +232,22 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       }
     } catch (error) {
       console.error('Chat error:', error);
+      // Clean up reveal interval on error
+      if (revealIntervalRef.current) {
+        clearInterval(revealIntervalRef.current);
+        revealIntervalRef.current = null;
+      }
+      setIsRevealing(false);
       setMessages(prev => [
         ...prev,
         { role: 'assistant', content: "Désolé, une erreur s'est produite. Veuillez réessayer." }
       ]);
     } finally {
-      setIsLoading(false);
+      // isLoading is now set to false by the reveal interval when it catches up
+      // But if SSE failed before reveal started, ensure cleanup
+      if (!isRevealing) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -257,7 +300,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     key={index}
                     role={message.role}
                     content={message.content}
-                    isStreaming={isLoading && index === messages.length - 1 && message.role === 'assistant'}
+                    isStreaming={(isLoading || isRevealing) && index === messages.length - 1 && message.role === 'assistant'}
                   />
                 ))}
               </AnimatePresence>

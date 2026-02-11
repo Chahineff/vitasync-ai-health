@@ -869,12 +869,12 @@ Deno.serve(async (req) => {
     
     // Set max_tokens based on model
     const modelMaxTokens: Record<string, number> = {
-      'openai/gpt-5-nano': 2048,
-      'openai/gpt-5-mini': 4096,
-      'openai/gpt-5': 6144,
-      'openai/gpt-5.2': 8192,
+      'openai/gpt-5-nano': 8192,
+      'openai/gpt-5-mini': 12288,
+      'openai/gpt-5': 16384,
+      'openai/gpt-5.2': 24576,
     };
-    const maxTokens = modelMaxTokens[model] || 2048;
+    const maxTokens = modelMaxTokens[model] || 8192;
     
     console.log("Using AI model:", model, "max_tokens:", maxTokens);
 

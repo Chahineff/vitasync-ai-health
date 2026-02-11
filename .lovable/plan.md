@@ -1,76 +1,107 @@
 
 
-# Correction "Produit non disponible" et reponses tronquees
+# Corps humain interactif dans le Coach IA
 
-## Probleme identifie
+## Vue d'ensemble
 
-L'erreur dans la console est claire : `Error calling Shopify: Variable $id of type ID! was provided invalid value`.
+Ajout d'un bouton "corps humain" dans la barre d'outils du chat qui ouvre un modal/drawer avec une silhouette humaine interactive en SVG. L'utilisateur clique sur une zone du corps (tete, epaules, dos, genoux, etc.), la zone s'illumine, son nom s'affiche, et un message est automatiquement envoye a l'IA du type "J'ai une douleur au [zone selectionnee]".
 
-Deux causes racines :
-
-### Cause 1 : Le regex de parsing casse les IDs contenant des colons
-
-Le variantId fourni par l'IA contient `gid://shopify/ProductVariant/53224061731184` avec des colons (`:`). Le regex actuel `([^:\]]+)` s'arrete au premier colon et capture seulement `gid` au lieu du GID complet. Le parsing est completement fausse.
-
-### Cause 2 : L'IA peut halluciner des IDs produit
-
-Meme si les IDs etaient correctement parses, l'IA genere parfois des IDs numeriques qui ne correspondent a aucun produit reel dans Shopify (ex: `15014337380720`). Appeler `fetchProductById` avec un ID invalide echoue systematiquement.
+Approche SVG plutot que 3D : un SVG vectoriel est leger, rapide, responsive, fonctionne parfaitement sur mobile, et ne necessite aucune dependance lourde (Three.js, modeles 3D). Le resultat visuel sera premium grace au design glassmorphism du projet.
 
 ---
 
-## Solution : Utiliser le cache produit partage au lieu d'appels individuels
+## Architecture
 
-Le hook `useShopifyProductResolver` existe deja et charge TOUS les produits en une seule requete, les met en cache, et permet de resoudre n'importe quel ID (numerique ou GID) vers les donnees produit. Il faut l'utiliser dans `ProductRecommendationCard` au lieu de `fetchProductById`.
+### Nouveau composant : `BodyMapModal.tsx`
 
-De plus, il faut corriger le regex pour gerer les GIDs avec colons dans le variantId.
+**Fichier** : `src/components/dashboard/chat/BodyMapModal.tsx`
+
+Un Dialog/Sheet contenant une silhouette humaine SVG avec des zones cliquables :
+
+**Zones du corps (18 zones)** :
+- Tete / Crane
+- Cou / Nuque
+- Epaule gauche / Epaule droite
+- Bras gauche / Bras droit
+- Poitrine / Thorax
+- Abdomen / Ventre
+- Dos (haut) / Dos (bas)
+- Hanche gauche / Hanche droite
+- Cuisse gauche / Cuisse droite
+- Genou gauche / Genou droit
+- Mollet gauche / Mollet droit
+- Pied gauche / Pied droit
+
+**Comportement** :
+- Chaque zone est un `path` ou `rect` SVG avec `cursor-pointer`
+- Au survol : la zone s'illumine (fill avec couleur primary a 30% d'opacite)
+- Au clic : la zone se selectionne (fill primary a 50%, bordure primary), le nom de la zone s'affiche dans un label en dessous
+- Un bouton "Envoyer a l'IA" en bas envoie le message : "J'ai une douleur au niveau de [zone]. Peux-tu m'aider ?"
+- Possibilite de selectionner plusieurs zones
+- Le modal se ferme automatiquement apres l'envoi
+
+**Design** :
+- Fond glassmorphism (`bg-background/95 backdrop-blur-xl`)
+- Silhouette en trait fin blanc/gris clair
+- Zones selectionnees en cyan/primary avec glow
+- Label de la zone selectionnee avec animation fade-in
+- Vue de face par defaut, bouton pour basculer en vue de dos
+
+### Modification : `ChatInput.tsx`
+
+**Fichier** : `src/components/dashboard/chat/ChatInput.tsx`
+
+- Ajouter un bouton avec l'icone `PersonArmsSpread` (disponible dans @phosphor-icons/react) dans la barre d'outils, entre le bouton micro et le bouton fichier
+- Au clic, ouvre le `BodyMapModal`
+- Quand l'utilisateur selectionne une zone et confirme, le message est insere dans l'input et soumis automatiquement
+
+### Modification : `ChatInput` interface
+
+- Ajouter une prop `onBodyZoneSelect` ou utiliser directement `onSubmit` depuis le modal
+- Le modal recoit `onSubmit` pour envoyer le message directement
 
 ---
 
-## Modifications
+## Detail technique du SVG
 
-### 1. Corriger le regex de parsing (`ProductRecommendationCard.tsx`)
+Le SVG sera dessine en inline dans le composant (pas de fichier externe) avec des `path` pour chaque zone anatomique. Chaque zone aura :
 
-Remplacer le regex actuel :
-```
-/\[\[PRODUCT:([^:\]]+):([^:\]]+):([^:\]]+):([^\]]+)\]\]/g
-```
-
-Par un regex qui gere les GIDs contenant des colons dans le variantId :
-```
-/\[\[PRODUCT:([^:\]]+):((?:gid:\/\/[^:]+|[^:\]]+)):([^:\]]+):([^\]]+)\]\]/g
+```text
+<g id="zone-tete" onClick={() => toggleZone('Tete')} className="cursor-pointer">
+  <path d="..." fill="transparent" stroke="currentColor" />
+  <path d="..." fill={selected ? 'primary/50' : 'transparent'} /> (overlay)
+</g>
 ```
 
-Ce nouveau pattern autorise `gid://...` comme variantId sans casser sur les colons internes.
+La silhouette sera une forme humaine simplifiee mais reconnaissable, style medical/anatomique epure, coherent avec le design Bio-Tech Luxury.
 
-### 2. Utiliser `useShopifyProductResolver` dans `ProductRecommendationCard.tsx`
-
-Remplacer l'appel direct a `fetchProductById` (qui echoue quand l'ID est hallucine) par une resolution via le cache partage :
-
-- Importer `useShopifyProductResolver` au niveau du composant parent (le `ChatMessageBubble` qui rend les cartes produit)
-- Ou bien dans `ProductRecommendationCard` lui-meme, utiliser le hook pour resoudre le productId
-- Le hook charge tous les produits une seule fois et les met en cache, puis fait une correspondance par ID numerique ou GID
-- Si le productId ne matche pas par ID, ajouter un fallback par nom de produit (fuzzy match sur le titre)
-
-### 3. Ajouter un fallback par nom de produit
-
-Si le productId ne se resout pas via le cache (ID hallucine), chercher le produit par son nom (`product.name` du tag) dans la liste des produits caches. Cela garantit que meme avec un mauvais ID, le produit s'affiche si le nom est correct.
-
-### 4. Simplifier le format des IDs dans le system prompt (`ai-coach/index.ts`)
-
-Changer le format du tag dans le catalogue pour utiliser uniquement des IDs numeriques (sans GID pour le variantId) :
-```
-Avant : [[PRODUCT:${productId}:${variantId}:${p.title}:${price}]]
-Apres : [[PRODUCT:${productId}:${variantNumericId}:${p.title}:${price}]]
-```
-
-Ou `variantNumericId = variant.id.split('/').pop()` pour eviter les GIDs avec colons dans le tag.
+Deux vues : **Face** et **Dos**, avec un toggle pour basculer (les zones du dos ne sont pas les memes : haut du dos, bas du dos, lombaires, omoplates).
 
 ---
 
-## Fichiers modifies
+## Flux utilisateur
+
+```text
+1. Clic sur le bouton "corps humain" (icone PersonArmsSpread)
+2. Modal s'ouvre avec la silhouette SVG
+3. L'utilisateur clique sur une ou plusieurs zones
+4. Les zones selectionnees s'illuminent + label affiche
+5. Bouton "Envoyer" -> message auto-genere :
+   "J'ai une douleur au niveau de : [zone1], [zone2]. Peux-tu m'aider a identifier les causes possibles et me recommander des solutions ?"
+6. Modal se ferme, message envoye, IA repond
+```
+
+---
+
+## Fichiers
 
 | Fichier | Modification |
 |---|---|
-| `src/components/dashboard/ProductRecommendationCard.tsx` | Regex corrige pour GIDs, fallback par nom de produit via `useShopifyProductResolver` |
-| `supabase/functions/ai-coach/index.ts` | Utiliser des IDs numeriques (sans `gid://`) dans les tags `[[PRODUCT:...]]` du catalogue |
+| `src/components/dashboard/chat/BodyMapModal.tsx` | Nouveau - Modal avec silhouette SVG interactive (face + dos) |
+| `src/components/dashboard/chat/ChatInput.tsx` | Ajout bouton PersonArmsSpread + ouverture du modal |
+| `src/components/dashboard/chat/index.ts` | Export du nouveau composant si necessaire |
+
+## Aucune nouvelle dependance
+
+Tout est fait avec les outils existants : React, Framer Motion, Phosphor Icons, SVG inline, et les composants UI (Dialog/Sheet).
 

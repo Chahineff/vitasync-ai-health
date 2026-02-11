@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Camera, SpinnerGap, Check, Globe } from "@phosphor-icons/react";
+import { Camera, SpinnerGap, Check, Globe, Question, SignOut } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
@@ -11,7 +11,12 @@ import { ThemeToggle } from "./ThemeToggle";
 import { HealthProfileSection } from "./HealthProfileSection";
 import { cn } from "@/lib/utils";
 
-export function ProfileSection() {
+interface ProfileSectionProps {
+  onNavigateToHelp?: () => void;
+  onSignOut?: () => void;
+}
+
+export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionProps = {}) {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
   const { signedUrl: avatarUrl, isLoading: isLoadingAvatar } = useAvatarUrl(profile?.avatar_url);
   const { toast } = useToast();
@@ -303,6 +308,30 @@ export function ProfileSection() {
 
       {/* Health Profile Section */}
       <HealthProfileSection />
+
+      {/* Mobile/Tablet only: Help Center & Sign Out */}
+      {(onNavigateToHelp || onSignOut) && (
+        <div className="lg:hidden space-y-3 pt-4">
+          {onNavigateToHelp && (
+            <button
+              onClick={onNavigateToHelp}
+              className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl glass-card text-foreground/70 hover:text-foreground transition-all min-h-[48px]"
+            >
+              <Question weight="light" className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm font-light">{t("dashboard.help")}</span>
+            </button>
+          )}
+          {onSignOut && (
+            <button
+              onClick={onSignOut}
+              className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl glass-card text-destructive hover:bg-destructive/10 transition-all min-h-[48px]"
+            >
+              <SignOut weight="light" className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm font-light">{t("dashboard.signout")}</span>
+            </button>
+          )}
+        </div>
+      )}
     </motion.div>
   );
 }

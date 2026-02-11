@@ -230,7 +230,7 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
       />
 
       {/* Products Grid */}
-      <div ref={shopContainerRef} className="flex-1 overflow-y-auto mt-6 scroll-smooth">
+      <div ref={shopContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden mt-6 scroll-smooth">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <SpinnerGap className="w-8 h-8 text-primary animate-spin" />

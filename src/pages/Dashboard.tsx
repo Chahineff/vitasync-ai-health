@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Robot, Storefront, Gear, Question, SignOut, List, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { Robot, Storefront, Gear, Question, SignOut, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
 import QuickCoachWidget from "@/components/dashboard/QuickCoachWidget";
@@ -165,19 +165,8 @@ const Dashboard = () => {
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex w-full">
       {/* Daily Checkin Modal */}
       <DailyCheckin />
-      {/* Mobile overlay */}
-      <AnimatePresence>
-        {sidebarOpen && <motion.div initial={{
-        opacity: 0
-      }} animate={{
-        opacity: 1
-      }} exit={{
-        opacity: 0
-      }} className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
-      </AnimatePresence>
-
-      {/* Sidebar - Fixed on all screens */}
-      <aside className={`fixed top-4 bottom-4 left-4 z-50 glass-sidebar-floating flex flex-col transition-all duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
+      {/* Sidebar - Hidden on mobile/tablet, visible on desktop */}
+      <aside className={`fixed top-4 bottom-4 left-4 z-50 glass-sidebar-floating hidden lg:flex flex-col transition-all duration-300 ease-out ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
         {/* Logo & Collapse Button */}
         <div className="p-6 flex items-center justify-between">
           <Link to="/" className={`transition-opacity duration-300 flex items-center gap-2 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
@@ -189,9 +178,6 @@ const Dashboard = () => {
           {sidebarCollapsed && <Link to="/" className="hidden lg:block">
               <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="VitaSync" className="w-8 h-8" />
             </Link>}
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-lg hover:bg-white/50">
-            <X weight="light" className="w-5 h-5" />
-          </button>
           <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="hidden lg:flex p-2 rounded-lg hover:bg-white/50 transition-all" title={sidebarCollapsed ? t("dashboard.expand") : t("dashboard.collapse")}>
             {sidebarCollapsed ? <CaretRight weight="light" className="w-5 h-5 text-foreground/60" /> : <CaretLeft weight="light" className="w-5 h-5 text-foreground/60" />}
           </button>
@@ -267,10 +253,10 @@ const Dashboard = () => {
       </aside>
 
       {/* Main - with margin-left to compensate for fixed sidebar */}
-      <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
+      <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
         
         {/* Add padding bottom on mobile for bottom nav */}
-        <div className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8 overflow-auto">
+        <div className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8 overflow-auto overflow-x-hidden">
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
               {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} hasInteractedWithCoach={hasInteractedWithCoach} />}
               {activeSection === "coach" && <motion.div key="coach" initial={{
@@ -334,7 +320,7 @@ const Dashboard = () => {
           }} exit={{
             opacity: 0
           }}>
-                  <ProfileSection />
+                  <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} />
                 </motion.div>}
               {activeSection === "help" && <motion.div key="help" initial={{
             opacity: 0,

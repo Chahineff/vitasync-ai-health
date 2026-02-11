@@ -4,12 +4,11 @@ import {
   ShoppingCartSimple,
   Check,
   SpinnerGap,
-  Plus,
   Repeat,
   ShieldCheck,
-  Leaf,
   Flask,
   Truck,
+  ChatCircleDots,
 } from '@phosphor-icons/react';
 import { ProductDetail, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
@@ -47,9 +46,6 @@ export function ProductPurchaseBox({
   const price = selectedVariant?.price || product.priceRange.minVariantPrice;
   const hasMultipleVariants = variants.length > 1;
 
-  // Extract key benefits (first 3)
-  const keyBenefits = parsedData?.benefits?.slice(0, 3) || [];
-
   const handleAddToCart = async () => {
     if (!selectedVariant || isAdding) return;
 
@@ -80,7 +76,7 @@ export function ProductPurchaseBox({
       });
       
       setJustAdded(true);
-      toast.success(t('pdp.addedToCart'), {
+      toast.success('Added to your monthly stack', {
         description: product.title,
         position: 'top-center',
       });
@@ -92,8 +88,15 @@ export function ProductPurchaseBox({
     }
   };
 
+  // Dynamic trust strip items
+  const trustItems = [
+    { icon: ShieldCheck, label: 'Lab-tested' },
+    { icon: Flask, label: 'Clean formula' },
+    { icon: Truck, label: 'Easy daily routine' },
+  ];
+
   return (
-    <div className="lg:sticky lg:top-8 space-y-6">
+    <div className="lg:sticky lg:top-24 space-y-5">
       {/* Vendor & Title */}
       <div>
         {product.vendor && (
@@ -101,7 +104,7 @@ export function ProductPurchaseBox({
             {product.vendor}
           </p>
         )}
-        <h1 className="text-3xl lg:text-4xl font-bold text-foreground leading-tight tracking-tight">
+        <h1 className="text-[34px] lg:text-[40px] font-semibold text-foreground leading-tight tracking-tight">
           {product.title}
         </h1>
         {product.productType && (
@@ -111,26 +114,24 @@ export function ProductPurchaseBox({
         )}
       </div>
 
-      {/* Enriched Summary or first benefit */}
+      {/* Enriched Summary */}
       {(enrichedSummary || parsedData?.benefits?.[0]) && (
-        <p className="text-foreground/70 font-light leading-relaxed">
+        <p className="text-[16px] lg:text-[18px] text-[#475569] dark:text-foreground/70 font-light leading-relaxed">
           {enrichedSummary || parsedData?.benefits?.[0]}
         </p>
       )}
 
-      {/* Key Benefits */}
-      {keyBenefits.length > 0 && (
-        <ul className="space-y-2">
-          {keyBenefits.map((benefit, index) => (
-            <li key={index} className="flex items-start gap-2 text-sm text-foreground/80">
-              <Check weight="bold" className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-              <span className="font-light">{benefit}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* Trust Strip — 3 items inline */}
+      <div className="flex items-center gap-4 py-2 flex-wrap">
+        {trustItems.map((item, i) => (
+          <div key={i} className="flex items-center gap-1.5">
+            <item.icon weight="light" className="w-4 h-4 text-primary flex-shrink-0" />
+            <span className="text-xs text-foreground/60 font-light">{item.label}</span>
+          </div>
+        ))}
+      </div>
 
-      {/* Flavor Selector (if multiple related products) */}
+      {/* Flavor Selector */}
       {relatedProducts && relatedProducts.length > 1 && (
         <div className="space-y-2">
           <p className="text-sm text-foreground/60 font-medium">{t('pdp.flavorVariant')}</p>
@@ -142,8 +143,8 @@ export function ProductPurchaseBox({
                 className={cn(
                   "px-4 py-2 rounded-xl text-sm transition-all border",
                   related.handle === product.handle
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-muted/30 text-foreground/70 border-border/50 hover:border-primary/50"
+                    ? "bg-[#0B1220] text-white border-[#0B1220] dark:bg-foreground dark:text-background dark:border-foreground"
+                    : "bg-[#F1F5F9] dark:bg-muted/30 text-foreground/70 border-[#E2E8F0] dark:border-border/50 hover:border-foreground/30"
                 )}
               >
                 {related.flavor}
@@ -153,7 +154,7 @@ export function ProductPurchaseBox({
         </div>
       )}
 
-      {/* Variant Selector (sizes within same product) */}
+      {/* Variant Selector */}
       {hasMultipleVariants && (
         <div className="space-y-2">
           <p className="text-sm text-foreground/60 font-medium">
@@ -168,9 +169,9 @@ export function ProductPurchaseBox({
                 className={cn(
                   "px-4 py-2 rounded-xl text-sm transition-all border",
                   selectedVariantIndex === index
-                    ? "bg-primary text-primary-foreground border-primary"
+                    ? "bg-[#0B1220] text-white border-[#0B1220] dark:bg-foreground dark:text-background dark:border-foreground"
                     : variant.node.availableForSale
-                    ? "bg-muted/30 text-foreground/70 border-border/50 hover:border-primary/50"
+                    ? "bg-[#F1F5F9] dark:bg-muted/30 text-foreground/70 border-[#E2E8F0] dark:border-border/50 hover:border-foreground/30"
                     : "bg-muted/20 text-foreground/30 border-border/30 cursor-not-allowed line-through"
                 )}
               >
@@ -183,7 +184,7 @@ export function ProductPurchaseBox({
 
       {/* Price */}
       <div className="flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-foreground">
+        <span className="text-[22px] lg:text-[28px] font-bold text-foreground">
           {parseFloat(price.amount).toFixed(2)} €
         </span>
         <span className="text-sm text-foreground/50">
@@ -191,72 +192,75 @@ export function ProductPurchaseBox({
         </span>
       </div>
 
-      {/* CTA Buttons */}
-      <div className="flex gap-3">
-        <motion.button
-          onClick={handleAddToCart}
-          disabled={isAdding || !selectedVariant?.availableForSale}
-          whileTap={{ scale: 0.98 }}
-          className={cn(
-            "flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl text-base font-semibold transition-all shadow-lg",
-            justAdded
-              ? "bg-green-500/20 text-green-600 border border-green-500/30"
-              : "bg-primary hover:bg-primary/90 text-primary-foreground",
-            "disabled:opacity-50 disabled:cursor-not-allowed"
-          )}
-        >
-          {isAdding ? (
-            <SpinnerGap className="w-5 h-5 animate-spin" />
-          ) : justAdded ? (
-            <>
-              <Check weight="bold" className="w-5 h-5" />
-              {t('pdp.added')}
-            </>
-          ) : (
-            <>
-              <ShoppingCartSimple weight="bold" className="w-5 h-5" />
-              {t('pdp.addToCart')}
-            </>
-          )}
-        </motion.button>
-        
-        <button
-          className="px-4 py-4 rounded-2xl bg-muted/50 border border-border/50 hover:bg-muted transition-colors"
-          title={t('pdp.addToStack')}
-        >
-          <Plus weight="bold" className="w-5 h-5 text-foreground" />
+      {/* CTAs */}
+      <div className="space-y-3">
+        <div className="flex gap-3">
+          {/* Primary: Add to pack */}
+          <motion.button
+            onClick={handleAddToCart}
+            disabled={isAdding || !selectedVariant?.availableForSale}
+            whileTap={{ scale: 0.98 }}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2 px-6 h-12 rounded-xl text-base font-semibold transition-all",
+              justAdded
+                ? "bg-green-500/20 text-green-600 border border-green-500/30"
+                : "bg-secondary hover:bg-secondary/90 text-[#0B1220]",
+              "disabled:opacity-50 disabled:cursor-not-allowed"
+            )}
+          >
+            {isAdding ? (
+              <SpinnerGap className="w-5 h-5 animate-spin" />
+            ) : justAdded ? (
+              <>
+                <Check weight="bold" className="w-5 h-5" />
+                Added!
+              </>
+            ) : (
+              <>
+                <ShoppingCartSimple weight="bold" className="w-5 h-5" />
+                Add to pack
+              </>
+            )}
+          </motion.button>
+
+          {/* Secondary: Buy once */}
+          <button
+            onClick={handleAddToCart}
+            disabled={isAdding || !selectedVariant?.availableForSale}
+            className="px-5 h-12 rounded-xl border border-[#E2E8F0] dark:border-border/50 text-foreground text-sm font-medium hover:bg-muted/50 transition-colors disabled:opacity-50"
+          >
+            Buy once
+          </button>
+        </div>
+
+        {/* Tertiary: Ask VitaSync */}
+        <button className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+          <ChatCircleDots weight="light" className="w-4 h-4" />
+          Ask VitaSync about this
         </button>
       </div>
 
-      {/* Subscription Placeholder */}
-      <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10">
-        <div className="flex items-center justify-between mb-3">
+      {/* Subscribe & Save */}
+      <div className="p-4 rounded-2xl bg-[#F8FAFC] dark:bg-muted/20 border border-[#E2E8F0] dark:border-border/30">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Repeat weight="light" className="w-5 h-5 text-primary" />
-            <span className="font-medium text-foreground">{t('pdp.subscribeAndSave')}</span>
+            <Repeat weight="light" className="w-5 h-5 text-secondary" />
+            <span className="font-medium text-foreground text-sm">{t('pdp.subscribeAndSave')}</span>
           </div>
-          <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+          <Badge variant="outline" className="text-xs border-secondary/30 text-secondary">
             {t('pdp.comingSoon')}
           </Badge>
         </div>
-        <p className="text-sm text-foreground/60 font-light mb-3">
-          {t('pdp.subscriptionModule')}
+        <p className="text-xs text-foreground/50 font-light mb-3">
+          Pause anytime • Free shipping • Save 10%
         </p>
         <div className="flex items-center justify-between opacity-50">
           <div className="flex items-center gap-3">
             <Switch disabled />
             <span className="text-sm text-foreground/70">{t('pdp.recurringDelivery')}</span>
           </div>
-          <span className="text-sm font-medium text-primary">-10%</span>
+          <span className="text-sm font-medium text-secondary">-10%</span>
         </div>
-      </div>
-
-      {/* Trust Bar */}
-      <div className="grid grid-cols-2 gap-3">
-        <TrustItem icon={ShieldCheck} label={t('pdp.testedQuality')} />
-        <TrustItem icon={Leaf} label={t('pdp.transparentLabeling')} />
-        <TrustItem icon={Flask} label={t('pdp.cleanFormula')} />
-        <TrustItem icon={Truck} label={t('pdp.fastShipping')} />
       </div>
 
       {/* Certifications */}
@@ -274,15 +278,6 @@ export function ProductPurchaseBox({
       <p className="text-xs text-foreground/40 text-center font-light">
         {t('pdp.disclaimer')}
       </p>
-    </div>
-  );
-}
-
-function TrustItem({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string; weight?: string }>; label: string }) {
-  return (
-    <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/30">
-      <Icon weight="light" className="w-4 h-4 text-primary flex-shrink-0" />
-      <span className="text-xs text-foreground/70 font-light">{label}</span>
     </div>
   );
 }

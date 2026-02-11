@@ -13,6 +13,7 @@ import { useEnrichedProductData } from '@/hooks/useEnrichedProductData';
 // Import all PDP sections
 import { ProductGallery } from './ProductGallery';
 import { ProductPurchaseBox } from './ProductPurchaseBox';
+import { CoachInsightCard } from './CoachInsightCard';
 import { QuickBenefitsStrip } from './QuickBenefitsStrip';
 import { WhatItDoes } from './WhatItDoes';
 import { HowToTake } from './HowToTake';
@@ -207,9 +208,9 @@ export function ProductDetailMaster({
 
   return (
     <>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-0 pb-24 lg:pb-8">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-[1200px] mx-auto px-4 lg:px-6 pb-24 lg:pb-8">
         {/* Header */}
-        <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/30 -mx-4 lg:-mx-8 px-4 lg:px-8 py-4 mb-6">
+        <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/30 -mx-4 lg:-mx-6 px-4 lg:px-6 py-4 mb-6">
           <div className="flex items-center justify-between">
             <button onClick={onBack} className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors">
               <ArrowLeft weight="light" className="w-5 h-5" />
@@ -233,12 +234,12 @@ export function ProductDetailMaster({
           </div>
         </div>
 
-        {/* HERO Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          <div className="lg:col-span-7">
-            <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} />
+        {/* HERO Section — 2 equal columns */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
+          <div>
+            <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} tags={product.tags} />
           </div>
-          <div className="lg:col-span-5">
+          <div>
             <ProductPurchaseBox 
               product={product}
               parsedData={parsedData}
@@ -249,6 +250,12 @@ export function ProductDetailMaster({
           </div>
         </section>
 
+        {/* Coach Insight Card */}
+        <CoachInsightCard 
+          enrichedData={enrichedData as any}
+          productTitle={product.title}
+        />
+
         <QuickBenefitsStrip 
           productType={product.productType}
           parsedData={parsedData}
@@ -256,8 +263,6 @@ export function ProductDetailMaster({
           enrichedDosage={enrichedData?.suggested_use?.dosage}
           enrichedTiming={enrichedData?.suggested_use?.timing}
         />
-
-        <div className="border-t border-border/30" />
 
         <WhatItDoes 
           description={product.description}
@@ -268,23 +273,19 @@ export function ProductDetailMaster({
           bestForTags={enrichedData?.best_for_tags}
         />
 
-        <div className="border-t border-border/30" />
-
         <HowToTake 
           parsedData={parsedData}
           enrichedSuggestedUse={enrichedData?.suggested_use}
           enrichedCoachTip={enrichedData?.coach_tip}
         />
 
-        <div className="border-t border-border/30" />
-
         <IngredientsLabel 
           parsedData={parsedData}
           product={product}
           enrichedIngredients={enrichedData?.ingredients_detailed}
+          enrichedSafety={enrichedData?.safety_warnings as any}
+          enrichedQuality={enrichedData?.quality_info as any}
         />
-
-        <div className="border-t border-border/30" />
 
         <QualitySourcing 
           parsedData={parsedData}
@@ -292,34 +293,22 @@ export function ProductDetailMaster({
           enrichedQuality={enrichedData?.quality_info}
         />
 
-        <div className="border-t border-border/30" />
-
         <SafetyCautions 
           parsedData={parsedData}
           enrichedSafety={enrichedData?.safety_warnings}
         />
-
-        <div className="border-t border-border/30" />
 
         <ScienceSection 
           productTitle={product.title}
           enrichedScience={enrichedData?.science_data}
         />
 
-        <div className="border-t border-border/30" />
-
-        <ProductFAQ 
+        <ProductReviews 
           productTitle={product.title}
-          enrichedFaq={enrichedData?.faq}
+          enrichedFaq={enrichedData?.faq as any}
         />
 
-        <div className="border-t border-border/30" />
-
-        <ProductReviews productTitle={product.title} />
-
-        <div className="border-t border-border/30" />
-
-        <BuildYourStack 
+        <BuildYourStack
           products={allProducts}
           currentProductId={product.id}
           onProductClick={handleFlavorChange}
@@ -335,19 +324,19 @@ export function ProductDetailMaster({
 
 function ProductDetailSkeleton({ onBack, t }: { onBack: () => void; t: (key: string) => string }) {
   return (
-    <div className="space-y-6">
+    <div className="max-w-[1200px] mx-auto px-4 lg:px-6 space-y-6">
       <button onClick={onBack} className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors">
         <ArrowLeft weight="light" className="w-5 h-5" />
         <span className="text-sm font-light">{t('pdp.backToShop')}</span>
       </button>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-7">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div>
           <Skeleton className="aspect-square rounded-2xl" />
           <div className="flex gap-2 mt-4">
             {[1, 2, 3, 4].map((i) => (<Skeleton key={i} className="w-16 h-16 rounded-xl" />))}
           </div>
         </div>
-        <div className="lg:col-span-5 space-y-6">
+        <div className="space-y-6">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-10 w-3/4" />
           <Skeleton className="h-6 w-20" />

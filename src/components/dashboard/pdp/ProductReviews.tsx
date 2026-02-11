@@ -1,44 +1,31 @@
-import { Star, PencilSimple } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { Star, PencilSimple, ChatCircleDots, CaretDown } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { FAQItem } from './types';
 
 interface ProductReviewsProps {
   productTitle: string;
+  enrichedFaq?: FAQItem[];
 }
 
-export function ProductReviews({ productTitle }: ProductReviewsProps) {
-  // Placeholder data
-  const averageRating = 0;
-  const totalReviews = 0;
-  
-  const placeholderReviews = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-  ];
+export function ProductReviews({ productTitle, enrichedFaq }: ProductReviewsProps) {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const faqItems = enrichedFaq?.slice(0, 4) || [];
 
   return (
-    <section className="py-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-foreground">
-          Customer Reviews
-        </h2>
-        <Badge variant="outline" className="text-xs">
-          Placeholder
-        </Badge>
-      </div>
+    <section className="py-6 space-y-6">
+      <h2 className="text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
+        Customer Reviews
+      </h2>
 
       {/* Summary Rating */}
-      <div className="flex items-center gap-6 p-6 rounded-2xl bg-muted/30 border border-border/30">
+      <div className="flex items-center gap-6 p-5 rounded-2xl bg-white dark:bg-muted/20 border border-[#E2E8F0] dark:border-border/30">
         <div className="text-center">
           <div className="text-4xl font-bold text-foreground">—</div>
           <div className="flex items-center gap-1 mt-1">
             {[1, 2, 3, 4, 5].map((star) => (
-              <Star 
-                key={star} 
-                weight="light" 
-                className="w-4 h-4 text-foreground/20" 
-              />
+              <Star key={star} weight="light" className="w-4 h-4 text-foreground/20" />
             ))}
           </div>
           <p className="text-xs text-foreground/50 mt-1">No reviews yet</p>
@@ -49,10 +36,7 @@ export function ProductReviews({ productTitle }: ProductReviewsProps) {
               <span className="text-xs text-foreground/50 w-3">{rating}</span>
               <Star weight="fill" className="w-3 h-3 text-foreground/20" />
               <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-foreground/20 rounded-full" 
-                  style={{ width: '0%' }} 
-                />
+                <div className="h-full bg-foreground/20 rounded-full" style={{ width: '0%' }} />
               </div>
               <span className="text-xs text-foreground/30 w-6">0</span>
             </div>
@@ -60,20 +44,13 @@ export function ProductReviews({ productTitle }: ProductReviewsProps) {
         </div>
       </div>
 
-      {/* Review Cards Placeholder */}
+      {/* Placeholder review cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {placeholderReviews.map((review) => (
-          <div 
-            key={review.id}
-            className="p-5 rounded-2xl bg-muted/20 border border-border/20 border-dashed space-y-3"
-          >
+        {[1, 2, 3].map((id) => (
+          <div key={id} className="p-5 rounded-2xl bg-white dark:bg-muted/10 border border-[#E2E8F0] dark:border-border/30 border-dashed space-y-3">
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star 
-                  key={star} 
-                  weight="light" 
-                  className="w-4 h-4 text-foreground/20" 
-                />
+                <Star key={star} weight="light" className="w-4 h-4 text-foreground/20" />
               ))}
             </div>
             <div className="space-y-2">
@@ -89,17 +66,47 @@ export function ProductReviews({ productTitle }: ProductReviewsProps) {
         ))}
       </div>
 
-      {/* Write Review CTA */}
-      <div className="flex justify-center">
-        <Button 
-          variant="outline" 
-          disabled
-          className="gap-2"
-        >
+      {/* CTAs */}
+      <div className="flex items-center gap-3 justify-center">
+        <Button variant="outline" disabled className="gap-2">
           <PencilSimple weight="light" className="w-4 h-4" />
           Write a Review (Coming Soon)
         </Button>
+        <Button variant="ghost" className="gap-2 text-primary">
+          <ChatCircleDots weight="light" className="w-4 h-4" />
+          Ask VitaSync
+        </Button>
       </div>
+
+      {/* FAQ Section */}
+      {faqItems.length > 0 && (
+        <div className="space-y-4 pt-4">
+          <h3 className="text-lg font-semibold text-foreground">Frequently Asked Questions</h3>
+          <div className="space-y-2">
+            {faqItems.map((faq, index) => (
+              <div key={index} className="rounded-xl border border-[#E2E8F0] dark:border-border/30 overflow-hidden">
+                <button
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
+                >
+                  <span className="text-sm font-medium text-foreground pr-4">{faq.question}</span>
+                  <CaretDown
+                    weight="light"
+                    className={cn("w-4 h-4 text-foreground/50 transition-transform flex-shrink-0", openFaqIndex === index && "rotate-180")}
+                  />
+                </button>
+                <div className={cn("grid transition-all duration-300", openFaqIndex === index ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
+                  <div className="overflow-hidden">
+                    <div className="px-4 pb-4">
+                      <p className="text-sm text-foreground/60 font-light leading-relaxed">{faq.answer}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

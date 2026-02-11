@@ -6,10 +6,27 @@ import {
   Paperclip, 
   X, 
   File as FileIcon,
-  Stop
+  Stop,
+  Globe
 } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
+const VOICE_LANGUAGES = [
+  { code: 'fr-FR', label: 'Français', flag: '🇫🇷' },
+  { code: 'en-US', label: 'English', flag: '🇺🇸' },
+  { code: 'es-ES', label: 'Español', flag: '🇪🇸' },
+  { code: 'ar-SA', label: 'العربية', flag: '🇸🇦' },
+  { code: 'zh-CN', label: '中文', flag: '🇨🇳' },
+  { code: 'de-DE', label: 'Deutsch', flag: '🇩🇪' },
+  { code: 'pt-BR', label: 'Português', flag: '🇧🇷' },
+  { code: 'it-IT', label: 'Italiano', flag: '🇮🇹' },
+  { code: 'ja-JP', label: '日本語', flag: '🇯🇵' },
+  { code: 'ko-KR', label: '한국어', flag: '🇰🇷' },
+  { code: 'hi-IN', label: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'ru-RU', label: 'Русский', flag: '🇷🇺' },
+];
 
 interface ChatInputProps {
   onSubmit: (message: string, file?: File | null) => void;
@@ -30,11 +47,14 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [filePreview, setFilePreview] = useState<string | null>(null);
     const [isFocused, setIsFocused] = useState(false);
+    const [voiceLang, setVoiceLang] = useState('fr-FR');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const MAX_CHARS = 4000;
 
-    // Speech-to-text
+    const currentLang = VOICE_LANGUAGES.find(l => l.code === voiceLang) || VOICE_LANGUAGES[0];
+
+    // Speech-to-text with language
     const { 
       startListening, 
       stopListening, 
@@ -43,7 +63,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
       transcript,
       partialTranscript,
       isSupported: sttSupported 
-    } = useSpeechToText();
+    } = useSpeechToText(voiceLang);
 
     // Expose methods to parent
     useImperativeHandle(ref, () => ({
@@ -146,7 +166,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
                 <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
               </motion.div>
               <span className="text-sm text-primary font-medium">
-                {isConnecting ? "Connexion..." : "🎙️ Écoute en cours..."}
+                {isConnecting ? "Connexion..." : `🎙️ Écoute en cours... (${currentLang.flag} ${currentLang.label})`}
               </span>
               {partialTranscript && (
                 <span className="text-sm text-foreground/60 italic truncate flex-1">
@@ -246,6 +266,42 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
                   <Paperclip weight="light" className="w-5 h-5" />
                 </button>
 
+                {/* Voice Language Selector */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className={cn(
+                        "p-2.5 rounded-xl transition-all duration-200",
+                        "text-foreground/50 hover:text-foreground/80 hover:bg-white/10"
+                      )}
+                      title="Langue de dictée vocale"
+                    >
+                      <span className="text-sm">{currentLang.flag}</span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-56 p-2 glass-card border-border/50" side="top" align="start">
+                    <div className="grid gap-0.5 max-h-64 overflow-y-auto">
+                      {VOICE_LANGUAGES.map((lang) => (
+                        <button
+                          key={lang.code}
+                          type="button"
+                          onClick={() => setVoiceLang(lang.code)}
+                          className={cn(
+                            "flex items-center gap-2.5 px-3 py-2 rounded-lg text-left transition-all duration-150",
+                            voiceLang === lang.code
+                              ? "bg-primary/15 text-primary"
+                              : "text-foreground/70 hover:bg-white/10 hover:text-foreground"
+                          )}
+                        >
+                          <span className="text-base">{lang.flag}</span>
+                          <span className="text-sm">{lang.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
                 {/* Voice Input Button */}
                 <button
                   type="button"
@@ -266,7 +322,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
               </div>
 
               <div className="flex items-center gap-3">
-                {/* Character counter with progressive color */}
+                {/* Character counter */}
                 <motion.span 
                   className={cn(
                     "text-xs transition-colors",

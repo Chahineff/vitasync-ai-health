@@ -62,7 +62,7 @@ interface UseSpeechToTextReturn {
   error: string | null;
 }
 
-export function useSpeechToText(): UseSpeechToTextReturn {
+export function useSpeechToText(lang?: string): UseSpeechToTextReturn {
   const [isListening, setIsListening] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -146,7 +146,7 @@ export function useSpeechToText(): UseSpeechToTextReturn {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
       
-      recognition.lang = 'fr-FR';
+      recognition.lang = lang || 'fr-FR';
       recognition.continuous = true;
       recognition.interimResults = true;
 
@@ -222,7 +222,7 @@ export function useSpeechToText(): UseSpeechToTextReturn {
       toast.error('Erreur de dictée vocale');
       setIsConnecting(false);
     }
-  }, [cleanup, isListening]);
+  }, [cleanup, isListening, lang]);
 
   // Start with ElevenLabs (fallback method)
   const startElevenLabsListening = useCallback(async () => {
@@ -257,7 +257,8 @@ export function useSpeechToText(): UseSpeechToTextReturn {
       }
 
       // Connect to ElevenLabs WebSocket
-      const wsUrl = `wss://api.elevenlabs.io/v1/speech-to-text/stream?token=${data.token}&model_id=scribe_v2_realtime&language_code=fr`;
+      const langCode = (lang || 'fr-FR').split('-')[0];
+      const wsUrl = `wss://api.elevenlabs.io/v1/speech-to-text/stream?token=${data.token}&model_id=scribe_v2_realtime&language_code=${langCode}`;
       
       const ws = new WebSocket(wsUrl);
       websocketRef.current = ws;

@@ -301,6 +301,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     role={message.role}
                     content={message.content}
                     isStreaming={(isLoading || isRevealing) && index === messages.length - 1 && message.role === 'assistant'}
+                    onQuizComplete={(summary) => handleSubmit(summary)}
                   />
                 ))}
               </AnimatePresence>

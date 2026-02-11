@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { ProductRecommendationCard, parseProductRecommendations, SubscriptionCard } from '../ProductRecommendationCard';
 
-// Official VitaSync PNG Logo
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
 interface ChatMessageBubbleProps {
@@ -16,25 +15,26 @@ interface ChatMessageBubbleProps {
   onRegenerate?: () => void;
 }
 
-// Render message content with product cards and subscription blocks
-function MessageContent({ content }: { content: string }) {
+function MessageContent({ content, isStreaming }: { content: string; isStreaming?: boolean }) {
   const { text, products, subscription } = parseProductRecommendations(content);
   
-  // If no special content, just render markdown
+  const streamingCursor = isStreaming ? (
+    <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 align-middle animate-cursor-blink" />
+  ) : null;
+
   if (products.length === 0 && !subscription) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
         <ReactMarkdown>{content}</ReactMarkdown>
+        {streamingCursor}
       </div>
     );
   }
 
-  // Split text by product placeholders
   const parts = text.split(/__PRODUCT_(\d+)__/);
   const elements: React.ReactNode[] = [];
   
   parts.forEach((part, index) => {
-    // Check if this is a product index (odd indices after split are captured groups)
     if (index % 2 === 1) {
       const productIndex = parseInt(part, 10);
       const product = products[productIndex];
@@ -44,7 +44,6 @@ function MessageContent({ content }: { content: string }) {
         );
       }
     } else if (part && part.trim()) {
-      // This is text content
       elements.push(
         <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
           <ReactMarkdown>{part.trim()}</ReactMarkdown>
@@ -53,31 +52,25 @@ function MessageContent({ content }: { content: string }) {
     }
   });
   
-  // Add subscription card if present
   if (subscription) {
     elements.push(<SubscriptionCard key="subscription" subscription={subscription} />);
+  }
+  
+  // Append cursor to last element
+  if (streamingCursor) {
+    elements.push(<span key="cursor">{streamingCursor}</span>);
   }
   
   return <div className="space-y-2">{elements}</div>;
 }
 
-// TTS Button Component
 function TTSButton({ content }: { content: string }) {
   const { speak, stop, isSpeaking, isSupported } = useSpeechSynthesis();
-  
   if (!isSupported) return null;
-
-  const handleClick = () => {
-    if (isSpeaking) {
-      stop();
-    } else {
-      speak(content);
-    }
-  };
 
   return (
     <button
-      onClick={handleClick}
+      onClick={() => isSpeaking ? stop() : speak(content)}
       className={cn(
         "p-1.5 rounded-lg transition-all duration-200",
         isSpeaking 
@@ -87,10 +80,7 @@ function TTSButton({ content }: { content: string }) {
       title={isSpeaking ? "Arrêter la lecture" : "Lire à voix haute"}
     >
       {isSpeaking ? (
-        <motion.div
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 0.8, repeat: Infinity }}
-        >
+        <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.8, repeat: Infinity }}>
           <SpeakerHigh weight="fill" className="w-4 h-4" />
         </motion.div>
       ) : (
@@ -100,10 +90,8 @@ function TTSButton({ content }: { content: string }) {
   );
 }
 
-// Copy Button Component
 function CopyButton({ content }: { content: string }) {
   const [copied, setCopied] = useState(false);
-
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(content);
     setCopied(true);
@@ -115,14 +103,14 @@ function CopyButton({ content }: { content: string }) {
       onClick={handleCopy}
       className={cn(
         "p-1.5 rounded-lg transition-all duration-200",
-        copied 
-          ? "bg-secondary/20 text-secondary" 
-          : "text-foreground/40 hover:text-foreground/70 hover:bg-white/5"
+        copied ? "bg-secondary/20 text-secondary" : "text-foreground/40 hover:text-foreground/70 hover:bg-white/5"
       )}
       title={copied ? "Copié !" : "Copier"}
     >
       {copied ? (
-        <Check weight="bold" className="w-4 h-4" />
+        <motion.div initial={{ scale: 0.5 }} animate={{ scale: [1.2, 1] }} transition={{ duration: 0.3 }}>
+          <Check weight="bold" className="w-4 h-4" />
+        </motion.div>
       ) : (
         <Copy weight="light" className="w-4 h-4" />
       )}
@@ -132,16 +120,14 @@ function CopyButton({ content }: { content: string }) {
 
 export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: ChatMessageBubbleProps) {
   const isUser = role === 'user';
-  const isAssistant = role === 'assistant';
 
-  // User message with bubble
   if (isUser) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 15, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
+        initial={{ opacity: 0, x: 30, scale: 0.95, filter: "blur(4px)" }}
+        animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+        exit={{ opacity: 0, x: 10 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
         className="flex gap-4 justify-end"
       >
         <div className="max-w-[75%]">
@@ -156,66 +142,72 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate }: 
     );
   }
 
-  // Assistant message without bubble - full width
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      initial={{ opacity: 0, x: -30, scale: 0.95, filter: "blur(4px)" }}
+      animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, x: -10 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
       className="flex items-start gap-4"
     >
-      {/* AI Avatar with glow during streaming */}
+      {/* AI Avatar */}
       <motion.div 
         className={cn(
-          "w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20 relative",
-          isStreaming && "animate-pulse-glow"
+          "w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20 relative"
         )}
         animate={isStreaming ? { 
+          rotate: [0, 360],
           boxShadow: [
             "0 0 10px 2px rgba(0, 240, 255, 0.2)",
             "0 0 20px 4px rgba(0, 240, 255, 0.4)",
             "0 0 10px 2px rgba(0, 240, 255, 0.2)"
           ]
         } : {}}
-        transition={{ duration: 1.5, repeat: Infinity }}
+        transition={isStreaming ? { 
+          rotate: { duration: 3, repeat: Infinity, ease: "linear" },
+          boxShadow: { duration: 1.5, repeat: Infinity }
+        } : {}}
       >
         <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
       </motion.div>
       
-      {/* Message Content - No bubble, full width */}
       <div className="flex-1 space-y-2 pt-1">
-        {/* Label VitaSync AI */}
         <div className="flex items-center gap-2 mb-2">
           <Sparkle weight="fill" className="w-3.5 h-3.5 text-primary" />
           <span className="text-xs font-medium text-foreground/50">VitaSync AI</span>
         </div>
 
-        {/* Message content without background */}
         <div className="text-foreground/90">
-          <MessageContent content={content} />
+          <MessageContent content={content} isStreaming={isStreaming} />
         </div>
 
-        {/* Action buttons */}
+        {/* Action buttons with stagger */}
         {content && !isStreaming && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex items-center gap-1 pt-2"
-          >
-            <CopyButton content={content} />
-            <TTSButton content={content} />
-            {onRegenerate && (
-              <button
-                onClick={onRegenerate}
-                className="p-1.5 rounded-lg text-foreground/40 hover:text-foreground/70 hover:bg-white/5 transition-all duration-200"
-                title="Régénérer"
+          <div className="flex items-center gap-1 pt-2">
+            {[
+              <CopyButton key="copy" content={content} />,
+              <TTSButton key="tts" content={content} />,
+              onRegenerate && (
+                <button
+                  key="regen"
+                  onClick={onRegenerate}
+                  className="p-1.5 rounded-lg text-foreground/40 hover:text-foreground/70 hover:bg-white/5 transition-all duration-200"
+                  title="Régénérer"
+                >
+                  <ArrowsClockwise weight="light" className="w-4 h-4" />
+                </button>
+              ),
+            ].filter(Boolean).map((btn, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + i * 0.08, duration: 0.25 }}
               >
-                <ArrowsClockwise weight="light" className="w-4 h-4" />
-              </button>
-            )}
-          </motion.div>
+                {btn}
+              </motion.div>
+            ))}
+          </div>
         )}
       </div>
     </motion.div>

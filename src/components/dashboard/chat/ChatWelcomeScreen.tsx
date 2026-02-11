@@ -31,27 +31,22 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="text-center max-w-3xl w-full"
       >
-        {/* Animated Logo with Halo Glow */}
+        {/* Animated Logo with Halo Glow + Float */}
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.5 }}
           className="relative mx-auto mb-8 w-28 h-28"
         >
-          {/* Outer rotating gradient ring */}
           <div className="absolute inset-0 rounded-full animate-halo-pulse" />
-          
-          {/* Inner glow */}
           <div className="absolute inset-2 rounded-full bg-gradient-to-br from-primary/30 via-secondary/20 to-primary/30 animate-gradient-rotate blur-md" />
-          
-          {/* Logo container */}
-          <div className="absolute inset-3 rounded-full bg-background/80 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-2xl">
-            <img 
-              src={vitasyncLogoUrl} 
-              alt="VitaSync" 
-              className="w-12 h-12 object-contain"
-            />
-          </div>
+          <motion.div 
+            className="absolute inset-3 rounded-full bg-background/80 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-2xl"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <img src={vitasyncLogoUrl} alt="VitaSync" className="w-12 h-12 object-contain" />
+          </motion.div>
         </motion.div>
 
         {/* Greeting with shimmer effect */}

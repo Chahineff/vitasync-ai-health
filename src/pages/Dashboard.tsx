@@ -350,7 +350,7 @@ const Dashboard = () => {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      {activeSection !== 'coach' && <MobileBottomNav activeSection={activeSection} onSectionChange={handleSectionChange} onSignOut={handleSignOut} />}
+      <MobileBottomNav activeSection={activeSection} onSectionChange={handleSectionChange} onSignOut={handleSignOut} />
     </div>;
 };
 interface DashboardHomeProps {

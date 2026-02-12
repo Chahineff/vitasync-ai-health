@@ -1,107 +1,77 @@
+# Restructuration des modeles IA VitaSync
+
+## Resume
+
+Remplacement des 4 modeles actuels (1.0 Flash, 1.0 Pro, 2.0 Flash, 2.0 Pro) par 3 modeles alignes sur le modele economique :
 
 
-# Corps humain interactif dans le Coach IA
+| Ancien             | Nouveau            | Modele reel            | Usage                                                           |
+| ------------------ | ------------------ | ---------------------- | --------------------------------------------------------------- |
+| VitaSync 1.0 Flash | VitaSync 2.5 Flash | gemini-2.5-flash-lite  | Supplement Tracking + Shop Recommendations + Coach IA (default) |
+| VitaSync 1.0 Pro   | *(supprime)*       | -                      | -                                                               |
+| VitaSync 2.0 Flash | VitaSync 3 Flash   | gemini-3-flash-preview | Coach IA (defaut for premium member)                            |
+| VitaSync 2.0 Pro   | VitaSync 3 Pro     | gemini-3-pro-preview   | Coach IA (premium)                                              |
 
-## Vue d'ensemble
-
-Ajout d'un bouton "corps humain" dans la barre d'outils du chat qui ouvre un modal/drawer avec une silhouette humaine interactive en SVG. L'utilisateur clique sur une zone du corps (tete, epaules, dos, genoux, etc.), la zone s'illumine, son nom s'affiche, et un message est automatiquement envoye a l'IA du type "J'ai une douleur au [zone selectionnee]".
-
-Approche SVG plutot que 3D : un SVG vectoriel est leger, rapide, responsive, fonctionne parfaitement sur mobile, et ne necessite aucune dependance lourde (Three.js, modeles 3D). Le resultat visuel sera premium grace au design glassmorphism du projet.
 
 ---
 
-## Architecture
+## Modifications
 
-### Nouveau composant : `BodyMapModal.tsx`
+### 1. ChatModelSelector.tsx -- Refonte du selecteur de modeles
 
-**Fichier** : `src/components/dashboard/chat/BodyMapModal.tsx`
+- Remplacer les 4 modeles par 3 :
+  - VitaSync 2.5 Flash (gemini-2.5-flash-lite) - "Rapide et economique"
+  - VitaSync 3 Flash (gemini-3-flash-preview) - "Equilibre optimal"
+  - VitaSync 3 Pro (gemini-3-pro-preview) - "Reflexion approfondie"
+- Mettre a jour le type `AIModel` (version devient `'2.5' | '3.0'`)
+- Adapter l'UI du dropdown (plus besoin de 2 sections separees)
 
-Un Dialog/Sheet contenant une silhouette humaine SVG avec des zones cliquables :
+### 2. ChatInterface.tsx -- Mise a jour du modele par defaut
 
-**Zones du corps (18 zones)** :
-- Tete / Crane
-- Cou / Nuque
-- Epaule gauche / Epaule droite
-- Bras gauche / Bras droit
-- Poitrine / Thorax
-- Abdomen / Ventre
-- Dos (haut) / Dos (bas)
-- Hanche gauche / Hanche droite
-- Cuisse gauche / Cuisse droite
-- Genou gauche / Genou droit
-- Mollet gauche / Mollet droit
-- Pied gauche / Pied droit
+- Changer `DEFAULT_MODEL` pour pointer sur VitaSync 3 Flash (gemini-3-flash-preview)
+- Le `modelVersion` envoye au backend refletera `'2.5'` ou `'3.0'`
 
-**Comportement** :
-- Chaque zone est un `path` ou `rect` SVG avec `cursor-pointer`
-- Au survol : la zone s'illumine (fill avec couleur primary a 30% d'opacite)
-- Au clic : la zone se selectionne (fill primary a 50%, bordure primary), le nom de la zone s'affiche dans un label en dessous
-- Un bouton "Envoyer a l'IA" en bas envoie le message : "J'ai une douleur au niveau de [zone]. Peux-tu m'aider ?"
-- Possibilite de selectionner plusieurs zones
-- Le modal se ferme automatiquement apres l'envoi
+### 3. ai-coach/index.ts -- Backend du Coach IA
 
-**Design** :
-- Fond glassmorphism (`bg-background/95 backdrop-blur-xl`)
-- Silhouette en trait fin blanc/gris clair
-- Zones selectionnees en cyan/primary avec glow
-- Label de la zone selectionnee avec animation fade-in
-- Vue de face par defaut, bouton pour basculer en vue de dos
+- Mettre a jour `ALLOWED_MODELS` pour inclure `google/gemini-2.5-flash-lite`
+- Adapter la logique de quiz : disponible uniquement pour les modeles version 3.0 (remplace la condition `2.0`)
+- Modele par defaut fallback : `google/gemini-3-flash-preview`
 
-### Modification : `ChatInput.tsx`
+### 4. supplement-insights/index.ts -- Analyse IA des supplements
 
-**Fichier** : `src/components/dashboard/chat/ChatInput.tsx`
+- Changer le modele de `google/gemini-3-pro-preview` a `google/gemini-2.5-flash-lite`
+- Meme fonctionnalite, cout reduit
 
-- Ajouter un bouton avec l'icone `PersonArmsSpread` (disponible dans @phosphor-icons/react) dans la barre d'outils, entre le bouton micro et le bouton fichier
-- Au clic, ouvre le `BodyMapModal`
-- Quand l'utilisateur selectionne une zone et confirme, le message est insere dans l'input et soumis automatiquement
+### 5. ai-shop-recommendations/index.ts -- Recommandations IA boutique
 
-### Modification : `ChatInput` interface
-
-- Ajouter une prop `onBodyZoneSelect` ou utiliser directement `onSubmit` depuis le modal
-- Le modal recoit `onSubmit` pour envoyer le message directement
+- Changer le modele de `google/gemini-3-pro-preview` a `google/gemini-2.5-flash-lite`
+- Meme fonctionnalite, cout reduit
 
 ---
 
-## Detail technique du SVG
+## Detail technique
 
-Le SVG sera dessine en inline dans le composant (pas de fichier externe) avec des `path` pour chaque zone anatomique. Chaque zone aura :
+### Nouveaux modeles (ChatModelSelector)
 
 ```text
-<g id="zone-tete" onClick={() => toggleZone('Tete')} className="cursor-pointer">
-  <path d="..." fill="transparent" stroke="currentColor" />
-  <path d="..." fill={selected ? 'primary/50' : 'transparent'} /> (overlay)
-</g>
+VitaSync 2.5 Flash  -> google/gemini-2.5-flash-lite  (version: '2.5', mode: 'flash')
+VitaSync 3 Flash    -> google/gemini-3-flash-preview  (version: '3.0', mode: 'flash')
+VitaSync 3 Pro      -> google/gemini-3-pro-preview    (version: '3.0', mode: 'pro')
 ```
 
-La silhouette sera une forme humaine simplifiee mais reconnaissable, style medical/anatomique epure, coherent avec le design Bio-Tech Luxury.
+### Impact sur les fonctionnalites
 
-Deux vues : **Face** et **Dos**, avec un toggle pour basculer (les zones du dos ne sont pas les memes : haut du dos, bas du dos, lombaires, omoplates).
+- Quiz interactifs : reserves aux modeles version `3.0` (VitaSync 3 Flash et 3 Pro)
+- Supplement Tracking et Shop : utiliseront `gemini-2.5-flash-lite` (le moins cher) au lieu de `gemini-3-pro-preview`
+- Coach IA : par defaut VitaSync 3 Flash, avec option Pro
 
----
+### Fichiers modifies
 
-## Flux utilisateur
 
-```text
-1. Clic sur le bouton "corps humain" (icone PersonArmsSpread)
-2. Modal s'ouvre avec la silhouette SVG
-3. L'utilisateur clique sur une ou plusieurs zones
-4. Les zones selectionnees s'illuminent + label affiche
-5. Bouton "Envoyer" -> message auto-genere :
-   "J'ai une douleur au niveau de : [zone1], [zone2]. Peux-tu m'aider a identifier les causes possibles et me recommander des solutions ?"
-6. Modal se ferme, message envoye, IA repond
-```
-
----
-
-## Fichiers
-
-| Fichier | Modification |
-|---|---|
-| `src/components/dashboard/chat/BodyMapModal.tsx` | Nouveau - Modal avec silhouette SVG interactive (face + dos) |
-| `src/components/dashboard/chat/ChatInput.tsx` | Ajout bouton PersonArmsSpread + ouverture du modal |
-| `src/components/dashboard/chat/index.ts` | Export du nouveau composant si necessaire |
-
-## Aucune nouvelle dependance
-
-Tout est fait avec les outils existants : React, Framer Motion, Phosphor Icons, SVG inline, et les composants UI (Dialog/Sheet).
-
+| Fichier                                               | Changement                                |
+| ----------------------------------------------------- | ----------------------------------------- |
+| `src/components/dashboard/chat/ChatModelSelector.tsx` | 3 modeles, nouveau nommage, UI simplifiee |
+| `src/components/dashboard/ChatInterface.tsx`          | DEFAULT_MODEL mis a jour                  |
+| `supabase/functions/ai-coach/index.ts`                | ALLOWED_MODELS + logique quiz version 3.0 |
+| `supabase/functions/supplement-insights/index.ts`     | Modele -> gemini-2.5-flash-lite           |
+| `supabase/functions/ai-shop-recommendations/index.ts` | Modele -> gemini-2.5-flash-lite           |

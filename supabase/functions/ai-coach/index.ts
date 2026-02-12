@@ -555,9 +555,9 @@ STYLE DE FORMATAGE (OBLIGATOIRE)
 • Varie la taille des titres pour la hiérarchie visuelle
 
 ═══════════════════════════════════════════════════════════════
-PLAYBOOK QUIZ PERSONNALISÉ (VitaSync 2.0 uniquement)
+PLAYBOOK QUIZ PERSONNALISÉ (VitaSync 3.0 uniquement)
 ═══════════════════════════════════════════════════════════════
-Si le modèle est version 2.0, tu peux créer un quiz interactif pour approfondir un sujet.
+Si le modèle est version 3.0, tu peux créer un quiz interactif pour approfondir un sujet.
 Format OBLIGATOIRE :
 [[QUIZ_START]]
 TITLE: Mon Quiz Personnalisé
@@ -568,7 +568,7 @@ Q2: Autre question ? | Choix 1 | Choix 2 | Choix 3 | Choix 4
 Règles :
 • Maximum 10 questions, 4 options par question
 • Utilise un quiz quand l'utilisateur a besoin d'un diagnostic plus poussé
-• NE GÉNÈRE UN QUIZ QUE si le modèle est version 2.0 (sinon, pose des questions textuelles classiques)
+• NE GÉNÈRE UN QUIZ QUE si le modèle est version 3.0 (sinon, pose des questions textuelles classiques)
 • Exemples : "Quiz Énergie", "Quiz Sommeil", "Quiz Stress", "Quiz Nutrition"`;
 
 
@@ -889,14 +889,13 @@ Deno.serve(async (req) => {
 
     // Validate and get requested model
     const ALLOWED_MODELS = [
-      'google/gemini-2.5-flash',
-      'google/gemini-2.5-pro',
+      'google/gemini-2.5-flash-lite',
       'google/gemini-3-flash-preview',
       'google/gemini-3-pro-preview'
     ];
     
     const requestedModel = (requestBody as Record<string, unknown>)?.model as string || 'google/gemini-3-flash-preview';
-    const modelVersion = (requestBody as Record<string, unknown>)?.modelVersion as string || '1.0';
+    const modelVersion = (requestBody as Record<string, unknown>)?.modelVersion as string || '2.5';
     const model = ALLOWED_MODELS.includes(requestedModel) 
       ? requestedModel 
       : 'google/gemini-3-flash-preview';
@@ -905,8 +904,8 @@ Deno.serve(async (req) => {
 
     // Conditionally add quiz capability info
     let finalSystemPrompt = systemPrompt;
-    if (modelVersion !== '2.0') {
-      // Remove quiz playbook for non-2.0 models
+    if (modelVersion !== '3.0') {
+      // Remove quiz playbook for non-3.0 models
       finalSystemPrompt = finalSystemPrompt.replace(
         /═+\nPLAYBOOK QUIZ PERSONNALISÉ[\s\S]*?Exemples : "Quiz Énergie", "Quiz Sommeil", "Quiz Stress", "Quiz Nutrition"/,
         ''

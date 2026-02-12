@@ -254,7 +254,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const isNewConversation = messages.length === 0;
 
   return (
-    <div className="flex h-[100dvh] md:h-[calc(100vh-2rem)] min-h-0 md:min-h-[600px] bg-background/30 md:rounded-3xl overflow-hidden md:border md:border-white/10 backdrop-blur-xl">
+    <div className="flex h-[calc(100dvh-4rem)] md:h-[calc(100vh-2rem)] min-h-0 md:min-h-[600px] bg-background/30 md:rounded-3xl overflow-hidden md:border md:border-white/10 backdrop-blur-xl">
       {/* Sidebar - hidden on mobile, shown via sheet */}
       <ChatSidebar
         conversations={conversations}

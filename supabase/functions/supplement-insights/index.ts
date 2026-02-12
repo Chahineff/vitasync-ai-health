@@ -137,7 +137,7 @@ INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse stru
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-pro-preview",
+        model: "google/gemini-2.5-flash-lite",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: "Analyse mes compléments et ma régularité de prise." },

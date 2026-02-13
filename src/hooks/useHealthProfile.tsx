@@ -31,6 +31,7 @@ export interface HealthProfile {
   budget_range_min: number | null;
   budget_range_max: number | null;
   medications_notes: string | null;
+  tutorial_completed: boolean | null;
 }
 
 export function useHealthProfile() {

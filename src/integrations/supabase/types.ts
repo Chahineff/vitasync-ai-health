@@ -294,6 +294,7 @@ export type Database = {
           sport_types: string[] | null
           stress_level: string | null
           supplements_experience: string | null
+          tutorial_completed: boolean | null
           updated_at: string
           user_id: string
         }
@@ -323,6 +324,7 @@ export type Database = {
           sport_types?: string[] | null
           stress_level?: string | null
           supplements_experience?: string | null
+          tutorial_completed?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -352,6 +354,7 @@ export type Database = {
           sport_types?: string[] | null
           stress_level?: string | null
           supplements_experience?: string | null
+          tutorial_completed?: boolean | null
           updated_at?: string
           user_id?: string
         }

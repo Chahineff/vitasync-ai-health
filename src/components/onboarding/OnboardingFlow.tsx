@@ -761,6 +761,14 @@ export function OnboardingFlow() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center relative overflow-hidden">
+      {/* Progress background fill */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 pointer-events-none bg-gradient-to-t from-emerald-500/15 via-teal-500/10 to-primary/5"
+        initial={{ height: "0%" }}
+        animate={{ height: `${progress}%` }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
+
       {/* Decorative floating orbs */}
       <motion.div
         className="absolute top-1/4 -left-32 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"

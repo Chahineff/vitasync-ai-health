@@ -75,7 +75,7 @@ export const AwaitingAnalysis = ({ title, onStartDiagnostic }: AwaitingAnalysisP
         onClick={onStartDiagnostic}
         className="flex items-center justify-center gap-2 w-full px-5 py-2.5 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all text-sm font-medium group"
       >
-        Lancer le diagnostic
+        Visiter le Shop
         <ArrowRight weight="bold" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </button>
     </motion.div>

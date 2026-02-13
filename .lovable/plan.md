@@ -1,73 +1,81 @@
-# Plan : Fond progressif onboarding + Tutoriel Dashboard
 
-## 1. Fond progressif d'avancement dans l'onboarding
 
-**Concept** : A mesure que l'utilisateur repond aux questions, un degrade de couleur (vert/bleu/teal) monte progressivement depuis le bas de l'ecran en arriere-plan, donnant un retour visuel immersif de la progression.
+# Plan : Tutoriel Dashboard immersif + Relancer depuis les parametres
 
-**Implementation technique** :
+## 1. Bouton "Relancer le tutoriel" dans les Parametres
 
-- Dans `OnboardingFlow.tsx`, ajouter un `div` en position absolue derriere le contenu principal
-- Ce div utilise un `height` anime via framer-motion, lie a la variable `progress` (deja calculee : `((currentStep + 1) / questions.length) * 100`)
-- Le degrade va du vert au bleu/teal : `bg-gradient-to-t from-emerald-500/15 via-teal-500/10 to-primary/5`
-- Animation fluide avec `motion.div` et `animate={{ height: progress + "%" }}`
-- L'opacite reste subtile (10-15%) pour ne pas interferer avec la lisibilite du formulaire
+Ajouter un bouton dans `ProfileSection.tsx` (entre le selecteur de langue et le formulaire de profil) qui :
+- Remet `tutorial_completed` a `false` en base
+- Declenche le tutoriel immediatement via un callback passe depuis `Dashboard.tsx`
 
-## 2. Tutoriel du Dashboard (premiere connexion)
+**Fichiers concernes** : `ProfileSection.tsx`, `Dashboard.tsx`
 
-### 2.1 Base de donnees
+## 2. Refonte complete du tutoriel : Experience immersive
 
-- Ajouter une colonne `tutorial_completed` (boolean, default false) a la table `user_health_profiles` via migration SQL
+### Concept
 
-### 2.2 Nouveau composant `DashboardTutorial.tsx`
+Au lieu de cartes statiques dans une modale, le tutoriel prend tout l'ecran et simule un vrai dashboard VitaSync. Un curseur anime se deplace automatiquement entre les elements de la sidebar, clique dessus, et des bulles explicatives apparaissent pour decrire chaque fonctionnalite.
 
-Un overlay plein ecran en 4 etapes rapides, chaque etape est une "carte" avec :
+### Architecture du composant
 
-- Un titre et une description courte
-- Une illustration/mockup anime de la fonctionnalite
-- Un bouton "Suivant" et un bouton "Passer le tutoriel"
+Le composant `DashboardTutorial.tsx` sera entierement reecrit avec :
 
-**Les 4 etapes du tutoriel :**
+**a) Un faux dashboard plein ecran**
+- Une sidebar simplifiee (logo VitaSync + menu items : Accueil, Coach IA, Supplements, Boutique, Parametres)
+- Une zone de contenu principale qui change selon la section selectionnee
+- Le tout en glassmorphism, identique au vrai dashboard
 
-1. **Check-in du jour** : "Chaque jour, reponds a un court formulaire sur ton sommeil, energie et stress. Ces donnees permettent a ton Coach IA de mieux te conseiller."
-2. **Coach IA (VitaSync)** : "Pose tes questions sante a VitaSync, ton coach personnel. Il connait ton profil et t'accompagne au quotidien." -- Avec une animation simulant une conversation (bulles de chat qui apparaissent)
-3. **Suivi des complements** : "Suis ta routine quotidienne et coche tes prises. Exemple : Creatine Monohydrate le matin, Whey Protein le soir." -- Avec une animation montrant des items qui se cochent
-4. **Boutique** : "Decouvre des complements adaptes a ton profil dans notre boutique integree." -- Avec un apercu de cartes produits
+**b) Un curseur anime**
+- Un element `motion.div` representant un curseur (forme de fleche SVG)
+- Il se deplace avec `animate={{ x, y }}` entre des positions precalculees
+- A chaque "clic", un effet ripple/pulse apparait
 
-### 2.3 Flux utilisateur
+**c) Sequence automatique en 5 etapes**
+
+| Etape | Le curseur va vers... | Contenu affiche | Bulle explicative |
+|---|---|---|---|
+| 1 | Zone "Accueil" (deja selectionnee) | Apercu du dashboard home avec check-in widget | "Chaque jour, remplis ton check-in pour que ton Coach IA s'adapte a toi." |
+| 2 | Bouton "Coach IA" dans la sidebar | Simulation d'une conversation (bulles de chat animees) | "Pose tes questions sante a VitaSync. Il connait ton profil et s'adapte a tes besoins." |
+| 3 | Bouton "Supplements" dans la sidebar | Liste de supplements avec cochage automatique | "Suis ta routine et coche tes prises. Exemple : Creatine le matin, Magnesium le soir." |
+| 4 | Bouton "Boutique" dans la sidebar | Grille de 3 cartes produits animees | "Decouvre une large selection de complements adaptes a ton profil." |
+| 5 | Bouton "Parametres" dans la sidebar | Apercu des settings (theme toggle, profil sante) | "Modifie ton profil de sante, change de theme, ajuste tes preferences a tout moment." |
+
+**d) Bulles explicatives**
+- Positionnees a cote du contenu principal (pas par-dessus)
+- Animation d'apparition en slide + deblur
+- Texte court et precis
+
+**e) Controles utilisateur**
+- Bouton "Passer" en haut a droite (permanent)
+- Bouton "Suivant" pour avancer manuellement (ou l'animation avance automatiquement apres ~4 secondes)
+- Indicateur de progression (5 points en bas)
+
+### Deroulement temporel de chaque etape
 
 ```text
-Connexion -> Check-in du jour (modal existante)
-          -> Si tutorial_completed = false : Tutoriel (4 etapes)
-          -> Dashboard normal
+1. Curseur se deplace vers l'element sidebar (~800ms)
+2. Effet de clic/pulse sur l'element (~300ms)
+3. L'element sidebar s'active visuellement (~200ms)
+4. Le contenu principal change avec animation slide (~400ms)
+5. La bulle explicative apparait (~300ms)
+6. Pause (~3 secondes) ou clic utilisateur sur "Suivant"
 ```
-
-- Le tutoriel se declenche apres la fermeture du check-in quotidien (ou son skip)
-- L'utilisateur peut passer le tutoriel a tout moment via un bouton "Passer"
-- A la fin ou au skip, `tutorial_completed` passe a `true` en base
-
-### 2.4 Design du tutoriel
-
-- Overlay plein ecran avec fond semi-transparent et `backdrop-blur`
-- Cartes centrales en glassmorphism (`glass-card-premium`)
-- Animations framer-motion (slide + deblur entre etapes)
-- Indicateur de progression (4 points en bas)
-- Le tutoriel est sobre, rapide (~15 secondes au total si l'utilisateur clique vite)
 
 ## 3. Fichiers concernes
 
-
-| Fichier                                          | Action                                                  |
-| ------------------------------------------------ | ------------------------------------------------------- |
-| `supabase/migrations/`                           | Nouvelle migration : ajout colonne `tutorial_completed` |
-| `src/hooks/useHealthProfile.tsx`                 | Ajouter `tutorial_completed` au type `HealthProfile`    |
-| `src/components/onboarding/OnboardingFlow.tsx`   | Ajouter le div de fond progressif                       |
-| `src/components/dashboard/DashboardTutorial.tsx` | **Nouveau** - Composant tutoriel 4 etapes               |
-| `src/pages/Dashboard.tsx`                        | Integrer le tutoriel apres le check-in                  |
-
+| Fichier | Action |
+|---|---|
+| `src/components/dashboard/DashboardTutorial.tsx` | Reecrit entierement : tutoriel immersif plein ecran |
+| `src/components/dashboard/ProfileSection.tsx` | Ajout bouton "Relancer le tutoriel" |
+| `src/pages/Dashboard.tsx` | Passer callback `onRestartTutorial` a ProfileSection |
 
 ## 4. Details techniques
 
-- Le fond progressif utilise `pointer-events-none` pour ne pas bloquer les interactions
-- Le tutoriel utilise `z-index: 60` (au-dessus du check-in a z-50)
-- Les animations de demo dans le tutoriel sont purement visuelles (pas de vraies donnees), simulees avec des timeouts et des animations framer-motion
-- Le composant tutoriel recoit un callback `onComplete` qui met a jour la base et ferme l'overlay
+- Le faux dashboard est un composant pur (pas de donnees reelles, tout est simule)
+- Le curseur utilise un SVG de pointeur classique (fleche blanche avec bord noir)
+- Les positions du curseur sont des coordonnees en pourcentage pour etre responsive
+- Sur mobile, le tutoriel utilise la bottom nav au lieu de la sidebar
+- Les refs des elements sidebar sont utilisees pour calculer les positions du curseur via `useRef` + positions fixes
+- Le composant reste en `z-[60]` pour etre au-dessus de tout
+- `pointer-events-none` sur le faux dashboard, seuls les boutons Passer/Suivant sont cliquables
+

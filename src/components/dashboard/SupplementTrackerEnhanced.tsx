@@ -74,14 +74,14 @@ export function SupplementTrackerEnhanced() {
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-white/5 rounded-xl p-1 mb-4">
-            <TabsTrigger value="day" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px]">
-              <Sun weight="light" className="w-4 h-4 mr-1" /> Jour
+            <TabsTrigger value="day" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px] flex items-center justify-center gap-1.5">
+              <Sun weight="light" className="w-4 h-4" /> Jour
             </TabsTrigger>
-            <TabsTrigger value="week" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px]">
-              <ChartBar weight="light" className="w-4 h-4 mr-1" /> Semaine
+            <TabsTrigger value="week" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px] flex items-center justify-center gap-1.5">
+              <ChartBar weight="light" className="w-4 h-4" /> Semaine
             </TabsTrigger>
-            <TabsTrigger value="month" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px]">
-              <CalendarBlank weight="light" className="w-4 h-4 mr-1" /> Mois
+            <TabsTrigger value="month" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-foreground text-foreground/60 font-light text-sm min-h-[44px] flex items-center justify-center gap-1.5">
+              <CalendarBlank weight="light" className="w-4 h-4" /> Mois
             </TabsTrigger>
           </TabsList>
 

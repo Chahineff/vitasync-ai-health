@@ -1,7 +1,8 @@
-import { Sparkle, PencilSimple, ChatCircleDots } from '@phosphor-icons/react';
+import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight } from '@phosphor-icons/react';
 import { EnrichedProductData } from './types';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
 
 interface CoachInsightCardProps {
   enrichedData: EnrichedProductData | null;
@@ -11,6 +12,7 @@ interface CoachInsightCardProps {
 
 export function CoachInsightCard({ enrichedData, productTitle, onAskCoach }: CoachInsightCardProps) {
   const { healthProfile: profile } = useHealthProfile();
+  const navigate = useNavigate();
 
   const insightText = enrichedData?.coach_tip || enrichedData?.summary || null;
   if (!insightText) return null;
@@ -63,13 +65,17 @@ export function CoachInsightCard({ enrichedData, productTitle, onAskCoach }: Coa
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-4 pt-1">
+          <div className="flex items-center gap-3 pt-2">
             <button
-              onClick={onAskCoach}
-              className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              onClick={() => {
+                const question = `Que penses-tu de ${productTitle} pour moi ? Est-ce adapté à mon profil et mes objectifs ?`;
+                navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
+              }}
+              className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-secondary to-primary shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
             >
-              <ChatCircleDots weight="light" className="w-4 h-4" />
-              Ask VitaSync
+              <ChatCircleDots weight="fill" className="w-4.5 h-4.5" />
+              Demander au Coach
+              <ArrowRight weight="bold" className="w-3.5 h-3.5" />
             </button>
             <button className="flex items-center gap-1.5 text-xs text-foreground/40 hover:text-foreground/60 transition-colors">
               <PencilSimple weight="light" className="w-3.5 h-3.5" />

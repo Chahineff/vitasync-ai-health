@@ -96,11 +96,19 @@ export function DailyCheckinWidget() {
             {todayCheckin ? "Tendances sur 7 jours" : "Comment te sens-tu aujourd'hui ?"}
           </p>
         </div>
-        <Button variant="ghost" size="sm" onClick={openCheckinModal} className="gap-2">
+        <Button 
+          variant={todayCheckin ? "ghost" : "default"} 
+          size={todayCheckin ? "sm" : "default"}
+          onClick={openCheckinModal} 
+          className={cn(
+            "gap-2",
+            !todayCheckin && "px-5 py-3 text-base font-medium shadow-lg shadow-primary/20"
+          )}
+        >
           {todayCheckin ? (
             <><PencilSimple weight="light" className="w-4 h-4" /> Modifier</>
           ) : (
-            <><Plus weight="light" className="w-4 h-4" /> Remplir</>
+            <><Plus weight="bold" className="w-5 h-5" /> Check-in du jour</>
           )}
         </Button>
       </div>

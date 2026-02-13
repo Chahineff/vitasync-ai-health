@@ -79,9 +79,9 @@ export function HealthProfileSection() {
   };
 
   const budgetLabels: Record<string, string> = {
-    eco: "Économique",
     standard: "Standard",
     premium: "Premium",
+    elite: "Élite",
   };
 
   const sections = [

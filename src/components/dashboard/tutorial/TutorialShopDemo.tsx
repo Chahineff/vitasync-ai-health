@@ -2,15 +2,21 @@ import { motion } from "framer-motion";
 import { ShoppingCart, MagnifyingGlass, Funnel } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
-const CATEGORIES = ["Tous", "Protéines", "Vitamines", "Minéraux", "Oméga", "Énergie"];
+const CATEGORIES = ["Tous", "Protéines", "Vitamines", "Minéraux", "Oméga", "Énergie", "Sommeil", "Muscle"];
 
 const PRODUCTS = [
   { name: "Créatine Monohydrate", price: "29,99 €", tag: "Muscle", color: "bg-blue-500/15", tagColor: "text-blue-400" },
-  { name: "Magnésium Bisglycinate", price: "24,99 €", tag: "Sommeil", color: "bg-indigo-500/15", tagColor: "text-indigo-400" },
+  { name: "Whey Isolate", price: "44,99 €", tag: "Protéines", color: "bg-orange-500/15", tagColor: "text-orange-400" },
+  { name: "5-HTP", price: "24,99 €", tag: "Sommeil", color: "bg-indigo-500/15", tagColor: "text-indigo-400" },
+  { name: "BCAA 2:1:1", price: "27,99 €", tag: "Muscle", color: "bg-blue-500/15", tagColor: "text-blue-400" },
+  { name: "Magnésium Bisglycinate", price: "22,99 €", tag: "Sommeil", color: "bg-indigo-500/15", tagColor: "text-indigo-400" },
   { name: "Oméga-3 Ultra", price: "34,99 €", tag: "Cerveau", color: "bg-cyan-500/15", tagColor: "text-cyan-400" },
   { name: "Vitamine D3 + K2", price: "19,99 €", tag: "Immunité", color: "bg-amber-500/15", tagColor: "text-amber-400" },
-  { name: "Zinc Picolinate", price: "14,99 €", tag: "Immunité", color: "bg-emerald-500/15", tagColor: "text-emerald-400" },
   { name: "Ashwagandha KSM-66", price: "27,99 €", tag: "Stress", color: "bg-purple-500/15", tagColor: "text-purple-400" },
+  { name: "Zinc Picolinate", price: "14,99 €", tag: "Immunité", color: "bg-emerald-500/15", tagColor: "text-emerald-400" },
+  { name: "Collagène Marin", price: "32,99 €", tag: "Peau", color: "bg-pink-500/15", tagColor: "text-pink-400" },
+  { name: "Probiotiques 50B", price: "29,99 €", tag: "Digestion", color: "bg-green-500/15", tagColor: "text-green-400" },
+  { name: "Multivitamines Sport", price: "24,99 €", tag: "Énergie", color: "bg-yellow-500/15", tagColor: "text-yellow-400" },
 ];
 
 export function TutorialShopDemo() {
@@ -56,13 +62,13 @@ export function TutorialShopDemo() {
       </div>
 
       {/* Product grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {PRODUCTS.map((product, i) => (
           <motion.div
             key={product.name}
             initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 0.15 + i * 0.07 }}
+            transition={{ delay: 0.15 + i * 0.05 }}
             className="glass-card-premium rounded-2xl p-4 border border-white/10 flex flex-col"
           >
             {/* Product image placeholder */}

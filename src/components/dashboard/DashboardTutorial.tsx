@@ -126,7 +126,7 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] bg-gradient-to-br from-background via-background to-secondary/5"
+      className="fixed inset-0 z-[60] bg-background"
     >
       {/* Skip button */}
       <button

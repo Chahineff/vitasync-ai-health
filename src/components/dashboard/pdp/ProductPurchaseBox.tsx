@@ -101,7 +101,7 @@ export function ProductPurchaseBox({
       <div>
         {product.vendor && (
           <p className="text-sm text-primary font-medium uppercase tracking-wider mb-1">
-            {product.vendor}
+            {product.vendor?.replace(/vitasync\s*2/i, 'VitaSync') || product.vendor}
           </p>
         )}
         <h1 className="text-[34px] lg:text-[40px] font-semibold text-foreground leading-tight tracking-tight">

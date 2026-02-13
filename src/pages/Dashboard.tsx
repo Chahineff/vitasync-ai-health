@@ -1,5 +1,5 @@
 // Dashboard VitaSync - Premium SaaS Interface
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { SupplementAIInsights } from "@/components/dashboard/SupplementAIInsights";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,6 +19,7 @@ import { ProductDetailSection } from "@/components/dashboard/ProductDetailSectio
 import { DailyCheckin } from "@/components/dashboard/DailyCheckin";
 import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
 import { MobileBottomNav } from "@/components/dashboard/MobileBottomNav";
+import { DashboardTutorial } from "@/components/dashboard/DashboardTutorial";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "settings" | "help";
@@ -46,7 +47,8 @@ const Dashboard = () => {
   } = useAvatarUrl(profile?.avatar_url);
   const {
     healthProfile,
-    loading: healthProfileLoading
+    loading: healthProfileLoading,
+    updateHealthProfile,
   } = useHealthProfile();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<Section>("home");
@@ -61,6 +63,7 @@ const Dashboard = () => {
   const [hasInteractedWithCoach, setHasInteractedWithCoach] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
   const menuItems = [{
     id: "home" as Section,
     label: t("dashboard.home"),
@@ -102,10 +105,26 @@ const Dashboard = () => {
     }
   }, [user, loading, healthProfile, healthProfileLoading, navigate]);
 
+  // Show tutorial after first load if not completed
+  useEffect(() => {
+    if (!loading && !healthProfileLoading && healthProfile && healthProfile.onboarding_completed && healthProfile.tutorial_completed === false) {
+      // Delay slightly to let check-in modal appear first
+      const timer = setTimeout(() => setShowTutorial(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, healthProfileLoading, healthProfile]);
+
   // Persist sidebar collapsed state
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));
   }, [sidebarCollapsed]);
+
+  const handleTutorialComplete = useCallback(async () => {
+    setShowTutorial(false);
+    if (healthProfile) {
+      await updateHealthProfile({ tutorial_completed: true } as any);
+    }
+  }, [healthProfile, updateHealthProfile]);
 
   // Early return: Show skeleton while loading or if no user (prevents flash of dashboard UI)
   // This comes AFTER all hooks to comply with React hooks rules
@@ -165,6 +184,10 @@ const Dashboard = () => {
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex w-full">
       {/* Daily Checkin Modal */}
       <DailyCheckin />
+      {/* Dashboard Tutorial */}
+      <AnimatePresence>
+        {showTutorial && <DashboardTutorial onComplete={handleTutorialComplete} />}
+      </AnimatePresence>
       {/* Sidebar - Hidden on mobile/tablet, visible on desktop */}
       <aside className={`fixed top-4 bottom-4 left-4 z-50 glass-sidebar-floating hidden lg:flex flex-col transition-all duration-300 ease-out ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
         {/* Logo & Collapse Button */}

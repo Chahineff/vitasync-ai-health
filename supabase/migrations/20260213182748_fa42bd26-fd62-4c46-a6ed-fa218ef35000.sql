@@ -1,0 +1,1 @@
+ALTER TABLE public.user_health_profiles ADD COLUMN tutorial_completed boolean DEFAULT false;

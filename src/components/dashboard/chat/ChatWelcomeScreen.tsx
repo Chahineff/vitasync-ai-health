@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ClipboardText, Sparkle } from '@phosphor-icons/react';
+import { ClipboardText, Sparkle, HandWaving, Target } from '@phosphor-icons/react';
 import { GuidedSuggestionCards } from '../GuidedSuggestionCards';
 import { ProfileSummaryCard } from '../ProfileSummaryCard';
 import { DisclaimerModal } from '../DisclaimerModal';
@@ -56,7 +56,14 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
           transition={{ delay: 0.2, duration: 0.5 }}
           className="text-4xl md:text-5xl font-light text-foreground mb-4"
         >
-          Bonjour{firstName !== 'toi' ? `, ${firstName}` : ''} 👋
+          Bonjour{firstName !== 'toi' ? `, ${firstName}` : ''}{' '}
+            <motion.span
+              className="inline-block"
+              animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
+              transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <HandWaving weight="duotone" className="w-10 h-10 inline text-amber-400" />
+            </motion.span>
         </motion.h2>
         
         <motion.p 
@@ -98,7 +105,8 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
               )}
             >
               <ClipboardText weight="bold" className="w-6 h-6" />
-              <span className="text-lg">🎯 Personnaliser mon plan (60 sec)</span>
+              <Target weight="bold" className="w-5 h-5" />
+              <span className="text-lg">Personnaliser mon plan (60 sec)</span>
               <Sparkle weight="fill" className="w-5 h-5 opacity-70 animate-pulse" />
             </motion.button>
           )}

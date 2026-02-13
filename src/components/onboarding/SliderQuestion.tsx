@@ -11,6 +11,7 @@ interface SliderQuestionProps {
   step?: number;
   labels?: { left: string; right: string };
   showValue?: boolean;
+  invertColors?: boolean;
 }
 
 const levelColors = [
@@ -19,6 +20,14 @@ const levelColors = [
   "text-yellow-400 bg-yellow-500/15 border-yellow-500/20",
   "text-green-400 bg-green-500/15 border-green-500/20",
   "text-emerald-400 bg-emerald-500/15 border-emerald-500/20",
+];
+
+const invertedLevelColors = [
+  "text-emerald-400 bg-emerald-500/15 border-emerald-500/20",
+  "text-green-400 bg-green-500/15 border-green-500/20",
+  "text-yellow-400 bg-yellow-500/15 border-yellow-500/20",
+  "text-orange-400 bg-orange-500/15 border-orange-500/20",
+  "text-red-400 bg-red-500/15 border-red-500/20",
 ];
 
 export function SliderQuestion({
@@ -30,8 +39,10 @@ export function SliderQuestion({
   step = 1,
   labels,
   showValue = true,
+  invertColors = false,
 }: SliderQuestionProps) {
-  const colorIndex = Math.min(value - 1, levelColors.length - 1);
+  const colors = invertColors ? invertedLevelColors : levelColors;
+  const colorIndex = Math.min(value - 1, colors.length - 1);
   const fillPercent = ((value - min) / (max - min)) * 100;
 
   return (
@@ -46,7 +57,7 @@ export function SliderQuestion({
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
             className={cn(
               "w-10 h-10 rounded-xl flex items-center justify-center border font-semibold text-sm",
-              levelColors[colorIndex]
+              colors[colorIndex]
             )}
           >
             {value}
@@ -66,7 +77,12 @@ export function SliderQuestion({
       {/* Visual fill bar */}
       <div className="relative h-1.5 rounded-full bg-muted/50 overflow-hidden">
         <motion.div
-          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-red-400 via-yellow-400 to-emerald-400"
+          className={cn(
+            "absolute inset-y-0 left-0 rounded-full",
+            invertColors
+              ? "bg-gradient-to-r from-emerald-400 via-yellow-400 to-red-400"
+              : "bg-gradient-to-r from-red-400 via-yellow-400 to-emerald-400"
+          )}
           initial={false}
           animate={{ width: `${fillPercent}%` }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}

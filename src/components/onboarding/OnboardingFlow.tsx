@@ -668,6 +668,7 @@ export function OnboardingFlow() {
                 value={answers[slider.id] || 3}
                 onChange={(v) => handleSliderChange(slider.id, v)}
                 labels={{ left: slider.leftLabel, right: slider.rightLabel }}
+                invertColors={slider.id === "stress_level"}
               />
             </div>
           ))}

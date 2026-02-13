@@ -258,7 +258,7 @@ const Dashboard = () => {
         {/* Add padding bottom on mobile for bottom nav */}
         <div id="dashboard-scroll-container" className={`flex-1 overflow-auto overflow-x-hidden ${activeSection === 'coach' ? 'p-0 pb-0 lg:p-8 lg:pb-8' : 'p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
-              {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} hasInteractedWithCoach={hasInteractedWithCoach} />}
+              {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} hasInteractedWithCoach={hasInteractedWithCoach} />}
               {activeSection === "coach" && <motion.div key="coach" initial={{
             opacity: 0,
             scale: 0.97,
@@ -357,12 +357,14 @@ interface DashboardHomeProps {
   userName: string;
   formatDate: () => string;
   onGoToCoach: () => void;
+  onGoToShop: () => void;
   hasInteractedWithCoach: boolean;
 }
 const DashboardHome = ({
   userName,
   formatDate,
   onGoToCoach,
+  onGoToShop,
   hasInteractedWithCoach
 }: DashboardHomeProps) => {
   const {
@@ -394,7 +396,7 @@ const DashboardHome = ({
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.34 }}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SupplementTrackerEnhanced />
-        <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToCoach} />
+        <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToShop} />
       </div>
     </motion.div>
   </motion.div>;

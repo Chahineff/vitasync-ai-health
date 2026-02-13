@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Camera, SpinnerGap, Check, Globe, Question, SignOut } from "@phosphor-icons/react";
+import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
@@ -14,9 +14,10 @@ import { cn } from "@/lib/utils";
 interface ProfileSectionProps {
   onNavigateToHelp?: () => void;
   onSignOut?: () => void;
+  onRestartTutorial?: () => void;
 }
 
-export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionProps = {}) {
+export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial }: ProfileSectionProps = {}) {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
   const { signedUrl: avatarUrl, isLoading: isLoadingAvatar } = useAvatarUrl(profile?.avatar_url);
   const { toast } = useToast();
@@ -178,6 +179,27 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
           ))}
         </div>
       </div>
+
+      {/* Restart Tutorial */}
+      {onRestartTutorial && (
+        <div className="glass-card rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <ArrowClockwise weight="light" className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium text-foreground">{t("settings.restartTutorial") || "Tutoriel"}</h3>
+              <p className="text-sm text-foreground/50">{t("settings.restartTutorialDesc") || "Relancer la visite guidée du dashboard"}</p>
+            </div>
+          </div>
+          <button
+            onClick={onRestartTutorial}
+            className="w-full px-4 py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/20 transition-colors"
+          >
+            {t("settings.restartTutorialBtn") || "Relancer le tutoriel"}
+          </button>
+        </div>
+      )}
 
       <div className="glass-card rounded-2xl p-4 md:p-8">
         {/* Avatar Section */}

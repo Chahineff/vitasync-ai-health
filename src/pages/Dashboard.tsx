@@ -126,6 +126,13 @@ const Dashboard = () => {
     }
   }, [healthProfile, updateHealthProfile]);
 
+  const handleRestartTutorial = useCallback(async () => {
+    if (healthProfile) {
+      await updateHealthProfile({ tutorial_completed: false } as any);
+    }
+    setShowTutorial(true);
+  }, [healthProfile, updateHealthProfile]);
+
   // Early return: Show skeleton while loading or if no user (prevents flash of dashboard UI)
   // This comes AFTER all hooks to comply with React hooks rules
   if (loading) {
@@ -353,7 +360,7 @@ const Dashboard = () => {
           }} exit={{
             opacity: 0
           }}>
-                  <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} />
+                  <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} onRestartTutorial={handleRestartTutorial} />
                 </motion.div>}
               {activeSection === "help" && <motion.div key="help" initial={{
             opacity: 0,

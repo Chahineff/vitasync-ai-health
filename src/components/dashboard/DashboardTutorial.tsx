@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   House, FirstAidKit, Storefront, Gear, Question, DeviceMobile,
-  User, Crown, CheckCircle, ArrowRight, SignOut, CaretLeft,
+  User, Crown, CheckCircle, ArrowRight, ArrowLeft, SignOut, CaretLeft,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -118,6 +118,11 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
     if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
     if (isLast) { onComplete(); return; }
     goToStep(currentStep + 1);
+  };
+
+  const handlePrev = () => {
+    if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    if (currentStep > 0) goToStep(currentStep - 1);
   };
 
   return (
@@ -269,9 +274,12 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
                 transition={{ delay: 0.2, duration: 0.35 }}
                 className="mb-4"
               >
-                <div className="glass-card rounded-2xl p-4 border border-primary/20 bg-primary/5 flex items-start gap-3 max-w-xl">
-                  <img src={vitasyncLogo} alt="" className="w-6 h-6 mt-0.5 shrink-0" />
-                  <p className="text-sm text-foreground/80 font-light leading-relaxed">{step.bubble}</p>
+                <div className="glass-card rounded-2xl p-5 border border-primary/20 bg-primary/5 flex items-start gap-4">
+                  <img src={vitasyncLogo} alt="" className="w-8 h-8 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-medium text-primary uppercase tracking-wider mb-1">{step.label}</p>
+                    <p className="text-base text-foreground/80 font-light leading-relaxed">{step.bubble}</p>
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -289,16 +297,26 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
                   />
                 ))}
               </div>
-              <button
-                onClick={handleNext}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
-              >
-                {isLast ? (
-                  <><CheckCircle weight="bold" className="w-4 h-4" /> C'est parti !</>
-                ) : (
-                  <>Suivant <ArrowRight weight="bold" className="w-4 h-4" /></>
+              <div className="flex items-center gap-2">
+                {currentStep > 0 && (
+                  <button
+                    onClick={handlePrev}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card/60 border border-border/20 text-foreground/70 text-sm font-medium hover:bg-card/80 transition-colors"
+                  >
+                    <ArrowLeft weight="bold" className="w-4 h-4" /> Retour
+                  </button>
                 )}
-              </button>
+                <button
+                  onClick={handleNext}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+                >
+                  {isLast ? (
+                    <><CheckCircle weight="bold" className="w-4 h-4" /> C'est parti !</>
+                  ) : (
+                    <>Suivant <ArrowRight weight="bold" className="w-4 h-4" /></>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </main>

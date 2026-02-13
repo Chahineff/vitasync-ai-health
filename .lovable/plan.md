@@ -1,77 +1,119 @@
-# Restructuration des modeles IA VitaSync
-
-## Resume
-
-Remplacement des 4 modeles actuels (1.0 Flash, 1.0 Pro, 2.0 Flash, 2.0 Pro) par 3 modeles alignes sur le modele economique :
 
 
-| Ancien             | Nouveau            | Modele reel            | Usage                                                           |
-| ------------------ | ------------------ | ---------------------- | --------------------------------------------------------------- |
-| VitaSync 1.0 Flash | VitaSync 2.5 Flash | gemini-2.5-flash-lite  | Supplement Tracking + Shop Recommendations + Coach IA (default) |
-| VitaSync 1.0 Pro   | *(supprime)*       | -                      | -                                                               |
-| VitaSync 2.0 Flash | VitaSync 3 Flash   | gemini-3-flash-preview | Coach IA (defaut for premium member)                            |
-| VitaSync 2.0 Pro   | VitaSync 3 Pro     | gemini-3-pro-preview   | Coach IA (premium)                                              |
+# Refonte Premium de l'Onboarding et du Check-in Quotidien
 
+## Objectif
+
+Remplacer tous les emojis par des icones Phosphor Icons stylisees, ajouter des animations professionnelles, adapter le layout desktop (3/4 de l'ecran) et optimiser pour mobile.
 
 ---
 
-## Modifications
+## 1. OnboardingFlow.tsx -- Refonte complete
 
-### 1. ChatModelSelector.tsx -- Refonte du selecteur de modeles
+### Layout Desktop vs Mobile
+- Centrer le contenu dans un conteneur `max-w-3xl mx-auto` (environ 6/8 de l'ecran sur desktop)
+- Sur mobile : plein ecran comme actuellement
+- Ajouter un fond decoratif avec orbes flottants animes
 
-- Remplacer les 4 modeles par 3 :
-  - VitaSync 2.5 Flash (gemini-2.5-flash-lite) - "Rapide et economique"
-  - VitaSync 3 Flash (gemini-3-flash-preview) - "Equilibre optimal"
-  - VitaSync 3 Pro (gemini-3-pro-preview) - "Reflexion approfondie"
-- Mettre a jour le type `AIModel` (version devient `'2.5' | '3.0'`)
-- Adapter l'UI du dropdown (plus besoin de 2 sections separees)
+### Remplacement des emojis par des icones Phosphor
+Chaque option utilisera une icone Phosphor Icons (`weight="duotone"`) dans un cercle degrade au lieu d'un emoji :
 
-### 2. ChatInterface.tsx -- Mise a jour du modele par defaut
+| Emoji actuel | Remplacement Phosphor |
+|---|---|
+| `😴` Sommeil | `Moon` avec fond indigo |
+| `⚡` Energie | `Lightning` avec fond amber |
+| `🎯` Focus | `Crosshair` avec fond blue |
+| `🧘` Stress | `Leaf` avec fond green |
+| `🏋️` Sport | `Barbell` avec fond orange |
+| `💪` Muscle | `Dumbbell` avec fond red |
+| `🏃` Perte poids | `PersonSimpleRun` avec fond teal |
+| `🍃` Digestion | `Leaf` avec fond emerald |
+| `🛡️` Immunite | `ShieldCheck` avec fond violet |
+| `✨` Peau/cheveux | `Sparkle` avec fond pink |
+| `💭` Autre | `DotsThree` avec fond gray |
+| `🚶` 0-1x/sem | `PersonSimpleWalk` |
+| `🏃` 2-3x/sem | `PersonSimpleRun` |
+| `🏋️` 4-5x/sem | `Barbell` |
+| `🔥` 6+/sem | `Flame` |
+| `😫/😕/😊/😴` Sleep | `MoonStars` avec niveaux de remplissage |
+| `🍖/🥗/🌱` Regimes | `CookingPot`, `Salad`, `Plant`, etc. |
+| `🥛/🌾/🥚` Allergies | Icones dediees avec fond rouge/warning |
+| `💊/🥤/🍬/💧` Formes | `Pill`, `Cup`, `Drop` |
+| `✅/🔞` Oui/Non | `CheckCircle` / `XCircle` |
+| `🔒` Prefer not say | `Lock` |
 
-- Changer `DEFAULT_MODEL` pour pointer sur VitaSync 3 Flash (gemini-3-flash-preview)
-- Le `modelVersion` envoye au backend refletera `'2.5'` ou `'3.0'`
+### Animations ajoutees
+- **Selection d'option** : animation `spring` avec rebond (scale 0.95 -> 1.05 -> 1) + changement de couleur fluide
+- **Transition entre etapes** : slide horizontal avec deblur (filter: blur(4px) -> blur(0))
+- **Barre de progression** : animation fluide avec `layoutId` de Framer Motion
+- **Bouton Continuer** : micro-animation de pulsation quand actif, effet "launch" au clic
+- **Icone selectionnee** : rotation subtile + scale avec effet de glow
 
-### 3. ai-coach/index.ts -- Backend du Coach IA
-
-- Mettre a jour `ALLOWED_MODELS` pour inclure `google/gemini-2.5-flash-lite`
-- Adapter la logique de quiz : disponible uniquement pour les modeles version 3.0 (remplace la condition `2.0`)
-- Modele par defaut fallback : `google/gemini-3-flash-preview`
-
-### 4. supplement-insights/index.ts -- Analyse IA des supplements
-
-- Changer le modele de `google/gemini-3-pro-preview` a `google/gemini-2.5-flash-lite`
-- Meme fonctionnalite, cout reduit
-
-### 5. ai-shop-recommendations/index.ts -- Recommandations IA boutique
-
-- Changer le modele de `google/gemini-3-pro-preview` a `google/gemini-2.5-flash-lite`
-- Meme fonctionnalite, cout reduit
-
----
-
-## Detail technique
-
-### Nouveaux modeles (ChatModelSelector)
-
+### Structure du conteneur desktop
 ```text
-VitaSync 2.5 Flash  -> google/gemini-2.5-flash-lite  (version: '2.5', mode: 'flash')
-VitaSync 3 Flash    -> google/gemini-3-flash-preview  (version: '3.0', mode: 'flash')
-VitaSync 3 Pro      -> google/gemini-3-pro-preview    (version: '3.0', mode: 'pro')
++----------------------------------------------------------+
+|                     (espace vide ~1/8)                    |
+|   +--------------------------------------------------+   |
+|   |  [<] Barre progression [X]                       |   |
+|   |                                                  |   |
+|   |  Titre de la question                            |   |
+|   |  Sous-titre                                      |   |
+|   |                                                  |   |
+|   |  [Options en grille 2 colonnes]                  |   |
+|   |                                                  |   |
+|   |  [ Continuer ]                                   |   |
+|   +--------------------------------------------------+   |
+|                     (espace vide ~1/8)                    |
++----------------------------------------------------------+
 ```
 
-### Impact sur les fonctionnalites
+---
 
-- Quiz interactifs : reserves aux modeles version `3.0` (VitaSync 3 Flash et 3 Pro)
-- Supplement Tracking et Shop : utiliseront `gemini-2.5-flash-lite` (le moins cher) au lieu de `gemini-3-pro-preview`
-- Coach IA : par defaut VitaSync 3 Flash, avec option Pro
+## 2. DailyCheckin.tsx -- Modale du check-in quotidien
 
-### Fichiers modifies
+### Remplacement des emojis
+- **Sommeil** : Remplacer `["😫", "😕", "😐", "😊", "😴"]` par 5 niveaux visuels avec l'icone `Moon` (opacity/couleur progressive : rouge -> orange -> gris -> vert -> indigo)
+- **Energie** : Remplacer `["🔋", "🪫", "⚡", "💪", "🚀"]` par l'icone `Lightning` avec une barre de remplissage animee (20% -> 100%)
+- **Stress** : Remplacer `["😌", "🙂", "😐", "😰", "🤯"]` par l'icone `Brain` avec pulsation croissante
+- **Humeur** : Remplacer les 5 emojis par des icones dans des cercles colores (vert -> jaune -> gris -> orange -> rouge)
+- **Feedback supplements** : Remplacer `👍/😐/👎` par `ThumbsUp`, `Minus`, `ThumbsDown` avec couleurs
 
+### Animations ajoutees
+- **Changement de slider** : l'icone associee change de couleur/taille de maniere fluide selon la valeur
+- **Selection humeur** : effet ripple + bordure animee
+- **Transition entre etapes** : slide + deblur comme l'onboarding
 
-| Fichier                                               | Changement                                |
-| ----------------------------------------------------- | ----------------------------------------- |
-| `src/components/dashboard/chat/ChatModelSelector.tsx` | 3 modeles, nouveau nommage, UI simplifiee |
-| `src/components/dashboard/ChatInterface.tsx`          | DEFAULT_MODEL mis a jour                  |
-| `supabase/functions/ai-coach/index.ts`                | ALLOWED_MODELS + logique quiz version 3.0 |
-| `supabase/functions/supplement-insights/index.ts`     | Modele -> gemini-2.5-flash-lite           |
-| `supabase/functions/ai-shop-recommendations/index.ts` | Modele -> gemini-2.5-flash-lite           |
+---
+
+## 3. DailyCheckinWidget.tsx -- Widget du dashboard
+
+### Remplacement des emojis
+- Remplacer `getValueDisplay()` : au lieu d'emojis, afficher une valeur numerique stylee (ex: "4/5") avec une barre de progression circulaire coloree
+- Utiliser les memes icones Phosphor que la modale (Moon, Lightning, Brain)
+
+---
+
+## 4. SliderQuestion.tsx -- Composant slider reutilisable
+
+- Remplacer la fonction `getEmoji()` par un indicateur visuel : cercle avec remplissage progressif et couleur dynamique
+- Ajouter une animation de transition sur le changement de valeur
+
+---
+
+## 5. ChatWelcomeScreen.tsx -- Nettoyage emoji
+
+- Remplacer le `👋` du greeting par rien ou une animation de main avec Phosphor `HandWaving`
+- Remplacer le `🎯` du bouton onboarding par l'icone `Target` de Phosphor
+
+---
+
+## Fichiers modifies
+
+| Fichier | Changements |
+|---|---|
+| `src/components/onboarding/OnboardingFlow.tsx` | Layout desktop 3/4, icones Phosphor, animations premium |
+| `src/components/onboarding/SliderQuestion.tsx` | Indicateur visuel au lieu d'emojis |
+| `src/components/dashboard/DailyCheckin.tsx` | Icones Phosphor, animations de slider |
+| `src/components/dashboard/DailyCheckinWidget.tsx` | Valeurs numeriques stylisees, barres circulaires |
+| `src/components/dashboard/chat/ChatWelcomeScreen.tsx` | Nettoyage emojis restants |
+

@@ -256,7 +256,7 @@ const Dashboard = () => {
       <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
         
         {/* Add padding bottom on mobile for bottom nav */}
-        <div className={`flex-1 overflow-auto overflow-x-hidden ${activeSection === 'coach' ? 'p-0 pb-0 lg:p-8 lg:pb-8' : 'p-4 lg:p-8 pb-24 lg:pb-8'}`}>
+        <div id="dashboard-scroll-container" className={`flex-1 overflow-auto overflow-x-hidden ${activeSection === 'coach' ? 'p-0 pb-0 lg:p-8 lg:pb-8' : 'p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
               {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} hasInteractedWithCoach={hasInteractedWithCoach} />}
               {activeSection === "coach" && <motion.div key="coach" initial={{

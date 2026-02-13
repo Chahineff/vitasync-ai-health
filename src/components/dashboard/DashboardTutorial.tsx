@@ -1,101 +1,89 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Check, ChevronRight, X } from "lucide-react";
 import {
-  Sun, Moon, ChatCircleDots, Pill, Storefront,
-  CheckCircle, Lightning, Brain,
+  House, ChatCircleDots, FirstAidKit, Storefront, Gear,
+  Sun, Moon, Lightning, Brain, Check, CheckCircle,
+  ArrowRight,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
 interface DashboardTutorialProps {
   onComplete: () => void;
 }
 
-const steps = [
+/* ── Step config ─────────────────────────────────────────── */
+const STEPS = [
   {
-    id: "checkin",
-    title: "Check-in du jour",
-    description:
-      "Chaque jour, réponds à un court formulaire sur ton sommeil, énergie et stress. Ces données permettent à ton Coach IA de mieux te conseiller.",
-    icon: Sun,
-    iconBg: "bg-amber-500/15 border-amber-500/20",
-    iconColor: "text-amber-400",
-    demo: "checkin",
+    id: "home",
+    label: "Accueil",
+    icon: House,
+    bubble: "Chaque jour, remplis ton check-in pour que ton Coach IA s'adapte à toi.",
   },
   {
     id: "coach",
-    title: "Coach IA — VitaSync",
-    description:
-      "Pose tes questions santé à VitaSync, ton coach personnel. Il connaît ton profil et t'accompagne au quotidien.",
+    label: "Coach IA",
     icon: ChatCircleDots,
-    iconBg: "bg-primary/15 border-primary/20",
-    iconColor: "text-primary",
-    demo: "chat",
+    bubble: "Pose tes questions santé à VitaSync. Il connaît ton profil et s'adapte à tes besoins.",
   },
   {
     id: "supplements",
-    title: "Suivi des compléments",
-    description:
-      "Suis ta routine quotidienne et coche tes prises. Ton Coach adapte ses conseils en fonction de ta régularité.",
-    icon: Pill,
-    iconBg: "bg-emerald-500/15 border-emerald-500/20",
-    iconColor: "text-emerald-400",
-    demo: "supplements",
+    label: "Suppléments",
+    icon: FirstAidKit,
+    bubble: "Suis ta routine et coche tes prises. Exemple : Créatine le matin, Magnésium le soir.",
   },
   {
     id: "shop",
-    title: "Boutique personnalisée",
-    description:
-      "Découvre des compléments adaptés à ton profil dans notre boutique intégrée.",
+    label: "Boutique",
     icon: Storefront,
-    iconBg: "bg-violet-500/15 border-violet-500/20",
-    iconColor: "text-violet-400",
-    demo: "shop",
+    bubble: "Découvre une large sélection de compléments adaptés à ton profil.",
+  },
+  {
+    id: "settings",
+    label: "Paramètres",
+    icon: Gear,
+    bubble: "Modifie ton profil de santé, change de thème, ajuste tes préférences à tout moment.",
   },
 ];
 
-function CheckinDemo() {
-  const [animated, setAnimated] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setAnimated(true), 400);
-    return () => clearTimeout(t);
-  }, []);
+/* ── Cursor SVG ──────────────────────────────────────────── */
+function CursorSVG() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M5 3L19 12L12 13L9 20L5 3Z"
+        fill="white"
+        stroke="black"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
+/* ── Demo content per step ───────────────────────────────── */
+function HomeDemo() {
+  const [animated, setAnimated] = useState(false);
+  useEffect(() => { setTimeout(() => setAnimated(true), 500); }, []);
   const metrics = [
     { label: "Sommeil", value: 4, icon: Moon, color: "text-indigo-400", bg: "bg-indigo-500/15" },
     { label: "Énergie", value: 3, icon: Lightning, color: "text-amber-400", bg: "bg-amber-500/15" },
     { label: "Stress", value: 2, icon: Brain, color: "text-rose-400", bg: "bg-rose-500/15" },
   ];
-
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
+      <p className="text-xs font-medium text-foreground/50 mb-2">Check-in du jour</p>
       {metrics.map((m, i) => (
-        <motion.div
-          key={m.label}
-          initial={{ opacity: 0, x: -20 }}
-          animate={animated ? { opacity: 1, x: 0 } : {}}
-          transition={{ delay: i * 0.2, duration: 0.4 }}
-          className="flex items-center gap-3 p-3 rounded-xl bg-card/50 border border-border/30"
-        >
-          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", m.bg)}>
-            <m.icon weight="duotone" className={cn("w-4 h-4", m.color)} />
+        <motion.div key={m.label} initial={{ opacity: 0, x: -15 }} animate={animated ? { opacity: 1, x: 0 } : {}} transition={{ delay: i * 0.15 }} className="flex items-center gap-2 p-2 rounded-lg bg-card/40 border border-border/20">
+          <div className={cn("w-6 h-6 rounded-md flex items-center justify-center", m.bg)}>
+            <m.icon weight="duotone" className={cn("w-3 h-3", m.color)} />
           </div>
-          <span className="text-sm text-foreground/70 flex-1">{m.label}</span>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((v) => (
-              <motion.div
-                key={v}
-                initial={{ scale: 0 }}
-                animate={animated ? { scale: 1 } : {}}
-                transition={{ delay: i * 0.2 + v * 0.05 }}
-                className={cn(
-                  "w-5 h-5 rounded-full border transition-colors",
-                  v <= m.value
-                    ? "bg-primary/80 border-primary"
-                    : "border-border/40 bg-card/30"
-                )}
-              />
+          <span className="text-xs text-foreground/60 flex-1">{m.label}</span>
+          <div className="flex gap-0.5">
+            {[1,2,3,4,5].map(v => (
+              <motion.div key={v} initial={{ scale: 0 }} animate={animated ? { scale: 1 } : {}} transition={{ delay: i * 0.15 + v * 0.04 }} className={cn("w-3.5 h-3.5 rounded-full border", v <= m.value ? "bg-primary/80 border-primary" : "border-border/30")} />
             ))}
           </div>
         </motion.div>
@@ -104,35 +92,21 @@ function CheckinDemo() {
   );
 }
 
-function ChatDemo() {
-  const [messages, setMessages] = useState<string[]>([]);
+function CoachDemo() {
+  const [msgs, setMsgs] = useState<string[]>([]);
   useEffect(() => {
-    const msgs = [
+    const all = [
       "Bonjour ! Comment te sens-tu aujourd'hui ?",
       "J'ai un peu mal dormi cette nuit…",
       "Je vois. Essaie le magnésium bisglycinate 30 min avant de dormir 💊",
     ];
-    msgs.forEach((msg, i) => {
-      setTimeout(() => setMessages((prev) => [...prev, msg]), 600 + i * 900);
-    });
+    all.forEach((m, i) => setTimeout(() => setMsgs(p => [...p, m]), 500 + i * 800));
   }, []);
-
   return (
-    <div className="space-y-2.5 max-h-40 overflow-hidden">
-      {messages.map((msg, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className={cn(
-            "px-3 py-2 rounded-2xl text-xs max-w-[85%]",
-            i % 2 === 0
-              ? "bg-primary/10 text-foreground/80 rounded-bl-sm"
-              : "bg-card/60 border border-border/30 text-foreground/70 ml-auto rounded-br-sm"
-          )}
-        >
-          {msg}
+    <div className="space-y-2">
+      {msgs.map((m, i) => (
+        <motion.div key={i} initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} className={cn("px-3 py-1.5 rounded-xl text-xs max-w-[85%]", i % 2 === 0 ? "bg-primary/10 text-foreground/80 rounded-bl-sm" : "bg-card/50 border border-border/20 text-foreground/70 ml-auto rounded-br-sm")}>
+          {m}
         </motion.div>
       ))}
     </div>
@@ -142,49 +116,25 @@ function ChatDemo() {
 function SupplementsDemo() {
   const [checked, setChecked] = useState<number[]>([]);
   useEffect(() => {
-    setTimeout(() => setChecked([0]), 500);
-    setTimeout(() => setChecked([0, 1]), 1200);
+    setTimeout(() => setChecked([0]), 600);
+    setTimeout(() => setChecked([0, 1]), 1300);
+    setTimeout(() => setChecked([0, 1, 2]), 1900);
   }, []);
-
   const items = [
-    { name: "Créatine Monohydrate", time: "Matin", icon: Sun },
-    { name: "Whey Protein", time: "Soir", icon: Moon },
+    { name: "Créatine Monohydrate", time: "Matin" },
+    { name: "Magnésium Bisglycinate", time: "Soir" },
+    { name: "Oméga-3", time: "Midi" },
   ];
-
   return (
-    <div className="space-y-3">
-      {items.map((item, i) => (
-        <motion.div
-          key={item.name}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.15 }}
-          className={cn(
-            "flex items-center gap-3 p-3 rounded-xl border transition-all duration-300",
-            checked.includes(i)
-              ? "bg-emerald-500/5 border-emerald-500/20"
-              : "bg-card/50 border-border/30"
-          )}
-        >
-          <motion.div
-            animate={checked.includes(i) ? { scale: [1, 1.2, 1] } : {}}
-            className={cn(
-              "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
-              checked.includes(i)
-                ? "bg-emerald-500 border-emerald-500"
-                : "border-border/50"
-            )}
-          >
-            {checked.includes(i) && (
-              <Check className="w-3 h-3 text-white" />
-            )}
+    <div className="space-y-2">
+      {items.map((it, i) => (
+        <motion.div key={it.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className={cn("flex items-center gap-2 p-2 rounded-lg border transition-all", checked.includes(i) ? "bg-emerald-500/5 border-emerald-500/20" : "bg-card/40 border-border/20")}>
+          <motion.div animate={checked.includes(i) ? { scale: [1, 1.2, 1] } : {}} className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0", checked.includes(i) ? "bg-emerald-500 border-emerald-500" : "border-border/40")}>
+            {checked.includes(i) && <Check className="w-2.5 h-2.5 text-white" weight="bold" />}
           </motion.div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-foreground/80">{item.name}</p>
-            <div className="flex items-center gap-1 text-xs text-foreground/50">
-              <item.icon weight="duotone" className="w-3 h-3" />
-              <span>{item.time}</span>
-            </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-foreground/80 truncate">{it.name}</p>
+            <p className="text-[10px] text-foreground/40">{it.time}</p>
           </div>
         </motion.div>
       ))}
@@ -194,148 +144,278 @@ function SupplementsDemo() {
 
 function ShopDemo() {
   const products = [
-    { name: "Magnésium", tag: "Sommeil", color: "bg-indigo-500/15 text-indigo-400" },
-    { name: "Oméga-3", tag: "Focus", color: "bg-blue-500/15 text-blue-400" },
-    { name: "Vitamine D3", tag: "Immunité", color: "bg-amber-500/15 text-amber-400" },
+    { name: "Magnésium", tag: "Sommeil", color: "bg-indigo-500/15" },
+    { name: "Oméga-3", tag: "Focus", color: "bg-blue-500/15" },
+    { name: "Vitamine D3", tag: "Immunité", color: "bg-amber-500/15" },
   ];
-
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-3 gap-1.5">
       {products.map((p, i) => (
-        <motion.div
-          key={p.name}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 + i * 0.15 }}
-          className="p-3 rounded-xl bg-card/50 border border-border/30 text-center"
-        >
-          <div className={cn("w-8 h-8 rounded-lg mx-auto mb-2", p.color.split(" ")[0])} />
-          <p className="text-xs font-medium text-foreground/80 truncate">{p.name}</p>
-          <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full mt-1 inline-block", p.color)}>
-            {p.tag}
-          </span>
+        <motion.div key={p.name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.12 }} className="p-2 rounded-lg bg-card/40 border border-border/20 text-center">
+          <div className={cn("w-6 h-6 rounded-md mx-auto mb-1", p.color)} />
+          <p className="text-[10px] font-medium text-foreground/80 truncate">{p.name}</p>
+          <span className="text-[9px] text-foreground/40">{p.tag}</span>
         </motion.div>
       ))}
     </div>
   );
 }
 
-const demoComponents: Record<string, () => JSX.Element> = {
-  checkin: CheckinDemo,
-  chat: ChatDemo,
+function SettingsDemo() {
+  const [darkMode, setDarkMode] = useState(false);
+  useEffect(() => { setTimeout(() => setDarkMode(true), 800); }, []);
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between p-2 rounded-lg bg-card/40 border border-border/20">
+        <span className="text-xs text-foreground/70">Thème</span>
+        <motion.div animate={{ backgroundColor: darkMode ? "hsl(var(--primary))" : "hsl(var(--muted))" }} className="w-10 h-5 rounded-full relative cursor-default" transition={{ duration: 0.3 }}>
+          <motion.div animate={{ x: darkMode ? 20 : 2 }} className="w-4 h-4 rounded-full bg-white absolute top-0.5" transition={{ type: "spring", stiffness: 400, damping: 25 }} />
+        </motion.div>
+      </div>
+      <div className="p-2 rounded-lg bg-card/40 border border-border/20">
+        <p className="text-xs text-foreground/70 mb-1">Profil de santé</p>
+        <div className="flex gap-1 flex-wrap">
+          {["Muscle", "Sommeil", "Énergie"].map(g => (
+            <span key={g} className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">{g}</span>
+          ))}
+        </div>
+      </div>
+      <div className="p-2 rounded-lg bg-card/40 border border-border/20">
+        <p className="text-xs text-foreground/70">Langue, informations personnelles…</p>
+      </div>
+    </div>
+  );
+}
+
+const DEMO_MAP: Record<string, React.FC> = {
+  home: HomeDemo,
+  coach: CoachDemo,
   supplements: SupplementsDemo,
   shop: ShopDemo,
+  settings: SettingsDemo,
 };
 
+/* ── Main Tutorial Component ─────────────────────────────── */
 export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
+  const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState(0);
-  const step = steps[currentStep];
-  const isLast = currentStep === steps.length - 1;
-  const DemoComponent = demoComponents[step.demo];
+  const [phase, setPhase] = useState<"moving" | "clicking" | "showing">("showing"); // start showing step 0
+  const [ripple, setRipple] = useState(false);
+  const sidebarRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const step = STEPS[currentStep];
+  const DemoComponent = DEMO_MAP[step.id];
+  const isLast = currentStep === STEPS.length - 1;
+
+  // Calculate cursor target position
+  const updateCursorTarget = useCallback((stepIndex: number) => {
+    const el = sidebarRefs.current[stepIndex];
+    const container = containerRef.current;
+    if (!el || !container) return;
+    const cRect = container.getBoundingClientRect();
+    const eRect = el.getBoundingClientRect();
+    setCursorPos({
+      x: eRect.left - cRect.left + eRect.width / 2,
+      y: eRect.top - cRect.top + eRect.height / 2,
+    });
+  }, []);
+
+  // Initialize cursor on first step
+  useEffect(() => {
+    const t = setTimeout(() => updateCursorTarget(0), 100);
+    return () => clearTimeout(t);
+  }, [updateCursorTarget]);
+
+  // Auto-advance timer
+  const startAutoAdvance = useCallback(() => {
+    if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    autoTimerRef.current = setTimeout(() => {
+      if (!isLast) goToStep(currentStep + 1);
+    }, 5000);
+  }, [currentStep, isLast]);
+
+  useEffect(() => {
+    if (phase === "showing") startAutoAdvance();
+    return () => { if (autoTimerRef.current) clearTimeout(autoTimerRef.current); };
+  }, [phase, startAutoAdvance]);
+
+  const goToStep = useCallback((nextStep: number) => {
+    if (nextStep >= STEPS.length) { onComplete(); return; }
+    // Phase 1: move cursor
+    setPhase("moving");
+    updateCursorTarget(nextStep);
+    
+    // Phase 2: click ripple
+    setTimeout(() => {
+      setPhase("clicking");
+      setRipple(true);
+      setTimeout(() => setRipple(false), 400);
+      
+      // Phase 3: show content
+      setTimeout(() => {
+        setCurrentStep(nextStep);
+        setPhase("showing");
+      }, 500);
+    }, 800);
+  }, [onComplete, updateCursorTarget]);
 
   const handleNext = () => {
-    if (isLast) {
-      onComplete();
-    } else {
-      setCurrentStep((s) => s + 1);
-    }
+    if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
+    if (isLast) { onComplete(); return; }
+    goToStep(currentStep + 1);
   };
+
+  /* ── Sidebar items (used for both desktop & mobile) ──── */
+  const navItems = STEPS.map((s, i) => (
+    <button
+      key={s.id}
+      ref={(el) => { sidebarRefs.current[i] = el; }}
+      className={cn(
+        "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative",
+        currentStep === i && phase === "showing"
+          ? "bg-primary/10 text-primary border border-primary/20"
+          : "text-foreground/50"
+      )}
+    >
+      <s.icon weight="light" className="w-5 h-5 shrink-0" />
+      {!isMobile && <span>{s.label}</span>}
+    </button>
+  ));
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[60] bg-background"
     >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, filter: "blur(8px)" }}
-        animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-        className="w-full max-w-md glass-card-premium rounded-3xl border border-white/10 p-6 relative"
+      {/* Skip button */}
+      <button
+        onClick={onComplete}
+        className="absolute top-4 right-4 z-[70] text-foreground/50 hover:text-foreground transition-colors text-sm flex items-center gap-1 px-3 py-2 rounded-xl bg-card/60 border border-border/20 backdrop-blur-md"
       >
-        {/* Skip button */}
-        <button
-          onClick={onComplete}
-          className="absolute top-4 right-4 text-foreground/40 hover:text-foreground/70 transition-colors text-sm flex items-center gap-1"
-        >
-          Passer
-          <X className="w-4 h-4" />
-        </button>
+        Passer
+      </button>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 40, filter: "blur(6px)" }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, x: -40, filter: "blur(6px)" }}
-            transition={{ duration: 0.35 }}
-          >
-            {/* Icon */}
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center border",
-                  step.iconBg
-                )}
-              >
-                <step.icon weight="duotone" className={cn("w-6 h-6", step.iconColor)} />
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-foreground">{step.title}</h3>
-                <p className="text-xs text-foreground/50">
-                  Étape {currentStep + 1} / {steps.length}
-                </p>
-              </div>
+      <div className="h-full flex flex-col lg:flex-row">
+        {/* Sidebar (desktop) */}
+        {!isMobile && (
+          <div className="w-64 shrink-0 glass-sidebar-floating m-4 rounded-3xl flex flex-col pointer-events-none">
+            <div className="p-5 flex items-center gap-2 border-b border-white/5">
+              <img src={vitasyncLogo} alt="" className="w-7 h-7" />
+              <span className="text-lg font-light text-foreground">
+                Vita<span className="text-primary font-medium">Sync</span>
+              </span>
             </div>
-
-            {/* Description */}
-            <p className="text-sm text-foreground/70 font-light mb-5 leading-relaxed">
-              {step.description}
-            </p>
-
-            {/* Demo */}
-            <div className="mb-6 p-4 rounded-2xl bg-background/30 border border-border/20">
-              <DemoComponent />
+            <div className="p-3 flex-1 space-y-1">
+              {navItems}
             </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between">
-          {/* Progress dots */}
-          <div className="flex gap-2">
-            {steps.map((_, i) => (
-              <motion.div
-                key={i}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-300",
-                  i === currentStep
-                    ? "w-6 bg-primary"
-                    : i < currentStep
-                    ? "w-1.5 bg-primary/50"
-                    : "w-1.5 bg-foreground/15"
-                )}
-              />
-            ))}
           </div>
+        )}
 
-          <Button
-            onClick={handleNext}
-            className="rounded-xl px-5 shadow-lg shadow-primary/20"
-          >
-            {isLast ? (
-              <>
-                <CheckCircle weight="bold" className="w-4 h-4 mr-1.5" />
-                C'est parti !
-              </>
-            ) : (
-              <>
-                Suivant
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </>
-            )}
-          </Button>
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col min-h-0 p-4 lg:p-8 pointer-events-none">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 30, filter: "blur(8px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
+              transition={{ duration: 0.4 }}
+              className="flex-1 flex flex-col lg:flex-row gap-6 items-start"
+            >
+              {/* Demo area */}
+              <div className="flex-1 w-full max-w-lg">
+                <div className="glass-card-premium rounded-2xl p-5 border border-white/10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <step.icon weight="duotone" className="w-5 h-5 text-primary" />
+                    <h3 className="text-sm font-medium text-foreground">{step.label}</h3>
+                  </div>
+                  <DemoComponent />
+                </div>
+              </div>
+
+              {/* Speech bubble */}
+              <motion.div
+                initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ delay: 0.3, duration: 0.35 }}
+                className="w-full lg:max-w-xs"
+              >
+                <div className="glass-card rounded-2xl p-5 border border-primary/20 bg-primary/5">
+                  <p className="text-sm text-foreground/80 font-light leading-relaxed">
+                    {step.bubble}
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Footer controls */}
+          <div className="mt-6 flex items-center justify-between pointer-events-auto">
+            {/* Progress dots */}
+            <div className="flex gap-2">
+              {STEPS.map((_, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-1.5 rounded-full transition-all duration-300",
+                    i === currentStep ? "w-6 bg-primary" : i < currentStep ? "w-1.5 bg-primary/50" : "w-1.5 bg-foreground/15"
+                  )}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={handleNext}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+            >
+              {isLast ? (
+                <>
+                  <CheckCircle weight="bold" className="w-4 h-4" />
+                  C'est parti !
+                </>
+              ) : (
+                <>
+                  Suivant
+                  <ArrowRight weight="bold" className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile bottom nav (fake) */}
+        {isMobile && (
+          <div className="shrink-0 flex justify-around items-center py-3 px-2 glass-card border-t border-white/10 pointer-events-none">
+            {navItems}
+          </div>
+        )}
+      </div>
+
+      {/* Animated cursor */}
+      <motion.div
+        className="absolute z-[65] pointer-events-none"
+        animate={{ x: cursorPos.x - 4, y: cursorPos.y - 4 }}
+        transition={{ type: "spring", stiffness: 120, damping: 20, duration: 0.8 }}
+      >
+        <CursorSVG />
+        {/* Ripple on click */}
+        <AnimatePresence>
+          {ripple && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0.6 }}
+              animate={{ scale: 2.5, opacity: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="absolute top-2 left-2 w-6 h-6 rounded-full bg-primary/40 -translate-x-1/2 -translate-y-1/2"
+            />
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.div>
   );

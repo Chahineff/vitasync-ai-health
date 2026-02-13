@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Pill, Check, Clock, Sun, Moon, Plus, ChartBar, CalendarBlank, X } from '@phosphor-icons/react';
+import { Pill, Check, Clock, Sun, Moon, Plus, ChartBar, CalendarBlank, X, Warning } from '@phosphor-icons/react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WeeklyChart } from './WeeklyChart';
 import { MonthlyChart } from './MonthlyChart';
@@ -295,15 +296,35 @@ function SupplementItem({ name, dosage, imageUrl, taken, onToggle, onRemove, loa
 
       {!taken && <Clock weight="light" className="w-4 h-4 text-foreground/30 flex-shrink-0" />}
 
-      <motion.button
-        onClick={onRemove}
-        initial={{ opacity: 0, scale: 0.5 }}
-        whileHover={{ opacity: 1, scale: 1 }}
-        className="p-1 rounded-lg hover:bg-destructive/10 transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
-        title="Supprimer"
-      >
-        <X weight="light" className="w-3.5 h-3.5 text-foreground/30 hover:text-destructive" />
-      </motion.button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileHover={{ opacity: 1, scale: 1 }}
+            className="p-1 rounded-lg hover:bg-destructive/10 transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
+            title="Supprimer"
+          >
+            <X weight="light" className="w-3.5 h-3.5 text-foreground/30 hover:text-destructive" />
+          </motion.button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="bg-background border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Warning weight="fill" className="w-5 h-5 text-destructive" />
+              Supprimer du suivi ?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir retirer <span className="font-medium text-foreground">{name}</span> de votre suivi des compléments ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-white/10">Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={onRemove} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

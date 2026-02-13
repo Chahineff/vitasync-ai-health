@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useHealthProfile, HealthProfile } from "@/hooks/useHealthProfile";
@@ -10,6 +10,15 @@ import { CountrySelect, Country } from "./CountrySelect";
 import { SliderQuestion } from "./SliderQuestion";
 import { BudgetSlider } from "./BudgetSlider";
 import { cn } from "@/lib/utils";
+import {
+  Moon, Lightning, Crosshair, Leaf, Barbell,
+  PersonSimpleRun, ShieldCheck, Sparkle, DotsThree,
+  PersonSimpleWalk, Flame, CookingPot, Avocado, Plant,
+  GrainsSlash, Drop as DropIcon,
+  Pill, Cookie, Drop,
+  CheckCircle, XCircle, Lock,
+  MoonStars, Egg, Fish, Nut,
+} from "@phosphor-icons/react";
 
 type QuestionType = "yesno" | "country" | "multi" | "single" | "single-bonus" | "slider-single" | "dual-slider" | "multi-doses" | "budget" | "optional-text";
 
@@ -18,12 +27,18 @@ interface OnboardingQuestion {
   title: string;
   subtitle: string;
   type: QuestionType;
-  options?: { value: string; label: string; emoji?: string }[];
+  options?: { value: string; label: string; icon?: ReactNode; iconBg?: string }[];
   bonusField?: { id: string; label: string; options: { value: string; label: string }[] };
   sliders?: { id: string; label: string; leftLabel: string; rightLabel: string }[];
   maxSelections?: number;
   required?: boolean;
 }
+
+const iconCircle = (icon: ReactNode, bg: string) => (
+  <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", bg)}>
+    {icon}
+  </div>
+);
 
 const questions: OnboardingQuestion[] = [
   {
@@ -47,17 +62,17 @@ const questions: OnboardingQuestion[] = [
     type: "multi",
     maxSelections: 3,
     options: [
-      { value: "sleep", label: "Sommeil", emoji: "😴" },
-      { value: "energy", label: "Énergie", emoji: "⚡" },
-      { value: "focus", label: "Focus", emoji: "🎯" },
-      { value: "stress", label: "Stress", emoji: "🧘" },
-      { value: "sport", label: "Performance sport", emoji: "🏋️" },
-      { value: "muscle", label: "Prise de muscle", emoji: "💪" },
-      { value: "weight_loss", label: "Perte de poids", emoji: "🏃" },
-      { value: "digestion", label: "Digestion", emoji: "🍃" },
-      { value: "immunity", label: "Immunité", emoji: "🛡️" },
-      { value: "skin_hair", label: "Peau/cheveux", emoji: "✨" },
-      { value: "other", label: "Autre", emoji: "💭" },
+      { value: "sleep", label: "Sommeil", icon: <Moon weight="duotone" className="w-5 h-5 text-indigo-400" />, iconBg: "bg-indigo-500/15 border border-indigo-500/20" },
+      { value: "energy", label: "Énergie", icon: <Lightning weight="duotone" className="w-5 h-5 text-amber-400" />, iconBg: "bg-amber-500/15 border border-amber-500/20" },
+      { value: "focus", label: "Focus", icon: <Crosshair weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
+      { value: "stress", label: "Stress", icon: <Leaf weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
+      { value: "sport", label: "Performance sport", icon: <Barbell weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
+      { value: "muscle", label: "Prise de muscle", icon: <Barbell weight="duotone" className="w-5 h-5 text-red-400" />, iconBg: "bg-red-500/15 border border-red-500/20" },
+      { value: "weight_loss", label: "Perte de poids", icon: <PersonSimpleRun weight="duotone" className="w-5 h-5 text-teal-400" />, iconBg: "bg-teal-500/15 border border-teal-500/20" },
+      { value: "digestion", label: "Digestion", icon: <Leaf weight="duotone" className="w-5 h-5 text-emerald-400" />, iconBg: "bg-emerald-500/15 border border-emerald-500/20" },
+      { value: "immunity", label: "Immunité", icon: <ShieldCheck weight="duotone" className="w-5 h-5 text-violet-400" />, iconBg: "bg-violet-500/15 border border-violet-500/20" },
+      { value: "skin_hair", label: "Peau/cheveux", icon: <Sparkle weight="duotone" className="w-5 h-5 text-pink-400" />, iconBg: "bg-pink-500/15 border border-pink-500/20" },
+      { value: "other", label: "Autre", icon: <DotsThree weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
     ],
     required: true,
   },
@@ -67,10 +82,10 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Cela nous aide à adapter tes recommandations",
     type: "single-bonus",
     options: [
-      { value: "0-1", label: "0-1x/semaine", emoji: "🚶" },
-      { value: "2-3", label: "2-3x/semaine", emoji: "🏃" },
-      { value: "4-5", label: "4-5x/semaine", emoji: "🏋️" },
-      { value: "6+", label: "6x+/semaine", emoji: "🔥" },
+      { value: "0-1", label: "0-1x/semaine", icon: <PersonSimpleWalk weight="duotone" className="w-5 h-5 text-slate-400" />, iconBg: "bg-slate-500/15 border border-slate-500/20" },
+      { value: "2-3", label: "2-3x/semaine", icon: <PersonSimpleRun weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
+      { value: "4-5", label: "4-5x/semaine", icon: <Barbell weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
+      { value: "6+", label: "6x+/semaine", icon: <Flame weight="duotone" className="w-5 h-5 text-red-400" />, iconBg: "bg-red-500/15 border border-red-500/20" },
     ],
     bonusField: {
       id: "sport_types",
@@ -91,10 +106,10 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Le sommeil est la base de la santé",
     type: "slider-single",
     options: [
-      { value: "<6h", label: "Moins de 6h", emoji: "😫" },
-      { value: "6-7h", label: "6-7h", emoji: "😕" },
-      { value: "7-8h", label: "7-8h", emoji: "😊" },
-      { value: ">8h", label: "Plus de 8h", emoji: "😴" },
+      { value: "<6h", label: "Moins de 6h", icon: <MoonStars weight="duotone" className="w-5 h-5 text-red-400" />, iconBg: "bg-red-500/15 border border-red-500/20" },
+      { value: "6-7h", label: "6-7h", icon: <MoonStars weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
+      { value: "7-8h", label: "7-8h", icon: <MoonStars weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
+      { value: ">8h", label: "Plus de 8h", icon: <MoonStars weight="duotone" className="w-5 h-5 text-indigo-400" />, iconBg: "bg-indigo-500/15 border border-indigo-500/20" },
     ],
     sliders: [
       { id: "sleep_quality_score", label: "Qualité du sommeil", leftLabel: "Mauvaise", rightLabel: "Excellente" },
@@ -118,14 +133,14 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Cela influence les compléments recommandés",
     type: "single",
     options: [
-      { value: "omnivore", label: "Omnivore", emoji: "🍖" },
-      { value: "vegetarian", label: "Végétarien", emoji: "🥗" },
-      { value: "vegan", label: "Vegan", emoji: "🌱" },
-      { value: "halal", label: "Halal", emoji: "🌙" },
-      { value: "keto", label: "Keto/low-carb", emoji: "🥑" },
-      { value: "gluten_free", label: "Sans gluten", emoji: "🌾" },
-      { value: "lactose_free", label: "Sans lactose", emoji: "🥛" },
-      { value: "unknown", label: "Je ne sais pas", emoji: "🤷" },
+      { value: "omnivore", label: "Omnivore", icon: <CookingPot weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
+      { value: "vegetarian", label: "Végétarien", icon: <Leaf weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
+      { value: "vegan", label: "Vegan", icon: <Plant weight="duotone" className="w-5 h-5 text-emerald-400" />, iconBg: "bg-emerald-500/15 border border-emerald-500/20" },
+      { value: "halal", label: "Halal", icon: <Moon weight="duotone" className="w-5 h-5 text-cyan-400" />, iconBg: "bg-cyan-500/15 border border-cyan-500/20" },
+      { value: "keto", label: "Keto/low-carb", icon: <Avocado weight="duotone" className="w-5 h-5 text-lime-400" />, iconBg: "bg-lime-500/15 border border-lime-500/20" },
+      { value: "gluten_free", label: "Sans gluten", icon: <GrainsSlash weight="duotone" className="w-5 h-5 text-amber-400" />, iconBg: "bg-amber-500/15 border border-amber-500/20" },
+      { value: "lactose_free", label: "Sans lactose", icon: <DropIcon weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
+      { value: "unknown", label: "Je ne sais pas", icon: <DotsThree weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
     ],
     required: true,
   },
@@ -135,14 +150,14 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Important pour éviter les mauvaises recommandations",
     type: "multi",
     options: [
-      { value: "lactose", label: "Lactose", emoji: "🥛" },
-      { value: "gluten", label: "Gluten", emoji: "🌾" },
-      { value: "egg", label: "Œuf", emoji: "🥚" },
-      { value: "soy", label: "Soja", emoji: "🫘" },
-      { value: "fish", label: "Poisson", emoji: "🐟" },
-      { value: "nuts", label: "Fruits à coque", emoji: "🥜" },
-      { value: "none", label: "Aucune", emoji: "✅" },
-      { value: "prefer_not_say", label: "Je préfère ne pas répondre", emoji: "🔒" },
+      { value: "lactose", label: "Lactose", icon: <DropIcon weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
+      { value: "gluten", label: "Gluten", icon: <GrainsSlash weight="duotone" className="w-5 h-5 text-amber-400" />, iconBg: "bg-amber-500/15 border border-amber-500/20" },
+      { value: "egg", label: "Œuf", icon: <Egg weight="duotone" className="w-5 h-5 text-yellow-400" />, iconBg: "bg-yellow-500/15 border border-yellow-500/20" },
+      { value: "soy", label: "Soja", icon: <Plant weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
+      { value: "fish", label: "Poisson", icon: <Fish weight="duotone" className="w-5 h-5 text-cyan-400" />, iconBg: "bg-cyan-500/15 border border-cyan-500/20" },
+      { value: "nuts", label: "Fruits à coque", icon: <Nut weight="duotone" className="w-5 h-5 text-amber-600" />, iconBg: "bg-amber-600/15 border border-amber-600/20" },
+      { value: "none", label: "Aucune", icon: <CheckCircle weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
+      { value: "prefer_not_say", label: "Je préfère ne pas répondre", icon: <Lock weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
     ],
     required: false,
   },
@@ -152,11 +167,11 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Sélectionne tes préférences",
     type: "multi-doses",
     options: [
-      { value: "capsules", label: "Gélules", emoji: "💊" },
-      { value: "powder", label: "Poudre", emoji: "🥤" },
-      { value: "gummies", label: "Gummies", emoji: "🍬" },
-      { value: "liquid", label: "Liquide", emoji: "💧" },
-      { value: "any", label: "Peu importe", emoji: "🤷" },
+      { value: "capsules", label: "Gélules", icon: <Pill weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
+      { value: "powder", label: "Poudre", icon: <Drop weight="duotone" className="w-5 h-5 text-purple-400" />, iconBg: "bg-purple-500/15 border border-purple-500/20" },
+      { value: "gummies", label: "Gummies", icon: <Cookie weight="duotone" className="w-5 h-5 text-pink-400" />, iconBg: "bg-pink-500/15 border border-pink-500/20" },
+      { value: "liquid", label: "Liquide", icon: <Drop weight="duotone" className="w-5 h-5 text-cyan-400" />, iconBg: "bg-cyan-500/15 border border-cyan-500/20" },
+      { value: "any", label: "Peu importe", icon: <DotsThree weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
     ],
     bonusField: {
       id: "max_daily_intakes",
@@ -184,6 +199,63 @@ const questions: OnboardingQuestion[] = [
     required: false,
   },
 ];
+
+// Step transition with deblur
+const stepTransition = {
+  initial: { opacity: 0, x: 60, filter: "blur(6px)" },
+  animate: { opacity: 1, x: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, x: -60, filter: "blur(6px)" },
+};
+
+function OptionCard({ selected, icon, iconBg, label, onClick, index }: {
+  selected: boolean;
+  icon?: ReactNode;
+  iconBg?: string;
+  label: string;
+  onClick: () => void;
+  index: number;
+}) {
+  return (
+    <motion.button
+      onClick={onClick}
+      initial={{ opacity: 0, y: 12, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: index * 0.04, type: "spring" as const, stiffness: 300, damping: 24 }}
+      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.03, y: -2 }}
+      className={cn(
+        "group relative p-4 rounded-2xl border-2 text-left transition-all duration-300",
+        "backdrop-blur-sm shadow-sm hover:shadow-lg",
+        selected
+          ? "border-primary bg-primary/5 shadow-lg shadow-primary/15"
+          : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
+      )}
+    >
+      <div className="flex items-center gap-3">
+        {icon && (
+          <motion.div
+            animate={selected ? { scale: [1, 1.15, 1], rotate: [0, 8, 0] } : {}}
+            transition={{ duration: 0.4, type: "spring" }}
+            className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-shadow duration-300", iconBg, selected && "shadow-lg")}
+          >
+            {icon}
+          </motion.div>
+        )}
+        <span className="text-sm font-medium text-foreground">{label}</span>
+      </div>
+      {selected && (
+        <motion.div
+          initial={{ scale: 0, rotate: -90 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 500, damping: 20 }}
+          className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+        >
+          <Check className="w-3 h-3 text-primary-foreground" />
+        </motion.div>
+      )}
+    </motion.button>
+  );
+}
 
 export function OnboardingFlow() {
   const navigate = useNavigate();
@@ -242,19 +314,16 @@ export function OnboardingFlow() {
     if (q.type === "multi" || q.type === "multi-doses") {
       const current = Array.isArray(answers[q.id]) ? answers[q.id] : [];
       
-      // Handle "none" or "prefer_not_say" exclusive selections
       if (value === "none" || value === "prefer_not_say" || value === "any") {
         setAnswers({ ...answers, [q.id]: [value] });
         return;
       }
       
-      // Remove exclusive options if selecting something else
       const filtered = current.filter((v: string) => v !== "none" && v !== "prefer_not_say" && v !== "any");
       
       if (filtered.includes(value)) {
         setAnswers({ ...answers, [q.id]: filtered.filter((v: string) => v !== value) });
       } else {
-        // Check max selections
         if (q.maxSelections && filtered.length >= q.maxSelections) {
           toast.error(`Maximum ${q.maxSelections} choix`);
           return;
@@ -310,34 +379,16 @@ export function OnboardingFlow() {
 
   const canProceed = () => {
     const q = question;
-    
     if (!q.required) return true;
-    
-    if (q.type === "yesno") {
-      return answers[q.id] === "yes" || answers[q.id] === "no";
-    }
-    
-    if (q.type === "country") {
-      return !!answers.shipping_country;
-    }
-    
+    if (q.type === "yesno") return answers[q.id] === "yes" || answers[q.id] === "no";
+    if (q.type === "country") return !!answers.shipping_country;
     if (q.type === "multi" || q.type === "multi-doses") {
       const arr = answers[q.id];
       return Array.isArray(arr) && arr.length > 0;
     }
-    
-    if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") {
-      return !!answers[q.id];
-    }
-    
-    if (q.type === "dual-slider") {
-      return q.sliders?.every((s) => answers[s.id] !== undefined) ?? false;
-    }
-    
-    if (q.type === "budget") {
-      return !!answers.monthly_budget || !!answers.budget_range;
-    }
-    
+    if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") return !!answers[q.id];
+    if (q.type === "dual-slider") return q.sliders?.every((s) => answers[s.id] !== undefined) ?? false;
+    if (q.type === "budget") return !!answers.monthly_budget || !!answers.budget_range;
     return true;
   };
 
@@ -345,7 +396,6 @@ export function OnboardingFlow() {
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Submit onboarding
       setIsSubmitting(true);
       try {
         const formattedAnswers: Partial<HealthProfile> = {
@@ -407,18 +457,22 @@ export function OnboardingFlow() {
 
     // Yes/No (Age verification)
     if (q.type === "yesno") {
+      const yesNoOptions = [
+        { value: "yes", label: "Oui, j'ai 18 ans ou plus", icon: <CheckCircle weight="duotone" className="w-6 h-6 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
+        { value: "no", label: "Non, j'ai moins de 18 ans", icon: <XCircle weight="duotone" className="w-6 h-6 text-red-400" />, iconBg: "bg-red-500/15 border border-red-500/20" },
+      ];
       return (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            {[
-              { value: "yes", label: "Oui, j'ai 18 ans ou plus", emoji: "✅" },
-              { value: "no", label: "Non, j'ai moins de 18 ans", emoji: "🔞" },
-            ].map((opt) => (
+            {yesNoOptions.map((opt, index) => (
               <motion.button
                 key={opt.value}
                 onClick={() => handleSelect(opt.value)}
-                whileTap={{ scale: 0.97 }}
-                whileHover={{ scale: 1.02 }}
+                initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: index * 0.04, type: "spring" as const, stiffness: 300, damping: 24 }}
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 className={cn(
                   "group relative p-6 rounded-2xl border-2 text-center transition-all duration-300",
                   "backdrop-blur-sm shadow-sm hover:shadow-lg",
@@ -427,17 +481,21 @@ export function OnboardingFlow() {
                     : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
                 )}
               >
-                <motion.span 
-                  className="text-4xl mb-3 block group-hover:scale-110 transition-transform duration-200"
-                  animate={answers[q.id] === opt.value ? { scale: [1, 1.1, 1] } : {}}
+                <motion.div 
+                  className="flex justify-center mb-3"
+                  animate={answers[q.id] === opt.value ? { scale: [1, 1.15, 1], rotate: [0, 5, 0] } : {}}
+                  transition={{ duration: 0.4 }}
                 >
-                  {opt.emoji}
-                </motion.span>
+                  <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center", opt.iconBg)}>
+                    {opt.icon}
+                  </div>
+                </motion.div>
                 <span className="text-sm font-medium text-foreground">{opt.label}</span>
                 {answers[q.id] === opt.value && (
                   <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
+                    initial={{ scale: 0, rotate: -90 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 20 }}
                     className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
                   >
                     <Check className="w-3.5 h-3.5 text-primary-foreground" />
@@ -484,41 +542,15 @@ export function OnboardingFlow() {
           )}
           <div className="grid grid-cols-2 gap-3">
             {q.options?.map((opt, index) => (
-              <motion.button
+              <OptionCard
                 key={opt.value}
+                selected={isOptionSelected(opt.value)}
+                icon={opt.icon}
+                iconBg={opt.iconBg}
+                label={opt.label}
                 onClick={() => handleSelect(opt.value)}
-                whileTap={{ scale: 0.97 }}
-                whileHover={{ scale: 1.02 }}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.03 }}
-                className={cn(
-                  "group relative p-4 rounded-2xl border-2 text-left transition-all duration-300",
-                  "backdrop-blur-sm shadow-sm hover:shadow-md",
-                  isOptionSelected(opt.value)
-                    ? "border-primary bg-primary/5 shadow-lg shadow-primary/15"
-                    : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <motion.span 
-                    className="text-2xl group-hover:scale-110 transition-transform duration-200"
-                    animate={isOptionSelected(opt.value) ? { scale: [1, 1.1, 1] } : {}}
-                  >
-                    {opt.emoji}
-                  </motion.span>
-                  <span className="text-sm font-medium text-foreground">{opt.label}</span>
-                </div>
-                {isOptionSelected(opt.value) && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
-                  >
-                    <Check className="w-3 h-3 text-primary-foreground" />
-                  </motion.div>
-                )}
-              </motion.button>
+                index={index}
+              />
             ))}
           </div>
         </div>
@@ -530,64 +562,35 @@ export function OnboardingFlow() {
       return (
         <div className="grid grid-cols-2 gap-3">
           {q.options?.map((opt, index) => (
-            <motion.button
+            <OptionCard
               key={opt.value}
+              selected={isOptionSelected(opt.value)}
+              icon={opt.icon}
+              iconBg={opt.iconBg}
+              label={opt.label}
               onClick={() => handleSelect(opt.value)}
-              whileTap={{ scale: 0.97 }}
-              whileHover={{ scale: 1.02 }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.03 }}
-              className={cn(
-                "group relative p-4 rounded-2xl border-2 text-left transition-all duration-300",
-                "backdrop-blur-sm shadow-sm hover:shadow-md",
-                isOptionSelected(opt.value)
-                  ? "border-primary bg-primary/5 shadow-lg shadow-primary/15"
-                  : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
-              )}
-            >
-              <motion.span 
-                className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200"
-                animate={isOptionSelected(opt.value) ? { scale: [1, 1.1, 1] } : {}}
-              >
-                {opt.emoji}
-              </motion.span>
-              <span className="text-sm font-medium text-foreground">{opt.label}</span>
-              {isOptionSelected(opt.value) && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
-                >
-                  <Check className="w-3 h-3 text-primary-foreground" />
-                </motion.div>
-              )}
-            </motion.button>
+              index={index}
+            />
           ))}
         </div>
       );
     }
 
-    // Single with bonus field (activity + sport type)
+    // Single with bonus field
     if (q.type === "single-bonus") {
       return (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3">
-            {q.options?.map((opt) => (
-              <motion.button
+            {q.options?.map((opt, index) => (
+              <OptionCard
                 key={opt.value}
+                selected={isOptionSelected(opt.value)}
+                icon={opt.icon}
+                iconBg={opt.iconBg}
+                label={opt.label}
                 onClick={() => handleSelect(opt.value)}
-                whileTap={{ scale: 0.98 }}
-                className={cn(
-                  "p-4 rounded-2xl border text-left transition-all",
-                  isOptionSelected(opt.value)
-                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
-                    : "border-border bg-card/50 hover:border-primary/50 hover:bg-card"
-                )}
-              >
-                <span className="text-2xl mb-2 block">{opt.emoji}</span>
-                <span className="text-sm font-medium">{opt.label}</span>
-              </motion.button>
+                index={index}
+              />
             ))}
           </div>
           
@@ -600,9 +603,11 @@ export function OnboardingFlow() {
               <p className="text-sm text-muted-foreground">{q.bonusField.label}</p>
               <div className="flex flex-wrap gap-2">
                 {q.bonusField.options.map((opt) => (
-                  <button
+                  <motion.button
                     key={opt.value}
                     onClick={() => handleBonusSelect(q.bonusField!.id, opt.value)}
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.05 }}
                     className={cn(
                       "px-4 py-2 rounded-full text-sm transition-all",
                       (answers[q.bonusField!.id] || []).includes(opt.value)
@@ -611,7 +616,7 @@ export function OnboardingFlow() {
                     )}
                   >
                     {opt.label}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -625,21 +630,16 @@ export function OnboardingFlow() {
       return (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3">
-            {q.options?.map((opt) => (
-              <motion.button
+            {q.options?.map((opt, index) => (
+              <OptionCard
                 key={opt.value}
+                selected={isOptionSelected(opt.value)}
+                icon={opt.icon}
+                iconBg={opt.iconBg}
+                label={opt.label}
                 onClick={() => handleSelect(opt.value)}
-                whileTap={{ scale: 0.98 }}
-                className={cn(
-                  "p-4 rounded-2xl border text-left transition-all",
-                  isOptionSelected(opt.value)
-                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
-                    : "border-border bg-card/50 hover:border-primary/50 hover:bg-card"
-                )}
-              >
-                <span className="text-2xl mb-2 block">{opt.emoji}</span>
-                <span className="text-sm font-medium">{opt.label}</span>
-              </motion.button>
+                index={index}
+              />
             ))}
           </div>
           
@@ -680,21 +680,16 @@ export function OnboardingFlow() {
       return (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3">
-            {q.options?.map((opt) => (
-              <motion.button
+            {q.options?.map((opt, index) => (
+              <OptionCard
                 key={opt.value}
+                selected={isOptionSelected(opt.value)}
+                icon={opt.icon}
+                iconBg={opt.iconBg}
+                label={opt.label}
                 onClick={() => handleSelect(opt.value)}
-                whileTap={{ scale: 0.98 }}
-                className={cn(
-                  "p-4 rounded-2xl border text-left transition-all",
-                  isOptionSelected(opt.value)
-                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
-                    : "border-border bg-card/50 hover:border-primary/50 hover:bg-card"
-                )}
-              >
-                <span className="text-2xl mb-2 block">{opt.emoji}</span>
-                <span className="text-sm font-medium">{opt.label}</span>
-              </motion.button>
+                index={index}
+              />
             ))}
           </div>
           
@@ -703,9 +698,11 @@ export function OnboardingFlow() {
               <p className="text-sm text-muted-foreground">{q.bonusField.label}</p>
               <div className="flex gap-3">
                 {q.bonusField.options.map((opt) => (
-                  <button
+                  <motion.button
                     key={opt.value}
                     onClick={() => setAnswers({ ...answers, [q.bonusField!.id]: opt.value })}
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.05 }}
                     className={cn(
                       "flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                       answers[q.bonusField!.id] === opt.value
@@ -714,7 +711,7 @@ export function OnboardingFlow() {
                     )}
                   >
                     {opt.label}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
@@ -749,9 +746,10 @@ export function OnboardingFlow() {
           />
           <button
             onClick={() => setAnswers({ ...answers, [q.id]: "" })}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            🔒 Je préfère ne pas répondre
+            <Lock weight="duotone" className="w-4 h-4" />
+            Je préfère ne pas répondre
           </button>
         </div>
       );
@@ -761,83 +759,109 @@ export function OnboardingFlow() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex flex-col">
-      {/* Header */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={handleBack}
-            disabled={currentStep === 0}
-            className="p-2 rounded-full hover:bg-muted/50 transition-colors disabled:opacity-50"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleSkip}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {isEditMode ? "Annuler" : question.required === false ? "Passer" : ""}
-          </button>
-        </div>
-        <Progress value={progress} className="h-1" />
-        <p className="text-xs text-muted-foreground mt-2 text-center">
-          {currentStep + 1} / {questions.length}
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center relative overflow-hidden">
+      {/* Decorative floating orbs */}
+      <motion.div
+        className="absolute top-1/4 -left-32 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"
+        animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-1/4 -right-32 w-64 h-64 bg-secondary/10 rounded-full blur-3xl pointer-events-none"
+        animate={{ y: [0, -25, 0], x: [0, -10, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-      {/* Content */}
-      <div className="flex-1 px-6 pb-6 flex flex-col overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="flex-1 flex flex-col overflow-auto"
-          >
-            <div className="mb-6">
-              <h1 className="text-2xl font-light text-foreground mb-2">
-                {question.title}
-              </h1>
-              <p className="text-muted-foreground font-light">
-                {question.subtitle}
-              </p>
-            </div>
-
-            <div className="flex-1 overflow-auto pb-4">
-              {renderQuestion()}
-            </div>
+      {/* Main container - 3/4 on desktop, full on mobile */}
+      <div className="w-full max-w-3xl mx-auto min-h-screen md:min-h-0 md:max-h-[90vh] flex flex-col md:rounded-3xl md:border md:border-white/10 md:shadow-2xl md:backdrop-blur-xl md:bg-card/50 relative z-10">
+        {/* Header */}
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <motion.button
+              onClick={handleBack}
+              disabled={currentStep === 0}
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              className="p-2 rounded-full hover:bg-muted/50 transition-colors disabled:opacity-30"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </motion.button>
+            <button
+              onClick={handleSkip}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {isEditMode ? "Annuler" : question.required === false ? "Passer" : ""}
+            </button>
+          </div>
+          <motion.div layoutId="onboarding-progress">
+            <Progress value={progress} className="h-1.5" />
           </motion.div>
-        </AnimatePresence>
+          <p className="text-xs text-muted-foreground mt-2 text-center tabular-nums">
+            {currentStep + 1} / {questions.length}
+          </p>
+        </div>
 
-        {/* Footer */}
-        <div className="mt-4 pt-4 border-t border-border/30">
-          <Button
-            onClick={handleNext}
-            disabled={!canProceed() || isSubmitting}
-            className="w-full h-14 rounded-2xl text-base font-medium"
-            size="lg"
-          >
-            {isSubmitting ? (
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        {/* Content */}
+        <div className="flex-1 px-6 pb-6 flex flex-col overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={stepTransition.initial}
+              animate={stepTransition.animate}
+              exit={stepTransition.exit}
+              transition={{ duration: 0.4 }}
+              className="flex-1 flex flex-col overflow-auto"
+            >
+              <div className="mb-6">
+                <h1 className="text-2xl font-light text-foreground mb-2">
+                  {question.title}
+                </h1>
+                <p className="text-muted-foreground font-light">
+                  {question.subtitle}
+                </p>
+              </div>
+
+              <div className="flex-1 overflow-auto pb-4">
+                {renderQuestion()}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Footer */}
+          <div className="mt-4 pt-4 border-t border-border/30">
+            <motion.div
+              whileTap={canProceed() ? { scale: 0.97 } : {}}
+            >
+              <Button
+                onClick={handleNext}
+                disabled={!canProceed() || isSubmitting}
+                className={cn(
+                  "w-full h-14 rounded-2xl text-base font-medium transition-all duration-300",
+                  canProceed() && !isSubmitting && "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
+                )}
+                size="lg"
               >
-                <Sparkles className="w-5 h-5" />
-              </motion.div>
-            ) : currentStep === questions.length - 1 ? (
-              <>
-                <Check className="w-5 h-5 mr-2" />
-                Terminer
-              </>
-            ) : (
-              <>
-                Continuer
-                <ChevronRight className="w-5 h-5 ml-2" />
-              </>
-            )}
-          </Button>
+                {isSubmitting ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Sparkles className="w-5 h-5" />
+                  </motion.div>
+                ) : currentStep === questions.length - 1 ? (
+                  <>
+                    <Check className="w-5 h-5 mr-2" />
+                    Terminer
+                  </>
+                ) : (
+                  <>
+                    Continuer
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </Button>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>

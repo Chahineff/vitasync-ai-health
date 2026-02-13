@@ -81,7 +81,7 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
       <div className="flex items-center gap-3 justify-center flex-wrap">
         {productHandle && (
           <a
-            href={`https://vitasync2.myshopify.com/products/${productHandle}#judgeme_product_reviews`}
+            href={`https://vitasync2.myshopify.com/products/${productHandle}#judgeme_product_reviews`}  
             target="_blank"
             rel="noopener noreferrer"
           >

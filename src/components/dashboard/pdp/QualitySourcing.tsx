@@ -24,7 +24,7 @@ export function QualitySourcing({ parsedData, vendor, enrichedQuality }: Quality
       bullets: [
         hasEnriched && enrichedQuality.manufacturing ? enrichedQuality.manufacturing : 'Manufactured under strict quality standards',
         'GMP-compliant production facility',
-        `By ${vendor || 'Trusted manufacturer'}`,
+        `By ${(vendor || 'Trusted manufacturer').replace(/vitasync\s*2/i, 'VitaSync')}`,
       ],
     },
     {

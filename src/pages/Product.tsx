@@ -215,7 +215,7 @@ export default function Product() {
             {/* Title & Vendor */}
             <div>
               {product.vendor && (
-                <p className="text-sm text-primary font-medium mb-1">{product.vendor}</p>
+                <p className="text-sm text-primary font-medium mb-1">{product.vendor?.replace(/vitasync\s*2/i, 'VitaSync') || product.vendor}</p>
               )}
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">{product.title}</h1>
               {product.productType && (

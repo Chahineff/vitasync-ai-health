@@ -1,81 +1,87 @@
 
+# Plan : Tutoriel Dashboard - Replique fidele du vrai dashboard
 
-# Plan : Tutoriel Dashboard immersif + Relancer depuis les parametres
+## Objectif
 
-## 1. Bouton "Relancer le tutoriel" dans les Parametres
+Reecrire entierement `DashboardTutorial.tsx` pour que le tutoriel soit une replique quasi copier-coller du vrai dashboard VitaSync. L'utilisateur voit exactement le meme layout (sidebar flottante, header, contenu principal) mais avec `pointer-events-none` sur tout sauf les boutons de controle du tutoriel (Passer / Suivant). Le curseur anime navigue entre les sections et le contenu change automatiquement.
 
-Ajouter un bouton dans `ProfileSection.tsx` (entre le selecteur de langue et le formulaire de profil) qui :
-- Remet `tutorial_completed` a `false` en base
-- Declenche le tutoriel immediatement via un callback passe depuis `Dashboard.tsx`
+## Approche : Repliques visuelles des vrais composants
 
-**Fichiers concernes** : `ProfileSection.tsx`, `Dashboard.tsx`
+Plutot que d'importer les vrais composants (qui declenchent des hooks Supabase, Shopify, etc.), on cree des sous-composants internes qui reprennent **exactement** le meme JSX et les memes classes CSS, mais avec des donnees statiques en dur.
 
-## 2. Refonte complete du tutoriel : Experience immersive
+## Composants repliques
 
-### Concept
+### 1. Sidebar (copie de Dashboard.tsx lignes 145-220)
+- Logo VitaSync + "VitaSync" avec meme style `glass-sidebar-floating`
+- Menu items identiques : Accueil (House), Coach IA (VitaSyncIcon), Supplements (FirstAidKit), Boutique (Storefront)
+- Section "General" : Parametres (Gear), Aide (Question)
+- Carte "Application mobile" avec bouton "Bientot" desactive
+- Profil utilisateur en bas (avatar placeholder + "User" + "Plan Gratuit")
+- Indicateur actif : meme style `bg-primary/10 text-primary border border-primary/20`
 
-Au lieu de cartes statiques dans une modale, le tutoriel prend tout l'ecran et simule un vrai dashboard VitaSync. Un curseur anime se deplace automatiquement entre les elements de la sidebar, clique dessus, et des bulles explicatives apparaissent pour decrire chaque fonctionnalite.
+### 2. Contenu par etape
 
-### Architecture du composant
+**Etape 1 - Accueil** : Replique du `DashboardHome`
+- Header "Bonjour User, pret pour ta routine ?"
+- `DailyCheckinWidget` replique : carte `glass-card-premium rounded-3xl p-6` avec titre "Mon suivi du jour", 3 MetricCards (Sommeil 4/5, Energie 3/5, Stress 2/5) avec cercles de progression SVG
+- `QuickCoachWidget` replique : carte glassmorphism avec logo VitaSync anime, titre "Coach IA Personnel", bouton "Parler au Coach"
+- Grille 2 colonnes : `SupplementTrackerEnhanced` (avec items Creatine/Magnesium/Omega-3 et checkbox animees) + `ProgressChart` (donut 78% + barres hebdomadaires)
 
-Le composant `DashboardTutorial.tsx` sera entierement reecrit avec :
+**Etape 2 - Coach IA** : Replique du `ChatInterface`
+- Layout `flex h-[calc(100vh-2rem)] rounded-3xl border border-white/10`
+- Sidebar de conversations (2-3 fausses conversations)
+- Header avec selecteur de modele "VitaSync 3 Flash"
+- Zone de messages : bulles de conversation animees (utilisateur + assistant avec avatar VitaSync)
+- Barre de saisie en bas avec gradient `from-background`
 
-**a) Un faux dashboard plein ecran**
-- Une sidebar simplifiee (logo VitaSync + menu items : Accueil, Coach IA, Supplements, Boutique, Parametres)
-- Une zone de contenu principale qui change selon la section selectionnee
-- Le tout en glassmorphism, identique au vrai dashboard
+**Etape 3 - Supplements** : Replique de la section supplements
+- Titre "Supplements"
+- Grille 3/5 + 2/5 : SupplementTrackerEnhanced (tabs Jour/Semaine/Mois, barre de progression, groupes Matin/Soir avec items cochables animes automatiquement) + carte "Analyse IA"
 
-**b) Un curseur anime**
-- Un element `motion.div` representant un curseur (forme de fleche SVG)
-- Il se deplace avec `animate={{ x, y }}` entre des positions precalculees
-- A chaque "clic", un effet ripple/pulse apparait
+**Etape 4 - Boutique** : Replique du `ShopSection`
+- Header avec icone panier et compteur
+- Barre de filtres (categories)
+- Grille de 4-6 cartes produits avec images placeholder, prix, boutons "Ajouter"
 
-**c) Sequence automatique en 5 etapes**
+**Etape 5 - Parametres** : Replique du `ProfileSection`
+- Titre "Parametres"
+- ThemeToggle replique (switch anime automatiquement)
+- Selecteur de langue (boutons FR/EN/ES)
+- Carte "Profil de sante" avec badges objectifs
+- Formulaire nom/prenom (champs pre-remplis)
 
-| Etape | Le curseur va vers... | Contenu affiche | Bulle explicative |
-|---|---|---|---|
-| 1 | Zone "Accueil" (deja selectionnee) | Apercu du dashboard home avec check-in widget | "Chaque jour, remplis ton check-in pour que ton Coach IA s'adapte a toi." |
-| 2 | Bouton "Coach IA" dans la sidebar | Simulation d'une conversation (bulles de chat animees) | "Pose tes questions sante a VitaSync. Il connait ton profil et s'adapte a tes besoins." |
-| 3 | Bouton "Supplements" dans la sidebar | Liste de supplements avec cochage automatique | "Suis ta routine et coche tes prises. Exemple : Creatine le matin, Magnesium le soir." |
-| 4 | Bouton "Boutique" dans la sidebar | Grille de 3 cartes produits animees | "Decouvre une large selection de complements adaptes a ton profil." |
-| 5 | Bouton "Parametres" dans la sidebar | Apercu des settings (theme toggle, profil sante) | "Modifie ton profil de sante, change de theme, ajuste tes preferences a tout moment." |
+### 3. Curseur anime
+- Meme systeme SVG avec ripple au clic
+- Se deplace vers l'element sidebar correspondant avant chaque transition
+- Positions calculees via `refs` sur les boutons sidebar
 
-**d) Bulles explicatives**
-- Positionnees a cote du contenu principal (pas par-dessus)
-- Animation d'apparition en slide + deblur
-- Texte court et precis
+### 4. Bulle explicative
+- Overlay flottant en glassmorphism positionne en bas a droite du contenu
+- Texte court avec icone VitaSync
+- Animation slide + deblur a chaque etape
 
-**e) Controles utilisateur**
-- Bouton "Passer" en haut a droite (permanent)
-- Bouton "Suivant" pour avancer manuellement (ou l'animation avance automatiquement apres ~4 secondes)
-- Indicateur de progression (5 points en bas)
+### 5. Controles utilisateur
+- Bouton "Passer" en haut a droite (toujours visible, `z-[70]`)
+- Bouton "Suivant" / "C'est parti !" en bas
+- 5 points de progression
+- Auto-avance apres 6 secondes
 
-### Deroulement temporel de chaque etape
+### 6. Mobile
+- Sidebar remplacee par bottom nav identique a `MobileBottomNav` (avec `layoutId` indicator)
+- Contenu adapte en colonnes simples
 
-```text
-1. Curseur se deplace vers l'element sidebar (~800ms)
-2. Effet de clic/pulse sur l'element (~300ms)
-3. L'element sidebar s'active visuellement (~200ms)
-4. Le contenu principal change avec animation slide (~400ms)
-5. La bulle explicative apparait (~300ms)
-6. Pause (~3 secondes) ou clic utilisateur sur "Suivant"
-```
-
-## 3. Fichiers concernes
+## Fichier concerne
 
 | Fichier | Action |
 |---|---|
-| `src/components/dashboard/DashboardTutorial.tsx` | Reecrit entierement : tutoriel immersif plein ecran |
-| `src/components/dashboard/ProfileSection.tsx` | Ajout bouton "Relancer le tutoriel" |
-| `src/pages/Dashboard.tsx` | Passer callback `onRestartTutorial` a ProfileSection |
+| `src/components/dashboard/DashboardTutorial.tsx` | Reecriture complete |
 
-## 4. Details techniques
+## Details techniques
 
-- Le faux dashboard est un composant pur (pas de donnees reelles, tout est simule)
-- Le curseur utilise un SVG de pointeur classique (fleche blanche avec bord noir)
-- Les positions du curseur sont des coordonnees en pourcentage pour etre responsive
-- Sur mobile, le tutoriel utilise la bottom nav au lieu de la sidebar
-- Les refs des elements sidebar sont utilisees pour calculer les positions du curseur via `useRef` + positions fixes
-- Le composant reste en `z-[60]` pour etre au-dessus de tout
-- `pointer-events-none` sur le faux dashboard, seuls les boutons Passer/Suivant sont cliquables
-
+- Classes CSS identiques au vrai dashboard : `glass-card-premium`, `glass-sidebar-floating`, `rounded-3xl`, `border border-white/10`, `backdrop-blur-xl`
+- Icones Phosphor identiques avec meme `weight="light"` ou `weight="duotone"`
+- Donnees statiques (aucun hook Supabase/Shopify)
+- `pointer-events-none` sur tout le faux dashboard
+- `pointer-events-auto` uniquement sur les boutons Passer/Suivant
+- Overlay `fixed inset-0 z-[60] bg-background`
+- Les animations internes des demos (cochage, bulles de chat, donut) se declenchent automatiquement a chaque changement d'etape via des `useEffect` avec timeouts

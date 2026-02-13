@@ -26,10 +26,10 @@ type Section = "home" | "coach" | "supplements" | "shop" | "product" | "settings
 const VitaSyncIcon = ({
   className,
   weight
-}: {
-  className?: string;
-  weight?: string;
-}) => <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="Coach IA" className={className || "w-5 h-5"} />;
+
+
+
+}: {className?: string;weight?: string;}) => <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="Coach IA" className={className || "w-5 h-5"} />;
 const Dashboard = () => {
   const {
     t,
@@ -188,7 +188,7 @@ const Dashboard = () => {
             {t("dashboard.menu")}
           </p>
           <nav className="space-y-1">
-            {menuItems.map(item => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
+            {menuItems.map((item) => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
                 {/* Active indicator bar */}
                 {activeSection === item.id}
                 <item.icon weight="light" className="w-5 h-5 flex-shrink-0" />
@@ -202,8 +202,8 @@ const Dashboard = () => {
             {t("dashboard.general")}
           </p>
           <nav className="space-y-1">
-            {generalItems.map(item => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50'}`}>
-                {activeSection === item.id && <motion.div layoutId="activeIndicator" className="absolute -left-0.5 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-full" />}
+            {generalItems.map((item) => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50'}`}>
+                {activeSection === item.id}
                 <item.icon weight="light" className="w-5 h-5 flex-shrink-0" />
                 <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
                   {item.label}

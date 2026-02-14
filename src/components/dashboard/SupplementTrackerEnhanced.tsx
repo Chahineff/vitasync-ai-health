@@ -8,6 +8,7 @@ import { MonthlyChart } from './MonthlyChart';
 import { AddSupplementModal } from './AddSupplementModal';
 import { useSupplementTracking } from '@/hooks/useSupplementTracking';
 import { useShopifyProductResolver } from '@/hooks/useShopifyProductResolver';
+import { toast } from '@/hooks/use-toast';
 
 function formatCustomTime(timeOfDay: string): string {
   if (timeOfDay.startsWith('custom:')) {
@@ -155,7 +156,10 @@ export function SupplementTrackerEnhanced() {
                                   imageUrl={resolved?.imageUrl}
                                   taken={isSupplementTakenToday(supplement.id)}
                                   onToggle={() => toggleSupplementTaken(supplement.id)}
-                                  onRemove={() => removeSupplement(supplement.id)}
+                                  onRemove={() => {
+                                    removeSupplement(supplement.id);
+                                    toast({ title: '✅ Complément supprimé', description: `${resolved?.title || supplement.product_name} a été retiré de votre suivi.` });
+                                  }}
                                   loading={loading}
                                   customTime={group.key === 'custom' ? formatCustomTime(supplement.time_of_day) : undefined}
                                 />

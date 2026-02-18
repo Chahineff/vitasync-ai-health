@@ -443,12 +443,44 @@ const DashboardHome = ({
   }} exit={{
     opacity: 0
   }} className="space-y-6">
-    <div className="mb-8">
-      <h1 className="text-xl md:text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-1">
-        {t("dashboard.hello")} <span className="text-primary font-medium">{userName}</span>, {t("dashboard.readyForRoutine")}
-      </h1>
-      <p className="text-sm text-foreground/50 font-light capitalize">{formatDate()}</p>
-    </div>
+    <motion.div 
+      className="mb-8 group cursor-default"
+      initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.h1 
+        className="text-xl md:text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-1 transition-all duration-500 group-hover:tracking-wide"
+        whileHover={{ scale: 1.02, x: 4 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        {t("dashboard.hello")}{" "}
+        <motion.span 
+          className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-secondary font-semibold"
+          initial={{ backgroundSize: "200% 100%", backgroundPosition: "100% 0" }}
+          animate={{ backgroundPosition: "0% 0" }}
+          transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+        >
+          {userName}
+        </motion.span>
+        <span className="inline-block ml-1">, {t("dashboard.readyForRoutine")}</span>
+        <motion.span
+          className="inline-block ml-2 origin-[70%_70%]"
+          animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
+          transition={{ duration: 1.5, delay: 0.8, ease: "easeInOut" }}
+        >
+          👋
+        </motion.span>
+      </motion.h1>
+      <motion.p 
+        className="text-sm text-foreground/50 font-light capitalize"
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        {formatDate()}
+      </motion.p>
+    </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.1 }}>
       <DailyCheckinWidget />
     </motion.div>

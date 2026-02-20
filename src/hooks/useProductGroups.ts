@@ -20,15 +20,19 @@ function parseProductTitle(title: string): { baseTitle: string; flavor: string |
   }
 
   // Pattern 2: "Name - Flavor" (only if after dash looks like a flavor)
+  // Skip if the part before dash is too short (e.g. "5-HTP" is not "5" + flavor "HTP")
   const dashMatch = title.match(/^(.+?)\s*-\s*(.+)$/);
   if (dashMatch) {
+    const basePart = dashMatch[1].trim();
     const potentialFlavor = dashMatch[2].trim();
-    // Check if it looks like a flavor (contains common flavor words or is short)
-    const flavorWords = ['chocolate', 'vanilla', 'strawberry', 'berry', 'fruit', 'punch', 'mango', 'lemon', 'lime', 'orange', 'grape', 'mint', 'peach', 'cherry', 'apple', 'banana', 'coconut', 'caramel', 'coffee', 'mocha', 'unflavored', 'natural', 'original', 'tropical', 'watermelon', 'blueberry', 'raspberry', 'shortcake', 'lemonade', 'litchi', 'gummy'];
-    const isLikelyFlavor = flavorWords.some(word => potentialFlavor.toLowerCase().includes(word)) || potentialFlavor.split(' ').length <= 3;
-    
-    if (isLikelyFlavor) {
-      return { baseTitle: dashMatch[1].trim(), flavor: potentialFlavor };
+    // Don't split if base is very short (likely a compound name like "5-HTP", "N-Acetyl")
+    if (basePart.length >= 3) {
+      const flavorWords = ['chocolate', 'vanilla', 'strawberry', 'berry', 'fruit', 'punch', 'mango', 'lemon', 'lime', 'orange', 'grape', 'mint', 'peach', 'cherry', 'apple', 'banana', 'coconut', 'caramel', 'coffee', 'mocha', 'unflavored', 'natural', 'original', 'tropical', 'watermelon', 'blueberry', 'raspberry', 'shortcake', 'lemonade', 'litchi', 'gummy'];
+      const isLikelyFlavor = flavorWords.some(word => potentialFlavor.toLowerCase().includes(word)) || potentialFlavor.split(' ').length <= 3;
+      
+      if (isLikelyFlavor) {
+        return { baseTitle: basePart, flavor: potentialFlavor };
+      }
     }
   }
 

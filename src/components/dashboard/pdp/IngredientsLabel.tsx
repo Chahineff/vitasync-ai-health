@@ -32,8 +32,11 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
   const supplementFactsImage = product.images.edges.find(img =>
     img.node.altText?.toLowerCase().includes('supplement') ||
     img.node.altText?.toLowerCase().includes('label') ||
-    img.node.altText?.toLowerCase().includes('facts')
-  )?.node || product.images.edges[product.images.edges.length - 1]?.node;
+    img.node.altText?.toLowerCase().includes('facts') ||
+    img.node.url?.toLowerCase().includes('supplement') ||
+    img.node.url?.toLowerCase().includes('label') ||
+    img.node.url?.toLowerCase().includes('facts')
+  )?.node || null;
 
   const handleCopyServing = () => {
     const servingInfo = hasEnriched 

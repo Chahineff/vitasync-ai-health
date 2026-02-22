@@ -897,6 +897,75 @@
   will-change: transform;
 }
 
+/* ===== SECTION TRANSITIONS ===== */
+
+.section-fade-transition {
+  @apply relative;
+}
+
+.section-fade-transition::before {
+  content: '';
+  @apply absolute top-0 left-0 right-0 pointer-events-none;
+  height: 120px;
+  background: linear-gradient(to bottom, hsl(var(--background)), transparent);
+  z-index: 1;
+}
+
+.section-fade-transition::after {
+  content: '';
+  @apply absolute bottom-0 left-0 right-0 pointer-events-none;
+  height: 120px;
+  background: linear-gradient(to top, hsl(var(--background)), transparent);
+  z-index: 1;
+}
+
+/* Transition from background to muted */
+.section-fade-to-muted::before {
+  background: linear-gradient(to bottom, hsl(var(--background)), transparent);
+}
+
+.section-fade-from-muted::after {
+  background: linear-gradient(to top, hsl(var(--muted) / 0.3), transparent);
+}
+
+/* Dark mode overrides for section transitions */
+.dark .section-fade-transition::before {
+  background: linear-gradient(to bottom, hsl(222 25% 4%), transparent);
+}
+.dark .section-fade-transition::after {
+  background: linear-gradient(to top, hsl(222 25% 4%), transparent);
+}
+
+/* Gradient divider between sections */
+.section-divider {
+  @apply w-full pointer-events-none;
+  height: 160px;
+  margin: -80px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.section-divider-bg-to-muted {
+  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted) / 0.3));
+}
+.dark .section-divider-bg-to-muted {
+  background: linear-gradient(to bottom, hsl(222 25% 6%), hsl(222 25% 4%));
+}
+
+.section-divider-muted-to-bg {
+  background: linear-gradient(to bottom, hsl(var(--muted) / 0.3), hsl(var(--background)));
+}
+.dark .section-divider-muted-to-bg {
+  background: linear-gradient(to bottom, hsl(222 25% 4%), hsl(222 25% 6%));
+}
+
+.section-divider-bg-to-bg {
+  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted) / 0.15), hsl(var(--background)));
+}
+.dark .section-divider-bg-to-bg {
+  background: linear-gradient(to bottom, hsl(222 25% 6%), hsl(222 25% 4%), hsl(222 25% 6%));
+}
+
 /* ===== MOBILE OPTIMIZATIONS ===== */
 
 @media (max-width: 768px) {

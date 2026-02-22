@@ -66,7 +66,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-muted/30 border-t border-border/50">
+    <footer className="bg-muted/20 dark:bg-[hsl(222_25%_4%)] border-t border-border/50 dark:border-white/[0.06]">
       <div className="container-custom py-16 md:py-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Column */}

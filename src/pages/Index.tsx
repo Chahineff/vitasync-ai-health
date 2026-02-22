@@ -12,7 +12,7 @@ import { SplineBackground } from "@/components/sections/SplineBackground";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background relative">
-      <SplineBackground />
+      <SplineBackground steps={1000} />
       <FloatingThemeToggle />
       <Navbar />
       <main className="relative z-10">

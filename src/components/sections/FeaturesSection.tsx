@@ -143,22 +143,6 @@ function FeatureBlock({ index }: FeatureBlockProps) {
             {index === 3 && <QualityPreviewWidget />}
           </div>
 
-          {/* Floating decorative elements */}
-          <motion.div 
-            className="absolute top-8 right-8 w-12 h-12 md:w-16 md:h-16 rounded-xl glass-card flex items-center justify-center"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-          >
-            <div className={`w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gradient-to-br ${gradient}`} />
-          </motion.div>
-          
-          <motion.div 
-            className="absolute bottom-8 left-8 w-10 h-10 md:w-14 md:h-14 rounded-full glass-card flex items-center justify-center"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 0.5 }}
-          >
-            <div className={`w-4 h-4 md:w-6 md:h-6 rounded-full bg-gradient-to-br ${gradient}`} />
-          </motion.div>
         </div>
       </motion.div>
     </motion.div>

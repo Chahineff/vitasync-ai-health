@@ -7,46 +7,16 @@ export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
 
-  // Parallax effect based on scroll - Hero fades, scales down, and blurs as user scrolls
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"]
   });
 
-  // Spline background transforms
-  const splineY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const splineScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.95, 0.9]);
-  const splineOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 0.6, 0.2]);
-  const splineBlur = useTransform(scrollYProgress, [0, 0.5, 1], [0, 5, 15]);
-
-  // Content transforms - fades out faster
   const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Spline 3D Background with Parallax - Hidden on mobile for performance */}
-      <motion.div 
-        className="absolute inset-0 z-0 pointer-events-none hidden md:block"
-        style={{ 
-          y: splineY, 
-          scale: splineScale,
-          opacity: splineOpacity,
-          filter: useTransform(splineBlur, (v) => `blur(${v}px)`)
-        }}
-      >
-        <spline-viewer 
-          url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
-          style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
-        />
-        {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/80" />
-      </motion.div>
-      
-      {/* Mobile background fallback */}
-      <div className="absolute inset-0 z-0 md:hidden bg-gradient-mesh" />
-      <div className="absolute inset-0 z-0 md:hidden bg-gradient-to-b from-background/20 via-background/60 to-background" />
-
       {/* Content Container with fade out on scroll */}
       <motion.div 
         className="relative z-10 px-4 sm:px-6 lg:px-16 py-16 md:py-24 text-center max-w-4xl mx-auto"

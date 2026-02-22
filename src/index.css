@@ -529,32 +529,60 @@
 
   /* Sticky Navigation - Floating Capsule */
   .nav-sticky {
-    @apply fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-5xl;
-    @apply rounded-2xl backdrop-blur-2xl border border-border/20;
-    background: hsl(220 20% 10% / 0.75);
+    @apply fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[96%] max-w-6xl;
+    @apply rounded-2xl backdrop-blur-2xl border border-white/10;
+    background: hsl(220 20% 10% / 0.78);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .nav-sticky.scrolled {
     @apply backdrop-blur-2xl;
-    background: hsl(220 20% 8% / 0.88);
-    border-color: rgba(0, 240, 255, 0.15);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.12), 0 0 20px rgba(0, 240, 255, 0.08);
+    background: hsl(220 20% 8% / 0.9);
+    border-color: rgba(0, 240, 255, 0.18);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.12);
+    animation: nav-glow-pulse 3s ease-in-out infinite;
   }
 
-  /* Light mode navbar text override */
+  @keyframes nav-glow-pulse {
+    0%, 100% {
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 240, 255, 0.06);
+      border-color: rgba(0, 240, 255, 0.12);
+    }
+    50% {
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2), 0 0 28px rgba(0, 240, 255, 0.14);
+      border-color: rgba(0, 240, 255, 0.25);
+    }
+  }
+
+  /* Navbar text always light on dark bg */
   .nav-sticky a, .nav-sticky button, .nav-sticky span {
-    color: hsl(0 0% 95%);
+    color: hsl(0 0% 92%);
+  }
+  .nav-sticky a:hover, .nav-sticky button:hover {
+    color: hsl(0 0% 100%);
   }
 
+  /* Dark mode refinements */
   .dark .nav-sticky {
-    background: hsl(222 25% 6% / 0.8);
-    border-color: hsl(222 20% 18% / 0.4);
+    background: hsl(222 25% 6% / 0.82);
+    border-color: hsl(222 20% 20% / 0.35);
   }
 
   .dark .nav-sticky.scrolled {
     background: hsl(222 25% 5% / 0.92);
-    border-color: hsl(222 20% 22% / 0.5);
+    border-color: rgba(0, 240, 255, 0.15);
+    animation: nav-glow-pulse-dark 3s ease-in-out infinite;
+  }
+
+  @keyframes nav-glow-pulse-dark {
+    0%, 100% {
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 18px rgba(0, 240, 255, 0.08);
+      border-color: rgba(0, 240, 255, 0.12);
+    }
+    50% {
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 35px rgba(0, 240, 255, 0.18);
+      border-color: rgba(0, 240, 255, 0.3);
+    }
   }
 
   /* Section Spacing */

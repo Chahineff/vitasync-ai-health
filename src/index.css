@@ -533,6 +533,18 @@
     @apply rounded-2xl backdrop-blur-2xl border border-white/10;
     background: hsl(220 20% 10% / 0.78);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+    animation: nav-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes nav-slide-in {
+    0% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   }
 
   .nav-sticky.scrolled {

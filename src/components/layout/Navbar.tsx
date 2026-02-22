@@ -54,8 +54,8 @@ export function Navbar() {
   };
   return <>
       <nav className={`nav-sticky ${isScrolled ? "scrolled" : ""}`}>
-        <div className="container-custom">
-          <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="px-4 md:px-6">
+          <div className="flex items-center justify-between h-14 md:h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
               <img alt="VitaSync" className="w-8 h-8 md:w-10 md:h-10" src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" />

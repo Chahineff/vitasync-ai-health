@@ -576,24 +576,31 @@
 
   /* Dark mode refinements */
   .dark .nav-sticky {
-    background: hsl(222 25% 6% / 0.82);
-    border-color: hsl(222 20% 20% / 0.35);
+    background: hsl(220 15% 92% / 0.85);
+    border-color: hsl(220 10% 80% / 0.4);
+  }
+
+  .dark .nav-sticky a, .dark .nav-sticky button, .dark .nav-sticky span {
+    color: hsl(220 20% 15%);
+  }
+  .dark .nav-sticky a:hover, .dark .nav-sticky button:hover {
+    color: hsl(220 20% 5%);
   }
 
   .dark .nav-sticky.scrolled {
-    background: hsl(222 25% 5% / 0.92);
-    border-color: rgba(0, 240, 255, 0.15);
+    background: hsl(220 15% 95% / 0.92);
+    border-color: rgba(0, 130, 255, 0.2);
     animation: nav-glow-pulse-dark 3s ease-in-out infinite;
   }
 
   @keyframes nav-glow-pulse-dark {
     0%, 100% {
-      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 18px rgba(0, 240, 255, 0.08);
-      border-color: rgba(0, 240, 255, 0.12);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 18px rgba(0, 130, 255, 0.08);
+      border-color: rgba(0, 130, 255, 0.15);
     }
     50% {
-      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 35px rgba(0, 240, 255, 0.18);
-      border-color: rgba(0, 240, 255, 0.3);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 35px rgba(0, 130, 255, 0.18);
+      border-color: rgba(0, 130, 255, 0.3);
     }
   }
 

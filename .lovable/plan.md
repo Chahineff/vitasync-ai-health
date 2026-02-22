@@ -1,45 +1,40 @@
 
+# Harmoniser toutes les sections de la homepage
 
-# Plan : 3 ameliorations du tutoriel
+## Objectif
+Appliquer le meme style adaptatif clair/sombre (utilise dans HowItWorks, Features, Testimonials) aux sections **Pricing**, **FAQ** et **Footer**, pour une coherence visuelle complete sur toute la page.
 
-## 1. Agrandir la zone de description explicative
+## Sections a modifier
 
-La bulle explicative (ligne 272) est actuellement limitee a `max-w-xl` avec un padding `p-4` et un texte `text-sm`. On va :
-- Retirer la contrainte `max-w-xl` pour que la bulle prenne toute la largeur disponible
-- Augmenter le padding a `p-5`
-- Passer le texte a `text-base` avec un `leading-relaxed`
-- Agrandir l'icone VitaSync de `w-6 h-6` a `w-8 h-8`
-- Ajouter le titre de l'etape en cours au-dessus du texte descriptif (ex: "Accueil", "Coach IA", etc.)
+### 1. PricingSection (`src/components/sections/PricingSection.tsx`)
+- Remplacer le fond generique `section-padding` par `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` (comme les autres sections)
+- Remplacer les `GlassCard` des plans par des cartes adaptatives avec :
+  - Light : `bg-white/70 backdrop-blur-xl border` avec ombre douce
+  - Dark : fond `hsl(220 20% 8% / 0.92)`, bordure accent, `boxShadow` glow
+  - Ligne accent en haut de chaque carte
+- Meme traitement pour la table de comparaison et la note en bas
+- Badge du label "Pricing" en `text-primary` avec `tracking-[0.3em]`
 
-**Fichier** : `DashboardTutorial.tsx` lignes 272-275
+### 2. FAQSection (`src/components/sections/FAQSection.tsx`)
+- Remplacer le fond `bg-gradient-subtle` par `bg-background dark:bg-[hsl(222_25%_5%)]`
+- Remplacer les `glass-card` des items FAQ par le meme pattern de carte adaptative :
+  - Light : `bg-white/70 backdrop-blur-xl border` avec bordure subtile
+  - Dark : fond `hsl(220 20% 8% / 0.92)`, bordure accent, glow subtil
+  - Ligne accent cyan en haut de chaque item
+- Badge en haut en `tracking-[0.3em]` pour coherence
 
-## 2. Images reelles des produits dans la boutique du tutoriel
+### 3. Footer (`src/components/layout/Footer.tsx`)
+- Adapter le fond : `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` au lieu de `bg-muted/30`
+- Adapter la bordure superieure avec le pattern accent
 
-Actuellement, les cartes produits affichent un fond colore avec un emoji. On va remplacer cela par les vraies images des produits Shopify.
+## Details techniques
 
-**Approche** : Le composant `TutorialShopDemo` fera un appel a `fetchProducts()` depuis `src/lib/shopify.ts` au montage pour recuperer les vrais produits avec leurs images. Les donnees statiques (noms, prix, tags) seront conservees en fallback si le fetch echoue.
+- Les accents utilises seront cyan (`rgba(0, 240, 255, ...)`) pour la coherence avec les sections deja harmonisees
+- Suppression de la dependance `GlassCard` dans PricingSection au profit de cartes custom adaptatives
+- Utilisation de tokens semantiques (`text-foreground`, `text-muted-foreground`, `border-border`) partout
+- Les styles inline pour dark mode resteront via `className="hidden dark:block"` + style inline, comme dans les autres sections
 
-- Ajouter un `useEffect` + `useState` pour charger les produits Shopify
-- Mapper les produits par nom pour associer chaque produit statique a son image reelle
-- Afficher `<img src={imageUrl}>` dans un container `aspect-square` au lieu du fond colore + emoji
-- Conserver le fallback colore si aucune image n'est trouvee
-
-**Fichier** : `TutorialShopDemo.tsx`
-
-## 3. Bouton "Retour" pour revenir en arriere
-
-Ajouter un bouton "Precedent" a cote du bouton "Suivant" dans les controles du tutoriel, visible uniquement quand `currentStep > 0`.
-
-- Ajouter une fonction `handlePrev` qui appelle `goToStep(currentStep - 1)` avec la meme animation de curseur
-- Modifier `goToStep` pour accepter les indices inferieurs au step actuel (deja le cas)
-- Afficher le bouton avec une fleche gauche (`ArrowLeft` de Phosphor)
-
-**Fichier** : `DashboardTutorial.tsx` lignes 280-301
-
-## Resume des fichiers modifies
-
-| Fichier | Modification |
-|---|---|
-| `src/components/dashboard/DashboardTutorial.tsx` | Bulle agrandie + bouton Precedent |
-| `src/components/dashboard/tutorial/TutorialShopDemo.tsx` | Fetch des vraies images produits Shopify |
-
+## Fichiers modifies
+1. `src/components/sections/PricingSection.tsx`
+2. `src/components/sections/FAQSection.tsx`
+3. `src/components/layout/Footer.tsx`

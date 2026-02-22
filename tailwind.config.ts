@@ -68,6 +68,8 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        card: "20px",
+        btn: "12px",
       },
       keyframes: {
         "accordion-down": {

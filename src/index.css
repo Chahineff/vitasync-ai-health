@@ -8,44 +8,44 @@
 
 @layer base {
   :root {
-    /* Core Colors */
-    --background: 0 0% 99%;
-    --foreground: 220 20% 10%;
+    /* Core Colors — Premium Clinical Light */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
 
-    /* Cards with Glassmorphism */
+    /* Surfaces */
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Primary - Electric Blue (AI) */
-    --primary: 217 100% 50%;
+    /* Primary — Teal Accent #00D09C */
+    --primary: 163 100% 41%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Mint Cyan (Health) */
-    --secondary: 163 100% 42%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary — Soft slate */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    /* Muted for subtle backgrounds */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    /* Muted */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    /* Accent - Gradient blend */
-    --accent: 190 100% 45%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent — same teal family */
+    --accent: 163 72% 94%;
+    --accent-foreground: 163 100% 25%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Alert/Notification Red */
+    /* Alert */
     --alert: 0 84% 60%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 100% 50%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 163 100% 41%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
     /* Glass Effect Variables */
     --glass-bg: 0 0% 100% / 0.7;
@@ -53,18 +53,21 @@
     --glass-blur: 20px;
 
     /* Glow Effects */
-    --glow-primary: 217 100% 50%;
-    --glow-secondary: 163 100% 42%;
+    --glow-primary: 163 100% 41%;
+    --glow-secondary: 163 100% 41%;
+
+    /* Card shadow */
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 220 10% 26%;
-    --sidebar-primary: 217 100% 50%;
+    --sidebar-background: 210 40% 98%;
+    --sidebar-foreground: 215 16% 47%;
+    --sidebar-primary: 163 100% 41%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 96%;
-    --sidebar-accent-foreground: 220 20% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 100% 50%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 163 100% 41%;
   }
 
   .dark {
@@ -77,40 +80,41 @@
     --popover: 222 25% 10%;
     --popover-foreground: 210 20% 95%;
 
-    --primary: 217 100% 60%;
+    --primary: 163 100% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 163 100% 50%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 222 20% 14%;
+    --secondary-foreground: 210 20% 95%;
 
     --muted: 222 20% 14%;
     --muted-foreground: 220 15% 65%;
 
-    --accent: 190 100% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 163 50% 15%;
+    --accent-foreground: 163 100% 70%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Alert/Notification Red */
     --alert: 0 70% 55%;
 
     --border: 222 20% 18%;
     --input: 222 20% 18%;
-    --ring: 217 100% 60%;
+    --ring: 163 100% 48%;
 
     /* Enhanced Glass for dark mode */
     --glass-bg: 222 25% 12% / 0.85;
     --glass-border: 222 20% 30% / 0.4;
 
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
     --sidebar-background: 222 25% 8%;
     --sidebar-foreground: 210 15% 90%;
-    --sidebar-primary: 217 100% 60%;
+    --sidebar-primary: 163 100% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 222 20% 14%;
     --sidebar-accent-foreground: 210 20% 95%;
     --sidebar-border: 222 20% 18%;
-    --sidebar-ring: 217 100% 60%;
+    --sidebar-ring: 163 100% 48%;
   }
 }
 
@@ -126,11 +130,31 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', sans-serif;
-    font-weight: 300;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight font-light;
+  h1 {
+    @apply tracking-tight font-bold;
+    font-size: 48px;
+    line-height: 1.2;
+  }
+
+  h2 {
+    @apply tracking-tight font-semibold;
+    font-size: 32px;
+    line-height: 1.3;
+  }
+
+  h3 {
+    @apply tracking-tight font-medium;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  h4, h5, h6 {
+    @apply tracking-tight font-medium;
   }
 
   p, span, a, li {
@@ -141,14 +165,13 @@
 @layer components {
   /* Glassmorphism Card */
   .glass-card {
-    @apply relative overflow-hidden rounded-2xl;
+    @apply relative overflow-hidden;
+    border-radius: 20px;
     background: hsl(var(--glass-bg));
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid hsl(var(--glass-border));
-    box-shadow: 
-      0 4px 30px rgba(0, 0, 0, 0.05),
-      inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    box-shadow: var(--card-shadow);
   }
 
   .dark .glass-card {

@@ -1,40 +1,61 @@
 
-# Harmoniser toutes les sections de la homepage
 
-## Objectif
-Appliquer le meme style adaptatif clair/sombre (utilise dans HowItWorks, Features, Testimonials) aux sections **Pricing**, **FAQ** et **Footer**, pour une coherence visuelle complete sur toute la page.
+## Plan : Spline plus subtil au scroll + fonds de sections harmonises
 
-## Sections a modifier
+### Objectif
+1. Reduire progressivement l'opacite du fond Spline 3D a mesure que l'utilisateur descend dans la page (bien visible en haut, quasi invisible en bas).
+2. Uniformiser les fonds de toutes les sections pour qu'elles se ressemblent visuellement (supprimer les differences entre `bg-background` et `bg-muted/20`).
 
-### 1. PricingSection (`src/components/sections/PricingSection.tsx`)
-- Remplacer le fond generique `section-padding` par `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` (comme les autres sections)
-- Remplacer les `GlassCard` des plans par des cartes adaptatives avec :
-  - Light : `bg-white/70 backdrop-blur-xl border` avec ombre douce
-  - Dark : fond `hsl(220 20% 8% / 0.92)`, bordure accent, `boxShadow` glow
-  - Ligne accent en haut de chaque carte
-- Meme traitement pour la table de comparaison et la note en bas
-- Badge du label "Pricing" en `text-primary` avec `tracking-[0.3em]`
+---
 
-### 2. FAQSection (`src/components/sections/FAQSection.tsx`)
-- Remplacer le fond `bg-gradient-subtle` par `bg-background dark:bg-[hsl(222_25%_5%)]`
-- Remplacer les `glass-card` des items FAQ par le meme pattern de carte adaptative :
-  - Light : `bg-white/70 backdrop-blur-xl border` avec bordure subtile
-  - Dark : fond `hsl(220 20% 8% / 0.92)`, bordure accent, glow subtil
-  - Ligne accent cyan en haut de chaque item
-- Badge en haut en `tracking-[0.3em]` pour coherence
+### Changements prevus
 
-### 3. Footer (`src/components/layout/Footer.tsx`)
-- Adapter le fond : `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` au lieu de `bg-muted/30`
-- Adapter la bordure superieure avec le pattern accent
+#### 1. `src/components/sections/SplineBackground.tsx`
+- Ajouter une `motion.div` autour du `spline-viewer` dont l'**opacite diminue avec le scroll** (de 1 en haut a ~0.15 en bas) via `useTransform(scrollYProgress, [0, 1], [1, 0.15])`.
+- Augmenter legerement l'overlay de lisibilite : passer de `bg-background/80` a `bg-background/85` (light) et `bg-background/75` (dark) pour un meilleur equilibre.
 
-## Details techniques
+#### 2. Harmonisation des fonds de sections
+Toutes les sections utiliseront le **meme fond transparent** pour laisser le Spline background filtrer uniformement :
 
-- Les accents utilises seront cyan (`rgba(0, 240, 255, ...)`) pour la coherence avec les sections deja harmonisees
-- Suppression de la dependance `GlassCard` dans PricingSection au profit de cartes custom adaptatives
-- Utilisation de tokens semantiques (`text-foreground`, `text-muted-foreground`, `border-border`) partout
-- Les styles inline pour dark mode resteront via `className="hidden dark:block"` + style inline, comme dans les autres sections
+| Section | Fond actuel | Nouveau fond |
+|---------|------------|-------------|
+| HeroSection | `relative` (transparent) | Inchange (transparent) |
+| ProductPreviewSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
+| HowItWorksSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
+| FeaturesSection | `bg-background dark:bg-[hsl(222_25%_5%)]` | `bg-transparent` |
+| PricingSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
+| FAQSection | `bg-background dark:bg-[hsl(222_25%_5%)]` | `bg-transparent` |
+| TestimonialsSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
+| Footer | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
 
-## Fichiers modifies
-1. `src/components/sections/PricingSection.tsx`
-2. `src/components/sections/FAQSection.tsx`
-3. `src/components/layout/Footer.tsx`
+Puisque le `SplineBackground` fournit deja un overlay `bg-background/85` qui garantit la lisibilite, les sections n'ont plus besoin de definir leur propre fond opaque.
+
+#### 3. `src/pages/Index.tsx`
+- Supprimer les `section-divider` entre les sections (ils deviennent inutiles puisque toutes les sections partagent le meme fond transparent).
+
+#### 4. `src/index.css`
+- Aucun changement majeur necessaire ; les classes `.section-parallax` et `.section-divider` restent disponibles si besoin futur.
+
+---
+
+### Details techniques
+
+```text
+Scroll position:   0%  ------>  50%  ------>  100%
+Spline opacity:    1.0          0.5           0.15
+Overlay:           bg/85        bg/85         bg/85
+Section bg:        transparent  transparent   transparent
+```
+
+Le resultat : un fond Spline bien visible en hero qui s'estompe naturellement vers le bas, avec des sections visuellement identiques en termes de fond.
+
+### Fichiers modifies
+- `src/components/sections/SplineBackground.tsx` (opacite progressive)
+- `src/components/sections/ProductPreviewSection.tsx` (bg transparent)
+- `src/components/sections/HowItWorksSection.tsx` (bg transparent)
+- `src/components/sections/FeaturesSection.tsx` (bg transparent)
+- `src/components/sections/PricingSection.tsx` (bg transparent)
+- `src/components/sections/FAQSection.tsx` (bg transparent)
+- `src/components/sections/TestimonialsSection.tsx` (bg transparent)
+- `src/components/layout/Footer.tsx` (bg transparent)
+- `src/pages/Index.tsx` (suppression des dividers)

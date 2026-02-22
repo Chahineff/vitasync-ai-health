@@ -160,7 +160,7 @@ export function FeaturesSection() {
   const { t } = useTranslation();
 
   return (
-    <section id="features" className="section-padding overflow-hidden bg-background dark:bg-[hsl(222_25%_5%)]">
+    <section id="features" className="section-padding overflow-hidden bg-background dark:bg-[hsl(222_25%_5%)] section-parallax">
       <div className="container-custom">
         {/* Header */}
         <motion.div 

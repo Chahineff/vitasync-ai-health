@@ -530,13 +530,30 @@
   /* Sticky Navigation - Floating Capsule */
   .nav-sticky {
     @apply fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-5xl;
-    @apply rounded-2xl bg-background/60 backdrop-blur-2xl border border-border/30;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    @apply rounded-2xl backdrop-blur-2xl border border-border/20;
+    background: hsl(220 20% 10% / 0.75);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .nav-sticky.scrolled {
-    @apply bg-background/80 backdrop-blur-2xl border-border/50;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    @apply backdrop-blur-2xl border-border/30;
+    background: hsl(220 20% 8% / 0.88);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Light mode navbar text override */
+  .nav-sticky a, .nav-sticky button, .nav-sticky span {
+    color: hsl(0 0% 95%);
+  }
+
+  .dark .nav-sticky {
+    background: hsl(222 25% 6% / 0.8);
+    border-color: hsl(222 20% 18% / 0.4);
+  }
+
+  .dark .nav-sticky.scrolled {
+    background: hsl(222 25% 5% / 0.92);
+    border-color: hsl(222 20% 22% / 0.5);
   }
 
   /* Section Spacing */

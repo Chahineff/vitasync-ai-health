@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
+import { ChatPreviewMini } from "./ChatPreviewMini";
 
 const bentoCards = [
   {
@@ -14,7 +15,8 @@ const bentoCards = [
   {
     titleKey: "features.feature2.title",
     descriptionKey: "features.feature2.description",
-    image: "/lovable-uploads/93cbbe29-32a4-45e6-8a4d-0893a176b344.png",
+    image: null,
+    chatPreview: true,
     span: "md:col-span-1",
     aspect: "aspect-square",
   },
@@ -74,13 +76,21 @@ export function FeaturesSection() {
               <div className="glass-card-premium rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-1">
                 {/* Image */}
                 <div className={`${card.aspect} overflow-hidden relative`}>
-                  <img
-                    src={card.image}
-                    alt={t(card.titleKey)}
-                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+                  {card.chatPreview ? (
+                    <div className="w-full h-full p-2">
+                      <ChatPreviewMini className="h-full" />
+                    </div>
+                  ) : (
+                    <>
+                      <img
+                        src={card.image}
+                        alt={t(card.titleKey)}
+                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+                    </>
+                  )}
                 </div>
                 {/* Text */}
                 <div className="p-5 md:p-6 mt-auto">
@@ -135,6 +145,19 @@ export function FeaturesSection() {
               </motion.div>
             ))}
           </div>
+
+          {/* Chat Preview Large */}
+          <motion.div
+            className="mt-10 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <div className="h-[360px] md:h-[400px] rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border/20">
+              <ChatPreviewMini className="h-full" />
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>

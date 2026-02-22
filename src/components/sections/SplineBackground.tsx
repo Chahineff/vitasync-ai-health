@@ -22,18 +22,21 @@ export function SplineBackground() {
   // Subtle rotation for visual movement
   const hueShift = useTransform(scrollYProgress, [0, 1], [0, 30]);
 
+  // Spline opacity fades as user scrolls down
+  const splineOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.4, 0.15]);
+
   return (
     <div ref={ref} className="fixed inset-0 z-0 pointer-events-none">
-      {/* Spline 3D scene - hidden on mobile */}
-      <div className="absolute inset-0 hidden md:block">
+      {/* Spline 3D scene - hidden on mobile, fades with scroll */}
+      <motion.div className="absolute inset-0 hidden md:block" style={{ opacity: splineOpacity }}>
         <spline-viewer
           url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
           style={{ width: "100%", height: "100%", pointerEvents: "none" }}
         />
-      </div>
+      </motion.div>
 
       {/* Mobile fallback gradient */}
-      <div className="absolute inset-0 md:hidden bg-gradient-mesh" />
+      <motion.div className="absolute inset-0 md:hidden bg-gradient-mesh" style={{ opacity: splineOpacity }} />
 
       {/* Color overlay that shifts with scroll */}
       <motion.div
@@ -60,7 +63,7 @@ export function SplineBackground() {
       ))}
 
       {/* Base overlay for readability - adapts to theme */}
-      <div className="absolute inset-0 bg-background/80 dark:bg-background/70" />
+      <div className="absolute inset-0 bg-background/85 dark:bg-background/75" />
     </div>
   );
 }

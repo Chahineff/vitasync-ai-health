@@ -17,17 +17,11 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10">
         <HeroSection />
-        <div className="section-divider section-divider-bg-to-muted" />
         <ProductPreviewSection />
-        {/* No divider — both ProductPreview & HowItWorks share muted bg */}
         <HowItWorksSection />
-        <div className="section-divider section-divider-muted-to-bg" />
         <FeaturesSection />
-        <div className="section-divider section-divider-bg-to-muted" />
         <PricingSection />
-        <div className="section-divider section-divider-muted-to-bg" />
         <FAQSection />
-        <div className="section-divider section-divider-bg-to-muted" />
       </main>
       <Footer />
     </div>

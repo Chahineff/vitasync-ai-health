@@ -64,7 +64,7 @@ export function TestimonialsSection(): JSX.Element {
   }, [isAutoPlaying, nextSlide]);
 
   return (
-    <section className="py-24 relative overflow-hidden bg-muted/20 dark:bg-[hsl(222_25%_4%)] section-parallax">
+    <section className="py-24 relative overflow-hidden bg-transparent section-parallax">
       {/* Background glow */}
       <div 
         className="absolute inset-0 pointer-events-none"

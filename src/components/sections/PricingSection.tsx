@@ -202,7 +202,7 @@ export function PricingSection() {
   );
 
   return (
-    <section id="pricing" className="section-padding bg-muted/20 dark:bg-[hsl(222_25%_4%)] section-parallax">
+    <section id="pricing" className="section-padding bg-transparent section-parallax">
       <div className="container-custom">
         <ScrollReveal>
           <div className="text-center mb-10 md:mb-16 px-2">

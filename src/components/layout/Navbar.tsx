@@ -54,7 +54,7 @@ export function Navbar() {
   };
   return <>
       <nav className={`nav-sticky ${isScrolled ? "scrolled" : ""}`}>
-        <div className="px-4 md:px-6">
+        <div className="px-5 md:px-8">
           <div className="flex items-center justify-between h-14 md:h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
@@ -63,7 +63,7 @@ export function Navbar() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-5 xl:gap-7">
               {navLinks.map(link => (
                 <a 
                   key={link.href} 

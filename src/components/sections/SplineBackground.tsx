@@ -2,13 +2,13 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
 const sectionColors = [
-  "hsla(190, 100%, 50%, 0.07)",  // Hero - cyan
-  "hsla(190, 80%, 45%, 0.06)",   // ProductPreview - cyan/teal
-  "hsla(210, 80%, 50%, 0.08)",   // HowItWorks - blue
-  "hsla(170, 80%, 45%, 0.07)",   // Features - teal/green
-  "hsla(160, 70%, 40%, 0.06)",   // Pricing - green
-  "hsla(200, 80%, 50%, 0.07)",   // FAQ - blue
-  "hsla(220, 60%, 40%, 0.05)",   // Footer - deep blue
+  "hsla(190, 100%, 50%, 0.05)",  // Hero - cyan
+  "hsla(190, 80%, 45%, 0.05)",   // ProductPreview - cyan/teal
+  "hsla(210, 80%, 50%, 0.05)",   // HowItWorks - blue
+  "hsla(170, 80%, 45%, 0.05)",   // Features - teal/green
+  "hsla(160, 70%, 40%, 0.05)",   // Pricing - green
+  "hsla(200, 80%, 50%, 0.05)",   // FAQ - blue
+  "hsla(220, 60%, 40%, 0.04)",   // Footer - deep blue
 ];
 
 export function SplineBackground() {
@@ -23,7 +23,7 @@ export function SplineBackground() {
   const hueShift = useTransform(scrollYProgress, [0, 1], [0, 30]);
 
   // Spline opacity fades as user scrolls down
-  const splineOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.4, 0.15]);
+  const splineOpacity = useTransform(scrollYProgress, [0, 0.4, 0.8, 1], [1, 0.6, 0.3, 0.15]);
 
   return (
     <div ref={ref} className="fixed inset-0 z-0 pointer-events-none">

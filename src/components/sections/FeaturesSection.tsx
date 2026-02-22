@@ -9,6 +9,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { useTranslation } from "@/hooks/useTranslation";
+import { ChatPreviewWidget } from "./ChatPreviewWidget";
 
 const featureIcons = [Robot, ChartLineUp, FileMagnifyingGlass, ShieldCheck];
 
@@ -131,29 +132,35 @@ function FeatureBlock({ index }: FeatureBlockProps) {
             <div className="absolute bottom-1/4 right-1/4 w-40 h-40 md:w-56 md:h-56 rounded-full bg-gradient-to-br from-secondary/30 to-transparent blur-3xl" />
           </div>
           
-          {/* Glass card with icon */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div 
-              className="glass-card p-8 md:p-12 rounded-3xl"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <div className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-gradient-to-br ${gradient} p-1`}>
-                <div className="w-full h-full rounded-[14px] bg-background/80 backdrop-blur-sm flex items-center justify-center">
-                  <Icon 
-                    size={40} 
-                    weight="light" 
-                    className="text-foreground md:hidden" 
-                  />
-                  <Icon 
-                    size={56} 
-                    weight="light" 
-                    className="text-foreground hidden md:block" 
-                  />
+          {/* AI Coach: Live Chat Preview | Others: Icon card */}
+          {index === 0 ? (
+            <div className="absolute inset-3 md:inset-5">
+              <ChatPreviewWidget />
+            </div>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div 
+                className="glass-card p-8 md:p-12 rounded-3xl"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-gradient-to-br ${gradient} p-1`}>
+                  <div className="w-full h-full rounded-[14px] bg-background/80 backdrop-blur-sm flex items-center justify-center">
+                    <Icon 
+                      size={40} 
+                      weight="light" 
+                      className="text-foreground md:hidden" 
+                    />
+                    <Icon 
+                      size={56} 
+                      weight="light" 
+                      className="text-foreground hidden md:block" 
+                    />
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
+              </motion.div>
+            </div>
+          )}
 
           {/* Floating decorative elements */}
           <motion.div 

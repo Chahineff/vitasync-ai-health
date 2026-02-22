@@ -527,14 +527,16 @@
     background: radial-gradient(circle, rgba(0, 220, 170, 0.25) 0%, transparent 70%);
   }
 
-  /* Sticky Navigation */
+  /* Sticky Navigation - Floating Capsule */
   .nav-sticky {
-    @apply fixed top-0 left-0 right-0 z-50 transition-all duration-300;
+    @apply fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-5xl;
+    @apply rounded-2xl bg-background/60 backdrop-blur-2xl border border-border/30;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
   .nav-sticky.scrolled {
-    @apply bg-background/80 backdrop-blur-xl border-b border-border/50;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    @apply bg-background/80 backdrop-blur-2xl border-border/50;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
   }
 
   /* Section Spacing */

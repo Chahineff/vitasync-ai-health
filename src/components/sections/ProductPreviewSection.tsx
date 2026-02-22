@@ -1,11 +1,15 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useTheme } from "next-themes";
+import dashboardLight from "@/assets/dashboard-preview-light.png";
+import dashboardDark from "@/assets/dashboard-preview-dark.png";
 
 export const ProductPreviewSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -55,51 +59,42 @@ export const ProductPreviewSection = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            {/* Screen Frame (Glassmorphism) */}
-            <motion.div
-              className="relative rounded-2xl lg:rounded-3xl overflow-hidden"
-              style={{
-                background: "rgba(255, 255, 255, 0.08)",
-                backdropFilter: "blur(40px)",
-                WebkitBackdropFilter: "blur(40px)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                boxShadow: "0 50px 100px -20px rgba(0, 0, 0, 0.15), 0 30px 60px -30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-              }}
-            >
-              {/* Top bezel with camera */}
-              <div className="h-6 lg:h-8 bg-gradient-to-b from-white/10 to-transparent flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-foreground/20" />
-              </div>
+            {/* MacBook Frame */}
+            <div className="relative">
+              {/* Screen bezel */}
+              <div 
+                className="relative rounded-t-xl lg:rounded-t-2xl overflow-hidden border-[6px] lg:border-[10px] border-[#1a1a1a] dark:border-[#2a2a2a] bg-[#1a1a1a] dark:bg-[#2a2a2a]"
+              >
+                {/* Camera notch */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 lg:w-24 h-3 lg:h-4 bg-[#1a1a1a] dark:bg-[#2a2a2a] rounded-b-lg z-10 flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-[#3a3a3a]" />
+                </div>
 
-              {/* Screen Content - Real Dashboard Screenshot */}
-              <div className="aspect-[16/10] lg:aspect-[16/9] p-1 lg:p-2">
-                <div className="w-full h-full rounded-xl lg:rounded-2xl overflow-hidden shadow-inner">
+                {/* Screen Content */}
+                <div className="aspect-[16/10] overflow-hidden rounded-sm">
                   <img 
-                    src="/lovable-uploads/dashboard-screenshot.png" 
+                    src={resolvedTheme === 'dark' ? dashboardDark : dashboardLight}
                     alt="Dashboard VitaSync - Interface de suivi santé personnalisé"
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover object-top transition-opacity duration-500"
                   />
                 </div>
               </div>
 
-              {/* Bottom bezel */}
-              <div className="h-4 lg:h-6 bg-gradient-to-t from-white/5 to-transparent" />
-            </motion.div>
+              {/* MacBook bottom hinge / keyboard base */}
+              <div className="relative h-3 lg:h-5 bg-gradient-to-b from-[#c0c0c0] to-[#a8a8a8] dark:from-[#3a3a3a] dark:to-[#2a2a2a] rounded-b-xl lg:rounded-b-2xl flex items-center justify-center">
+                <div className="w-12 lg:w-20 h-1 lg:h-1.5 bg-[#888] dark:bg-[#555] rounded-full" />
+              </div>
 
-            {/* Reflection effect */}
-            <div 
-              className="absolute inset-0 rounded-2xl lg:rounded-3xl pointer-events-none"
-              style={{
-                background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, transparent 100%)",
-              }}
-            />
+              {/* Base shadow */}
+              <div className="absolute -bottom-3 left-[10%] right-[10%] h-4 bg-foreground/10 blur-xl rounded-full" />
+            </div>
 
             {/* CTA Overlay on Hover */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: isHovered ? 1 : 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-2xl lg:rounded-3xl"
+              className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl lg:rounded-2xl"
             >
               <motion.button
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -115,9 +110,6 @@ export const ProductPreviewSection = () => {
               </motion.button>
             </motion.div>
           </div>
-
-          {/* Stand/Shadow */}
-          <div className="hidden lg:block absolute -bottom-4 left-1/2 -translate-x-1/2 w-32 h-4 bg-gradient-to-t from-foreground/5 to-transparent rounded-full blur-sm" />
         </motion.div>
       </div>
     </section>

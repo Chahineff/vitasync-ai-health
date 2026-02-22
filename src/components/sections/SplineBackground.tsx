@@ -2,13 +2,13 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
 const sectionColors = [
-  "hsla(190, 100%, 50%, 0.05)",  // Hero - cyan
-  "hsla(190, 80%, 45%, 0.05)",   // ProductPreview - cyan/teal
-  "hsla(210, 80%, 50%, 0.05)",   // HowItWorks - blue
-  "hsla(170, 80%, 45%, 0.05)",   // Features - teal/green
-  "hsla(160, 70%, 40%, 0.05)",   // Pricing - green
-  "hsla(200, 80%, 50%, 0.05)",   // FAQ - blue
-  "hsla(220, 60%, 40%, 0.04)",   // Footer - deep blue
+  "hsla(190, 100%, 50%, 0.15)",  // Hero - cyan vif
+  "hsla(190, 80%, 45%, 0.12)",   // ProductPreview - cyan/teal
+  "hsla(210, 80%, 50%, 0.14)",   // HowItWorks - bleu électrique
+  "hsla(170, 80%, 45%, 0.13)",   // Features - teal/vert menthe
+  "hsla(160, 70%, 40%, 0.12)",   // Pricing - vert
+  "hsla(200, 80%, 50%, 0.13)",   // FAQ - bleu
+  "hsla(220, 60%, 40%, 0.10)",   // Footer - bleu profond
 ];
 
 export function SplineBackground() {

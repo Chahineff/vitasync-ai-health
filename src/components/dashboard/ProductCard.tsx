@@ -46,7 +46,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
         description: node.title,
         position: 'top-center',
       });
-      setTimeout(() => setJustAdded(false), 2000);
+      setTimeout(() => setJustAdded(false), 1500);
     } catch (error) {
       toast.error('Erreur lors de l\'ajout au panier');
     } finally {
@@ -142,9 +142,9 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
           <button
             onClick={handleAddToCart}
             disabled={isAdding || !selectedVariant?.availableForSale}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded-btn text-sm font-medium transition-all duration-150 mt-4 ${
+            className={`w-full flex items-center justify-center gap-2 py-3 rounded-btn text-sm font-medium transition-all duration-200 mt-4 ${
               justAdded
-                ? 'bg-green-500/20 text-green-600'
+                ? 'bg-emerald-600 text-white'
                 : 'bg-primary hover:bg-primary/90 text-primary-foreground'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >

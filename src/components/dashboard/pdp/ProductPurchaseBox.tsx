@@ -85,7 +85,7 @@ export function ProductPurchaseBox({
         description: product.title,
         position: 'top-center',
       });
-      setTimeout(() => setJustAdded(false), 2000);
+      setTimeout(() => setJustAdded(false), 1500);
     } catch (error) {
       toast.error(t('shop.addError'));
     } finally {
@@ -267,9 +267,9 @@ export function ProductPurchaseBox({
         disabled={isAdding || !selectedVariant?.availableForSale}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "w-full flex items-center justify-center gap-2 h-14 rounded-btn text-base font-semibold transition-all duration-150",
+          "w-full flex items-center justify-center gap-2 h-14 rounded-btn text-base font-semibold transition-all duration-200",
           justAdded
-            ? "bg-green-500/20 text-green-600 border border-green-500/30"
+            ? "bg-emerald-600 text-white border border-emerald-700"
             : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm",
           "disabled:opacity-50 disabled:cursor-not-allowed"
         )}

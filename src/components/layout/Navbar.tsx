@@ -69,17 +69,17 @@ export function Navbar() {
                   key={link.href} 
                   href={link.href} 
                   onClick={e => handleAnchorClick(e, link.href)} 
-                  className="text-xs uppercase tracking-[0.15em] text-foreground/50 hover:text-foreground transition-colors duration-200"
+                  className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200"
                 >
                   {t(link.labelKey)}
                 </a>
               ))}
-              <div className="w-px h-4 bg-foreground/10" />
+              <div className="w-px h-5 bg-border" />
               {pageLinks.map(link => (
                 <Link 
                   key={link.href} 
                   to={link.href} 
-                  className="text-xs uppercase tracking-[0.15em] text-foreground/50 hover:text-foreground transition-colors duration-200"
+                  className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200"
                 >
                   {t(link.labelKey)}
                 </Link>
@@ -92,7 +92,7 @@ export function Navbar() {
               <Link to="/auth?mode=signin" className="px-4 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all">
                 {t("nav.signin")}
               </Link>
-              <Link to="/auth?mode=signup" className="px-5 py-2 rounded-full text-xs uppercase tracking-[0.1em] font-medium border border-foreground/20 text-foreground hover:border-primary hover:text-primary transition-all duration-300">
+              <Link to="/auth?mode=signup" className="btn-neumorphic text-primary-foreground">
                 {t("nav.start")}
               </Link>
             </div>

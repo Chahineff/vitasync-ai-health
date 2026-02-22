@@ -221,22 +221,22 @@ function OptionCard({ selected, icon, iconBg, label, onClick, index }: {
       initial={{ opacity: 0, y: 12, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: index * 0.04, type: "spring" as const, stiffness: 300, damping: 24 }}
-      whileTap={{ scale: 0.97 }}
-      whileHover={{ scale: 1.02, y: -1 }}
+      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.03, y: -2 }}
       className={cn(
-        "group relative p-4 rounded-[20px] text-left",
-        "transition-all duration-150 ease-in-out",
+        "group relative p-4 rounded-2xl border-2 text-left transition-all duration-300",
+        "backdrop-blur-sm shadow-sm hover:shadow-lg",
         selected
-          ? "border-2 border-primary bg-primary/10 shadow-sm"
-          : "border-2 border-transparent bg-muted/40 hover:bg-muted/60"
+          ? "border-primary bg-primary/5 shadow-lg shadow-primary/15"
+          : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
       )}
     >
       <div className="flex items-center gap-3">
         {icon && (
           <motion.div
-            animate={selected ? { scale: [1, 1.1, 1] } : {}}
-            transition={{ duration: 0.3 }}
-            className={cn("w-10 h-10 rounded-xl flex items-center justify-center", iconBg)}
+            animate={selected ? { scale: [1, 1.15, 1], rotate: [0, 8, 0] } : {}}
+            transition={{ duration: 0.4, type: "spring" }}
+            className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-shadow duration-300", iconBg, selected && "shadow-lg")}
           >
             {icon}
           </motion.div>
@@ -245,8 +245,8 @@ function OptionCard({ selected, icon, iconBg, label, onClick, index }: {
       </div>
       {selected && (
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
+          initial={{ scale: 0, rotate: -90 }}
+          animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 500, damping: 20 }}
           className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
         >
@@ -471,20 +471,20 @@ export function OnboardingFlow() {
                 initial={{ opacity: 0, y: 12, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: index * 0.04, type: "spring" as const, stiffness: 300, damping: 24 }}
-                whileTap={{ scale: 0.97 }}
-                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 className={cn(
-                  "group relative p-6 rounded-[20px] text-center",
-                  "transition-all duration-150 ease-in-out",
+                  "group relative p-6 rounded-2xl border-2 text-center transition-all duration-300",
+                  "backdrop-blur-sm shadow-sm hover:shadow-lg",
                   answers[q.id] === opt.value
-                    ? "border-2 border-primary bg-primary/10 shadow-sm"
-                    : "border-2 border-transparent bg-muted/40 hover:bg-muted/60"
+                    ? "border-primary bg-primary/5 shadow-lg shadow-primary/20"
+                    : "border-border/60 bg-card/30 hover:border-primary/40 hover:bg-card/50"
                 )}
               >
                 <motion.div 
                   className="flex justify-center mb-3"
-                  animate={answers[q.id] === opt.value ? { scale: [1, 1.1, 1] } : {}}
-                  transition={{ duration: 0.3 }}
+                  animate={answers[q.id] === opt.value ? { scale: [1, 1.15, 1], rotate: [0, 5, 0] } : {}}
+                  transition={{ duration: 0.4 }}
                 >
                   <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center", opt.iconBg)}>
                     {opt.icon}
@@ -493,8 +493,8 @@ export function OnboardingFlow() {
                 <span className="text-sm font-medium text-foreground">{opt.label}</span>
                 {answers[q.id] === opt.value && (
                   <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
+                    initial={{ scale: 0, rotate: -90 }}
+                    animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: "spring", stiffness: 500, damping: 20 }}
                     className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
                   >

@@ -481,23 +481,18 @@ const DashboardHome = ({
         {formatDate()}
       </motion.p>
     </motion.div>
-    {[
-      <DailyCheckinWidget key="checkin" />,
-      <QuickCoachWidget key="coach" onStartChat={onGoToCoach} userName={userName} />,
-      <div key="grid" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.1 }}>
+      <DailyCheckinWidget />
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.22 }}>
+      <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.34 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SupplementTrackerEnhanced />
         <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToShop} />
-      </div>,
-    ].map((child, i) => (
-      <motion.div
-        key={i}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: i * 0.1, ease: [0.2, 0.8, 0.2, 1] }}
-      >
-        {child}
-      </motion.div>
-    ))}
+      </div>
+    </motion.div>
   </motion.div>;
 };
 const HelpSection = () => {

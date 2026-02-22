@@ -46,7 +46,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
         description: node.title,
         position: 'top-center',
       });
-      setTimeout(() => setJustAdded(false), 1500);
+      setTimeout(() => setJustAdded(false), 2000);
     } catch (error) {
       toast.error('Erreur lors de l\'ajout au panier');
     } finally {
@@ -70,8 +70,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
     <div onClick={handleCardClick} className={onProductClick ? "cursor-pointer" : ""}>
       <motion.div
         whileHover={{ y: -4 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="glass-card rounded-card overflow-hidden border border-border group flex flex-col transition-shadow duration-300 ease-out hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.15)]"
+        className="glass-card rounded-2xl overflow-hidden border border-white/10 group"
       >
         {/* Image */}
         <div className="relative aspect-square bg-gradient-to-br from-white/5 to-white/10 overflow-hidden">
@@ -79,7 +78,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
             <img
               src={mainImage.url}
               alt={mainImage.altText || node.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -97,8 +96,8 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
         </div>
 
         {/* Content */}
-        <div className="p-4 flex flex-col flex-1">
-          <div className="text-left">
+        <div className="p-4 space-y-3">
+          <div>
             <h3 className="font-medium text-foreground truncate">{node.title}</h3>
             {node.description && (
               <p className="text-sm text-foreground/60 font-light line-clamp-2 mt-1">
@@ -109,7 +108,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
 
           {/* Variant Selector */}
           {hasMultipleVariants && (
-            <div className="flex flex-wrap gap-2 mt-3">
+            <div className="flex flex-wrap gap-2">
               {variants.slice(0, 4).map((variant, index) => (
                 <button
                   key={variant.node.id}
@@ -117,7 +116,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
                   className={`px-2 py-1 text-xs rounded-lg transition-colors ${
                     selectedVariantIndex === index
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted/40 text-foreground/60 hover:bg-muted/60'
+                      : 'bg-white/5 text-foreground/60 hover:bg-white/10'
                   }`}
                 >
                   {variant.node.title}
@@ -131,40 +130,40 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
             </div>
           )}
 
-          {/* Price */}
-          <div className="text-left mt-3">
-            <span className="text-xl font-bold text-foreground">
-              {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
-            </span>
+          {/* Price & Add to Cart */}
+          <div className="flex items-center justify-between pt-2">
+            <div>
+              <span className="text-lg font-semibold text-foreground">
+                {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
+              </span>
+            </div>
+            <button
+              onClick={handleAddToCart}
+              disabled={isAdding || !selectedVariant?.availableForSale}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                justAdded
+                  ? 'bg-green-500/20 text-green-500'
+                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {isAdding ? (
+                <SpinnerGap className="w-4 h-4 animate-spin" />
+              ) : justAdded ? (
+                <>
+                  <Check weight="bold" className="w-4 h-4" />
+                  Ajouté
+                </>
+              ) : (
+                <>
+                  <ShoppingCartSimple weight="bold" className="w-4 h-4" />
+                  Ajouter
+                </>
+              )}
+            </button>
           </div>
 
-          {/* Add to Cart — Full Width */}
-          <button
-            onClick={handleAddToCart}
-            disabled={isAdding || !selectedVariant?.availableForSale}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded-btn text-sm font-medium transition-all duration-200 mt-4 ${
-              justAdded
-                ? 'bg-emerald-600 text-white'
-                : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            {isAdding ? (
-              <SpinnerGap className="w-4 h-4 animate-spin" />
-            ) : justAdded ? (
-              <>
-                <Check weight="bold" className="w-4 h-4" />
-                Ajouté
-              </>
-            ) : (
-              <>
-                <ShoppingCartSimple weight="bold" className="w-4 h-4" />
-                Ajouter
-              </>
-            )}
-          </button>
-
           {!selectedVariant?.availableForSale && (
-            <p className="text-xs text-destructive font-light mt-2">Rupture de stock</p>
+            <p className="text-xs text-destructive font-light">Rupture de stock</p>
           )}
         </div>
       </motion.div>

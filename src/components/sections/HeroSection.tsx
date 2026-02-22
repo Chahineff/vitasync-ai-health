@@ -1,157 +1,124 @@
-import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { ArrowRight, MagnifyingGlass, ShieldCheck, Brain, Trophy } from "@phosphor-icons/react";
+import { Link } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 
-const promptPhrases = [
-  "Quels suppléments pour mon énergie ?",
-  "Comment améliorer mon sommeil ?",
-  "Mon stack personnalisé anti-stress",
-  "Analyse de mes biomarqueurs",
-  "Optimiser ma récupération sportive",
-];
-
 export function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [currentPhrase, setCurrentPhrase] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhrase((prev) => (prev + 1) % promptPhrases.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  // Parallax effect based on scroll - Hero fades, scales down, and blurs as user scrolls
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Spline background transforms
+  const splineY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const splineScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.95, 0.9]);
+  const splineOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 0.6, 0.2]);
+  const splineBlur = useTransform(scrollYProgress, [0, 0.5, 1], [0, 5, 15]);
+
+  // Content transforms - fades out faster
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-hero-immersive dark:bg-hero-immersive">
-      {/* Light mode override */}
-      <div className="absolute inset-0 bg-hero-immersive-light dark:hidden" />
+    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Spline 3D Background with Parallax - Hidden on mobile for performance */}
+      <motion.div 
+        className="absolute inset-0 z-0 pointer-events-none hidden md:block"
+        style={{ 
+          y: splineY, 
+          scale: splineScale,
+          opacity: splineOpacity,
+          filter: useTransform(splineBlur, (v) => `blur(${v}px)`)
+        }}
+      >
+        <spline-viewer 
+          url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
+          style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
+        />
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/80" />
+      </motion.div>
+      
+      {/* Mobile background fallback */}
+      <div className="absolute inset-0 z-0 md:hidden bg-gradient-mesh" />
+      <div className="absolute inset-0 z-0 md:hidden bg-gradient-to-b from-background/20 via-background/60 to-background" />
 
-      {/* Subtle ambient glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-
-      {/* Content */}
-      <div className="relative z-10 px-4 sm:px-6 lg:px-16 py-24 md:py-32 text-center max-w-5xl mx-auto">
-        {/* Badge */}
+      {/* Content Container with fade out on scroll */}
+      <motion.div 
+        className="relative z-10 px-4 sm:px-6 lg:px-16 py-16 md:py-24 text-center max-w-4xl mx-auto"
+        style={{ opacity: contentOpacity, y: contentY }}
+      >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-xs text-primary mb-8 backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <span className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-white/10 border border-white/20 text-xs md:text-sm text-primary mb-6 md:mb-8 backdrop-blur-md shadow-lg">
+            <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-secondary animate-pulse" />
             {t("hero.badge")}
           </span>
         </motion.div>
 
-        {/* Editorial Title */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-[-0.04em] text-foreground dark:text-white mb-6 leading-[1.05]"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-[-0.04em] text-foreground mb-4 md:mb-6 leading-[1.1] hero-text-shadow"
         >
-          <span className="font-editorial italic text-primary">Propulse</span>{" "}
-          ta santé.
+          {t("hero.title")}{" "}
+          <span className="gradient-text-hero">{t("hero.titleHighlight")}</span>
         </motion.h1>
 
-        {/* Subtitle */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="text-lg md:text-xl text-foreground/60 dark:text-white/50 mb-10 max-w-2xl mx-auto leading-relaxed"
+          className="text-base md:text-lg lg:text-xl xl:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-2"
         >
           {t("hero.subtitle")}
         </motion.p>
 
-        {/* CTA Button */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10"
+          className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center pointer-events-auto px-4"
         >
           <Link 
             to="/auth?mode=signup" 
-            className="btn-outline-hero group"
+            className="btn-hero-glass text-white text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-10 w-full sm:w-auto"
           >
             {t("hero.cta")}
-            <ArrowRight size={18} weight="bold" className="transition-transform group-hover:translate-x-1" />
           </Link>
-        </motion.div>
-
-        {/* AI Prompt Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-xl mx-auto mb-6"
-        >
-          <button
-            onClick={() => navigate("/auth?mode=signup")}
-            className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group cursor-pointer"
+          <a 
+            href="#how-it-works" 
+            className="btn-hero-secondary text-foreground text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-10 w-full sm:w-auto"
           >
-            <MagnifyingGlass size={20} className="text-foreground/40 dark:text-white/30 flex-shrink-0" />
-            <span className="flex-1 text-left text-sm text-foreground/40 dark:text-white/30 truncate">
-              <motion.span
-                key={currentPhrase}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3 }}
-                className="inline-block"
-              >
-                {promptPhrases[currentPhrase]}
-              </motion.span>
-            </span>
-            <span className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-              Envoyer
-            </span>
-          </button>
-          <p className="text-xs text-foreground/30 dark:text-white/20 mt-3">
-            Suivez tout. Demandez tout.
-          </p>
+            {t("hero.secondary")}
+          </a>
         </motion.div>
+      </motion.div>
 
-        {/* Credibility Badges */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="flex flex-wrap justify-center gap-6 mt-12"
-        >
-          {[
-            { icon: Trophy, label: "Top App Santé 2025" },
-            { icon: Brain, label: "IA Certifiée" },
-            { icon: ShieldCheck, label: "Données Protégées" },
-          ].map(({ icon: Icon, label }) => (
-            <div key={label} className="flex items-center gap-2 text-foreground/30 dark:text-white/20">
-              <Icon size={16} weight="light" />
-              <span className="text-xs tracking-wide uppercase">{label}</span>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator */}
+      {/* Scroll indicator - hidden on small mobile */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden sm:block"
+        transition={{ delay: 1, duration: 1 }}
+        className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 hidden sm:block"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-5 h-8 rounded-full border-2 border-foreground/15 dark:border-white/15 flex items-start justify-center p-1.5"
+          className="w-5 h-8 md:w-6 md:h-10 rounded-full border-2 border-foreground/20 flex items-start justify-center p-1.5 md:p-2"
         >
           <motion.div
-            animate={{ opacity: [0.3, 1, 0.3], y: [0, 8, 0] }}
+            animate={{ opacity: [0.5, 1, 0.5], y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-1 h-1 rounded-full bg-primary"
+            className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary"
           />
         </motion.div>
       </motion.div>

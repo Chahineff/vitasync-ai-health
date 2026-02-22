@@ -128,15 +128,10 @@ function FeatureBlock({ index }: FeatureBlockProps) {
         transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
         style={{ y: imageY }}
       >
-        <div className={`relative aspect-[4/3] rounded-3xl overflow-hidden bg-gradient-to-br ${bgGradient}`}>
-          {/* Decorative background pattern */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-primary/30 to-transparent blur-3xl" />
-            <div className="absolute bottom-1/4 right-1/4 w-40 h-40 md:w-56 md:h-56 rounded-full bg-gradient-to-br from-secondary/30 to-transparent blur-3xl" />
-          </div>
+        <div className={`relative aspect-[3/4] sm:aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br ${bgGradient}`}>
           
           {/* AI Coach: Live Chat Preview | Others: Icon card */}
-          <div className="absolute inset-3 md:inset-5">
+          <div className="absolute inset-2 sm:inset-3 md:inset-5">
             {index === 0 && <ChatPreviewWidget />}
             {index === 1 && <TrackerPreviewWidget />}
             {index === 2 && <BiomarkerPreviewWidget />}

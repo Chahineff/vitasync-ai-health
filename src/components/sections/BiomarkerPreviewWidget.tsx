@@ -96,7 +96,7 @@ export function BiomarkerPreviewWidget() {
   const showResults = phase === "results";
 
   return (
-    <div className="w-full h-full flex flex-col gap-2.5 p-1">
+    <div className="w-full h-full flex flex-col gap-1.5 sm:gap-2.5 p-0.5 sm:p-1">
       <AnimatePresence mode="wait">
         {/* Drop zone phase */}
         {showDropzone && (
@@ -106,7 +106,7 @@ export function BiomarkerPreviewWidget() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="rounded-2xl border-2 border-dashed border-border/50 bg-card/60 backdrop-blur-xl flex flex-col items-center justify-center gap-3 flex-1 relative overflow-hidden"
+            className="rounded-xl sm:rounded-2xl border-2 border-dashed border-border/50 bg-card/60 backdrop-blur-xl flex flex-col items-center justify-center gap-2 sm:gap-3 flex-1 relative overflow-hidden"
           >
             {/* Pulsing drop zone highlight when dragging */}
             {phase === "dragging" && (
@@ -175,7 +175,7 @@ export function BiomarkerPreviewWidget() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl p-4 shadow-xl flex flex-col items-center justify-center gap-3 flex-1"
+            className="rounded-xl sm:rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl p-3 sm:p-4 shadow-xl flex flex-col items-center justify-center gap-2 sm:gap-3 flex-1"
           >
             {/* Animated file with scan line */}
             <div className="relative w-14 h-18">
@@ -251,7 +251,7 @@ export function BiomarkerPreviewWidget() {
                       key={i}
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="px-3 py-2 flex items-center gap-2"
+                      className="px-2 py-1.5 sm:px-3 sm:py-2 flex items-center gap-1.5 sm:gap-2"
                     >
                       <StatusIcon status={bm.status} />
                       <div className="flex-1 min-w-0">

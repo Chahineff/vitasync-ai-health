@@ -70,7 +70,8 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
     <div onClick={handleCardClick} className={onProductClick ? "cursor-pointer" : ""}>
       <motion.div
         whileHover={{ y: -4 }}
-        className="glass-card rounded-card overflow-hidden border border-border group flex flex-col"
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="glass-card rounded-card overflow-hidden border border-border group flex flex-col transition-shadow duration-300 ease-out hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.15)]"
       >
         {/* Image */}
         <div className="relative aspect-square bg-gradient-to-br from-white/5 to-white/10 overflow-hidden">
@@ -78,7 +79,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
             <img
               src={mainImage.url}
               alt={mainImage.altText || node.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">

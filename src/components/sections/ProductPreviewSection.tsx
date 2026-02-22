@@ -70,23 +70,39 @@ export const ProductPreviewSection = () => {
                   <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-[#3a3a3a]" />
                 </div>
 
-                {/* Screen Content */}
-                <div className="aspect-[16/10] overflow-hidden rounded-sm">
+                {/* Screen Content - object-contain to show full dashboard */}
+                <div className="aspect-[16/10] overflow-hidden rounded-sm bg-background">
                   <img 
                     src={resolvedTheme === 'dark' ? dashboardDark : dashboardLight}
                     alt="Dashboard VitaSync - Interface de suivi santé personnalisé"
-                    className="w-full h-full object-cover object-top transition-opacity duration-500"
+                    className="w-full h-full object-contain transition-opacity duration-500"
                   />
                 </div>
               </div>
 
-              {/* MacBook bottom hinge / keyboard base */}
-              <div className="relative h-3 lg:h-5 bg-gradient-to-b from-[#c0c0c0] to-[#a8a8a8] dark:from-[#3a3a3a] dark:to-[#2a2a2a] rounded-b-xl lg:rounded-b-2xl flex items-center justify-center">
-                <div className="w-12 lg:w-20 h-1 lg:h-1.5 bg-[#888] dark:bg-[#555] rounded-full" />
+              {/* MacBook bottom hinge line */}
+              <div className="relative h-1.5 lg:h-2 bg-gradient-to-b from-[#d4d4d4] to-[#b8b8b8] dark:from-[#3a3a3a] dark:to-[#2a2a2a] flex items-center justify-center">
+                <div className="w-12 lg:w-20 h-0.5 lg:h-1 bg-[#999] dark:bg-[#555] rounded-full" />
+              </div>
+
+              {/* Keyboard body - visible with perspective tilt */}
+              <div 
+                className="relative mx-auto rounded-b-xl lg:rounded-b-2xl overflow-hidden"
+                style={{
+                  width: '108%',
+                  marginLeft: '-4%',
+                  height: '16px',
+                  background: 'linear-gradient(to bottom, #c8c8c8, #b0b0b0)',
+                }}
+              >
+                {/* Keyboard surface gradient */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#d6d6d6] to-[#b8b8b8] dark:from-[#333] dark:to-[#222] rounded-b-xl lg:rounded-b-2xl" />
+                {/* Trackpad hint */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[25%] h-[60%] rounded-t-sm bg-[#c0c0c0] dark:bg-[#2a2a2a] border border-[#aaa]/30 dark:border-[#444]/30" />
               </div>
 
               {/* Base shadow */}
-              <div className="absolute -bottom-3 left-[10%] right-[10%] h-4 bg-foreground/10 blur-xl rounded-full" />
+              <div className="absolute -bottom-4 left-[5%] right-[5%] h-6 bg-foreground/8 blur-2xl rounded-full" />
             </div>
 
             {/* CTA Overlay on Hover */}

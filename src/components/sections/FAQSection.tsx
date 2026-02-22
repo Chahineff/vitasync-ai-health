@@ -96,7 +96,7 @@ export function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="section-padding bg-background dark:bg-[hsl(222_25%_5%)]">
+    <section id="faq" className="section-padding bg-background dark:bg-[hsl(222_25%_5%)] section-parallax">
       <div className="container-custom">
         <ScrollReveal>
           <div className="text-center mb-16">

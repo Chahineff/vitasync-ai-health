@@ -17,14 +17,15 @@ const Index = () => {
         <HeroSection />
         <div className="section-divider section-divider-bg-to-muted" />
         <ProductPreviewSection />
-        <div className="section-divider section-divider-muted-to-bg" />
+        {/* No divider — both ProductPreview & HowItWorks share muted bg */}
         <HowItWorksSection />
-        <div className="section-divider section-divider-bg-to-muted" />
-        <FeaturesSection />
         <div className="section-divider section-divider-muted-to-bg" />
+        <FeaturesSection />
+        <div className="section-divider section-divider-bg-to-muted" />
         <PricingSection />
-        <div className="section-divider section-divider-bg-to-bg" />
+        <div className="section-divider section-divider-muted-to-bg" />
         <FAQSection />
+        <div className="section-divider section-divider-bg-to-muted" />
       </main>
       <Footer />
     </div>

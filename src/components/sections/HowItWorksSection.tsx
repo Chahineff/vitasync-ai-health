@@ -1,8 +1,64 @@
 import { useRef, useState, useEffect } from "react";
 import { ChatCircle, FileArrowUp, Package, ClipboardText } from "@phosphor-icons/react";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
+
+function ScrollHighlightText({ text, accentColor }: { text: string; accentColor: string }) {
+  const words = text.split(" ");
+  const containerRef = useRef<HTMLParagraphElement>(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.5 });
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) {
+      setProgress(0);
+      return;
+    }
+    let frame: number;
+    const start = performance.now();
+    const duration = 1200; // ms to reveal all words
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const p = Math.min(elapsed / duration, 1);
+      setProgress(p);
+      if (p < 1) frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [isInView]);
+
+  return (
+    <p
+      ref={containerRef}
+      className="text-sm sm:text-base md:text-lg leading-relaxed max-w-lg font-light"
+    >
+      {words.map((word, i) => {
+        const wordProgress = Math.min(
+          Math.max((progress * words.length - i) / 1.5, 0),
+          1
+        );
+        return (
+          <span
+            key={i}
+            className="inline-block mr-[0.3em] transition-none"
+            style={{
+              color: wordProgress > 0.5
+                ? "hsl(var(--foreground))"
+                : "hsl(var(--foreground) / 0.2)",
+              textShadow: wordProgress > 0.8
+                ? `0 0 20px ${accentColor}`
+                : "none",
+              transition: "color 0.15s ease, text-shadow 0.3s ease",
+            }}
+          >
+            {word}
+          </span>
+        );
+      })}
+    </p>
+  );
+}
 
 const stepIcons = [ClipboardText, ChatCircle, FileArrowUp, Package];
 
@@ -112,10 +168,11 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
               {t(`howItWorks.step${stepNum}.title`)}
             </h3>
 
-            {/* Description */}
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg font-light">
-              {t(`howItWorks.step${stepNum}.description`)}
-            </p>
+            {/* Description with scroll highlight */}
+            <ScrollHighlightText 
+              text={t(`howItWorks.step${stepNum}.description`)} 
+              accentColor={accent.color}
+            />
 
             {/* Bottom accent dots */}
             <div className="flex items-center gap-2 mt-8 md:mt-12">

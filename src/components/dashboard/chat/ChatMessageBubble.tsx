@@ -28,7 +28,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
 
   if (products.length === 0 && !subscription && !quiz) {
     return (
-      <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+      <div className="prose prose-sm dark:prose-invert max-w-none font-light [&_li]:mb-2 [&_strong]:font-semibold" style={{ lineHeight: 1.6 }}>
         <ReactMarkdown>{content}</ReactMarkdown>
         {streamingCursor}
       </div>
@@ -40,13 +40,13 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     return (
       <div className="space-y-4">
         {beforeQuiz && (
-          <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+          <div className="prose prose-sm dark:prose-invert max-w-none font-light [&_li]:mb-2 [&_strong]:font-semibold" style={{ lineHeight: 1.6 }}>
             <ReactMarkdown>{beforeQuiz}</ReactMarkdown>
           </div>
         )}
         <ChatQuizBlock quiz={quiz} onComplete={onQuizComplete || (() => {})} />
         {afterQuiz && (
-          <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+          <div className="prose prose-sm dark:prose-invert max-w-none font-light [&_li]:mb-2 [&_strong]:font-semibold" style={{ lineHeight: 1.6 }}>
             <ReactMarkdown>{afterQuiz}</ReactMarkdown>
           </div>
         )}
@@ -68,7 +68,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
       }
     } else if (part && part.trim()) {
       elements.push(
-        <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+        <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light [&_li]:mb-2 [&_strong]:font-semibold" style={{ lineHeight: 1.6 }}>
           <ReactMarkdown>{part.trim()}</ReactMarkdown>
         </div>
       );

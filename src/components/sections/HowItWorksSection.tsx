@@ -7,10 +7,10 @@ import { useTranslation } from "@/hooks/useTranslation";
 const stepIcons = [ClipboardText, ChatCircle, FileArrowUp, Package];
 
 const stepAccents = [
-  { color: "rgba(0, 240, 255, 0.8)", glow: "rgba(0, 240, 255, 0.15)", border: "rgba(0, 240, 255, 0.2)" },
-  { color: "rgba(59, 130, 246, 0.8)", glow: "rgba(59, 130, 246, 0.15)", border: "rgba(59, 130, 246, 0.2)" },
-  { color: "rgba(0, 200, 180, 0.8)", glow: "rgba(0, 200, 180, 0.15)", border: "rgba(0, 200, 180, 0.2)" },
-  { color: "rgba(0, 215, 135, 0.8)", glow: "rgba(0, 215, 135, 0.15)", border: "rgba(0, 215, 135, 0.2)" },
+  { color: "rgba(0, 240, 255, 0.8)", glow: "rgba(0, 240, 255, 0.15)", border: "rgba(0, 240, 255, 0.2)", colorClass: "text-cyan-500", borderLight: "rgba(0, 200, 220, 0.25)" },
+  { color: "rgba(59, 130, 246, 0.8)", glow: "rgba(59, 130, 246, 0.15)", border: "rgba(59, 130, 246, 0.2)", colorClass: "text-blue-500", borderLight: "rgba(59, 130, 246, 0.25)" },
+  { color: "rgba(0, 200, 180, 0.8)", glow: "rgba(0, 200, 180, 0.15)", border: "rgba(0, 200, 180, 0.2)", colorClass: "text-teal-500", borderLight: "rgba(0, 180, 160, 0.25)" },
+  { color: "rgba(0, 215, 135, 0.8)", glow: "rgba(0, 215, 135, 0.15)", border: "rgba(0, 215, 135, 0.2)", colorClass: "text-emerald-500", borderLight: "rgba(0, 195, 120, 0.25)" },
 ];
 
 function StepCard({ stepIndex }: { stepIndex: number }) {
@@ -28,26 +28,52 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="w-full max-w-5xl mx-auto px-4 md:px-8"
     >
+      {/* Light mode card */}
       <div
-        className="relative overflow-hidden rounded-3xl"
+        className={cn(
+          "relative overflow-hidden rounded-3xl",
+          "bg-white/80 dark:bg-transparent",
+          "backdrop-blur-xl dark:backdrop-blur-none",
+          "border dark:border-0",
+        )}
         style={{
-          background: "hsl(220 20% 8% / 0.95)",
-          border: `1px solid ${accent.border}`,
-          boxShadow: `0 0 60px ${accent.glow}, 0 25px 60px rgba(0,0,0,0.3)`,
-        }}
+          // @ts-ignore - CSS custom properties
+          "--accent-border": accent.borderLight,
+          "--accent-border-dark": accent.border,
+          "--accent-glow": accent.glow,
+          borderColor: `var(--accent-border)`,
+        } as React.CSSProperties}
       >
+        {/* Dark mode background overlay */}
+        <div 
+          className="absolute inset-0 hidden dark:block rounded-3xl"
+          style={{
+            background: "hsl(220 20% 8% / 0.95)",
+            border: `1px solid ${accent.border}`,
+            boxShadow: `0 0 60px ${accent.glow}, 0 25px 60px rgba(0,0,0,0.3)`,
+          }}
+        />
+
+        {/* Light mode shadow */}
+        <div 
+          className="absolute inset-0 dark:hidden rounded-3xl pointer-events-none"
+          style={{
+            boxShadow: `0 0 40px ${accent.glow}, 0 20px 50px rgba(0,0,0,0.06)`,
+          }}
+        />
+
         {/* Accent line at top */}
         <div
-          className="absolute top-0 left-0 right-0 h-px"
+          className="absolute top-0 left-0 right-0 h-px z-10"
           style={{ background: `linear-gradient(90deg, transparent, ${accent.color}, transparent)` }}
         />
 
-        <div className="flex flex-col md:flex-row items-stretch">
+        <div className="relative z-10 flex flex-col md:flex-row items-stretch">
           {/* Left: Large number + icon */}
-          <div className="relative flex flex-col items-center justify-center p-8 md:p-12 md:w-[280px] lg:w-[320px] border-b md:border-b-0 md:border-r border-white/5">
+          <div className="relative flex flex-col items-center justify-center p-8 md:p-12 md:w-[280px] lg:w-[320px] border-b md:border-b-0 md:border-r border-border/30 dark:border-white/5">
             {/* Background glow */}
             <div
-              className="absolute inset-0 opacity-30"
+              className="absolute inset-0 opacity-20 dark:opacity-30"
               style={{
                 background: `radial-gradient(circle at 50% 50%, ${accent.glow}, transparent 70%)`,
               }}
@@ -82,12 +108,12 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-light tracking-tight text-white leading-[1.15] mb-5 md:mb-8">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-light tracking-tight text-foreground leading-[1.15] mb-5 md:mb-8">
               {t(`howItWorks.step${stepNum}.title`)}
             </h3>
 
             {/* Description */}
-            <p className="text-sm sm:text-base md:text-lg text-white/50 leading-relaxed max-w-lg font-light">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg font-light">
               {t(`howItWorks.step${stepNum}.description`)}
             </p>
 
@@ -100,7 +126,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
                   style={{
                     width: i === stepIndex ? 24 : 6,
                     height: 6,
-                    background: i === stepIndex ? accent.color : "rgba(255,255,255,0.12)",
+                    background: i === stepIndex ? accent.color : "hsl(var(--foreground) / 0.1)",
                     borderRadius: 999,
                   }}
                 />
@@ -138,7 +164,7 @@ function ProgressIndicator({
           <span
             className="absolute inset-0 rounded-full transition-all duration-300"
             style={{
-              background: index === currentIndex ? accent.color : "rgba(255,255,255,0.2)",
+              background: index === currentIndex ? accent.color : "hsl(var(--foreground) / 0.15)",
               boxShadow: index === currentIndex ? `0 0 12px ${accent.glow}` : "none",
             }}
           />
@@ -152,7 +178,7 @@ function ProgressIndicator({
           )}
         </button>
       ))}
-      <div className="absolute top-0 bottom-0 w-px bg-white/10 -z-10" />
+      <div className="absolute top-0 bottom-0 w-px bg-foreground/10 -z-10" />
     </div>
   );
 }
@@ -199,10 +225,8 @@ export function HowItWorksSection() {
       className="relative"
       style={{ height: `${4 * 60}vh` }}
     >
-      {/* Sticky container */}
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden"
-        style={{ background: "hsl(222 25% 4%)" }}
-      >
+      {/* Sticky container - adapts to theme */}
+      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-muted/30 dark:bg-[hsl(222_25%_4%)]">
         {/* Subtle radial glow */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -214,12 +238,12 @@ export function HowItWorksSection() {
 
         {/* Header */}
         <div className="absolute top-16 md:top-20 left-0 right-0 text-center px-4 z-10">
-          <span className="text-[10px] md:text-xs text-cyan-400 uppercase tracking-[0.3em] mb-4 block font-medium">
+          <span className="text-[10px] md:text-xs text-primary uppercase tracking-[0.3em] mb-4 block font-medium">
             {t("howItWorks.badge")}
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-white">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground">
             {t("howItWorks.title")}{" "}
-            <span className="gradient-text-hero">{t("howItWorks.titleHighlight")}</span>
+            <span className="gradient-text">{t("howItWorks.titleHighlight")}</span>
           </h2>
         </div>
 
@@ -242,12 +266,12 @@ export function HowItWorksSection() {
           animate={{ opacity: currentStepIndex < 3 ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         >
-          <span className="text-[10px] text-white/30 uppercase tracking-[0.25em]">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-[0.25em]">
             {t("howItWorks.scroll")}
           </span>
-          <div className="w-5 h-8 rounded-full border border-white/15 flex items-start justify-center p-1">
+          <div className="w-5 h-8 rounded-full border border-border flex items-start justify-center p-1">
             <motion.div
-              className="w-1 h-2 bg-white/30 rounded-full"
+              className="w-1 h-2 bg-muted-foreground rounded-full"
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />

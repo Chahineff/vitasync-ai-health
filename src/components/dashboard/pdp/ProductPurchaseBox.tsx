@@ -14,7 +14,6 @@ import { ProductDetail, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -27,6 +26,8 @@ interface ProductPurchaseBoxProps {
   enrichedSummary?: string | null;
 }
 
+type PurchaseMode = 'subscribe' | 'once';
+
 export function ProductPurchaseBox({ 
   product, 
   parsedData, 
@@ -38,6 +39,7 @@ export function ProductPurchaseBox({
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
+  const [purchaseMode, setPurchaseMode] = useState<PurchaseMode>('subscribe');
   
   const addItem = useCartStore(state => state.addItem);
   
@@ -45,6 +47,9 @@ export function ProductPurchaseBox({
   const selectedVariant = variants[selectedVariantIndex]?.node;
   const price = selectedVariant?.price || product.priceRange.minVariantPrice;
   const hasMultipleVariants = variants.length > 1;
+
+  const originalPrice = parseFloat(price.amount);
+  const subscribedPrice = +(originalPrice * 0.85).toFixed(2);
 
   const handleAddToCart = async () => {
     if (!selectedVariant || isAdding) return;
@@ -76,7 +81,7 @@ export function ProductPurchaseBox({
       });
       
       setJustAdded(true);
-      toast.success('Added to your monthly stack', {
+      toast.success(purchaseMode === 'subscribe' ? 'Abonnement ajouté' : 'Produit ajouté', {
         description: product.title,
         position: 'top-center',
       });
@@ -88,7 +93,6 @@ export function ProductPurchaseBox({
     }
   };
 
-  // Dynamic trust strip items
   const trustItems = [
     { icon: ShieldCheck, label: 'Lab-tested' },
     { icon: Flask, label: 'Clean formula' },
@@ -116,12 +120,12 @@ export function ProductPurchaseBox({
 
       {/* Enriched Summary */}
       {(enrichedSummary || parsedData?.benefits?.[0]) && (
-        <p className="text-[16px] lg:text-[18px] text-[#475569] dark:text-foreground/70 font-light leading-relaxed">
+        <p className="text-[16px] lg:text-[18px] text-muted-foreground font-light leading-relaxed">
           {enrichedSummary || parsedData?.benefits?.[0]}
         </p>
       )}
 
-      {/* Trust Strip — 3 items inline */}
+      {/* Trust Strip */}
       <div className="flex items-center gap-4 py-2 flex-wrap">
         {trustItems.map((item, i) => (
           <div key={i} className="flex items-center gap-1.5">
@@ -141,10 +145,10 @@ export function ProductPurchaseBox({
                 key={related.handle}
                 onClick={() => onFlavorChange?.(related.handle)}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-sm transition-all border",
+                  "px-4 py-2 rounded-btn text-sm transition-all duration-150 border",
                   related.handle === product.handle
-                    ? "bg-[#0B1220] text-white border-[#0B1220] dark:bg-foreground dark:text-background dark:border-foreground"
-                    : "bg-[#F1F5F9] dark:bg-muted/30 text-foreground/70 border-[#E2E8F0] dark:border-border/50 hover:border-foreground/30"
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-muted/40 text-foreground/70 border-border hover:border-foreground/30"
                 )}
               >
                 {related.flavor}
@@ -167,11 +171,11 @@ export function ProductPurchaseBox({
                 onClick={() => setSelectedVariantIndex(index)}
                 disabled={!variant.node.availableForSale}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-sm transition-all border",
+                  "px-4 py-2 rounded-btn text-sm transition-all duration-150 border",
                   selectedVariantIndex === index
-                    ? "bg-[#0B1220] text-white border-[#0B1220] dark:bg-foreground dark:text-background dark:border-foreground"
+                    ? "bg-foreground text-background border-foreground"
                     : variant.node.availableForSale
-                    ? "bg-[#F1F5F9] dark:bg-muted/30 text-foreground/70 border-[#E2E8F0] dark:border-border/50 hover:border-foreground/30"
+                    ? "bg-muted/40 text-foreground/70 border-border hover:border-foreground/30"
                     : "bg-muted/20 text-foreground/30 border-border/30 cursor-not-allowed line-through"
                 )}
               >
@@ -182,86 +186,114 @@ export function ProductPurchaseBox({
         </div>
       )}
 
-      {/* Price */}
-      <div className="flex items-baseline gap-2">
-        <span className="text-[22px] lg:text-[28px] font-bold text-foreground">
-          {parseFloat(price.amount).toFixed(2)} €
-        </span>
-        <span className="text-sm text-foreground/50">
-          {selectedVariant?.availableForSale ? t('pdp.inStock') : t('pdp.outOfStock')}
-        </span>
-      </div>
-
-      {/* CTAs */}
+      {/* Purchase Mode Cards */}
       <div className="space-y-3">
-        <div className="flex gap-3">
-          {/* Primary: Add to pack */}
-          <motion.button
-            onClick={handleAddToCart}
-            disabled={isAdding || !selectedVariant?.availableForSale}
-            whileTap={{ scale: 0.98 }}
-            className={cn(
-              "flex-1 flex items-center justify-center gap-2 px-6 h-12 rounded-xl text-base font-semibold transition-all",
-              justAdded
-                ? "bg-green-500/20 text-green-600 border border-green-500/30"
-                : "bg-secondary hover:bg-secondary/90 text-[#0B1220]",
-              "disabled:opacity-50 disabled:cursor-not-allowed"
-            )}
-          >
-            {isAdding ? (
-              <SpinnerGap className="w-5 h-5 animate-spin" />
-            ) : justAdded ? (
-              <>
-                <Check weight="bold" className="w-5 h-5" />
-                Added!
-              </>
-            ) : (
-              <>
-                <ShoppingCartSimple weight="bold" className="w-5 h-5" />
-                Add to pack
-              </>
-            )}
-          </motion.button>
+        {/* Card 1: Subscribe — Dominant */}
+        <button
+          onClick={() => setPurchaseMode('subscribe')}
+          className={cn(
+            "w-full text-left rounded-card p-5 transition-all duration-150 ease-in-out relative overflow-hidden",
+            purchaseMode === 'subscribe'
+              ? "border-2 border-primary bg-primary/10"
+              : "border-2 border-border bg-transparent hover:border-primary/40"
+          )}
+        >
+          {/* Badge */}
+          <div className="absolute top-3 right-3">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+              Recommandé · -15%
+            </span>
+          </div>
 
-          {/* Secondary: Buy once */}
-          <button
-            onClick={handleAddToCart}
-            disabled={isAdding || !selectedVariant?.availableForSale}
-            className="px-5 h-12 rounded-xl border border-[#E2E8F0] dark:border-border/50 text-foreground text-sm font-medium hover:bg-muted/50 transition-colors disabled:opacity-50"
-          >
-            Buy once
-          </button>
-        </div>
+          <div className="flex items-center gap-3 mb-3">
+            <div className={cn(
+              "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-150",
+              purchaseMode === 'subscribe' ? "border-primary bg-primary" : "border-border"
+            )}>
+              {purchaseMode === 'subscribe' && <Check weight="bold" className="w-3 h-3 text-primary-foreground" />}
+            </div>
+            <div className="flex items-center gap-2">
+              <Repeat weight="duotone" className="w-5 h-5 text-primary" />
+              <span className="font-semibold text-foreground">Abonnement mensuel</span>
+            </div>
+          </div>
 
-        {/* Tertiary: Ask VitaSync */}
-        <button className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-          <ChatCircleDots weight="light" className="w-4 h-4" />
-          Ask VitaSync about this
+          <div className="ml-8">
+            <div className="flex items-baseline gap-2 mb-1">
+              <span className="text-2xl font-bold text-foreground">{subscribedPrice.toFixed(2)} €</span>
+              <span className="text-sm text-muted-foreground line-through">{originalPrice.toFixed(2)} €</span>
+              <span className="text-xs font-medium text-primary">/mois</span>
+            </div>
+            <p className="text-xs text-muted-foreground font-light">
+              Pause ou annulation à tout moment · Livraison offerte
+            </p>
+          </div>
+        </button>
+
+        {/* Card 2: One-time — Neutral */}
+        <button
+          onClick={() => setPurchaseMode('once')}
+          className={cn(
+            "w-full text-left rounded-card p-5 transition-all duration-150 ease-in-out",
+            purchaseMode === 'once'
+              ? "border-2 border-primary bg-primary/10"
+              : "border-2 border-border bg-transparent hover:border-primary/40"
+          )}
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <div className={cn(
+              "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-150",
+              purchaseMode === 'once' ? "border-primary bg-primary" : "border-border"
+            )}>
+              {purchaseMode === 'once' && <Check weight="bold" className="w-3 h-3 text-primary-foreground" />}
+            </div>
+            <div className="flex items-center gap-2">
+              <ShoppingCartSimple weight="duotone" className="w-5 h-5 text-muted-foreground" />
+              <span className="font-semibold text-foreground">Achat unique</span>
+            </div>
+          </div>
+
+          <div className="ml-8">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-foreground">{originalPrice.toFixed(2)} €</span>
+            </div>
+          </div>
         </button>
       </div>
 
-      {/* Subscribe & Save */}
-      <div className="p-4 rounded-2xl bg-[#F8FAFC] dark:bg-muted/20 border border-[#E2E8F0] dark:border-border/30">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Repeat weight="light" className="w-5 h-5 text-secondary" />
-            <span className="font-medium text-foreground text-sm">{t('pdp.subscribeAndSave')}</span>
-          </div>
-          <Badge variant="outline" className="text-xs border-secondary/30 text-secondary">
-            {t('pdp.comingSoon')}
-          </Badge>
-        </div>
-        <p className="text-xs text-foreground/50 font-light mb-3">
-          Pause anytime • Free shipping • Save 10%
-        </p>
-        <div className="flex items-center justify-between opacity-50">
-          <div className="flex items-center gap-3">
-            <Switch disabled />
-            <span className="text-sm text-foreground/70">{t('pdp.recurringDelivery')}</span>
-          </div>
-          <span className="text-sm font-medium text-secondary">-10%</span>
-        </div>
-      </div>
+      {/* CTA — Full Width */}
+      <motion.button
+        onClick={handleAddToCart}
+        disabled={isAdding || !selectedVariant?.availableForSale}
+        whileTap={{ scale: 0.98 }}
+        className={cn(
+          "w-full flex items-center justify-center gap-2 h-14 rounded-btn text-base font-semibold transition-all duration-150",
+          justAdded
+            ? "bg-green-500/20 text-green-600 border border-green-500/30"
+            : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm",
+          "disabled:opacity-50 disabled:cursor-not-allowed"
+        )}
+      >
+        {isAdding ? (
+          <SpinnerGap className="w-5 h-5 animate-spin" />
+        ) : justAdded ? (
+          <>
+            <Check weight="bold" className="w-5 h-5" />
+            Ajouté !
+          </>
+        ) : (
+          <>
+            <ShoppingCartSimple weight="bold" className="w-5 h-5" />
+            Démarrer ma routine
+          </>
+        )}
+      </motion.button>
+
+      {/* Ask VitaSync */}
+      <button className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors mx-auto">
+        <ChatCircleDots weight="light" className="w-4 h-4" />
+        Ask VitaSync about this
+      </button>
 
       {/* Certifications */}
       {parsedData && parsedData.certifications.length > 0 && (

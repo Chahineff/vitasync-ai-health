@@ -1,61 +1,52 @@
 
 
-## Plan : Spline plus subtil au scroll + fonds de sections harmonises
+## Plan : 200 paliers ultra-lisses + SplineBackground sur les 4 pages
 
-### Objectif
-1. Reduire progressivement l'opacite du fond Spline 3D a mesure que l'utilisateur descend dans la page (bien visible en haut, quasi invisible en bas).
-2. Uniformiser les fonds de toutes les sections pour qu'elles se ressemblent visuellement (supprimer les differences entre `bg-background` et `bg-muted/20`).
+### 1. SplineBackground.tsx -- Passer a 200 paliers
 
----
+Remplacer les tableaux manuels de 6-7 valeurs par des tableaux generes programmatiquement avec 200 points pour chaque transition :
 
-### Changements prevus
+- **splineOpacity** : 200 paliers lineaires de `scrollYProgress` (0 a 1), avec opacite allant de 1 a 0.25 via une courbe douce.
+- **colorIndex** : 200 paliers mappant scroll (0-1) vers index couleur (0-6).
+- **hueShift** : Reste a 2 paliers (deja lineaire, pas besoin de plus).
+- **Transitions entre couleurs de section** : Elargir encore les zones de fondu dans le `useTransform` de chaque overlay couleur (passer de 1.2 a 1.5 de rayon).
 
-#### 1. `src/components/sections/SplineBackground.tsx`
-- Ajouter une `motion.div` autour du `spline-viewer` dont l'**opacite diminue avec le scroll** (de 1 en haut a ~0.15 en bas) via `useTransform(scrollYProgress, [0, 1], [1, 0.15])`.
-- Augmenter legerement l'overlay de lisibilite : passer de `bg-background/80` a `bg-background/85` (light) et `bg-background/75` (dark) pour un meilleur equilibre.
+Generation des paliers via une fonction utilitaire au debut du fichier :
+```typescript
+function generateSteps(count: number, from: number, to: number): [number[], number[]] {
+  const inputs = Array.from({ length: count }, (_, i) => i / (count - 1));
+  const outputs = inputs.map(t => from + (to - from) * t);
+  return [inputs, outputs];
+}
+```
 
-#### 2. Harmonisation des fonds de sections
-Toutes les sections utiliseront le **meme fond transparent** pour laisser le Spline background filtrer uniformement :
+### 2. Ajouter SplineBackground aux 4 pages
 
-| Section | Fond actuel | Nouveau fond |
-|---------|------------|-------------|
-| HeroSection | `relative` (transparent) | Inchange (transparent) |
-| ProductPreviewSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
-| HowItWorksSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
-| FeaturesSection | `bg-background dark:bg-[hsl(222_25%_5%)]` | `bg-transparent` |
-| PricingSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
-| FAQSection | `bg-background dark:bg-[hsl(222_25%_5%)]` | `bg-transparent` |
-| TestimonialsSection | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
-| Footer | `bg-muted/20 dark:bg-[hsl(222_25%_4%)]` | `bg-transparent` |
+Ajouter `<SplineBackground />` et `relative z-10` sur le contenu principal de chaque page :
 
-Puisque le `SplineBackground` fournit deja un overlay `bg-background/85` qui garantit la lisibilite, les sections n'ont plus besoin de definir leur propre fond opaque.
+| Page | Fichier | Changement |
+|------|---------|-----------|
+| Auth | `src/pages/Auth.tsx` | Ajouter `<SplineBackground />`, wrapper le contenu avec `relative z-10` |
+| About | `src/pages/About.tsx` | Ajouter `<SplineBackground />`, `relative z-10` sur `<main>` |
+| Blog | `src/pages/Blog.tsx` | Ajouter `<SplineBackground />`, `relative z-10` sur `<main>` |
+| Contact | `src/pages/Contact.tsx` | Ajouter `<SplineBackground />`, `relative z-10` sur `<main>` |
 
-#### 3. `src/pages/Index.tsx`
-- Supprimer les `section-divider` entre les sections (ils deviennent inutiles puisque toutes les sections partagent le meme fond transparent).
-
-#### 4. `src/index.css`
-- Aucun changement majeur necessaire ; les classes `.section-parallax` et `.section-divider` restent disponibles si besoin futur.
-
----
+Le Dashboard n'est PAS concerne.
 
 ### Details techniques
 
+**Fichiers modifies :**
+- `src/components/sections/SplineBackground.tsx` -- generation de 200 paliers pour `splineOpacity` et `colorIndex`
+- `src/pages/Auth.tsx` -- ajout SplineBackground + z-index
+- `src/pages/About.tsx` -- ajout SplineBackground + z-index
+- `src/pages/Blog.tsx` -- ajout SplineBackground + z-index
+- `src/pages/Contact.tsx` -- ajout SplineBackground + z-index
+
+**Approche pour les 200 paliers :**
 ```text
-Scroll position:   0%  ------>  50%  ------>  100%
-Spline opacity:    1.0          0.5           0.15
-Overlay:           bg/85        bg/85         bg/85
-Section bg:        transparent  transparent   transparent
+Scroll:   0.000  0.005  0.010  ...  0.995  1.000
+Opacity:  1.000  0.996  0.993  ...  0.254  0.250
+Color:    0.000  0.030  0.060  ...  5.970  6.000
 ```
 
-Le resultat : un fond Spline bien visible en hero qui s'estompe naturellement vers le bas, avec des sections visuellement identiques en termes de fond.
-
-### Fichiers modifies
-- `src/components/sections/SplineBackground.tsx` (opacite progressive)
-- `src/components/sections/ProductPreviewSection.tsx` (bg transparent)
-- `src/components/sections/HowItWorksSection.tsx` (bg transparent)
-- `src/components/sections/FeaturesSection.tsx` (bg transparent)
-- `src/components/sections/PricingSection.tsx` (bg transparent)
-- `src/components/sections/FAQSection.tsx` (bg transparent)
-- `src/components/sections/TestimonialsSection.tsx` (bg transparent)
-- `src/components/layout/Footer.tsx` (bg transparent)
-- `src/pages/Index.tsx` (suppression des dividers)
+Chaque micro-step represente 0.5% du scroll -- les transitions deviennent mathematiquement imperceptibles.

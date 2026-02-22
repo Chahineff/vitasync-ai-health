@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeSlash, SpinnerGap } from "@phosphor-icons/react";
 import { useToast } from "@/hooks/use-toast";
 import { lovable } from "@/integrations/lovable/index";
+import { SplineBackground } from "@/components/sections/SplineBackground";
 
 const signInSchema = z.object({
   email: z.string().email("Email invalide"),
@@ -141,6 +142,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <SplineBackground />
       <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-mesh pointer-events-none" />
 

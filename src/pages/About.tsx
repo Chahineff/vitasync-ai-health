@@ -11,6 +11,7 @@ import {
   Users 
 } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { SplineBackground } from "@/components/sections/SplineBackground";
 
 const valueIcons = [Brain, Heart, ShieldCheck, Users];
 
@@ -49,9 +50,10 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SplineBackground />
       <FloatingThemeToggle />
       <Navbar />
-      <main>
+      <main className="relative z-10">
         {/* Hero */}
         <section className="pt-32 pb-20 bg-gradient-radial">
           <div className="container-custom">

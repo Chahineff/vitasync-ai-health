@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -642,6 +643,60 @@
       radial-gradient(at 0% 0%, hsl(var(--primary) / 0.1) 0%, transparent 50%),
       radial-gradient(at 100% 0%, hsl(var(--secondary) / 0.1) 0%, transparent 50%),
       radial-gradient(at 50% 100%, hsl(var(--accent) / 0.05) 0%, transparent 50%);
+  }
+
+  /* Editorial italic font */
+  .font-editorial {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  /* Hero immersive gradient */
+  .bg-hero-immersive {
+    background: 
+      radial-gradient(ellipse at 20% 50%, hsl(200 80% 8%) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, hsl(180 60% 10%) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, hsl(220 50% 6%) 0%, transparent 60%),
+      hsl(220 30% 5%);
+  }
+
+  .bg-hero-immersive-light {
+    background: 
+      radial-gradient(ellipse at 20% 50%, hsl(200 40% 95%) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, hsl(180 30% 93%) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, hsl(220 25% 96%) 0%, transparent 60%),
+      hsl(210 40% 98%);
+  }
+
+  /* Outline CTA button */
+  .btn-outline-hero {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-medium text-sm tracking-wide transition-all duration-300;
+    border: 1px solid hsl(var(--foreground) / 0.3);
+    color: hsl(var(--foreground));
+    background: transparent;
+  }
+
+  .btn-outline-hero:hover {
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.05);
+    transform: translateY(-2px);
+  }
+
+  /* Infinite scroll carousel */
+  .testimonial-carousel {
+    display: flex;
+    gap: 1.5rem;
+    animation: scroll-carousel 40s linear infinite;
+    width: max-content;
+  }
+
+  .testimonial-carousel:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes scroll-carousel {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
 }
 

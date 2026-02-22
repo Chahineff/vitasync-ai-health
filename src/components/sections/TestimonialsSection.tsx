@@ -1,7 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { CaretLeft, CaretRight, Star } from "@phosphor-icons/react";
+import { Star } from "@phosphor-icons/react";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { GlassCard } from "@/components/ui/GlassCard";
 
 const testimonials = [
   {
@@ -9,138 +7,104 @@ const testimonials = [
     role: "Entrepreneure",
     content: "Mon sommeil profond a augmenté de 20% grâce aux recommandations de l'IA. Je me réveille enfin reposée !",
     metric: "+20% sommeil profond",
-    avatar: "M"
   },
   {
     name: "Thomas D.",
     role: "Développeur",
-    content: "L'analyse de mes biomarqueurs a révélé une carence en vitamine D que mon médecin avait manquée. Incroyable précision.",
+    content: "L'analyse de mes biomarqueurs a révélé une carence en vitamine D que mon médecin avait manquée.",
     metric: "Carence détectée",
-    avatar: "T"
   },
   {
     name: "Sophie B.",
     role: "Coach sportive",
     content: "En 3 mois, mon énergie quotidienne s'est transformée. VitaSync comprend vraiment les besoins des sportifs.",
     metric: "+45% énergie",
-    avatar: "S"
   },
   {
     name: "Pierre M.",
     role: "Cadre dirigeant",
     content: "Le stress était mon ennemi. Grâce au stack personnalisé, je gère mes journées intenses avec sérénité.",
-    metric: "-60% stress ressenti",
-    avatar: "P"
+    metric: "-60% stress",
   },
   {
     name: "Camille R.",
     role: "Médecin",
     content: "En tant que professionnelle de santé, je suis impressionnée par la rigueur scientifique de VitaSync.",
     metric: "Validé médicalement",
-    avatar: "C"
-  }
+  },
+  {
+    name: "Lucas T.",
+    role: "Étudiant",
+    content: "Ma concentration en période d'examens a complètement changé. Le stack focus est incroyable.",
+    metric: "+35% concentration",
+  },
 ];
 
-export function TestimonialsSection(): JSX.Element {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+function TestimonialCard({ name, role, content, metric }: typeof testimonials[0]) {
+  return (
+    <div className="flex-shrink-0 w-[320px] md:w-[380px] glass-card-premium rounded-2xl p-6 md:p-8">
+      {/* Stars */}
+      <div className="flex gap-0.5 mb-4">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} weight="fill" className="w-4 h-4 text-amber-400" />
+        ))}
+      </div>
 
-  const nextSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  }, []);
+      {/* Quote */}
+      <blockquote className="text-sm md:text-base text-foreground/70 leading-relaxed mb-5 line-clamp-4">
+        "{content}"
+      </blockquote>
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
+      {/* Metric */}
+      <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-4">
+        {metric}
+      </div>
 
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    const interval = setInterval(nextSlide, 5000);
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+      {/* Author */}
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center text-sm font-medium text-primary">
+          {name[0]}
+        </div>
+        <div>
+          <p className="text-sm font-medium text-foreground">{name}</p>
+          <p className="text-xs text-foreground/40">{role}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TestimonialsSection() {
+  // Duplicate for infinite loop
+  const allCards = [...testimonials, ...testimonials];
 
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="container mx-auto px-6">
+    <section className="py-20 md:py-28 overflow-hidden">
+      <div className="container-custom mb-12">
         <ScrollReveal>
-          <div className="text-center mb-16">
-            <span className="text-primary text-sm font-medium tracking-wider uppercase">Témoignages</span>
-            <h2 className="text-4xl md:text-5xl font-light mt-4 mb-6 text-foreground">
-              Ce que disent nos utilisateurs
+          <div className="text-center">
+            <span className="text-xs uppercase tracking-[0.2em] text-primary mb-4 block">Témoignages</span>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground mb-4">
+              Ce que disent nos{" "}
+              <span className="font-editorial italic text-primary">utilisateurs</span>
             </h2>
-            <p className="text-foreground/60 max-w-2xl mx-auto">
+            <p className="text-foreground/50 max-w-lg mx-auto text-base">
               Découvrez comment VitaSync transforme la santé de milliers de personnes.
             </p>
           </div>
         </ScrollReveal>
+      </div>
 
-        <div 
-          className="relative max-w-4xl mx-auto"
-          onMouseEnter={() => setIsAutoPlaying(false)}
-          onMouseLeave={() => setIsAutoPlaying(true)}
-        >
-          {/* Navigation Arrows */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 z-10 p-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all hidden md:flex items-center justify-center"
-          >
-            <CaretLeft weight="bold" className="w-5 h-5 text-foreground/60" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 z-10 p-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all hidden md:flex items-center justify-center"
-          >
-            <CaretRight weight="bold" className="w-5 h-5 text-foreground/60" />
-          </button>
-
-          {/* Testimonial Card */}
-          <GlassCard className="p-8 md:p-12">
-            <div className="flex flex-col items-center text-center">
-              {/* Avatar */}
-              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-semibold text-primary mb-6">
-                {testimonials[currentIndex].avatar}
-              </div>
-
-              {/* Stars */}
-              <div className="flex gap-1 mb-6">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} weight="fill" className="w-5 h-5 text-amber-400" />
-                ))}
-              </div>
-
-              {/* Quote */}
-              <blockquote className="text-lg md:text-xl text-foreground/80 font-light leading-relaxed mb-6 max-w-2xl">
-                "{testimonials[currentIndex].content}"
-              </blockquote>
-
-              {/* Metric Badge */}
-              <div className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                {testimonials[currentIndex].metric}
-              </div>
-
-              {/* Author */}
-              <div>
-                <p className="font-medium text-foreground">{testimonials[currentIndex].name}</p>
-                <p className="text-sm text-foreground/60">{testimonials[currentIndex].role}</p>
-              </div>
-            </div>
-          </GlassCard>
-
-          {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-8">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  index === currentIndex
-                    ? "bg-primary w-8"
-                    : "bg-foreground/20 hover:bg-foreground/40"
-                }`}
-              />
-            ))}
-          </div>
+      {/* Carousel */}
+      <div className="relative">
+        <div className="testimonial-carousel">
+          {allCards.map((t, i) => (
+            <TestimonialCard key={i} {...t} />
+          ))}
         </div>
+        {/* Fade edges */}
+        <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
+        <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
       </div>
     </section>
   );

@@ -667,16 +667,16 @@
   .bg-gradient-subtle {
     background: linear-gradient(
       180deg,
-      hsl(var(--background)) 0%,
-      hsl(var(--muted) / 0.3) 50%,
-      hsl(var(--background)) 100%
+      transparent 0%,
+      hsl(var(--muted) / 0.15) 50%,
+      transparent 100%
     );
   }
 
   .bg-gradient-radial {
     background: radial-gradient(
       ellipse at 50% 0%,
-      hsl(var(--primary) / 0.08) 0%,
+      hsl(var(--primary) / 0.05) 0%,
       transparent 60%
     );
   }
@@ -907,7 +907,7 @@
   content: '';
   @apply absolute top-0 left-0 right-0 pointer-events-none;
   height: 120px;
-  background: linear-gradient(to bottom, hsl(var(--background)), transparent);
+  background: linear-gradient(to bottom, transparent, transparent);
   z-index: 1;
 }
 
@@ -915,11 +915,11 @@
   content: '';
   @apply absolute bottom-0 left-0 right-0 pointer-events-none;
   height: 120px;
-  background: linear-gradient(to top, hsl(var(--background)), transparent);
+  background: linear-gradient(to top, transparent, transparent);
   z-index: 1;
 }
 
-/* Gradient divider between sections */
+/* Gradient divider between sections - now transparent */
 .section-divider {
   @apply w-full pointer-events-none;
   height: 120px;
@@ -928,28 +928,15 @@
   z-index: 2;
 }
 
-/* bg → muted (e.g. Features → Pricing) */
-.section-divider-bg-to-muted {
-  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted) / 0.2));
-}
-.dark .section-divider-bg-to-muted {
-  background: linear-gradient(to bottom, hsl(222 25% 5%), hsl(222 25% 4%));
-}
-
-/* muted → bg (e.g. Pricing → FAQ) */
-.section-divider-muted-to-bg {
-  background: linear-gradient(to bottom, hsl(var(--muted) / 0.2), hsl(var(--background)));
-}
-.dark .section-divider-muted-to-bg {
-  background: linear-gradient(to bottom, hsl(222 25% 4%), hsl(222 25% 5%));
-}
-
-/* bg → bg (subtle bump) */
+.section-divider-bg-to-muted,
+.section-divider-muted-to-bg,
 .section-divider-bg-to-bg {
-  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted) / 0.1), hsl(var(--background)));
+  background: transparent;
 }
+.dark .section-divider-bg-to-muted,
+.dark .section-divider-muted-to-bg,
 .dark .section-divider-bg-to-bg {
-  background: linear-gradient(to bottom, hsl(222 25% 5%), hsl(222 25% 4.5%), hsl(222 25% 5%));
+  background: transparent;
 }
 
 /* ===== PARALLAX DEPTH ===== */
@@ -963,8 +950,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 50% 60% at 20% 30%, hsl(var(--primary) / 0.03), transparent),
-    radial-gradient(ellipse 40% 50% at 80% 70%, hsl(var(--secondary) / 0.03), transparent);
+    radial-gradient(ellipse 50% 60% at 20% 30%, hsl(var(--primary) / 0.015), transparent),
+    radial-gradient(ellipse 40% 50% at 80% 70%, hsl(var(--secondary) / 0.015), transparent);
   background-attachment: fixed;
   pointer-events: none;
   z-index: 0;
@@ -972,8 +959,8 @@
 
 .dark .section-parallax::before {
   background:
-    radial-gradient(ellipse 50% 60% at 20% 30%, rgba(0, 240, 255, 0.025), transparent),
-    radial-gradient(ellipse 40% 50% at 80% 70%, rgba(0, 215, 135, 0.02), transparent);
+    radial-gradient(ellipse 50% 60% at 20% 30%, rgba(0, 240, 255, 0.012), transparent),
+    radial-gradient(ellipse 40% 50% at 80% 70%, rgba(0, 215, 135, 0.01), transparent);
   background-attachment: fixed;
 }
 

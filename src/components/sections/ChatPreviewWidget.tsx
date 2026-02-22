@@ -104,9 +104,9 @@ export function ChatPreviewWidget() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="rounded-2xl border border-border/50 bg-background/80 backdrop-blur-xl px-4 py-3 flex items-center gap-3 shadow-lg"
+        className="rounded-xl sm:rounded-2xl border border-border/50 bg-background/80 backdrop-blur-xl px-2.5 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3 shadow-lg"
       >
-        <span className="flex-1 text-sm text-foreground/80 font-light tracking-tight">
+        <span className="flex-1 text-[11px] sm:text-sm text-foreground/80 font-light tracking-tight">
           {conv.question.slice(0, qChars)}
           <motion.span
             animate={{ opacity: [1, 0] }}
@@ -131,15 +131,15 @@ export function ChatPreviewWidget() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl overflow-hidden shadow-xl"
+          className="rounded-xl sm:rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl overflow-hidden shadow-xl"
         >
-          <div className="px-4 py-3 space-y-2.5">
+          <div className="px-2.5 py-2 sm:px-4 sm:py-3 space-y-2">
             {/* Intro text */}
             {aLines >= 1 && (
               <motion.p
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-xs leading-relaxed text-foreground/70"
+                className="text-[10px] sm:text-xs leading-relaxed text-foreground/70"
               >
                 {renderBold(conv.answer.intro)}
               </motion.p>
@@ -150,7 +150,7 @@ export function ChatPreviewWidget() {
               <motion.p
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-xs font-semibold text-foreground tracking-wide uppercase"
+                className="text-[10px] sm:text-xs font-semibold text-foreground tracking-wide uppercase"
               >
                 {conv.answer.heading}
               </motion.p>
@@ -164,7 +164,7 @@ export function ChatPreviewWidget() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.05 }}
-                  className="text-xs text-foreground/70 pl-2 border-l-2 border-primary/40"
+                  className="text-[10px] sm:text-xs text-foreground/70 pl-2 border-l-2 border-primary/40"
                 >
                   {item}
                 </motion.div>
@@ -177,7 +177,7 @@ export function ChatPreviewWidget() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mx-3 mb-3 rounded-xl bg-muted/50 border border-border/30 p-3"
+              className="mx-2 mb-2 sm:mx-3 sm:mb-3 rounded-lg sm:rounded-xl bg-muted/50 border border-border/30 p-2 sm:p-3"
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] font-medium uppercase tracking-widest text-foreground/50">

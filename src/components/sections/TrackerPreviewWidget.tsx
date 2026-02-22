@@ -52,12 +52,12 @@ export function TrackerPreviewWidget() {
   const progress = (takenCount / supplements.length) * 100;
 
   return (
-    <div className="w-full h-full flex flex-col gap-2.5 p-1">
+    <div className="w-full h-full flex flex-col gap-1.5 sm:gap-2.5 p-0.5 sm:p-1">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl p-3 shadow-xl"
+        className="rounded-xl sm:rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl p-2 sm:p-3 shadow-xl"
       >
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-medium uppercase tracking-widest text-foreground/50">
@@ -91,11 +91,11 @@ export function TrackerPreviewWidget() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + i * 0.1 }}
-              className="px-3 py-2.5 flex items-center gap-2.5"
+              className="px-2 py-1.5 sm:px-3 sm:py-2.5 flex items-center gap-2"
             >
               {/* Checkbox */}
               <motion.div
-                className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                className={`w-4 h-4 sm:w-5 sm:h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
                   sup.taken
                     ? "bg-primary border-primary"
                     : "border-foreground/20 bg-transparent"
@@ -116,12 +116,12 @@ export function TrackerPreviewWidget() {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <div className={`text-xs font-medium transition-all duration-300 ${
+                <div className={`text-[10px] sm:text-xs font-medium transition-all duration-300 ${
                   sup.taken ? "text-foreground/40 line-through" : "text-foreground"
                 }`}>
                   {sup.name}
                 </div>
-                <div className="text-[10px] text-foreground/40">{sup.dosage}</div>
+                <div className="text-[9px] sm:text-[10px] text-foreground/40">{sup.dosage}</div>
               </div>
 
               {/* Time badge */}

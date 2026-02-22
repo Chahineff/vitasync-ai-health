@@ -41,12 +41,12 @@ export function QualityPreviewWidget() {
   }, [showVerified]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-2.5 p-1">
+    <div className="w-full h-full flex flex-col gap-1.5 sm:gap-2.5 p-0.5 sm:p-1">
       {/* Product header */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl p-3 shadow-xl"
+        className="rounded-xl sm:rounded-2xl border border-border/40 bg-card/90 backdrop-blur-xl p-2 sm:p-3 shadow-xl"
       >
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center border border-primary/10">
@@ -75,9 +75,9 @@ export function QualityPreviewWidget() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4 }}
-                className="px-3 py-2.5 flex items-center gap-2.5"
+                className="px-2 py-1.5 sm:px-3 sm:py-2.5 flex items-center gap-2"
               >
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
                   <Icon weight="bold" className="w-3.5 h-3.5 text-emerald-500" />
                 </div>
                 <div className="flex-1 min-w-0">

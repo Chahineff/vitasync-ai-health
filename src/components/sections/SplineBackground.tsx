@@ -1,16 +1,11 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 
-// Generate N evenly-spaced steps mapping [0,1] → [from, to]
 function generateSteps(count: number, from: number, to: number): [number[], number[]] {
   const inputs = Array.from({ length: count }, (_, i) => i / (count - 1));
   const outputs = inputs.map(t => from + (to - from) * t);
   return [inputs, outputs];
 }
-
-const STEPS = 200;
-const [opacityInputs, opacityOutputs] = generateSteps(STEPS, 1, 0.25);
-const [colorInputs, colorOutputs] = generateSteps(STEPS, 0, 6);
 
 const sectionColors = [
   "hsla(190, 100%, 50%, 0.15)",
@@ -22,9 +17,16 @@ const sectionColors = [
   "hsla(220, 60%, 40%, 0.10)",
 ];
 
-export function SplineBackground() {
+interface SplineBackgroundProps {
+  steps?: number;
+}
+
+export function SplineBackground({ steps = 200 }: SplineBackgroundProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
+
+  const [opacityInputs, opacityOutputs] = useMemo(() => generateSteps(steps, 1, 0.25), [steps]);
+  const [colorInputs, colorOutputs] = useMemo(() => generateSteps(steps, 0, 6), [steps]);
 
   const colorIndex = useTransform(scrollYProgress, colorInputs, colorOutputs);
   const hueShift = useTransform(scrollYProgress, [0, 1], [0, 30]);

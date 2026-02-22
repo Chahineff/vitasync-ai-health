@@ -283,7 +283,7 @@ export function HowItWorksSection() {
       style={{ height: `${4 * 60}vh` }}
     >
       {/* Sticky container - adapts to theme */}
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-muted/20 dark:bg-[hsl(222_25%_4%)]">
+      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent">
         {/* Subtle radial glow */}
         <div
           className="absolute inset-0 pointer-events-none"

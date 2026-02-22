@@ -23,7 +23,7 @@ export const ProductPreviewSection = () => {
   return (
     <section 
       ref={containerRef}
-      className="relative py-12 md:py-20 lg:py-32 overflow-hidden bg-muted/20 dark:bg-[hsl(222_25%_4%)] section-parallax"
+      className="relative py-12 md:py-20 lg:py-32 overflow-hidden bg-transparent section-parallax"
     >
       {/* Decorative blurs - themed */}
       <div className="absolute top-1/4 left-1/4 w-48 md:w-96 h-48 md:h-96 bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl" />

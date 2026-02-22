@@ -81,7 +81,7 @@ export function CountrySelect({ value, onChange }: CountrySelectProps) {
           placeholder="Rechercher un pays..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 rounded-xl bg-card/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full pl-12 pr-4 py-3 rounded-btn bg-muted/40 border-2 border-transparent text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:bg-background transition-all duration-150 ease-in-out"
         />
       </div>
 
@@ -100,10 +100,11 @@ export function CountrySelect({ value, onChange }: CountrySelectProps) {
                     key={country.code}
                     onClick={() => onChange(country.code, country)}
                     className={cn(
-                      "flex items-center justify-between p-3 rounded-xl border text-left transition-all",
+                      "flex items-center justify-between p-3 rounded-[20px] text-left",
+                      "transition-all duration-150 ease-in-out",
                       value === country.code
-                        ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
-                        : "border-border bg-card/50 hover:border-primary/50 hover:bg-card"
+                        ? "border-2 border-primary bg-primary/10"
+                        : "border-2 border-transparent bg-muted/40 hover:bg-muted/60"
                     )}
                   >
                     <span className="text-sm font-medium truncate">

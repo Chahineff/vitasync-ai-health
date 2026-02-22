@@ -5,13 +5,49 @@ import {
   ShieldCheck,
   Check
 } from "@phosphor-icons/react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ChatPreviewWidget } from "./ChatPreviewWidget";
 import { TrackerPreviewWidget } from "./TrackerPreviewWidget";
 import { BiomarkerPreviewWidget } from "./BiomarkerPreviewWidget";
 import { QualityPreviewWidget } from "./QualityPreviewWidget";
+
+function ScrollHighlightText({ text, accentColor }: { text: string; accentColor: string }) {
+  const words = text.split(" ");
+  const containerRef = useRef<HTMLParagraphElement>(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.5 });
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) { setProgress(0); return; }
+    let frame: number;
+    const start = performance.now();
+    const duration = 1200;
+    const animate = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      setProgress(p);
+      if (p < 1) frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [isInView]);
+
+  return (
+    <p ref={containerRef} className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
+      {words.map((word, i) => {
+        const wp = Math.min(Math.max((progress * words.length - i) / 1.5, 0), 1);
+        return (
+          <span key={i} className="inline-block mr-[0.3em]" style={{
+            color: wp > 0.5 ? "hsl(var(--foreground))" : "hsl(var(--foreground) / 0.2)",
+            textShadow: wp > 0.8 ? `0 0 20px ${accentColor}` : "none",
+            transition: "color 0.15s ease, text-shadow 0.3s ease",
+          }}>{word}</span>
+        );
+      })}
+    </p>
+  );
+}
 
 const featureIcons = [Robot, ChartLineUp, FileMagnifyingGlass, ShieldCheck];
 
@@ -115,9 +151,7 @@ function FeatureBlock({ index }: FeatureBlockProps) {
             </h3>
 
             {/* Description */}
-            <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
-              {description}
-            </p>
+            <ScrollHighlightText text={description} accentColor={accent.color} />
 
             {/* Details list */}
             <ul className="space-y-3 stagger-children">

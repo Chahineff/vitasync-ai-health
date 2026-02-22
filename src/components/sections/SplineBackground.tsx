@@ -23,7 +23,7 @@ export function SplineBackground() {
   const hueShift = useTransform(scrollYProgress, [0, 1], [0, 30]);
 
   // Spline opacity fades as user scrolls down
-  const splineOpacity = useTransform(scrollYProgress, [0, 0.4, 0.8, 1], [1, 0.6, 0.3, 0.15]);
+  const splineOpacity = useTransform(scrollYProgress, [0, 0.2, 0.4, 0.6, 0.8, 1], [1, 0.85, 0.7, 0.55, 0.4, 0.25]);
 
   return (
     <div ref={ref} className="fixed inset-0 z-0 pointer-events-none">
@@ -52,18 +52,18 @@ export function SplineBackground() {
           key={i}
           className="absolute inset-0"
           style={{
-            background: `radial-gradient(ellipse 120% 80% at 50% 50%, ${color}, transparent 70%)`,
+            background: `radial-gradient(ellipse 140% 100% at 50% 50%, ${color}, transparent 80%)`,
             opacity: useTransform(
               colorIndex,
-              [Math.max(0, i - 0.8), i, Math.min(6, i + 0.8)],
-              [0, 1, 0]
+              [Math.max(0, i - 1.2), Math.max(0, i - 0.3), i, Math.min(6, i + 0.3), Math.min(6, i + 1.2)],
+              [0, 0.3, 1, 0.3, 0]
             ),
           }}
         />
       ))}
 
       {/* Base overlay for readability - adapts to theme */}
-      <div className="absolute inset-0 bg-background/85 dark:bg-background/75" />
+      <div className="absolute inset-0 bg-background/70 dark:bg-background/60" />
     </div>
   );
 }

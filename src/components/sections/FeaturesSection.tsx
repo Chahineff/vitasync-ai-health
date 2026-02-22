@@ -7,7 +7,6 @@ import {
 } from "@phosphor-icons/react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { GlassCard } from "@/components/ui/GlassCard";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ChatPreviewWidget } from "./ChatPreviewWidget";
 import { TrackerPreviewWidget } from "./TrackerPreviewWidget";
@@ -16,11 +15,11 @@ import { QualityPreviewWidget } from "./QualityPreviewWidget";
 
 const featureIcons = [Robot, ChartLineUp, FileMagnifyingGlass, ShieldCheck];
 
-const featureGradients = [
-  { gradient: "from-primary to-primary/60", bgGradient: "from-primary/10 via-primary/5 to-transparent" },
-  { gradient: "from-secondary to-secondary/60", bgGradient: "from-secondary/10 via-secondary/5 to-transparent" },
-  { gradient: "from-accent to-accent/60", bgGradient: "from-accent/10 via-accent/5 to-transparent" },
-  { gradient: "from-primary via-accent to-secondary", bgGradient: "from-primary/10 via-accent/5 to-secondary/10" },
+const featureAccents = [
+  { color: "rgba(0, 240, 255, 0.8)", glow: "rgba(0, 240, 255, 0.12)", border: "rgba(0, 240, 255, 0.2)", borderLight: "rgba(0, 200, 220, 0.2)", gradient: "from-primary to-primary/60", bgGradient: "from-primary/10 via-primary/5 to-transparent" },
+  { color: "rgba(0, 215, 135, 0.8)", glow: "rgba(0, 215, 135, 0.12)", border: "rgba(0, 215, 135, 0.2)", borderLight: "rgba(0, 195, 120, 0.2)", gradient: "from-secondary to-secondary/60", bgGradient: "from-secondary/10 via-secondary/5 to-transparent" },
+  { color: "rgba(0, 200, 180, 0.8)", glow: "rgba(0, 200, 180, 0.12)", border: "rgba(0, 200, 180, 0.2)", borderLight: "rgba(0, 180, 160, 0.2)", gradient: "from-accent to-accent/60", bgGradient: "from-accent/10 via-accent/5 to-transparent" },
+  { color: "rgba(59, 130, 246, 0.8)", glow: "rgba(59, 130, 246, 0.12)", border: "rgba(59, 130, 246, 0.2)", borderLight: "rgba(59, 130, 246, 0.2)", gradient: "from-primary via-accent to-secondary", bgGradient: "from-primary/10 via-accent/5 to-secondary/10" },
 ];
 
 interface FeatureBlockProps {
@@ -31,6 +30,7 @@ function FeatureBlock({ index }: FeatureBlockProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isReversed = index % 2 === 1;
   const { t } = useTranslation();
+  const accent = featureAccents[index];
   
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -40,7 +40,7 @@ function FeatureBlock({ index }: FeatureBlockProps) {
   const imageY = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   const Icon = featureIcons[index];
-  const { gradient, bgGradient } = featureGradients[index];
+  const { gradient, bgGradient } = accent;
   const featureNum = index + 1;
 
   const title = t(`features.feature${featureNum}.title`);
@@ -70,53 +70,68 @@ function FeatureBlock({ index }: FeatureBlockProps) {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <GlassCard className="h-full p-6 md:p-8 lg:p-10">
-          {/* Icon with gradient background */}
-          <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${gradient} p-0.5 mb-6`}>
-            <div className="w-full h-full rounded-[14px] bg-background flex items-center justify-center group-hover:bg-transparent transition-colors duration-300">
-              <Icon 
-                size={28} 
-                weight="light" 
-                className="text-foreground md:hidden" 
-              />
-              <Icon 
-                size={32} 
-                weight="light" 
-                className="text-foreground hidden md:block" 
-              />
+        <div 
+          className="h-full rounded-3xl overflow-hidden relative p-6 md:p-8 lg:p-10 bg-white/70 dark:bg-transparent backdrop-blur-xl dark:backdrop-blur-none border dark:border-0"
+          style={{ borderColor: accent.borderLight }}
+        >
+          {/* Dark mode card bg */}
+          <div 
+            className="absolute inset-0 hidden dark:block rounded-3xl"
+            style={{
+              background: "hsl(220 20% 8% / 0.92)",
+              border: `1px solid ${accent.border}`,
+              boxShadow: `0 0 40px ${accent.glow}`,
+            }}
+          />
+          {/* Light mode shadow */}
+          <div 
+            className="absolute inset-0 dark:hidden rounded-3xl pointer-events-none"
+            style={{ boxShadow: `0 0 30px ${accent.glow}, 0 15px 40px rgba(0,0,0,0.04)` }}
+          />
+
+          {/* Accent line */}
+          <div
+            className="absolute top-0 left-0 right-0 h-px z-10"
+            style={{ background: `linear-gradient(90deg, transparent, ${accent.color}, transparent)` }}
+          />
+
+          <div className="relative z-10">
+            {/* Icon */}
+            <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${gradient} p-0.5 mb-6`}>
+              <div className="w-full h-full rounded-[14px] bg-background flex items-center justify-center">
+                <Icon size={28} weight="light" className="text-foreground md:hidden" />
+                <Icon size={32} weight="light" className="text-foreground hidden md:block" />
+              </div>
             </div>
+
+            {/* Subtitle badge */}
+            <span className={`inline-block text-xs font-medium uppercase tracking-widest bg-gradient-to-r ${gradient} bg-clip-text text-transparent mb-3`}>
+              {subtitle}
+            </span>
+
+            {/* Title */}
+            <h3 className="text-xl md:text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-4">
+              {title}
+            </h3>
+
+            {/* Description */}
+            <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
+              {description}
+            </p>
+
+            {/* Details list */}
+            <ul className="space-y-3 stagger-children">
+              {details.map((detail, detailIndex) => (
+                <li key={detailIndex} className="flex items-start gap-3">
+                  <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                    <Check size={12} weight="bold" className="text-primary-foreground" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">{detail}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-
-          {/* Subtitle badge */}
-          <span className={`inline-block text-xs font-medium uppercase tracking-widest bg-gradient-to-r ${gradient} bg-clip-text text-transparent mb-3`}>
-            {subtitle}
-          </span>
-
-          {/* Title */}
-          <h3 className="text-xl md:text-2xl lg:text-3xl font-light tracking-tight text-foreground mb-4">
-            {title}
-          </h3>
-
-          {/* Description */}
-          <p className="text-sm md:text-base text-foreground/60 mb-6 leading-relaxed">
-            {description}
-          </p>
-
-          {/* Details list with staggered animation */}
-          <ul className="space-y-3 stagger-children">
-            {details.map((detail, detailIndex) => (
-              <li 
-                key={detailIndex}
-                className="flex items-start gap-3"
-              >
-                <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 mt-0.5`}>
-                  <Check size={12} weight="bold" className="text-primary-foreground" />
-                </div>
-                <span className="text-sm text-foreground/70">{detail}</span>
-              </li>
-            ))}
-          </ul>
-        </GlassCard>
+        </div>
       </motion.div>
 
       {/* Image Block */}
@@ -129,15 +144,12 @@ function FeatureBlock({ index }: FeatureBlockProps) {
         style={{ y: imageY }}
       >
         <div className={`relative aspect-[3/4] sm:aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br ${bgGradient}`}>
-          
-          {/* AI Coach: Live Chat Preview | Others: Icon card */}
           <div className="absolute inset-2 sm:inset-3 md:inset-5">
             {index === 0 && <ChatPreviewWidget />}
             {index === 1 && <TrackerPreviewWidget />}
             {index === 2 && <BiomarkerPreviewWidget />}
             {index === 3 && <QualityPreviewWidget />}
           </div>
-
         </div>
       </motion.div>
     </motion.div>
@@ -148,7 +160,7 @@ export function FeaturesSection() {
   const { t } = useTranslation();
 
   return (
-    <section id="features" className="section-padding overflow-hidden">
+    <section id="features" className="section-padding overflow-hidden bg-background dark:bg-[hsl(222_25%_5%)]">
       <div className="container-custom">
         {/* Header */}
         <motion.div 
@@ -158,20 +170,20 @@ export function FeaturesSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <span className="text-xs md:text-sm text-secondary uppercase tracking-widest mb-3 md:mb-4 block">
+          <span className="text-xs md:text-sm text-primary uppercase tracking-[0.2em] mb-3 md:mb-4 block font-medium">
             {t("features.badge")}
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-3 md:mb-4">
             {t("features.title")}{" "}
-            <span className="gradient-text-reverse">{t("features.titleHighlight")}</span>
+            <span className="gradient-text">{t("features.titleHighlight")}</span>
             {" "}{t("features.titleEnd")}
           </h2>
-          <p className="text-sm md:text-base lg:text-lg text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
+          <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4 md:px-0">
             {t("features.subtitle")}
           </p>
         </motion.div>
 
-        {/* Features Grid - Zigzag layout */}
+        {/* Features Grid */}
         <div className="space-y-12 md:space-y-16 lg:space-y-24">
           {[0, 1, 2, 3].map((index) => (
             <FeatureBlock key={index} index={index} />

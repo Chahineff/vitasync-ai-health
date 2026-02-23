@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCartSimple, Star, Check, SpinnerGap } from '@phosphor-icons/react';
+import { ShoppingCartSimple, Star, Check, SpinnerGap, Repeat } from '@phosphor-icons/react';
 import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
+import { getBestSellingPlan, getSellingPlanDiscount } from '@/lib/shopify';
 
 interface ProductGroupCardProps {
   group: ProductGroup;
@@ -28,6 +29,13 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const mainImage = displayProduct.node.images.edges[0]?.node;
   const selectedVariant = displayProduct.node.variants.edges[0]?.node;
   const price = selectedVariant?.price || displayProduct.node.priceRange.minVariantPrice;
+
+  // Subscription data
+  const sellingPlan = getBestSellingPlan(displayProduct);
+  const discountPercent = sellingPlan ? getSellingPlanDiscount(sellingPlan) : 0;
+  const subscriptionPrice = discountPercent > 0
+    ? (parseFloat(price.amount) * (1 - discountPercent / 100)).toFixed(2)
+    : null;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -89,7 +97,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             )}
           </AnimatePresence>
 
-          {/* AI Badge with bounce-in */}
+          {/* AI Badge */}
           {recommendedByAI && (
             <motion.div 
               initial={{ scale: 0, opacity: 0 }}
@@ -100,6 +108,14 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
               <Star weight="fill" className="w-3 h-3" />
               {t('shop.recommended')}
             </motion.div>
+          )}
+
+          {/* Subscription badge */}
+          {sellingPlan && discountPercent > 0 && (
+            <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-secondary/90 text-secondary-foreground text-xs font-semibold">
+              <Repeat weight="bold" className="w-3 h-3" />
+              Save {discountPercent}%
+            </div>
           )}
 
           {hasMultipleFlavors && (
@@ -149,9 +165,17 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
 
           {/* Price & Cart */}
           <div className="flex items-center justify-between pt-2">
-            <span className="text-lg font-semibold text-foreground">
-              {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-semibold text-foreground">
+                {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
+              </span>
+              {subscriptionPrice && (
+                <span className="text-xs text-secondary font-medium flex items-center gap-1">
+                  <Repeat weight="bold" className="w-3 h-3" />
+                  {subscriptionPrice} {price.currencyCode}/mo
+                </span>
+              )}
+            </div>
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !selectedVariant?.availableForSale}

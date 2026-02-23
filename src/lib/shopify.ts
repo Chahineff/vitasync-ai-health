@@ -6,6 +6,28 @@ const SHOPIFY_STORE_PERMANENT_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '5ec910af19d9aa3b391d303a0e2e8891';
 
+export interface SellingPlanPriceAdjustment {
+  adjustmentValue: {
+    adjustmentPercentage?: number;
+    adjustmentAmount?: { amount: string; currencyCode: string };
+  };
+}
+
+export interface SellingPlan {
+  id: string;
+  name: string;
+  description: string | null;
+  recurringDeliveries: boolean;
+  priceAdjustments: SellingPlanPriceAdjustment[];
+}
+
+export interface SellingPlanGroup {
+  name: string;
+  sellingPlans: {
+    edges: Array<{ node: SellingPlan }>;
+  };
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -49,6 +71,9 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }>;
+    sellingPlanGroups?: {
+      edges: Array<{ node: SellingPlanGroup }>;
+    };
   };
 }
 
@@ -96,6 +121,9 @@ export interface ProductDetail {
     name: string;
     values: string[];
   }>;
+  sellingPlanGroups?: {
+    edges: Array<{ node: SellingPlanGroup }>;
+  };
   benefitsMetafield: { value: string; type: string } | null;
   ingredientsMetafield: { value: string; type: string } | null;
   reviewRating: { value: string; type: string } | null;
@@ -145,7 +173,33 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   return data;
 }
 
-// GraphQL Queries - NOTE: sellingPlanGroups removed to avoid permission issues
+// GraphQL Queries - includes sellingPlanGroups for subscription support
+const SELLING_PLAN_FRAGMENT = `
+  sellingPlanGroups(first: 5) {
+    edges {
+      node {
+        name
+        sellingPlans(first: 10) {
+          edges {
+            node {
+              id
+              name
+              description
+              recurringDeliveries
+              priceAdjustments {
+                adjustmentValue {
+                  ... on SellingPlanPercentagePriceAdjustment { adjustmentPercentage }
+                  ... on SellingPlanFixedAmountPriceAdjustment { adjustmentAmount { amount currencyCode } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 const PRODUCTS_QUERY = `
   query GetProducts($first: Int!, $query: String) {
     products(first: $first, query: $query) {
@@ -192,6 +246,7 @@ const PRODUCTS_QUERY = `
             name
             values
           }
+          ${SELLING_PLAN_FRAGMENT}
         }
       }
     }
@@ -214,7 +269,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
           currencyCode
         }
       }
-      images(first: 10) {
+      images(first: 20) {
         edges {
           node {
             url
@@ -243,6 +298,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      ${SELLING_PLAN_FRAGMENT}
       benefitsMetafield: metafield(namespace: "custom", key: "benefits") {
         value
         type
@@ -313,14 +369,41 @@ const PRODUCT_BY_ID_QUERY = `
   }
 `;
 
+// Fallback queries without sellingPlanGroups (in case scope is missing)
+const PRODUCTS_QUERY_FALLBACK = PRODUCTS_QUERY.replace(/sellingPlanGroups[\s\S]*?}\s*}\s*}\s*}\s*}(\s*options)/, '$1');
+
 export async function fetchProducts(first: number = 50, query?: string): Promise<ShopifyProduct[]> {
-  const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
-  return data?.data?.products?.edges || [];
+  try {
+    const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
+    return data?.data?.products?.edges || [];
+  } catch (error) {
+    // Fallback: retry without sellingPlanGroups if scope is missing
+    console.warn('Retrying product fetch without sellingPlanGroups:', error);
+    try {
+      const data = await storefrontApiRequest(PRODUCTS_QUERY.replace(/\s*sellingPlanGroups[\s\S]*?}\s*}\s*}\s*}\s*}/, ''), { first, query });
+      return data?.data?.products?.edges || [];
+    } catch (fallbackError) {
+      console.error('Product fetch failed:', fallbackError);
+      return [];
+    }
+  }
 }
 
 export async function fetchProductByHandle(handle: string): Promise<ProductDetail | null> {
-  const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
-  return data?.data?.productByHandle || null;
+  try {
+    const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
+    return data?.data?.productByHandle || null;
+  } catch (error) {
+    // Fallback: retry without sellingPlanGroups
+    console.warn('Retrying product detail fetch without sellingPlanGroups:', error);
+    try {
+      const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY.replace(/\s*sellingPlanGroups[\s\S]*?}\s*}\s*}\s*}\s*}/, ''), { handle });
+      return data?.data?.productByHandle || null;
+    } catch (fallbackError) {
+      console.error('Product detail fetch failed:', fallbackError);
+      return null;
+    }
+  }
 }
 
 export async function fetchProductById(productId: string): Promise<ShopifyProduct | null> {
@@ -477,11 +560,16 @@ export interface CartItem {
   price: { amount: string; currencyCode: string };
   quantity: number;
   selectedOptions: Array<{ name: string; value: string }>;
+  sellingPlanId?: string;
 }
 
 export async function createShopifyCart(item: CartItem): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
-  const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
-    input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
+  const line: Record<string, unknown> = { quantity: item.quantity, merchandiseId: item.variantId };
+  if (item.sellingPlanId) line.sellingPlanId = item.sellingPlanId;
+  
+  const mutation = item.sellingPlanId ? CART_CREATE_WITH_SELLING_PLAN_MUTATION : CART_CREATE_MUTATION;
+  const data = await storefrontApiRequest(mutation, {
+    input: { lines: [line] },
   });
 
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
@@ -499,9 +587,12 @@ export async function createShopifyCart(item: CartItem): Promise<{ cartId: strin
 }
 
 export async function addLineToShopifyCart(cartId: string, item: CartItem): Promise<{ success: boolean; lineId?: string; cartNotFound?: boolean }> {
+  const line: Record<string, unknown> = { quantity: item.quantity, merchandiseId: item.variantId };
+  if (item.sellingPlanId) line.sellingPlanId = item.sellingPlanId;
+
   const data = await storefrontApiRequest(CART_LINES_ADD_MUTATION, {
     cartId,
-    lines: [{ quantity: item.quantity, merchandiseId: item.variantId }],
+    lines: [line],
   });
 
   const userErrors = data?.data?.cartLinesAdd?.userErrors || [];
@@ -578,4 +669,27 @@ export async function createSubscriptionCart(
     cartId: cart.id,
     checkoutUrl: formatCheckoutUrl(cart.checkoutUrl)
   };
+}
+
+// Helper to extract the best selling plan from a product
+export function getBestSellingPlan(product: ShopifyProduct | ProductDetail): SellingPlan | null {
+  const groups = 'node' in product 
+    ? (product as ShopifyProduct).node.sellingPlanGroups?.edges 
+    : (product as ProductDetail).sellingPlanGroups?.edges;
+  if (!groups || groups.length === 0) return null;
+  const firstPlan = groups[0]?.node?.sellingPlans?.edges?.[0]?.node;
+  return firstPlan || null;
+}
+
+export function getSellingPlanDiscount(plan: SellingPlan): number {
+  const adj = plan.priceAdjustments?.[0]?.adjustmentValue;
+  return adj?.adjustmentPercentage || 0;
+}
+
+export function getAllSellingPlans(product: ShopifyProduct | ProductDetail): SellingPlan[] {
+  const groups = 'node' in product
+    ? (product as ShopifyProduct).node.sellingPlanGroups?.edges
+    : (product as ProductDetail).sellingPlanGroups?.edges;
+  if (!groups) return [];
+  return groups.flatMap(g => g.node.sellingPlans.edges.map(e => e.node));
 }

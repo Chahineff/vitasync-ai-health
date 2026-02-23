@@ -1,61 +1,65 @@
-## Plan : Corriger le token Storefront + Integrer les abonnements Shopify natifs
 
-### Probleme principal
 
-L'API Shopify Storefront retourne **401 UNAUTHORIZED** pour toutes les requetes. Le token d'acces actuel (`5ec910af...`) a ete revoque quand tu as change d'application d'abonnement. Aucun produit ne peut s'afficher.
+## Plan : Supprimer les lignes visibles entre sections et rendre les fonds translucides
 
-### Etape 1 : Regenerer le token Storefront
+### Problemes identifies
 
-Le token doit etre regenere depuis l'admin Shopify :
+1. **Lignes visibles entre sections** : Les classes CSS `bg-gradient-radial`, `bg-gradient-subtle` et `section-parallax::before` creent des fonds opaques avec des bords nets la ou les sections se rencontrent, ce qui cree des "lignes" visibles.
 
-1. Aller dans **Shopify Admin** (Settings > Apps and sales channels > Develop apps)
-2. Ouvrir l'app existante (ou en creer une nouvelle) avec les scopes :
-  - `unauthenticated_read_product_listings` (obligatoire)
-  - `unauthenticated_read_selling_plans` (pour les abonnements)
-3. Installer l'app et copier le nouveau **Storefront access token**
+2. **Fonds non translucides sur About/Blog/Contact** : Ces pages utilisent `bg-gradient-radial` et `bg-gradient-subtle` qui contiennent `hsl(var(--background))` (opaque), ce qui bloque completement le SplineBackground derriere.
 
-Je te demanderai de fournir ce nouveau token et je le configurerai comme secret securise dans le projet (au lieu du token en dur dans le code).
+### Corrections
 
-### Etape 2 : Utiliser un secret pour le token (plus securise)
+#### 1. `src/index.css` -- Rendre les gradients transparents
 
-Actuellement le token est en dur dans `src/lib/shopify.ts`. Je vais :
+| Classe | Avant | Apres |
+|--------|-------|-------|
+| `.bg-gradient-subtle` | `hsl(var(--background))` aux extremites (opaque) | `transparent` aux extremites, garder juste le muted central avec opacite reduite |
+| `.bg-gradient-radial` | Fond radial opaque | Reduire l'opacite a 0.04 et s'assurer que le fond est transparent |
+| `.section-parallax::before` | `radial-gradient` avec fond fixe | Reduire l'opacite ou supprimer completement (le SplineBackground fait deja ce travail) |
 
-- Stocker le nouveau token comme secret backend
-- Creer une edge function proxy qui fait les appels Shopify avec le token securise
-- OU le stocker comme variable d'environnement securisee
+Modifications CSS :
 
-### Etape 3 : Integrer les abonnements (Shopify Subscriptions natif)
+```css
+.bg-gradient-subtle {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    hsl(var(--muted) / 0.15) 50%,
+    transparent 100%
+  );
+}
 
-L'application "Shopify Subscriptions" (gratuite, creee par Shopify) gere les selling plans. D'apres ton fichier Excel, 109 produits doivent avoir des abonnements en 30, 60 et 90 jours.
+.bg-gradient-radial {
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    hsl(var(--primary) / 0.05) 0%,
+    transparent 60%
+  );
+}
+```
 
-**Le code existant est deja pret** pour les abonnements :
+Pour `.section-parallax::before` : reduire l'opacite des gradients a 0.015 (quasi invisible) pour eviter les bords durs.
 
-- Les queries GraphQL incluent `sellingPlanGroups` 
-- Le `ProductPurchaseBox` a deja le toggle One-time / Subscribe
-- Le `ProductGroupCard` affiche deja le badge "Save X%"
-- Le `cartStore` supporte deja `sellingPlanId`
+#### 2. Sections de la Home page -- Supprimer les fonds opaques redondants
 
-Si le scope `unauthenticated_read_selling_plans` est actif dans le nouveau token, tout fonctionnera automatiquement.
+Les sections `HowItWorksSection`, `FeaturesSection`, `PricingSection`, `ProductPreviewSection` utilisent deja `bg-transparent` -- pas de changement necessaire.
 
-### Etape 4 : Correction des images Supplement Facts
+La `FAQSection` utilise `section-padding bg-transparent section-parallax` -- verifier et corriger si besoin.
 
-Deja en place avec la logique heuristique dans `IngredientsLabel.tsx` -- sera testable une fois les produits charges.
+#### 3. Pages About/Blog/Contact -- Supprimer `bg-gradient-radial` et `bg-gradient-subtle`
+
+Les sections hero de ces pages utilisent `bg-gradient-radial` et certaines sections utilisent `bg-gradient-subtle`. Avec les corrections CSS du point 1, ces classes deviendront transparentes automatiquement -- aucune modification de fichier necessaire pour ces pages.
 
 ### Fichiers modifies
 
-
-| Fichier              | Changement                                              |
-| -------------------- | ------------------------------------------------------- |
-| `src/lib/shopify.ts` | Mettre a jour le token Storefront avec le nouveau token |
-
-
-### Ce dont j'ai besoin de toi
-
-1. **Generer un nouveau token Storefront** depuis l'admin Shopify avec les scopes adequats (Le voici : unauthenticated_read_product_listings (2602fe4763e52cfd2bc82898b8bc59ec) )
-2. Me le communiquer pour que je le configure dans le projet
+| Fichier | Changement |
+|---------|-----------|
+| `src/index.css` | Rendre `.bg-gradient-subtle`, `.bg-gradient-radial` transparents aux bords ; reduire `.section-parallax::before` |
 
 ### Resultat attendu
 
-- Tous les produits s'affichent a nouveau dans la boutique
-- Les abonnements (30/60/90 jours) apparaissent sur les fiches produits
-- Le toggle Subscribe and Save fonctionne avec le checkout Shopify
+- Les sections se fondent les unes dans les autres sans aucune ligne visible
+- Le SplineBackground est visible a travers toutes les sections sur toutes les pages
+- Les gradients subtils de couleur restent presents mais ne creent plus de bords nets
+

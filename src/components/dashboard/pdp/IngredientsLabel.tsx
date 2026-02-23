@@ -29,8 +29,14 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
     ? enrichedSafety.allergens 
     : detectAllergens(ingredients, product.description, t);
 
-  // Improved supplement facts image detection
-  const supplementFactsImage = findSupplementFactsImage(product.images.edges);
+  const supplementFactsImage = product.images.edges.find(img =>
+    img.node.altText?.toLowerCase().includes('supplement') ||
+    img.node.altText?.toLowerCase().includes('label') ||
+    img.node.altText?.toLowerCase().includes('facts') ||
+    img.node.url?.toLowerCase().includes('supplement') ||
+    img.node.url?.toLowerCase().includes('label') ||
+    img.node.url?.toLowerCase().includes('facts')
+  )?.node || null;
 
   const handleCopyServing = () => {
     const servingInfo = hasEnriched 
@@ -211,49 +217,4 @@ function detectAllergens(ingredients: string[], description: string, t: (key: st
     if (text.includes(keyword) && !allergens.includes(label)) allergens.push(label);
   }
   return allergens;
-}
-
-function findSupplementFactsImage(
-  images: Array<{ node: { url: string; altText: string | null } }>
-): { url: string; altText: string | null } | null {
-  if (!images || images.length === 0) return null;
-
-  // 1. Check altText for known keywords
-  const byAlt = images.find(img => {
-    const alt = img.node.altText?.toLowerCase() || '';
-    return alt.includes('supplement') || alt.includes('label') || alt.includes('facts') || alt.includes('nutrition');
-  });
-  if (byAlt) return byAlt.node;
-
-  // 2. Check URL for keywords
-  const byUrl = images.find(img => {
-    const url = img.node.url.toLowerCase();
-    return url.includes('supplement-facts') || url.includes('nutrition-label') || url.includes('label-image');
-  });
-  if (byUrl) return byUrl.node;
-
-  // 3. Heuristic: look for "generated-label-image" pattern in URL (common in Shopify)
-  // The supplement facts label is typically at index 3 or 4 in the filename
-  const byGeneratedLabel = images.find(img => {
-    const url = img.node.url.toLowerCase();
-    return url.includes('generated-label-image-3') || url.includes('generated-label-image-4');
-  });
-  if (byGeneratedLabel) return byGeneratedLabel.node;
-
-  // 4. Heuristic: for products with >= 4 images, the supplement facts label 
-  // is typically the last or second-to-last image
-  if (images.length >= 4) {
-    // Check the last 2 images - prefer the one with a portrait-like filename pattern
-    const lastTwo = images.slice(-2);
-    const portraitCandidate = lastTwo.find(img => {
-      const url = img.node.url.toLowerCase();
-      return url.includes('label') || url.includes('facts') || url.includes('generated-label');
-    });
-    if (portraitCandidate) return portraitCandidate.node;
-    
-    // Fallback: use the second-to-last image (common convention)
-    return images[images.length - 2].node;
-  }
-
-  return null;
 }

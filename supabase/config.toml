@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.parse-product-pdfs]
 verify_jwt = false
+
+[functions.shopify-storefront-proxy]
+verify_jwt = false

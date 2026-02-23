@@ -1,5 +1,8 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowsClockwise, Trash } from '@phosphor-icons/react';
+import { ArrowsClockwise, Trash, Spinner } from '@phosphor-icons/react';
+import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
+import { fetchProducts, type ShopifyProduct } from '@/lib/shopify';
 
 interface StackProduct {
   id: string;
@@ -7,19 +10,115 @@ interface StackProduct {
   image: string;
   quantity: number;
   price: string;
+  shopifyProductId?: string;
 }
-
-const MOCK_PRODUCTS: StackProduct[] = [
-  { id: '1', name: 'Magnésium Bisglycinate', image: '/placeholder.svg', quantity: 1, price: '19,99 €' },
-  { id: '2', name: 'Oméga 3 EPA/DHA', image: '/placeholder.svg', quantity: 1, price: '24,99 €' },
-  { id: '3', name: 'Ashwagandha KSM-66', image: '/placeholder.svg', quantity: 1, price: '14,99 €' },
-];
 
 interface CurrentStackListProps {
   index: number;
+  customer: ReturnType<typeof useShopifyCustomer>;
 }
 
-export function CurrentStackList({ index }: CurrentStackListProps) {
+// Query to get subscription contract lines from Customer Account API
+const SUBSCRIPTION_LINES_QUERY = `
+  query {
+    customer {
+      orders(first: 1, sortKey: PROCESSED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            lineItems(first: 20) {
+              edges {
+                node {
+                  title
+                  quantity
+                  image {
+                    url
+                    altText
+                  }
+                  discountedTotalPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export function CurrentStackList({ index, customer }: CurrentStackListProps) {
+  const { isConnected, isLoading: customerLoading, executeQuery } = customer;
+  const [products, setProducts] = useState<StackProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch products from Shopify selling plans (subscription products)
+  useEffect(() => {
+    async function loadSubscriptionProducts() {
+      if (!isConnected) {
+        // Fallback: Load all products with selling plans from Storefront API
+        setIsLoading(true);
+        try {
+          const allProducts = await fetchProducts(50);
+          // Filter products that have selling plan groups (subscription-eligible)
+          const subProducts = allProducts.filter(
+            p => p.node.sellingPlanGroups?.edges?.length
+          );
+
+          if (subProducts.length > 0) {
+            setProducts(
+              subProducts.slice(0, 5).map(p => ({
+                id: p.node.id,
+                name: p.node.title,
+                image: p.node.images.edges[0]?.node.url || '/placeholder.svg',
+                quantity: 1,
+                price: `${parseFloat(p.node.priceRange.minVariantPrice.amount).toFixed(2)} €`,
+                shopifyProductId: p.node.id,
+              }))
+            );
+          }
+        } catch (err) {
+          console.error('Failed to load subscription products:', err);
+        } finally {
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      // Connected: Try to fetch from Customer Account API
+      setIsLoading(true);
+      try {
+        const data = await executeQuery(SUBSCRIPTION_LINES_QUERY);
+        const orders = (data as any)?.data?.customer?.orders?.edges || [];
+        
+        if (orders.length > 0) {
+          const latestOrder = orders[0].node;
+          const lineItems = latestOrder.lineItems.edges.map((edge: any) => edge.node);
+          
+          setProducts(
+            lineItems.map((item: any, idx: number) => ({
+              id: `order-${idx}`,
+              name: item.title,
+              image: item.image?.url || '/placeholder.svg',
+              quantity: item.quantity,
+              price: `${parseFloat(item.discountedTotalPrice.amount).toFixed(2)} €`,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('Failed to fetch subscription lines:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadSubscriptionProducts();
+  }, [isConnected, executeQuery]);
+
+  const loading = customerLoading || isLoading;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -30,48 +129,59 @@ export function CurrentStackList({ index }: CurrentStackListProps) {
         Dans votre prochaine box
       </h2>
 
-      <div className="bg-card rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-border/50 divide-y divide-border/50">
-        {MOCK_PRODUCTS.map((product) => (
-          <div
-            key={product.id}
-            className="flex items-center gap-4 p-4 md:p-6 transition-all duration-200 hover:bg-muted/30 first:rounded-t-[20px] last:rounded-b-[20px] group"
-          >
-            {/* Image */}
-            <div className="w-16 h-16 rounded-lg bg-muted/50 flex items-center justify-center flex-shrink-0 overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+      {loading ? (
+        <div className="bg-card rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-border/50 p-8 flex items-center justify-center">
+          <Spinner className="w-6 h-6 animate-spin text-muted-foreground" />
+          <span className="ml-2 text-muted-foreground">Chargement des produits...</span>
+        </div>
+      ) : products.length === 0 ? (
+        <div className="bg-card rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-border/50 p-8 text-center">
+          <p className="text-muted-foreground">Aucun produit dans votre stack pour le moment.</p>
+        </div>
+      ) : (
+        <div className="bg-card rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-border/50 divide-y divide-border/50">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="flex items-center gap-4 p-4 md:p-6 transition-all duration-200 hover:bg-muted/30 first:rounded-t-[20px] last:rounded-b-[20px] group"
+            >
+              {/* Image */}
+              <div className="w-16 h-16 rounded-lg bg-muted/50 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <h3 className="text-base md:text-lg font-medium text-foreground truncate">
-                {product.name}
-              </h3>
-              <p className="text-sm text-muted-foreground">x{product.quantity}</p>
-            </div>
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base md:text-lg font-medium text-foreground truncate">
+                  {product.name}
+                </h3>
+                <p className="text-sm text-muted-foreground">x{product.quantity}</p>
+              </div>
 
-            {/* Price */}
-            <p className="text-base font-semibold text-foreground hidden sm:block">
-              {product.price}
-            </p>
+              {/* Price */}
+              <p className="text-base font-semibold text-foreground hidden sm:block">
+                {product.price}
+              </p>
 
-            {/* Actions */}
-            <div className="flex items-center gap-2">
-              <button className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-primary/5">
-                <ArrowsClockwise weight="bold" className="w-4 h-4" />
-                <span className="hidden md:inline">Échanger</span>
-              </button>
-              <button className="text-sm text-muted-foreground hover:text-destructive transition-colors duration-200 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-destructive/5">
-                <Trash weight="bold" className="w-4 h-4" />
-                <span className="hidden md:inline">Retirer</span>
-              </button>
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                <button className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-primary/5">
+                  <ArrowsClockwise weight="bold" className="w-4 h-4" />
+                  <span className="hidden md:inline">Échanger</span>
+                </button>
+                <button className="text-sm text-muted-foreground hover:text-destructive transition-colors duration-200 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-destructive/5">
+                  <Trash weight="bold" className="w-4 h-4" />
+                  <span className="hidden md:inline">Retirer</span>
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }

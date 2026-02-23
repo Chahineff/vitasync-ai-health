@@ -199,6 +199,45 @@ export type Database = {
         }
         Relationships: []
       }
+      shopify_customer_tokens: {
+        Row: {
+          access_token: string
+          created_at: string
+          expires_at: string
+          id: string
+          id_token: string | null
+          refresh_token: string
+          scopes: string | null
+          shopify_customer_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          id_token?: string | null
+          refresh_token: string
+          scopes?: string | null
+          shopify_customer_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          id_token?: string | null
+          refresh_token?: string
+          scopes?: string | null
+          shopify_customer_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       supplement_logs: {
         Row: {
           id: string

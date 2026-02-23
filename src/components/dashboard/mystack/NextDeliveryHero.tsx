@@ -1,15 +1,30 @@
 import { motion } from 'framer-motion';
-import { CalendarBlank, Clock } from '@phosphor-icons/react';
+import { CalendarBlank, Clock, Spinner } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
+import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 
 interface NextDeliveryHeroProps {
   index: number;
+  customer: ReturnType<typeof useShopifyCustomer>;
 }
 
-export function NextDeliveryHero({ index }: NextDeliveryHeroProps) {
+export function NextDeliveryHero({ index, customer }: NextDeliveryHeroProps) {
   const { t } = useTranslation();
+  const { isConnected, isLoading, subscriptions } = customer;
+
+  // For now, show mock data or real subscription data
+  const activeContract = subscriptions.find(s => s.status === 'ACTIVE');
+  const nextDate = activeContract?.nextBillingDate
+    ? new Date(activeContract.nextBillingDate).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+      })
+    : '15 Novembre';
+
+  const status = activeContract ? activeContract.status : 'ACTIVE';
+  const statusLabel = status === 'ACTIVE' ? 'Actif' : status === 'PAUSED' ? 'En pause' : status;
 
   return (
     <motion.div
@@ -30,10 +45,21 @@ export function NextDeliveryHero({ index }: NextDeliveryHeroProps) {
             </div>
             <div>
               <h2 className="text-lg md:text-2xl font-semibold text-foreground">
-                Prochaine livraison le 15 Novembre
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <Spinner className="w-5 h-5 animate-spin" />
+                    Chargement...
+                  </span>
+                ) : (
+                  `Prochaine livraison le ${nextDate}`
+                )}
               </h2>
-              <Badge className="mt-1 bg-primary/15 text-primary border-primary/20 hover:bg-primary/20">
-                Statut : Actif
+              <Badge className={`mt-1 ${
+                status === 'ACTIVE'
+                  ? 'bg-primary/15 text-primary border-primary/20 hover:bg-primary/20'
+                  : 'bg-muted text-muted-foreground border-border'
+              }`}>
+                Statut : {statusLabel}
               </Badge>
             </div>
           </div>
@@ -42,6 +68,7 @@ export function NextDeliveryHero({ index }: NextDeliveryHeroProps) {
           <div className="flex items-center gap-3">
             <Button
               className="rounded-xl transition-all duration-200 ease-in-out"
+              disabled={!isConnected || isLoading}
               onClick={() => {}}
             >
               <Clock weight="bold" className="w-4 h-4 mr-1" />
@@ -50,6 +77,7 @@ export function NextDeliveryHero({ index }: NextDeliveryHeroProps) {
             <Button
               variant="outline"
               className="rounded-xl transition-all duration-200 ease-in-out border-border"
+              disabled={!isConnected || isLoading}
               onClick={() => {}}
             >
               Mettre en pause

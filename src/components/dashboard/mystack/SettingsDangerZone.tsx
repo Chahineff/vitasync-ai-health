@@ -1,12 +1,26 @@
 import { motion } from 'framer-motion';
-import { CreditCard, MapPin } from '@phosphor-icons/react';
+import { CreditCard, MapPin, PlugsConnected } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
+import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 
 interface SettingsDangerZoneProps {
   index: number;
+  customer: ReturnType<typeof useShopifyCustomer>;
 }
 
-export function SettingsDangerZone({ index }: SettingsDangerZoneProps) {
+export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps) {
+  const { isConnected, customer: customerData, disconnect } = customer;
+
+  const address = customerData?.defaultAddress;
+  const addressLines = address
+    ? [
+        address.address1,
+        address.address2,
+        [address.zip, address.city].filter(Boolean).join(' '),
+        address.country,
+      ].filter(Boolean)
+    : ['12 Rue de la Santé', '75013 Paris, France'];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -43,8 +57,12 @@ export function SettingsDangerZone({ index }: SettingsDangerZoneProps) {
             <h3 className="text-lg font-semibold text-foreground">Adresse de livraison</h3>
           </div>
           <p className="text-base text-muted-foreground mb-4 leading-relaxed">
-            12 Rue de la Santé<br />
-            75013 Paris, France
+            {addressLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < addressLines.length - 1 && <br />}
+              </span>
+            ))}
           </p>
           <Button
             variant="outline"
@@ -56,8 +74,17 @@ export function SettingsDangerZone({ index }: SettingsDangerZoneProps) {
         </div>
       </div>
 
-      {/* Cancel Link */}
-      <div className="text-center pt-4">
+      {/* Connection status & Cancel */}
+      <div className="flex flex-col items-center gap-3 pt-4">
+        {isConnected && (
+          <button
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-1"
+            onClick={disconnect}
+          >
+            <PlugsConnected weight="bold" className="w-4 h-4" />
+            Déconnecter mon compte Shopify
+          </button>
+        )}
         <button
           className="text-sm text-muted-foreground hover:text-destructive transition-colors duration-200 underline-offset-4 hover:underline"
           onClick={() => {}}

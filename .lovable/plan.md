@@ -1,114 +1,61 @@
+## Plan : Corriger le token Storefront + Integrer les abonnements Shopify natifs
+
+### Probleme principal
+
+L'API Shopify Storefront retourne **401 UNAUTHORIZED** pour toutes les requetes. Le token d'acces actuel (`5ec910af...`) a ete revoque quand tu as change d'application d'abonnement. Aucun produit ne peut s'afficher.
+
+### Etape 1 : Regenerer le token Storefront
+
+Le token doit etre regenere depuis l'admin Shopify :
+
+1. Aller dans **Shopify Admin** (Settings > Apps and sales channels > Develop apps)
+2. Ouvrir l'app existante (ou en creer une nouvelle) avec les scopes :
+  - `unauthenticated_read_product_listings` (obligatoire)
+  - `unauthenticated_read_selling_plans` (pour les abonnements)
+3. Installer l'app et copier le nouveau **Storefront access token**
+
+Je te demanderai de fournir ce nouveau token et je le configurerai comme secret securise dans le projet (au lieu du token en dur dans le code).
+
+### Etape 2 : Utiliser un secret pour le token (plus securise)
+
+Actuellement le token est en dur dans `src/lib/shopify.ts`. Je vais :
+
+- Stocker le nouveau token comme secret backend
+- Creer une edge function proxy qui fait les appels Shopify avec le token securise
+- OU le stocker comme variable d'environnement securisee
+
+### Etape 3 : Integrer les abonnements (Shopify Subscriptions natif)
+
+L'application "Shopify Subscriptions" (gratuite, creee par Shopify) gere les selling plans. D'apres ton fichier Excel, 109 produits doivent avoir des abonnements en 30, 60 et 90 jours.
+
+**Le code existant est deja pret** pour les abonnements :
+
+- Les queries GraphQL incluent `sellingPlanGroups` 
+- Le `ProductPurchaseBox` a deja le toggle One-time / Subscribe
+- Le `ProductGroupCard` affiche deja le badge "Save X%"
+- Le `cartStore` supporte deja `sellingPlanId`
+
+Si le scope `unauthenticated_read_selling_plans` est actif dans le nouveau token, tout fonctionnera automatiquement.
+
+### Etape 4 : Correction des images Supplement Facts
+
+Deja en place avec la logique heuristique dans `IngredientsLabel.tsx` -- sera testable une fois les produits charges.
+
+### Fichiers modifies
 
 
-## Plan : Abonnements Shopify (Subi) + Correction des images Supplement Facts
+| Fichier              | Changement                                              |
+| -------------------- | ------------------------------------------------------- |
+| `src/lib/shopify.ts` | Mettre a jour le token Storefront avec le nouveau token |
 
-### Partie 1 : Integration des abonnements (Selling Plans) dans la boutique
 
-#### 1.1 Requeter les `sellingPlanGroups` depuis l'API Storefront
+### Ce dont j'ai besoin de toi
 
-**Fichier : `src/lib/shopify.ts`**
+1. **Generer un nouveau token Storefront** depuis l'admin Shopify avec les scopes adequats (Le voici : unauthenticated_read_product_listings (2602fe4763e52cfd2bc82898b8bc59ec) )
+2. Me le communiquer pour que je le configure dans le projet
 
-- Ajouter `sellingPlanGroups` dans les queries GraphQL `PRODUCTS_QUERY` et `PRODUCT_BY_HANDLE_QUERY`
-- Mettre a jour les interfaces `ShopifyProduct` et `ProductDetail` pour inclure les donnees de selling plans (nom du plan, pourcentage de reduction, frequence de livraison, `sellingPlanId`)
-- Structure des donnees attendue :
-```text
-sellingPlanGroups(first: 5) {
-  edges {
-    node {
-      name
-      sellingPlans(first: 10) {
-        edges {
-          node {
-            id
-            name
-            description
-            recurringDeliveries
-            priceAdjustments {
-              adjustmentValue {
-                ... on SellingPlanPercentagePriceAdjustment { adjustmentPercentage }
-                ... on SellingPlanFixedAmountPriceAdjustment { adjustmentAmount { amount currencyCode } }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
+### Resultat attendu
 
-Si le scope `unauthenticated_read_selling_plans` n'est pas disponible (erreur API), un fallback gracieux sera implemente : les donnees d'abonnement ne s'affichent tout simplement pas et le comportement actuel est conserve.
-
-#### 1.2 Afficher le prix abonnement sur les cartes produits (Shop)
-
-**Fichier : `src/components/dashboard/shop/ProductGroupCard.tsx`**
-
-- Sous le prix actuel (achat unique), afficher une ligne supplementaire si le produit a un selling plan :
-```text
-29.90 USD         <- prix actuel (one-time)
-25.42 USD/mois    <- prix abonnement (barre avec -15%)
-     ^-- badge "Save 15%"
-```
-- Le pourcentage de reduction est lu dynamiquement depuis les donnees Shopify (pas en dur a 15%)
-- La frequence de livraison est affichee ("Every 1 month", "Every 2 months", etc.)
-
-#### 1.3 Ajouter un toggle One-time / Subscribe dans la Buy Box (PDP)
-
-**Fichier : `src/components/dashboard/pdp/ProductPurchaseBox.tsx`**
-
-- Remplacer la section "Subscribe & Save" statique (actuellement "Coming Soon") par un vrai widget interactif :
-  - Toggle switch ou radio : "One-time purchase" vs "Subscribe & Save"
-  - Quand subscribe est selectionne :
-    - Afficher le prix reduit avec le pourcentage
-    - Afficher la frequence de livraison du selling plan
-    - Le bouton "Add to pack" cree un panier avec le `sellingPlanId`
-  - Quand one-time est selectionne : comportement actuel inchange
-- Le bouton "Buy once" secondaire reste pour l'achat unique
-
-#### 1.4 Creer un panier avec selling plan
-
-**Fichier : `src/stores/cartStore.ts`**
-
-- Ajouter un champ optionnel `sellingPlanId` dans `CartItem`
-- Quand `sellingPlanId` est present, utiliser `CART_CREATE_WITH_SELLING_PLAN_MUTATION` (deja existant dans `shopify.ts`) au lieu de `CART_CREATE_MUTATION`
-- Pour `cartLinesAdd`, ajouter le `sellingPlanId` dans la mutation
-
-### Partie 2 : Correction de l'image Supplement Facts
-
-#### 2.1 Meilleure detection de l'image du label
-
-**Fichier : `src/components/dashboard/pdp/IngredientsLabel.tsx`**
-
-Le probleme actuel : la detection se base sur `altText` et l'URL contenant "supplement", "label" ou "facts". Or, la plupart des images n'ont pas d'alt text et les URLs contiennent "generated-label-image" sans ces mots-cles.
-
-Nouvelle logique de detection (par ordre de priorite) :
-1. Image dont l'`altText` contient "supplement", "label", "facts", "nutrition" (garde l'existant)
-2. Image dont l'URL contient "supplement-facts", "label", "nutrition"
-3. **Heuristique de position** : la derniere ou avant-derniere image est souvent le label (convention Shopify). Si le produit a >= 3 images, utiliser l'avant-derniere image comme fallback (les images generees suivent un pattern ou l'image "supplement facts" est typiquement en position 4-5 sur 6-7 images)
-4. **Heuristique de format** : chercher une image avec un ratio hauteur > largeur (format portrait typique d'un label) parmi les dernieres images
-
-On ajoutera aussi une detection basee sur le nom de fichier contenant "generated-label-image" suivi d'un index specifique (typiquement index 3 ou 4 qui correspond au label).
-
-#### 2.2 Utiliser plus d'images dans la galerie PDP
-
-**Fichier : `src/lib/shopify.ts`**
-
-- Dans `PRODUCT_BY_HANDLE_QUERY`, augmenter `images(first: 10)` a `images(first: 20)` pour s'assurer qu'aucune image n'est manquee (certains produits ont beaucoup d'images)
-
-### Partie 3 : Details techniques
-
-**Fichiers modifies :**
-
-| Fichier | Changement |
-|---------|-----------|
-| `src/lib/shopify.ts` | Ajouter `sellingPlanGroups` aux queries + interfaces ; augmenter le nombre d'images |
-| `src/components/dashboard/shop/ProductGroupCard.tsx` | Afficher prix abonnement + badge reduction |
-| `src/components/dashboard/pdp/ProductPurchaseBox.tsx` | Remplacer "Coming Soon" par un vrai toggle subscribe |
-| `src/stores/cartStore.ts` | Support `sellingPlanId` dans les items du panier |
-| `src/components/dashboard/pdp/IngredientsLabel.tsx` | Ameliorer la detection d'image supplement facts |
-
-**Gestion d'erreur API :**
-Si la requete `sellingPlanGroups` echoue (scope manquant), le composant affiche simplement le prix one-time sans option abonnement -- pas de crash, pas d'erreur visible.
-
-**Pas de modification de la base de donnees** -- tout est lu depuis l'API Shopify Storefront en temps reel.
-
+- Tous les produits s'affichent a nouveau dans la boutique
+- Les abonnements (30/60/90 jours) apparaissent sur les fiches produits
+- Le toggle Subscribe and Save fonctionne avec le checkout Shopify

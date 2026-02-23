@@ -32,7 +32,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative">
-        <div className="relative aspect-square rounded-2xl overflow-hidden bg-white dark:bg-muted/10 border border-[#E2E8F0] dark:border-border/50">
+        <div className="relative aspect-square rounded-[20px] overflow-hidden bg-[hsl(210_40%_98%)] dark:bg-muted/10 border border-[hsl(214_32%_91%)] dark:border-border/50">
           <AnimatePresence mode="wait">
             {selectedImage ?
             <motion.img

@@ -1,65 +1,58 @@
 
 
-## Plan : Supprimer les lignes visibles entre sections et rendre les fonds translucides
+## Plan : Corriger l'affichage des produits (erreur 401 Storefront API)
 
-### Problemes identifies
+### Diagnostic
 
-1. **Lignes visibles entre sections** : Les classes CSS `bg-gradient-radial`, `bg-gradient-subtle` et `section-parallax::before` creent des fonds opaques avec des bords nets la ou les sections se rencontrent, ce qui cree des "lignes" visibles.
+Le token Storefront (`5ec910af19d9aa3b391d303a0e2e8891`) retourne une erreur **401 Unauthorized** sur toutes les requetes. La boutique Shopify est protegee par mot de passe, ce qui bloque l'API Storefront cote client. En revanche, l'API Admin (via le secret `SHOPIFY_ACCESS_TOKEN` stocke cote serveur) fonctionne parfaitement -- les 100 produits sont accessibles.
 
-2. **Fonds non translucides sur About/Blog/Contact** : Ces pages utilisent `bg-gradient-radial` et `bg-gradient-subtle` qui contiennent `hsl(var(--background))` (opaque), ce qui bloque completement le SplineBackground derriere.
+### Solution : Proxy via une fonction backend
 
-### Corrections
+Creer une fonction backend `shopify-storefront-proxy` qui recoit les requetes GraphQL du frontend et les transmet a l'API **Admin** de Shopify (qui n'est pas bloquee). Le frontend appellera cette fonction au lieu de contacter Shopify directement.
 
-#### 1. `src/index.css` -- Rendre les gradients transparents
-
-| Classe | Avant | Apres |
-|--------|-------|-------|
-| `.bg-gradient-subtle` | `hsl(var(--background))` aux extremites (opaque) | `transparent` aux extremites, garder juste le muted central avec opacite reduite |
-| `.bg-gradient-radial` | Fond radial opaque | Reduire l'opacite a 0.04 et s'assurer que le fond est transparent |
-| `.section-parallax::before` | `radial-gradient` avec fond fixe | Reduire l'opacite ou supprimer completement (le SplineBackground fait deja ce travail) |
-
-Modifications CSS :
-
-```css
-.bg-gradient-subtle {
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    hsl(var(--muted) / 0.15) 50%,
-    transparent 100%
-  );
-}
-
-.bg-gradient-radial {
-  background: radial-gradient(
-    ellipse at 50% 0%,
-    hsl(var(--primary) / 0.05) 0%,
-    transparent 60%
-  );
-}
+```text
+Frontend  -->  Edge Function (shopify-storefront-proxy)  -->  Shopify Admin API
+                  (utilise SHOPIFY_ACCESS_TOKEN)                (fonctionne)
 ```
 
-Pour `.section-parallax::before` : reduire l'opacite des gradients a 0.015 (quasi invisible) pour eviter les bords durs.
+### Fichiers a modifier/creer
 
-#### 2. Sections de la Home page -- Supprimer les fonds opaques redondants
+**1. Creer `supabase/functions/shopify-storefront-proxy/index.ts`**
 
-Les sections `HowItWorksSection`, `FeaturesSection`, `PricingSection`, `ProductPreviewSection` utilisent deja `bg-transparent` -- pas de changement necessaire.
+- Accepte un body JSON contenant `{ query, variables }`
+- Transmet la requete a l'API Admin GraphQL de Shopify (`https://vitasync2.myshopify.com/admin/api/2025-07/graphql.json`)
+- Utilise le header `X-Shopify-Access-Token` avec le secret `SHOPIFY_ACCESS_TOKEN`
+- Retourne la reponse JSON de Shopify au frontend
+- Gestion CORS incluse
 
-La `FAQSection` utilise `section-padding bg-transparent section-parallax` -- verifier et corriger si besoin.
+**2. Modifier `src/lib/shopify.ts`**
 
-#### 3. Pages About/Blog/Contact -- Supprimer `bg-gradient-radial` et `bg-gradient-subtle`
+- Modifier la fonction `storefrontApiRequest` pour envoyer les requetes via la fonction backend au lieu de contacter Shopify directement
+- L'URL cible devient l'endpoint de la fonction backend
+- Le token Storefront n'est plus envoye cote client (securite amelioree)
+- Le reste du code (queries GraphQL, pagination, fonctions utilitaires) reste inchange
 
-Les sections hero de ces pages utilisent `bg-gradient-radial` et certaines sections utilisent `bg-gradient-subtle`. Avec les corrections CSS du point 1, ces classes deviendront transparentes automatiquement -- aucune modification de fichier necessaire pour ces pages.
+**3. Mettre a jour `supabase/functions/ai-shop-recommendations/index.ts`**
 
-### Fichiers modifies
+- Utiliser aussi l'API Admin au lieu de l'API Storefront pour eviter le meme probleme 401
 
-| Fichier | Changement |
-|---------|-----------|
-| `src/index.css` | Rendre `.bg-gradient-subtle`, `.bg-gradient-radial` transparents aux bords ; reduire `.section-parallax::before` |
+### Details techniques
+
+- L'API Admin GraphQL de Shopify utilise le meme schema que l'API Storefront pour les queries de lecture (products, variants, images) -- les queries existantes fonctionneront sans modification
+- Le secret `SHOPIFY_ACCESS_TOKEN` est deja configure dans le projet
+- La pagination par curseur deja implementee restera fonctionnelle
+- Les 100 produits seront tous recuperes grace a la pagination existante (250 par batch)
+
+### Securite
+
+- Le token Admin n'est jamais expose cote client
+- La fonction backend agit comme un proxy securise
+- Pas de modification de la base de donnees ni des politiques RLS
 
 ### Resultat attendu
 
-- Les sections se fondent les unes dans les autres sans aucune ligne visible
-- Le SplineBackground est visible a travers toutes les sections sur toutes les pages
-- Les gradients subtils de couleur restent presents mais ne creent plus de bords nets
+- Les 100 produits de la boutique s'affichent correctement dans la section Boutique
+- Les fiches produits (PDP) fonctionnent
+- Le Coach IA peut acceder au catalogue pour ses recommandations
+- Aucun changement visible pour l'utilisateur final
 

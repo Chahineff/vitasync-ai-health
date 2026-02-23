@@ -29,14 +29,34 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
     ? enrichedSafety.allergens 
     : detectAllergens(ingredients, product.description, t);
 
-  const supplementFactsImage = product.images.edges.find(img =>
-    img.node.altText?.toLowerCase().includes('supplement') ||
-    img.node.altText?.toLowerCase().includes('label') ||
-    img.node.altText?.toLowerCase().includes('facts') ||
-    img.node.url?.toLowerCase().includes('supplement') ||
-    img.node.url?.toLowerCase().includes('label') ||
-    img.node.url?.toLowerCase().includes('facts')
-  )?.node || null;
+  const supplementFactsImage = (() => {
+    const images = product.images.edges;
+    if (!images.length) return null;
+    
+    // Priority 1: Keywords in alt text
+    const altKeywords = ['supplement', 'facts', 'label', 'nutrition', 'ingredients'];
+    const byAlt = images.find(img => {
+      const alt = (img.node.altText || '').toLowerCase();
+      return altKeywords.some(k => alt.includes(k));
+    });
+    if (byAlt) return byAlt.node;
+    
+    // Priority 2: Keywords in URL
+    const urlKeywords = ['supplement', 'facts', 'label', 'nutrition', 'ingredients', 'generated-label', 'back', 'rear'];
+    const byUrl = images.find(img => {
+      const url = img.node.url.toLowerCase();
+      return urlKeywords.some(k => url.includes(k));
+    });
+    if (byUrl) return byUrl.node;
+    
+    // Priority 3: Second-to-last image (catalogue convention: label images at end)
+    if (images.length >= 3) return images[images.length - 2].node;
+    
+    // Priority 4: Last image if only 2
+    if (images.length === 2) return images[1].node;
+    
+    return null;
+  })();
 
   const handleCopyServing = () => {
     const servingInfo = hasEnriched 

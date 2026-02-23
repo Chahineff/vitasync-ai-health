@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ShoppingCart, Heart } from '@phosphor-icons/react';
+import { ArrowLeft, ShoppingCart, Heart, Flask, Leaf, ShieldCheck, Flag, Plus } from '@phosphor-icons/react';
 import { fetchProductByHandle, fetchProducts, ProductDetail, ShopifyProduct } from '@/lib/shopify';
 import { parseProductDescription, ParsedProductData } from '@/lib/shopify-parser';
 import { toast } from 'sonner';
@@ -9,6 +9,7 @@ import { CartDrawer } from '../CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnrichedProductData } from '@/hooks/useEnrichedProductData';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 // Import all PDP sections
 import { ProductGallery } from './ProductGallery';
@@ -38,6 +39,14 @@ interface CachedProduct {
   product: ProductDetail;
   parsedData: ParsedProductData | null;
 }
+
+/* ─── Reassurance pictograms ─── */
+const reassuranceItems = [
+  { icon: ShieldCheck, label: 'Qualité Pharmaceutique' },
+  { icon: Leaf, label: 'Vegan' },
+  { icon: Flask, label: 'Sans Gluten' },
+  { icon: Flag, label: 'Fabriqué en France' },
+];
 
 export function ProductDetailMaster({ 
   handle, 
@@ -234,12 +243,15 @@ export function ProductDetailMaster({
           </div>
         </div>
 
-        {/* HERO Section — 2 equal columns */}
+        {/* ═══ HERO — 50/50 columns ═══ */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
-          <div>
+          {/* LEFT — Sticky gallery */}
+          <div className="lg:sticky lg:top-[100px] lg:self-start">
             <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} tags={product.tags} />
           </div>
-          <div>
+
+          {/* RIGHT — Scrollable info */}
+          <div className="space-y-6">
             <ProductPurchaseBox 
               product={product}
               parsedData={parsedData}
@@ -247,44 +259,103 @@ export function ProductDetailMaster({
               onFlavorChange={handleFlavorChange}
               enrichedSummary={enrichedData?.summary}
             />
+
+            {/* ─── Reassurance Strip ─── */}
+            <div className="flex items-center justify-between gap-3 py-4 border-t border-b border-[hsl(var(--border))]/30">
+              {reassuranceItems.map((item, i) => (
+                <div key={i} className="flex flex-col items-center gap-1.5 text-center flex-1">
+                  <item.icon weight="light" className="w-5 h-5 text-foreground/40" />
+                  <span className="text-[12px] text-foreground/50 font-light leading-tight">{item.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* ─── Accordion Sections ─── */}
+            <Accordion type="multiple" className="w-full">
+              <AccordionItem value="what-it-does" className="border-b border-[hsl(214_32%_91%)] dark:border-border/30">
+                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+                  <span className="flex items-center justify-between w-full pr-2">
+                    What It Does
+                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="pb-6">
+                  <WhatItDoes 
+                    description={product.description}
+                    parsedData={parsedData}
+                    productType={product.productType}
+                    enrichedBenefits={enrichedData?.key_benefits}
+                    enrichedSummary={enrichedData?.summary}
+                    bestForTags={enrichedData?.best_for_tags}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="how-to-take" className="border-b border-[hsl(214_32%_91%)] dark:border-border/30">
+                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+                  <span className="flex items-center justify-between w-full pr-2">
+                    {t('pdp.howToTake')}
+                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="pb-6">
+                  <HowToTake 
+                    parsedData={parsedData}
+                    enrichedSuggestedUse={enrichedData?.suggested_use}
+                    enrichedCoachTip={enrichedData?.coach_tip}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="ingredients" className="border-b border-[hsl(214_32%_91%)] dark:border-border/30">
+                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+                  <span className="flex items-center justify-between w-full pr-2">
+                    Ingredients & Label
+                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="pb-6">
+                  <IngredientsLabel 
+                    parsedData={parsedData}
+                    product={product}
+                    enrichedIngredients={enrichedData?.ingredients_detailed}
+                    enrichedSafety={enrichedData?.safety_warnings as any}
+                    enrichedQuality={enrichedData?.quality_info as any}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="science" className="border-b border-[hsl(214_32%_91%)] dark:border-border/30">
+                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+                  <span className="flex items-center justify-between w-full pr-2">
+                    The Science
+                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="pb-6">
+                  <ScienceSection 
+                    productTitle={product.title}
+                    enrichedScience={enrichedData?.science_data}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Coach Insight */}
+            <CoachInsightCard 
+              enrichedData={enrichedData as any}
+              productTitle={product.title}
+            />
           </div>
         </section>
 
-        {/* Coach Insight Card */}
-        <CoachInsightCard 
-          enrichedData={enrichedData as any}
-          productTitle={product.title}
-        />
-
+        {/* ─── Full-width below-the-fold ─── */}
         <QuickBenefitsStrip 
           productType={product.productType}
           parsedData={parsedData}
           bestForTags={enrichedData?.best_for_tags}
           enrichedDosage={enrichedData?.suggested_use?.dosage}
           enrichedTiming={enrichedData?.suggested_use?.timing}
-        />
-
-        <WhatItDoes 
-          description={product.description}
-          parsedData={parsedData}
-          productType={product.productType}
-          enrichedBenefits={enrichedData?.key_benefits}
-          enrichedSummary={enrichedData?.summary}
-          bestForTags={enrichedData?.best_for_tags}
-        />
-
-        <HowToTake 
-          parsedData={parsedData}
-          enrichedSuggestedUse={enrichedData?.suggested_use}
-          enrichedCoachTip={enrichedData?.coach_tip}
-        />
-
-        <IngredientsLabel 
-          parsedData={parsedData}
-          product={product}
-          enrichedIngredients={enrichedData?.ingredients_detailed}
-          enrichedSafety={enrichedData?.safety_warnings as any}
-          enrichedQuality={enrichedData?.quality_info as any}
         />
 
         <QualitySourcing 
@@ -296,11 +367,6 @@ export function ProductDetailMaster({
         <SafetyCautions 
           parsedData={parsedData}
           enrichedSafety={enrichedData?.safety_warnings}
-        />
-
-        <ScienceSection 
-          productTitle={product.title}
-          enrichedScience={enrichedData?.science_data}
         />
 
         <ProductReviews 
@@ -340,7 +406,7 @@ function ProductDetailSkeleton({ onBack, t }: { onBack: () => void; t: (key: str
       </button>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div>
-          <Skeleton className="aspect-square rounded-2xl" />
+          <Skeleton className="aspect-square rounded-[20px]" />
           <div className="flex gap-2 mt-4">
             {[1, 2, 3, 4].map((i) => (<Skeleton key={i} className="w-16 h-16 rounded-xl" />))}
           </div>

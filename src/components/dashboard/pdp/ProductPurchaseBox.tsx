@@ -4,14 +4,10 @@ import {
   ShoppingCartSimple,
   Check,
   SpinnerGap,
-  ShieldCheck,
-  Flask,
-  Truck,
   ChatCircleDots,
   Repeat,
-  CaretDown,
 } from '@phosphor-icons/react';
-import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency, SellingPlan } from '@/lib/shopify';
+import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +34,7 @@ export function ProductPurchaseBox({
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
-  const [purchaseMode, setPurchaseMode] = useState<'once' | 'subscribe'>('once');
+  const [purchaseMode, setPurchaseMode] = useState<'once' | 'subscribe'>('subscribe');
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
   
   const addItem = useCartStore(state => state.addItem);
@@ -55,6 +51,9 @@ export function ProductPurchaseBox({
   const basePrice = parseFloat(price.amount);
   const subscriptionPrice = selectedPlan ? calculateSubscriptionPrice(basePrice, selectedPlan) : basePrice;
   const discountPct = selectedPlan ? getDiscountPercentage(selectedPlan) : null;
+
+  // Default to 'subscribe' only if subscription is available
+  const effectiveMode = hasSubscription ? purchaseMode : 'once';
 
   const handleAddToCart = async () => {
     if (!selectedVariant || isAdding) return;
@@ -83,7 +82,7 @@ export function ProductPurchaseBox({
         price: selectedVariant.price,
         quantity: 1,
         selectedOptions: selectedVariant.selectedOptions || [],
-        ...(purchaseMode === 'subscribe' && selectedPlan ? {
+        ...(effectiveMode === 'subscribe' && selectedPlan ? {
           sellingPlanId: selectedPlan.id,
           sellingPlanName: selectedPlan.name,
         } : {}),
@@ -91,7 +90,7 @@ export function ProductPurchaseBox({
       
       setJustAdded(true);
       toast.success(
-        purchaseMode === 'subscribe' ? 'Added to your monthly pack' : 'Added to cart',
+        effectiveMode === 'subscribe' ? 'Ajouté à votre routine' : 'Ajouté au panier',
         { description: product.title, position: 'top-center' }
       );
       setTimeout(() => setJustAdded(false), 2000);
@@ -102,14 +101,8 @@ export function ProductPurchaseBox({
     }
   };
 
-  const trustItems = [
-    { icon: ShieldCheck, label: 'Lab-tested' },
-    { icon: Flask, label: 'Clean formula' },
-    { icon: Truck, label: 'Easy daily routine' },
-  ];
-
   return (
-    <div className="lg:sticky lg:top-24 space-y-5">
+    <div className="space-y-6">
       {/* Vendor & Title */}
       <div>
         {product.vendor && (
@@ -117,7 +110,7 @@ export function ProductPurchaseBox({
             {product.vendor?.replace(/vitasync\s*2/i, 'VitaSync') || product.vendor}
           </p>
         )}
-        <h1 className="text-[34px] lg:text-[40px] font-semibold text-foreground leading-tight tracking-tight">
+        <h1 className="text-[30px] lg:text-[36px] font-semibold text-foreground leading-tight tracking-tight">
           {product.title}
         </h1>
         {product.productType && (
@@ -129,20 +122,10 @@ export function ProductPurchaseBox({
 
       {/* Enriched Summary */}
       {(enrichedSummary || parsedData?.benefits?.[0]) && (
-        <p className="text-[16px] lg:text-[18px] text-[#475569] dark:text-foreground/70 font-light leading-relaxed">
+        <p className="text-[15px] lg:text-[16px] text-foreground/60 font-light leading-relaxed">
           {enrichedSummary || parsedData?.benefits?.[0]}
         </p>
       )}
-
-      {/* Trust Strip */}
-      <div className="flex items-center gap-4 py-2 flex-wrap">
-        {trustItems.map((item, i) => (
-          <div key={i} className="flex items-center gap-1.5">
-            <item.icon weight="light" className="w-4 h-4 text-primary flex-shrink-0" />
-            <span className="text-xs text-foreground/60 font-light">{item.label}</span>
-          </div>
-        ))}
-      </div>
 
       {/* Flavor Selector */}
       {relatedProducts && relatedProducts.length > 1 && (
@@ -156,8 +139,8 @@ export function ProductPurchaseBox({
                 className={cn(
                   "px-4 py-2 rounded-xl text-sm transition-all border",
                   related.handle === product.handle
-                    ? "bg-[#0B1220] text-white border-[#0B1220] dark:bg-foreground dark:text-background dark:border-foreground"
-                    : "bg-[#F1F5F9] dark:bg-muted/30 text-foreground/70 border-[#E2E8F0] dark:border-border/50 hover:border-foreground/30"
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-muted/30 text-foreground/70 border-border/50 hover:border-foreground/30"
                 )}
               >
                 {related.flavor}
@@ -182,9 +165,9 @@ export function ProductPurchaseBox({
                 className={cn(
                   "px-4 py-2 rounded-xl text-sm transition-all border",
                   selectedVariantIndex === index
-                    ? "bg-[#0B1220] text-white border-[#0B1220] dark:bg-foreground dark:text-background dark:border-foreground"
+                    ? "bg-foreground text-background border-foreground"
                     : variant.node.availableForSale
-                    ? "bg-[#F1F5F9] dark:bg-muted/30 text-foreground/70 border-[#E2E8F0] dark:border-border/50 hover:border-foreground/30"
+                    ? "bg-muted/30 text-foreground/70 border-border/50 hover:border-foreground/30"
                     : "bg-muted/20 text-foreground/30 border-border/30 cursor-not-allowed line-through"
                 )}
               >
@@ -195,97 +178,90 @@ export function ProductPurchaseBox({
         </div>
       )}
 
-      {/* ═══ Purchase Options ═══ */}
-      <div className="space-y-3 pt-1">
-        <p className="text-sm font-medium text-foreground/70 uppercase tracking-wider">Purchase options</p>
-        
-        {/* Buy Once */}
-        <button
-          onClick={() => setPurchaseMode('once')}
-          className={cn(
-            "w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all text-left",
-            purchaseMode === 'once'
-              ? "border-foreground bg-[#F8FAFC] dark:bg-muted/20"
-              : "border-[#E2E8F0] dark:border-border/30 hover:border-foreground/30"
-          )}
-        >
-          <div className="flex items-center gap-3">
-            <div className={cn(
-              "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0",
-              purchaseMode === 'once' ? "border-foreground" : "border-foreground/30"
-            )}>
-              {purchaseMode === 'once' && <div className="w-2.5 h-2.5 rounded-full bg-foreground" />}
-            </div>
-            <span className="font-medium text-foreground">Buy once</span>
-          </div>
-          <span className="text-lg font-bold text-foreground">{basePrice.toFixed(2)} €</span>
-        </button>
-
-        {/* Subscribe & Save */}
+      {/* ═══ Purchase Options — Subscribe favored ═══ */}
+      <div className="space-y-3">
+        {/* Subscribe & Save — HIGHLIGHTED */}
         {hasSubscription && (
-          <div>
-            <button
-              onClick={() => setPurchaseMode('subscribe')}
-              className={cn(
-                "w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all text-left",
-                purchaseMode === 'subscribe'
-                  ? "border-primary bg-primary/5"
-                  : "border-[#E2E8F0] dark:border-border/30 hover:border-primary/30",
-                "rounded-b-none"
-              )}
-            >
+          <button
+            onClick={() => setPurchaseMode('subscribe')}
+            className={cn(
+              "w-full text-left rounded-2xl border-2 transition-all overflow-hidden",
+              effectiveMode === 'subscribe'
+                ? "border-primary bg-primary/5"
+                : "border-border/30 hover:border-primary/30"
+            )}
+          >
+            <div className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={cn(
                   "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0",
-                  purchaseMode === 'subscribe' ? "border-primary" : "border-foreground/30"
+                  effectiveMode === 'subscribe' ? "border-primary" : "border-foreground/30"
                 )}>
-                  {purchaseMode === 'subscribe' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                  {effectiveMode === 'subscribe' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
                 </div>
                 <div>
-                  <span className="font-medium text-foreground">Subscribe & Save</span>
+                  <span className="font-semibold text-foreground">Abonnement Mensuel</span>
                   {discountPct && (
-                    <Badge className="ml-2 bg-primary/10 text-primary border-primary/20 text-xs">
+                    <Badge className="ml-2 bg-primary/10 text-primary border-primary/20 text-xs font-semibold">
                       -{discountPct}%
                     </Badge>
                   )}
                 </div>
               </div>
               <span className="text-lg font-bold text-primary">{subscriptionPrice.toFixed(2)} €</span>
-            </button>
+            </div>
 
-            {/* Frequency selector (shown when subscribe is selected) */}
-            {purchaseMode === 'subscribe' && (
+            {effectiveMode === 'subscribe' && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="border-2 border-t-0 border-primary rounded-b-2xl bg-primary/5 p-4 space-y-3"
+                className="px-4 pb-4 space-y-3"
               >
-                <p className="text-xs text-foreground/60 font-medium">Deliver every:</p>
-                <div className="flex flex-wrap gap-2">
-                  {sellingPlans.map((plan, index) => (
-                    <button
-                      key={plan.id}
-                      onClick={() => setSelectedPlanIndex(index)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-sm transition-all border",
-                        selectedPlanIndex === index
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-background border-[#E2E8F0] dark:border-border/50 text-foreground/70 hover:border-primary/50"
-                      )}
-                    >
-                      {getDeliveryFrequency(plan)}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-xs text-foreground/50 font-light flex items-center gap-1.5">
-                  <Repeat weight="light" className="w-3.5 h-3.5" />
-                  Free shipping • Cancel anytime
+                <p className="text-sm text-foreground/60 font-light pl-8">
+                  Livraison gratuite, ajustable à tout moment avec l'IA.
                 </p>
+                {sellingPlans.length > 1 && (
+                  <div className="flex flex-wrap gap-2 pl-8">
+                    {sellingPlans.map((plan, index) => (
+                      <span
+                        key={plan.id}
+                        role="button"
+                        onClick={(e) => { e.stopPropagation(); setSelectedPlanIndex(index); }}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-sm transition-all border cursor-pointer",
+                          selectedPlanIndex === index
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-background border-border/50 text-foreground/70 hover:border-primary/50"
+                        )}
+                      >
+                        {getDeliveryFrequency(plan)}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             )}
-          </div>
+          </button>
         )}
+
+        {/* Buy Once — neutral & understated */}
+        <button
+          onClick={() => setPurchaseMode('once')}
+          className="w-full flex items-center justify-between py-3 px-1 text-left group"
+        >
+          <div className="flex items-center gap-3">
+            <div className={cn(
+              "w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0",
+              effectiveMode === 'once' ? "border-foreground/60" : "border-foreground/20"
+            )}>
+              {effectiveMode === 'once' && <div className="w-2 h-2 rounded-full bg-foreground/60" />}
+            </div>
+            <span className="text-sm text-foreground/50 font-light group-hover:text-foreground/70 transition-colors">
+              Achat unique
+            </span>
+          </div>
+          <span className="text-sm text-foreground/50 font-light">{basePrice.toFixed(2)} €</span>
+        </button>
       </div>
 
       {/* CTA Button */}
@@ -297,9 +273,9 @@ export function ProductPurchaseBox({
           "w-full flex items-center justify-center gap-2 px-6 h-14 rounded-2xl text-base font-semibold transition-all",
           justAdded
             ? "bg-green-500/20 text-green-600 border border-green-500/30"
-            : purchaseMode === 'subscribe'
+            : effectiveMode === 'subscribe'
               ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-              : "bg-[#0B1220] hover:bg-[#0B1220]/90 text-white dark:bg-foreground dark:text-background",
+              : "bg-foreground hover:bg-foreground/90 text-background",
           "disabled:opacity-50 disabled:cursor-not-allowed"
         )}
       >
@@ -308,17 +284,17 @@ export function ProductPurchaseBox({
         ) : justAdded ? (
           <>
             <Check weight="bold" className="w-5 h-5" />
-            Added!
+            Ajouté !
           </>
-        ) : purchaseMode === 'subscribe' ? (
+        ) : effectiveMode === 'subscribe' ? (
           <>
             <Repeat weight="bold" className="w-5 h-5" />
-            Add to pack
+            Démarrer ma routine
           </>
         ) : (
           <>
             <ShoppingCartSimple weight="bold" className="w-5 h-5" />
-            Add to cart
+            Ajouter au panier
           </>
         )}
       </motion.button>
@@ -326,7 +302,7 @@ export function ProductPurchaseBox({
       {/* Ask VitaSync */}
       <button className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
         <ChatCircleDots weight="light" className="w-4 h-4" />
-        Ask VitaSync about this
+        Demander à VitaSync
       </button>
 
       {/* Certifications */}

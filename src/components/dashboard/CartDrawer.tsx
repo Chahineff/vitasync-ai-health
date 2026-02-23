@@ -7,10 +7,12 @@ import {
   Trash, 
   ShoppingCart, 
   ArrowSquareOut,
-  SpinnerGap 
+  SpinnerGap,
+  Repeat,
 } from '@phosphor-icons/react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useCartStore } from '@/stores/cartStore';
+import { Badge } from '@/components/ui/badge';
 
 interface CartDrawerProps {
   children: ReactNode;
@@ -97,6 +99,16 @@ export function CartDrawer({ children }: CartDrawerProps) {
                           <p className="text-xs text-foreground/60 font-light">
                             {item.selectedOptions.map(o => o.value).join(' • ')}
                           </p>
+                        )}
+                        {item.sellingPlanName ? (
+                          <Badge className="mt-1 bg-primary/10 text-primary border-primary/20 text-[10px] px-1.5 py-0 gap-1">
+                            <Repeat weight="bold" className="w-2.5 h-2.5" />
+                            {item.sellingPlanName}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="mt-1 text-[10px] px-1.5 py-0 text-foreground/40 border-foreground/10">
+                            One-time
+                          </Badge>
                         )}
                         <p className="text-sm font-semibold text-foreground mt-1">
                           {parseFloat(item.price.amount).toFixed(2)} {item.price.currencyCode}

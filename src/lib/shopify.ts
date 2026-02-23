@@ -1,6 +1,31 @@
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+// ═══════════════ Selling Plan Types ═══════════════
+
+export interface SellingPlanPriceAdjustment {
+  adjustmentValue: {
+    adjustmentPercentage?: number;
+    adjustmentAmount?: { amount: string; currencyCode: string };
+  };
+}
+
+export interface SellingPlan {
+  id: string;
+  name: string;
+  options: Array<{ name: string; value: string }>;
+  priceAdjustments: SellingPlanPriceAdjustment[];
+}
+
+export interface SellingPlanGroup {
+  name: string;
+  sellingPlans: {
+    edges: Array<{ node: SellingPlan }>;
+  };
+}
+
+// ═══════════════ Product Types ═══════════════
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -44,6 +69,9 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }>;
+    sellingPlanGroups?: {
+      edges: Array<{ node: SellingPlanGroup }>;
+    };
   };
 }
 
@@ -91,6 +119,9 @@ export interface ProductDetail {
     name: string;
     values: string[];
   }>;
+  sellingPlanGroups?: {
+    edges: Array<{ node: SellingPlanGroup }>;
+  };
   benefitsMetafield: { value: string; type: string } | null;
   ingredientsMetafield: { value: string; type: string } | null;
   reviewRating: { value: string; type: string } | null;
@@ -106,7 +137,8 @@ export interface ProductGroup {
   }>;
 }
 
-// Storefront API helper function — proxied through backend to avoid 401
+// ═══════════════ API Helper ═══════════════
+
 export async function storefrontApiRequest(query: string, variables: Record<string, unknown> = {}) {
   const { data, error } = await supabase.functions.invoke('shopify-storefront-proxy', {
     body: { query, variables },
@@ -124,7 +156,35 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   return data;
 }
 
-// GraphQL Queries - NOTE: sellingPlanGroups removed to avoid permission issues
+// ═══════════════ Selling Plan Fragment ═══════════════
+
+const SELLING_PLAN_FRAGMENT = `
+  sellingPlanGroups(first: 3) {
+    edges {
+      node {
+        name
+        sellingPlans(first: 10) {
+          edges {
+            node {
+              id
+              name
+              options { name value }
+              priceAdjustments {
+                adjustmentValue {
+                  ... on SellingPlanPercentagePriceAdjustment { adjustmentPercentage }
+                  ... on SellingPlanFixedAmountPriceAdjustment { adjustmentAmount { amount currencyCode } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// ═══════════════ GraphQL Queries ═══════════════
+
 const PRODUCTS_QUERY = `
   query GetProducts($first: Int!, $query: String, $after: String) {
     products(first: $first, query: $query, after: $after) {
@@ -175,11 +235,31 @@ const PRODUCTS_QUERY = `
             name
             values
           }
+          ${SELLING_PLAN_FRAGMENT}
         }
       }
     }
   }
 `;
+
+// Fallback without selling plans (in case of permission issues)
+const PRODUCTS_QUERY_FALLBACK = `
+  query GetProducts($first: Int!, $query: String, $after: String) {
+    products(first: $first, query: $query, after: $after) {
+      pageInfo { hasNextPage endCursor }
+      edges {
+        node {
+          id title description handle productType vendor
+          priceRange { minVariantPrice { amount currencyCode } }
+          images(first: 5) { edges { node { url altText } } }
+          variants(first: 10) { edges { node { id title price { amount currencyCode } availableForSale selectedOptions { name value } } } }
+          options { name values }
+        }
+      }
+    }
+  }
+`;
+
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
     productByHandle(handle: $handle) {
@@ -197,7 +277,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
           currencyCode
         }
       }
-      images(first: 10) {
+      images(first: 20) {
         edges {
           node {
             url
@@ -226,6 +306,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      ${SELLING_PLAN_FRAGMENT}
       benefitsMetafield: metafield(namespace: "custom", key: "benefits") {
         value
         type
@@ -242,6 +323,22 @@ const PRODUCT_BY_HANDLE_QUERY = `
         value
         type
       }
+    }
+  }
+`;
+
+const PRODUCT_BY_HANDLE_QUERY_FALLBACK = `
+  query GetProductByHandle($handle: String!) {
+    productByHandle(handle: $handle) {
+      id title description descriptionHtml handle productType vendor tags
+      priceRange { minVariantPrice { amount currencyCode } }
+      images(first: 20) { edges { node { url altText } } }
+      variants(first: 20) { edges { node { id title price { amount currencyCode } availableForSale selectedOptions { name value } } } }
+      options { name values }
+      benefitsMetafield: metafield(namespace: "custom", key: "benefits") { value type }
+      ingredientsMetafield: metafield(namespace: "custom", key: "ingredients") { value type }
+      reviewRating: metafield(namespace: "reviews", key: "rating") { value type }
+      reviewCount: metafield(namespace: "reviews", key: "rating_count") { value type }
     }
   }
 `;
@@ -291,16 +388,20 @@ const PRODUCT_BY_ID_QUERY = `
           name
           values
         }
+        ${SELLING_PLAN_FRAGMENT}
       }
     }
   }
 `;
 
+// ═══════════════ Data Fetching ═══════════════
+
 export async function fetchProducts(first: number = 50, query?: string): Promise<ShopifyProduct[]> {
   const allProducts: ShopifyProduct[] = [];
   let hasNextPage = true;
   let afterCursor: string | null = null;
-  const pageSize = Math.min(first, 250); // Storefront API max is 250
+  const pageSize = Math.min(first, 250);
+  let useFallback = false;
 
   while (hasNextPage) {
     const remaining = first - allProducts.length;
@@ -310,26 +411,40 @@ export async function fetchProducts(first: number = 50, query?: string): Promise
     const variables: Record<string, unknown> = { first: batchSize, query };
     if (afterCursor) variables.after = afterCursor;
 
-    const data = await storefrontApiRequest(PRODUCTS_QUERY, variables);
-    const edges = data?.data?.products?.edges || [];
-    const pageInfo = data?.data?.products?.pageInfo;
+    try {
+      const activeQuery = useFallback ? PRODUCTS_QUERY_FALLBACK : PRODUCTS_QUERY;
+      const data = await storefrontApiRequest(activeQuery, variables);
+      const edges = data?.data?.products?.edges || [];
+      const pageInfo = data?.data?.products?.pageInfo;
 
-    allProducts.push(...edges);
-
-    hasNextPage = pageInfo?.hasNextPage === true && allProducts.length < first;
-    afterCursor = pageInfo?.endCursor || null;
+      allProducts.push(...edges);
+      hasNextPage = pageInfo?.hasNextPage === true && allProducts.length < first;
+      afterCursor = pageInfo?.endCursor || null;
+    } catch (error) {
+      if (!useFallback) {
+        console.warn('Selling plans query failed, retrying without:', error);
+        useFallback = true;
+        continue;
+      }
+      throw error;
+    }
   }
 
   return allProducts;
 }
 
 export async function fetchProductByHandle(handle: string): Promise<ProductDetail | null> {
-  const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
-  return data?.data?.productByHandle || null;
+  try {
+    const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
+    return data?.data?.productByHandle || null;
+  } catch (error) {
+    console.warn('Product query with selling plans failed, retrying without:', error);
+    const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY_FALLBACK, { handle });
+    return data?.data?.productByHandle || null;
+  }
 }
 
 export async function fetchProductById(productId: string): Promise<ShopifyProduct | null> {
-  // Build full GraphQL ID if only numeric ID provided
   const fullId = productId.startsWith('gid://') 
     ? productId 
     : `gid://shopify/Product/${productId}`;
@@ -338,26 +453,21 @@ export async function fetchProductById(productId: string): Promise<ShopifyProduc
   const product = data?.data?.node;
   
   if (!product) return null;
-  
-  // Wrap in the expected format
   return { node: product };
 }
 
-// Group products by base name (e.g., "Whey Protein" groups Chocolate and Vanilla variants)
+// Group products by base name
 export function groupProductsByBaseName(products: ShopifyProduct[]): ProductGroup[] {
   const groups: Map<string, ProductGroup> = new Map();
-  
-  // Pattern to detect flavor variants in product titles
   const flavorPatterns = [
-    /\s*\(([^)]+)\)\s*$/,  // Matches "(Chocolate)" at end
-    /\s*-\s*([^-]+)\s*$/,  // Matches "- Chocolate" at end
+    /\s*\(([^)]+)\)\s*$/,
+    /\s*-\s*([^-]+)\s*$/,
   ];
   
   for (const product of products) {
     let baseTitle = product.node.title;
     let flavor = 'Default';
     
-    // Try to extract flavor from title
     for (const pattern of flavorPatterns) {
       const match = product.node.title.match(pattern);
       if (match) {
@@ -368,11 +478,7 @@ export function groupProductsByBaseName(products: ShopifyProduct[]): ProductGrou
     }
     
     if (!groups.has(baseTitle)) {
-      groups.set(baseTitle, {
-        baseTitle,
-        products: [],
-        variants: []
-      });
+      groups.set(baseTitle, { baseTitle, products: [], variants: [] });
     }
     
     const group = groups.get(baseTitle)!;
@@ -383,7 +489,56 @@ export function groupProductsByBaseName(products: ShopifyProduct[]): ProductGrou
   return Array.from(groups.values());
 }
 
-// Cart Queries
+// ═══════════════ Selling Plan Helpers ═══════════════
+
+export function getFirstSellingPlan(product: ShopifyProduct | ProductDetail): SellingPlan | null {
+  const groups = 'node' in product 
+    ? (product as ShopifyProduct).node.sellingPlanGroups?.edges 
+    : (product as ProductDetail).sellingPlanGroups?.edges;
+  if (!groups?.length) return null;
+  return groups[0].node.sellingPlans.edges[0]?.node || null;
+}
+
+export function getSellingPlans(product: ShopifyProduct | ProductDetail): SellingPlan[] {
+  const groups = 'node' in product
+    ? (product as ShopifyProduct).node.sellingPlanGroups?.edges
+    : (product as ProductDetail).sellingPlanGroups?.edges;
+  if (!groups?.length) return [];
+  const plans: SellingPlan[] = [];
+  for (const group of groups) {
+    for (const edge of group.node.sellingPlans.edges) {
+      plans.push(edge.node);
+    }
+  }
+  return plans;
+}
+
+export function calculateSubscriptionPrice(basePrice: number, plan: SellingPlan): number {
+  if (!plan.priceAdjustments?.length) return basePrice;
+  const adj = plan.priceAdjustments[0].adjustmentValue;
+  if (adj.adjustmentPercentage != null) {
+    return basePrice * (1 - adj.adjustmentPercentage / 100);
+  }
+  if (adj.adjustmentAmount?.amount != null) {
+    return basePrice - parseFloat(adj.adjustmentAmount.amount);
+  }
+  return basePrice;
+}
+
+export function getDiscountPercentage(plan: SellingPlan): number | null {
+  if (!plan.priceAdjustments?.length) return null;
+  const adj = plan.priceAdjustments[0].adjustmentValue;
+  if (adj.adjustmentPercentage != null) return adj.adjustmentPercentage;
+  return null;
+}
+
+export function getDeliveryFrequency(plan: SellingPlan): string {
+  const opt = plan.options?.find(o => o.name.toLowerCase().includes('delivery') || o.name.toLowerCase().includes('frequency') || o.name.toLowerCase().includes('billing'));
+  return opt?.value || plan.name || '';
+}
+
+// ═══════════════ Cart ═══════════════
+
 export const CART_QUERY = `
   query cart($id: ID!) {
     cart(id: $id) { id totalQuantity }
@@ -433,33 +588,6 @@ export const CART_LINES_REMOVE_MUTATION = `
   }
 `;
 
-// Mutation for creating cart with selling plans (subscriptions)
-export const CART_CREATE_WITH_SELLING_PLAN_MUTATION = `
-  mutation cartCreateWithSellingPlan($input: CartInput!) {
-    cartCreate(input: $input) {
-      cart {
-        id
-        checkoutUrl
-        lines(first: 100) {
-          edges {
-            node {
-              id
-              merchandise {
-                ... on ProductVariant { id }
-              }
-              sellingPlanAllocation {
-                sellingPlan { id name }
-              }
-            }
-          }
-        }
-      }
-      userErrors { field message }
-    }
-  }
-`;
-
-
 function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
@@ -482,11 +610,16 @@ export interface CartItem {
   price: { amount: string; currencyCode: string };
   quantity: number;
   selectedOptions: Array<{ name: string; value: string }>;
+  sellingPlanId?: string;
+  sellingPlanName?: string;
 }
 
 export async function createShopifyCart(item: CartItem): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
+  const line: Record<string, unknown> = { quantity: item.quantity, merchandiseId: item.variantId };
+  if (item.sellingPlanId) line.sellingPlanId = item.sellingPlanId;
+
   const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
-    input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
+    input: { lines: [line] },
   });
 
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
@@ -504,9 +637,12 @@ export async function createShopifyCart(item: CartItem): Promise<{ cartId: strin
 }
 
 export async function addLineToShopifyCart(cartId: string, item: CartItem): Promise<{ success: boolean; lineId?: string; cartNotFound?: boolean }> {
+  const line: Record<string, unknown> = { quantity: item.quantity, merchandiseId: item.variantId };
+  if (item.sellingPlanId) line.sellingPlanId = item.sellingPlanId;
+
   const data = await storefrontApiRequest(CART_LINES_ADD_MUTATION, {
     cartId,
-    lines: [{ quantity: item.quantity, merchandiseId: item.variantId }],
+    lines: [line],
   });
 
   const userErrors = data?.data?.cartLinesAdd?.userErrors || [];
@@ -551,7 +687,7 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
   return { success: true };
 }
 
-// Create a subscription cart with selling plans
+// Create a subscription cart with selling plans (legacy compat)
 export interface SubscriptionCartItem {
   variantId: string;
   quantity: number;
@@ -567,7 +703,7 @@ export async function createSubscriptionCart(
     ...(item.sellingPlanId && { sellingPlanId: item.sellingPlanId })
   }));
 
-  const data = await storefrontApiRequest(CART_CREATE_WITH_SELLING_PLAN_MUTATION, {
+  const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
     input: { lines }
   });
 

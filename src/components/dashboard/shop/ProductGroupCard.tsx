@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCartSimple, Star, Check, SpinnerGap } from '@phosphor-icons/react';
+import { ShoppingCartSimple, Star, Check, SpinnerGap, Repeat } from '@phosphor-icons/react';
 import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
+import { getFirstSellingPlan, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 
 interface ProductGroupCardProps {
   group: ProductGroup;
@@ -149,9 +150,32 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
 
           {/* Price & Cart */}
           <div className="flex items-center justify-between pt-2">
-            <span className="text-lg font-semibold text-foreground">
-              {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
-            </span>
+            <div>
+              <span className="text-lg font-semibold text-foreground">
+                {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
+              </span>
+              {(() => {
+                const plan = getFirstSellingPlan(displayProduct);
+                if (!plan) return null;
+                const subPrice = calculateSubscriptionPrice(parseFloat(price.amount), plan);
+                const pct = getDiscountPercentage(plan);
+                const freq = getDeliveryFrequency(plan);
+                return (
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <Repeat weight="light" className="w-3 h-3 text-primary" />
+                    <span className="text-xs text-primary font-medium">
+                      {subPrice.toFixed(2)} {price.currencyCode}
+                    </span>
+                    <span className="text-xs text-foreground/40">
+                      /{freq.toLowerCase().replace('every ', '').replace('deliver ', '')}
+                    </span>
+                    {pct && (
+                      <span className="text-[10px] text-primary/70">-{pct}%</span>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !selectedVariant?.availableForSale}

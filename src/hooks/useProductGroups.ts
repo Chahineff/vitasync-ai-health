@@ -41,53 +41,21 @@ function parseProductTitle(title: string): { baseTitle: string; flavor: string |
 
 export function useProductGroups(products: ShopifyProduct[]): ProductGroup[] {
   return useMemo(() => {
-    const groupMap = new Map<string, ShopifyProduct[]>();
-
-    // Group products by base title
-    products.forEach(product => {
-      const { baseTitle } = parseProductTitle(product.node.title);
-      const normalizedBase = baseTitle.toLowerCase().trim();
-      
-      if (!groupMap.has(normalizedBase)) {
-        groupMap.set(normalizedBase, []);
-      }
-      groupMap.get(normalizedBase)!.push(product);
+    // Each product is its own group — no merging
+    const groups: ProductGroup[] = products.map(product => {
+      const price = parseFloat(product.node.priceRange.minVariantPrice.amount);
+      return {
+        baseTitle: product.node.title,
+        products: [product],
+        primaryProduct: product,
+        flavors: [],
+        minPrice: price,
+        maxPrice: price,
+        productType: product.node.productType || '',
+      };
     });
 
-    // Convert to ProductGroup array
-    const groups: ProductGroup[] = [];
-
-    groupMap.forEach((groupProducts, _baseKey) => {
-      // Sort by title to get consistent ordering
-      groupProducts.sort((a, b) => a.node.title.localeCompare(b.node.title));
-
-      const primaryProduct = groupProducts[0];
-      const { baseTitle } = parseProductTitle(primaryProduct.node.title);
-
-      // Extract flavors
-      const flavors = groupProducts
-        .map(p => parseProductTitle(p.node.title).flavor)
-        .filter((f): f is string => f !== null);
-
-      // Calculate price range
-      const prices = groupProducts.map(p => 
-        parseFloat(p.node.priceRange.minVariantPrice.amount)
-      );
-      const minPrice = Math.min(...prices);
-      const maxPrice = Math.max(...prices);
-
-      groups.push({
-        baseTitle,
-        products: groupProducts,
-        primaryProduct,
-        flavors,
-        minPrice,
-        maxPrice,
-        productType: primaryProduct.node.productType || '',
-      });
-    });
-
-    // Sort groups by title
+    // Sort by title
     groups.sort((a, b) => a.baseTitle.localeCompare(b.baseTitle));
 
     return groups;

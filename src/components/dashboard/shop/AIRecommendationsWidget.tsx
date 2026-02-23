@@ -69,7 +69,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
   const fetchAIRecommendations = async () => {
     setLoading(true);
     try {
-      const allProducts = await fetchProducts(100);
+      const allProducts = await fetchProducts(250);
 
       const { data, error } = await supabase.functions.invoke('ai-shop-recommendations', {
         body: {}

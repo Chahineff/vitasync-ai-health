@@ -46,7 +46,7 @@ export function TutorialShopDemo() {
   const [shopifyProducts, setShopifyProducts] = useState<ShopifyProduct[]>([]);
 
   useEffect(() => {
-    fetchProducts(100).then(setShopifyProducts).catch(() => {});
+    fetchProducts(250).then(setShopifyProducts).catch(() => {});
   }, []);
 
   return (

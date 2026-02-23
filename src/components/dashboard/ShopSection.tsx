@@ -73,7 +73,7 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const data = await fetchProducts(100);
+      const data = await fetchProducts(250);
       setProducts(data);
     } catch (error) {
       console.error('Failed to load products:', error);

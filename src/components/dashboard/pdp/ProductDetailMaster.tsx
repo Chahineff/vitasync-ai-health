@@ -80,7 +80,7 @@ export function ProductDetailMaster({
       try {
         const [productData, productsData] = await Promise.all([
           fetchProductByHandle(currentHandle),
-          fetchProducts(100)
+          fetchProducts(250)
         ]);
         
         setAllProducts(productsData);

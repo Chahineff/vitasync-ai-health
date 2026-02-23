@@ -147,8 +147,12 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
 
 // GraphQL Queries - NOTE: sellingPlanGroups removed to avoid permission issues
 const PRODUCTS_QUERY = `
-  query GetProducts($first: Int!, $query: String) {
-    products(first: $first, query: $query) {
+  query GetProducts($first: Int!, $query: String, $after: String) {
+    products(first: $first, query: $query, after: $after) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
           id
@@ -314,8 +318,30 @@ const PRODUCT_BY_ID_QUERY = `
 `;
 
 export async function fetchProducts(first: number = 50, query?: string): Promise<ShopifyProduct[]> {
-  const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
-  return data?.data?.products?.edges || [];
+  const allProducts: ShopifyProduct[] = [];
+  let hasNextPage = true;
+  let afterCursor: string | null = null;
+  const pageSize = Math.min(first, 250); // Storefront API max is 250
+
+  while (hasNextPage) {
+    const remaining = first - allProducts.length;
+    const batchSize = Math.min(pageSize, remaining);
+    if (batchSize <= 0) break;
+
+    const variables: Record<string, unknown> = { first: batchSize, query };
+    if (afterCursor) variables.after = afterCursor;
+
+    const data = await storefrontApiRequest(PRODUCTS_QUERY, variables);
+    const edges = data?.data?.products?.edges || [];
+    const pageInfo = data?.data?.products?.pageInfo;
+
+    allProducts.push(...edges);
+
+    hasNextPage = pageInfo?.hasNextPage === true && allProducts.length < first;
+    afterCursor = pageInfo?.endCursor || null;
+  }
+
+  return allProducts;
 }
 
 export async function fetchProductByHandle(handle: string): Promise<ProductDetail | null> {

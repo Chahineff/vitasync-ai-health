@@ -7,7 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Robot, Storefront, Gear, Question, SignOut, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { Robot, Storefront, Gear, Question, SignOut, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight, Package } from "@phosphor-icons/react";
+import { MyStackSection } from "@/components/dashboard/mystack";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
 import QuickCoachWidget from "@/components/dashboard/QuickCoachWidget";
@@ -22,7 +23,7 @@ import { MobileBottomNav } from "@/components/dashboard/MobileBottomNav";
 import { DashboardTutorial } from "@/components/dashboard/DashboardTutorial";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
-type Section = "home" | "coach" | "supplements" | "shop" | "product" | "settings" | "help";
+type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "settings" | "help";
 // Custom VitaSync icon component for Coach IA
 const VitaSyncIcon = ({
   className,
@@ -81,6 +82,10 @@ const Dashboard = () => {
     id: "shop" as Section,
     label: t("dashboard.shop"),
     icon: Storefront
+  }, {
+    id: "mystack" as Section,
+    label: "Mon Stack",
+    icon: Package
   }];
   const generalItems = [{
     id: "settings" as Section,
@@ -380,6 +385,19 @@ const Dashboard = () => {
             opacity: 0
           }} className="h-full">
                   <ProductDetailSection handle={selectedProductHandle} onBack={handleBackToShop} onProductSelect={handleProductSelect} />
+                </motion.div>}
+              {activeSection === "mystack" && <motion.div key="mystack" initial={{
+            opacity: 0,
+            scale: 0.97,
+            filter: "blur(6px)"
+          }} animate={{
+            opacity: 1,
+            scale: 1,
+            filter: "blur(0px)"
+          }} exit={{
+            opacity: 0
+          }}>
+                  <MyStackSection />
                 </motion.div>}
               {activeSection === "settings" && <motion.div key="settings" initial={{
             opacity: 0,

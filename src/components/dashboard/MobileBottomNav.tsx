@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { House, FirstAidKit, Storefront, Gear } from '@phosphor-icons/react';
+import { House, FirstAidKit, Storefront, Gear, Package } from '@phosphor-icons/react';
 import { useTranslation } from '@/hooks/useTranslation';
 
-type Section = "home" | "coach" | "supplements" | "shop" | "product" | "settings" | "help";
+type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "settings" | "help";
 
 const VitaSyncIcon = ({ className }: { className?: string }) => (
   <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="Coach IA" className={className || "w-5 h-5"} />
@@ -22,7 +22,7 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
     { id: "coach" as Section, labelKey: "dashboard.coach", icon: VitaSyncIcon },
     { id: "supplements" as Section, labelKey: "dashboard.supplements", icon: FirstAidKit },
     { id: "shop" as Section, labelKey: "dashboard.shop", icon: Storefront },
-    { id: "settings" as Section, labelKey: "dashboard.settings", icon: Gear },
+    { id: "mystack" as Section, labelKey: "dashboard.mystack", icon: Package },
   ];
 
   const displaySection = activeSection === "product" ? "shop" : activeSection;

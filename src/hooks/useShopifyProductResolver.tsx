@@ -14,7 +14,7 @@ let allProductsPromise: Promise<ShopifyProduct[]> | null = null;
 
 function ensureAllProducts(): Promise<ShopifyProduct[]> {
   if (!allProductsPromise) {
-    allProductsPromise = fetchProducts(100).then(products => {
+    allProductsPromise = fetchProducts(250).then(products => {
       products.forEach(p => {
         const gid = p.node.id;
         const numericId = gid.split('/').pop() || '';

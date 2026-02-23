@@ -32,7 +32,7 @@ export function AddSupplementModal({ open, onClose, onAdd }: AddSupplementModalP
   useEffect(() => {
     if (open) {
       setLoading(true);
-      fetchProducts(100).then(p => {
+      fetchProducts(250).then(p => {
         setProducts(p);
         setLoading(false);
       }).catch(() => setLoading(false));

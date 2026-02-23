@@ -302,7 +302,7 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -15 }}
                     transition={{ duration: 0.25 }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                    className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
                   >
                     {paginatedGroups.map((group, index) => (
                       <motion.div

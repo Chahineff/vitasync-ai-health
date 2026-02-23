@@ -72,17 +72,9 @@ serve(async (req) => {
 
     if (now.getTime() + bufferMs >= expiresAt.getTime()) {
       console.log("Token expired, refreshing...");
-      // Fetch discovery config for token endpoint
-      const discoveryRes = await fetch(
-        `https://shopify.com/${SHOP_ID}/.well-known/openid-configuration`
-      );
-      if (!discoveryRes.ok) {
-        const text = await discoveryRes.text();
-        throw new Error(`Discovery failed: ${text}`);
-      }
-      const config = await discoveryRes.json();
+      const tokenEndpoint = `https://shopify.com/authentication/${SHOP_ID}/oauth/token`;
 
-      const refreshRes = await fetch(config.token_endpoint, {
+      const refreshRes = await fetch(tokenEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({

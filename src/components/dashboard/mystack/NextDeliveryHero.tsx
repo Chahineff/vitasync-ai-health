@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CalendarBlank, Clock, Spinner } from '@phosphor-icons/react';
+import { CalendarBlank, Clock, Spinner, ArrowSquareOut } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -81,6 +81,20 @@ export function NextDeliveryHero({ index, customer }: NextDeliveryHeroProps) {
               onClick={() => {}}
             >
               Mettre en pause
+            </Button>
+            <Button
+              variant="ghost"
+              className="rounded-xl transition-all duration-200 ease-in-out"
+              asChild
+            >
+              <a
+                href="https://shopify.com/99633365360/account/pages/6971b1a1-27f6-4c27-b8b0-3009fd3b921d"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ArrowSquareOut weight="bold" className="w-4 h-4 mr-1" />
+                Gérer mes abonnements
+              </a>
             </Button>
           </div>
         </div>

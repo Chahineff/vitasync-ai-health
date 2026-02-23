@@ -7,21 +7,12 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Cache discovery config
-let discoveryConfig: Record<string, string> | null = null;
-
-async function getDiscoveryConfig(shopId: string): Promise<Record<string, string>> {
-  if (discoveryConfig) return discoveryConfig;
-  
-  const res = await fetch(
-    `https://shopify.com/${shopId}/.well-known/openid-configuration`
-  );
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Discovery failed (${res.status}): ${text}`);
-  }
-  discoveryConfig = await res.json();
-  return discoveryConfig!;
+function getEndpoints(shopId: string) {
+  return {
+    authorization_endpoint: `https://shopify.com/authentication/${shopId}/oauth/authorize`,
+    token_endpoint: `https://shopify.com/authentication/${shopId}/oauth/token`,
+    logout_endpoint: `https://shopify.com/authentication/${shopId}/logout`,
+  };
 }
 
 serve(async (req) => {
@@ -46,8 +37,7 @@ serve(async (req) => {
 
     // ── Action: get-auth-url ──
     if (action === "get-auth-url") {
-      const config = await getDiscoveryConfig(SHOP_ID);
-      const authEndpoint = config.authorization_endpoint;
+      const { authorization_endpoint: authEndpoint } = getEndpoints(SHOP_ID);
 
       const params = new URLSearchParams({
         client_id: CLIENT_ID,
@@ -98,8 +88,7 @@ serve(async (req) => {
         );
       }
 
-      const config = await getDiscoveryConfig(SHOP_ID);
-      const tokenEndpoint = config.token_endpoint;
+      const { token_endpoint: tokenEndpoint } = getEndpoints(SHOP_ID);
 
       const tokenRes = await fetch(tokenEndpoint, {
         method: "POST",
@@ -176,8 +165,7 @@ serve(async (req) => {
         );
       }
 
-      const config = await getDiscoveryConfig(SHOP_ID);
-      const tokenEndpoint = config.token_endpoint;
+      const { token_endpoint: tokenEndpoint } = getEndpoints(SHOP_ID);
 
       const refreshRes = await fetch(tokenEndpoint, {
         method: "POST",

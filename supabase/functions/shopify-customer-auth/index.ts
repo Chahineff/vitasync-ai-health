@@ -7,21 +7,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Cache discovery config
-let discoveryConfig: Record<string, string> | null = null;
-
-async function getDiscoveryConfig(shopId: string): Promise<Record<string, string>> {
-  if (discoveryConfig) return discoveryConfig;
-  
-  const res = await fetch(
-    `https://shopify.com/${shopId}/.well-known/openid-configuration`
-  );
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Discovery failed (${res.status}): ${text}`);
-  }
-  discoveryConfig = await res.json();
-  return discoveryConfig!;
+function getOAuthEndpoints(shopId: string) {
+  const base = `https://shopify.com/authentication/${shopId}`;
+  return {
+    authorization_endpoint: `${base}/oauth/authorize`,
+    token_endpoint: `${base}/oauth/token`,
+    end_session_endpoint: `${base}/logout`,
+    jwks_uri: `${base}/.well-known/jwks.json`,
+  };
 }
 
 serve(async (req) => {
@@ -46,7 +39,7 @@ serve(async (req) => {
 
     // ── Action: get-auth-url ──
     if (action === "get-auth-url") {
-      const config = await getDiscoveryConfig(SHOP_ID);
+      const config = getOAuthEndpoints(SHOP_ID);
       const authEndpoint = config.authorization_endpoint;
 
       const params = new URLSearchParams({
@@ -98,7 +91,7 @@ serve(async (req) => {
         );
       }
 
-      const config = await getDiscoveryConfig(SHOP_ID);
+      const config = getOAuthEndpoints(SHOP_ID);
       const tokenEndpoint = config.token_endpoint;
 
       const tokenRes = await fetch(tokenEndpoint, {
@@ -176,7 +169,7 @@ serve(async (req) => {
         );
       }
 
-      const config = await getDiscoveryConfig(SHOP_ID);
+      const config = getOAuthEndpoints(SHOP_ID);
       const tokenEndpoint = config.token_endpoint;
 
       const refreshRes = await fetch(tokenEndpoint, {

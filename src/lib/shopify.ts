@@ -370,17 +370,132 @@ const PRODUCT_BY_ID_QUERY = `
 `;
 
 // Fallback queries without sellingPlanGroups (in case scope is missing)
-const PRODUCTS_QUERY_FALLBACK = PRODUCTS_QUERY.replace(/sellingPlanGroups[\s\S]*?}\s*}\s*}\s*}\s*}(\s*options)/, '$1');
+const PRODUCTS_QUERY_FALLBACK = `
+  query GetProducts($first: Int!, $query: String) {
+    products(first: $first, query: $query) {
+      edges {
+        node {
+          id
+          title
+          description
+          handle
+          productType
+          vendor
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          images(first: 5) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          variants(first: 10) {
+            edges {
+              node {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                availableForSale
+                selectedOptions {
+                  name
+                  value
+                }
+              }
+            }
+          }
+          options {
+            name
+            values
+          }
+        }
+      }
+    }
+  }
+`;
+
+const PRODUCT_BY_HANDLE_QUERY_FALLBACK = `
+  query GetProductByHandle($handle: String!) {
+    productByHandle(handle: $handle) {
+      id
+      title
+      description
+      descriptionHtml
+      handle
+      productType
+      vendor
+      tags
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      images(first: 20) {
+        edges {
+          node {
+            url
+            altText
+          }
+        }
+      }
+      variants(first: 20) {
+        edges {
+          node {
+            id
+            title
+            price {
+              amount
+              currencyCode
+            }
+            availableForSale
+            selectedOptions {
+              name
+              value
+            }
+          }
+        }
+      }
+      options {
+        name
+        values
+      }
+      benefitsMetafield: metafield(namespace: "custom", key: "benefits") {
+        value
+        type
+      }
+      ingredientsMetafield: metafield(namespace: "custom", key: "ingredients") {
+        value
+        type
+      }
+      reviewRating: metafield(namespace: "reviews", key: "rating") {
+        value
+        type
+      }
+      reviewCount: metafield(namespace: "reviews", key: "rating_count") {
+        value
+        type
+      }
+    }
+  }
+`;
 
 export async function fetchProducts(first: number = 50, query?: string): Promise<ShopifyProduct[]> {
   try {
     const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
     return data?.data?.products?.edges || [];
   } catch (error) {
-    // Fallback: retry without sellingPlanGroups if scope is missing
     console.warn('Retrying product fetch without sellingPlanGroups:', error);
     try {
-      const data = await storefrontApiRequest(PRODUCTS_QUERY.replace(/\s*sellingPlanGroups[\s\S]*?}\s*}\s*}\s*}\s*}/, ''), { first, query });
+      const data = await storefrontApiRequest(PRODUCTS_QUERY_FALLBACK, { first, query });
       return data?.data?.products?.edges || [];
     } catch (fallbackError) {
       console.error('Product fetch failed:', fallbackError);
@@ -394,10 +509,9 @@ export async function fetchProductByHandle(handle: string): Promise<ProductDetai
     const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
     return data?.data?.productByHandle || null;
   } catch (error) {
-    // Fallback: retry without sellingPlanGroups
     console.warn('Retrying product detail fetch without sellingPlanGroups:', error);
     try {
-      const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY.replace(/\s*sellingPlanGroups[\s\S]*?}\s*}\s*}\s*}\s*}/, ''), { handle });
+      const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY_FALLBACK, { handle });
       return data?.data?.productByHandle || null;
     } catch (fallbackError) {
       console.error('Product detail fetch failed:', fallbackError);

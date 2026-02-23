@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, SpinnerGap, Sparkle } from '@phosphor-icons/react';
+import { ShoppingCart, SpinnerGap, Sparkle, X } from '@phosphor-icons/react';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { CartDrawer } from './CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
@@ -208,18 +208,65 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
         </div>
       </div>
 
-      {/* Filters */}
-      <ShopFilters
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        sortOption={sortOption}
-        onSortChange={setSortOption}
-        priceRange={priceRange}
-        onPriceRangeChange={setPriceRange}
-        maxPrice={maxPrice}
-        onReset={handleReset}
-        hasActiveFilters={hasActiveFilters}
-      />
+      {/* Category Pills */}
+      <div className="overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+        <div className="flex gap-2 min-w-max">
+          {[
+            { key: 'all' as CategoryKey, label: t('shop.allCategories') },
+            { key: 'sport' as CategoryKey, label: t('shop.sport') },
+            { key: 'wellness' as CategoryKey, label: t('shop.wellness') },
+            { key: 'brain' as CategoryKey, label: t('shop.brain') },
+            { key: 'digestive' as CategoryKey, label: t('shop.digestive') },
+            { key: 'vitamins' as CategoryKey, label: t('shop.vitamins') },
+            { key: 'weight' as CategoryKey, label: t('shop.weight') },
+            { key: 'mushrooms' as CategoryKey, label: t('shop.mushrooms') },
+            { key: 'bones' as CategoryKey, label: t('shop.bones') },
+            { key: 'other' as CategoryKey, label: t('shop.other') },
+          ].map((cat) => (
+            <button
+              key={cat.key}
+              onClick={() => { setSelectedCategory(cat.key); setCurrentPage(1); }}
+              className={`px-4 h-9 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                selectedCategory === cat.key
+                  ? 'bg-accent text-accent-foreground shadow-sm'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Secondary filters row */}
+      <div className="flex flex-wrap items-center gap-3 mt-3">
+        <div className="relative">
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value as SortOption)}
+            className="appearance-none pl-3 pr-8 py-2 rounded-lg bg-muted border border-border focus:border-primary/50 focus:outline-none text-sm text-foreground cursor-pointer"
+          >
+            {[
+              { value: 'az' as SortOption, label: t('shop.sortAZ') },
+              { value: 'za' as SortOption, label: t('shop.sortZA') },
+              { value: 'price-low' as SortOption, label: t('shop.sortPriceLow') },
+              { value: 'price-high' as SortOption, label: t('shop.sortPriceHigh') },
+            ].map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {hasActiveFilters && (
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            <X className="w-4 h-4" />
+            {t('shop.resetFilters')}
+          </button>
+        )}
+      </div>
 
       {/* Products Grid */}
       <div ref={shopContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden mt-6 scroll-smooth">
@@ -255,7 +302,7 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -15 }}
                     transition={{ duration: 0.25 }}
-                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                   >
                     {paginatedGroups.map((group, index) => (
                       <motion.div

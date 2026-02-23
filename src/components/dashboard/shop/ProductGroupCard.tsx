@@ -13,13 +13,25 @@ interface ProductGroupCardProps {
   onProductClick?: (handle: string) => void;
 }
 
+function StarRating() {
+  return (
+    <div className="flex items-center gap-1">
+      {[...Array(5)].map((_, i) => (
+        <svg key={i} className="w-3.5 h-3.5" style={{ color: 'hsl(43, 96%, 56%)' }} fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+      <span className="text-xs text-muted-foreground ml-1">4.8 (120)</span>
+    </div>
+  );
+}
+
 export function ProductGroupCard({ group, recommendedByAI = false, onProductClick }: ProductGroupCardProps) {
   const { t } = useTranslation();
   const [selectedProductIndex, setSelectedProductIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const addItem = useCartStore(state => state.addItem);
 
   const { products, baseTitle, flavors } = group;
@@ -59,44 +71,44 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   };
 
   return (
-    <div 
-      onClick={() => onProductClick?.(displayProduct.node.handle)} 
-      className={onProductClick ? "cursor-pointer" : ""}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {setIsHovered(false);}}
+    <div
+      onClick={() => onProductClick?.(displayProduct.node.handle)}
+      className={onProductClick ? 'cursor-pointer' : ''}
     >
       <motion.div
         whileHover={{ y: -4 }}
-        className="glass-card rounded-2xl overflow-hidden border border-white/10 group h-full flex flex-col relative"
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        className="rounded-2xl overflow-hidden bg-card border border-border shadow-sm hover:shadow-lg transition-shadow duration-300 group h-full flex flex-col"
       >
-        {/* Image */}
-        <div className="relative aspect-square bg-gradient-to-br from-white/5 to-white/10 overflow-hidden">
+        {/* Image — 65% height */}
+        <div className="relative overflow-hidden rounded-t-2xl" style={{ aspectRatio: '3/4' }}>
+          <div className="absolute inset-0 bg-[hsl(210_40%_98%)] dark:bg-white/5" />
           <AnimatePresence mode="wait">
             {mainImage ? (
               <motion.img
                 key={displayProduct.node.id}
-                initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
                 src={mainImage.url}
                 alt={mainImage.altText || baseTitle}
-                className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-110 transition-all duration-500"
+                className="relative w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <ShoppingCartSimple weight="light" className="w-12 h-12 text-foreground/20" />
+              <div className="relative w-full h-full flex items-center justify-center">
+                <ShoppingCartSimple weight="light" className="w-12 h-12 text-muted-foreground/30" />
               </div>
             )}
           </AnimatePresence>
 
-          {/* AI Badge with bounce-in */}
+          {/* AI Badge */}
           {recommendedByAI && (
-            <motion.div 
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-              className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium"
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', bounce: 0.5, delay: 0.2 }}
+              className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-md"
             >
               <Star weight="fill" className="w-3 h-3" />
               {t('shop.recommended')}
@@ -111,18 +123,22 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-3 flex-1 flex flex-col">
-          <div className="flex-1">
-            <h3 className="font-medium text-foreground line-clamp-2">{baseTitle}</h3>
-            {displayProduct.node.productType && (
-              <p className="text-xs text-foreground/50 mt-1">{displayProduct.node.productType}</p>
-            )}
-          </div>
+        <div className="p-4 flex-1 flex flex-col gap-2">
+          {/* Star rating */}
+          <StarRating />
+
+          {/* Title */}
+          <h3 className="text-base font-bold text-foreground line-clamp-2 leading-snug">{baseTitle}</h3>
+
+          {/* Product type as subtitle */}
+          {displayProduct.node.productType && (
+            <p className="text-xs text-muted-foreground line-clamp-1">{displayProduct.node.productType}</p>
+          )}
 
           {/* Flavor Selector */}
           {hasMultipleFlavors && (
-            <div 
-              className="flex flex-wrap gap-1.5"
+            <div
+              className="flex flex-wrap gap-1.5 mt-1"
               onMouseLeave={() => setHoveredIndex(null)}
             >
               {products.slice(0, 4).map((product, index) => {
@@ -132,10 +148,10 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                     key={product.node.id}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedProductIndex(index); }}
                     onMouseEnter={(e) => { e.stopPropagation(); setHoveredIndex(index); }}
-                    className={`px-1.5 py-0.5 md:px-2 md:py-1 text-[10px] md:text-xs rounded-lg transition-colors min-h-[32px] md:min-h-0 ${
+                    className={`px-2 py-1 text-[11px] rounded-lg transition-colors ${
                       displayIndex === index
                         ? 'bg-primary text-primary-foreground'
-                        : 'bg-white/5 text-foreground/60 hover:bg-white/10'
+                        : 'bg-muted text-muted-foreground hover:bg-accent/20'
                     }`}
                   >
                     {flavor || 'Original'}
@@ -143,47 +159,51 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                 );
               })}
               {products.length > 4 && (
-                <span className="px-2 py-1 text-xs text-foreground/40">+{products.length - 4}</span>
+                <span className="px-2 py-1 text-xs text-muted-foreground">+{products.length - 4}</span>
               )}
             </div>
           )}
 
-          {/* Price & Cart */}
-          <div className="flex items-center justify-between pt-2">
-            <div>
-              <span className="text-lg font-semibold text-foreground">
-                {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
-              </span>
-              {(() => {
-                const plan = getFirstSellingPlan(displayProduct);
-                if (!plan) return null;
-                const subPrice = calculateSubscriptionPrice(parseFloat(price.amount), plan);
-                const pct = getDiscountPercentage(plan);
-                const freq = getDeliveryFrequency(plan);
-                return (
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Repeat weight="light" className="w-3 h-3 text-primary" />
-                    <span className="text-xs text-primary font-medium">
-                      {subPrice.toFixed(2)} {price.currencyCode}
-                    </span>
-                    <span className="text-xs text-foreground/40">
-                      /{freq.toLowerCase().replace('every ', '').replace('deliver ', '')}
-                    </span>
-                    {pct && (
-                      <span className="text-[10px] text-primary/70">-{pct}%</span>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Subscribe hint */}
+          {(() => {
+            const plan = getFirstSellingPlan(displayProduct);
+            if (!plan) return null;
+            const subPrice = calculateSubscriptionPrice(parseFloat(price.amount), plan);
+            const pct = getDiscountPercentage(plan);
+            const freq = getDeliveryFrequency(plan);
+            return (
+              <div className="flex items-center gap-1">
+                <Repeat weight="bold" className="w-3 h-3 text-secondary" />
+                <span className="text-xs text-secondary font-medium">
+                  {subPrice.toFixed(2)} {price.currencyCode}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  /{freq.toLowerCase().replace('every ', '').replace('deliver ', '')}
+                </span>
+                {pct && (
+                  <span className="text-[10px] font-semibold text-secondary">-{pct}%</span>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Price + Add button */}
+          <div className="flex items-center justify-between pt-1">
+            <span className="text-xl font-bold text-foreground">
+              {parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}
+            </span>
+
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !selectedVariant?.availableForSale}
-              className={`flex items-center gap-2 px-2 py-2 md:px-4 rounded-xl text-sm font-medium transition-all min-h-[44px] ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                 justAdded
-                  ? 'bg-green-500/20 text-green-500'
-                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                  : 'bg-accent text-accent-foreground hover:brightness-110'
+              } disabled:opacity-40 disabled:cursor-not-allowed`}
             >
               {isAdding ? (
                 <SpinnerGap className="w-4 h-4 animate-spin" />
@@ -192,23 +212,23 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                   <motion.div
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", bounce: 0.5 }}
+                    transition={{ type: 'spring', bounce: 0.5 }}
                   >
                     <Check weight="bold" className="w-4 h-4" />
                   </motion.div>
-                  <span className="hidden md:inline">{t('shop.added')}</span>
+                  <span className="hidden sm:inline">{t('shop.added')}</span>
                 </>
               ) : (
                 <>
                   <ShoppingCartSimple weight="bold" className="w-4 h-4" />
-                  <span className="hidden md:inline">{t('shop.addToCart')}</span>
+                  <span className="hidden sm:inline">{t('shop.addToCart')}</span>
                 </>
               )}
             </button>
           </div>
 
           {!selectedVariant?.availableForSale && (
-            <p className="text-xs text-destructive font-light">{t('shop.outOfStock')}</p>
+            <p className="text-xs text-destructive">{t('shop.outOfStock')}</p>
           )}
         </div>
       </motion.div>

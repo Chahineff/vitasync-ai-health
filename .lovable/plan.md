@@ -1,159 +1,87 @@
 
 
-## Plan : Abonnements Shopify + Correction des labels + Nouveau design PDP
+## Plan : Page "Mon Stack Mensuel" -- Gestionnaire d'Abonnement
 
-### 1. Stocker le nouveau token Storefront API
+### Vue d'ensemble
 
-Utilisation de l'outil `add_secret` pour mettre a jour le secret `SHOPIFY_STOREFRONT_ACCESS_TOKEN` avec la nouvelle cle API Headless qui a acces aux selling plans. L'utilisateur pourra coller sa cle en toute securite sans l'exposer dans le chat.
-
----
-
-### 2. Modifier le proxy pour utiliser l'API Storefront (au lieu de l'API Admin)
-
-Le proxy actuel (`shopify-storefront-proxy`) utilise l'API Admin. Avec le nouveau token Storefront ayant tous les scopes, on bascule vers l'API **Storefront** directe. Cela elimine les problemes de transformation de prix (cents vs dollars) et donne acces natif aux `sellingPlanGroups`.
-
-| Fichier | Changement |
-|---------|-----------|
-| `supabase/functions/shopify-storefront-proxy/index.ts` | Basculer vers `https://vitasync2.myshopify.com/api/2025-07/graphql.json` avec le header `X-Shopify-Storefront-Access-Token`. Supprimer toute la logique de transformation Admin. |
+Creer une nouvelle section dans le dashboard existant ("mystack") qui centralise la gestion des abonnements produits (Shopify Selling Plans), l'abonnement IA (Go AI / Premium AI), les moyens de paiement et les recommandations IA. Pour l'instant, les donnees seront mockees car l'API Customer Account GraphQL de Shopify necessite un buyer access token qui sera integre dans une phase ulterieure. L'abonnement IA (Stripe) est aussi moque en attendant l'integration.
 
 ---
 
-### 3. Ajouter les `sellingPlanGroups` aux requetes GraphQL
+### Fichiers a creer
 
-| Fichier | Changement |
-|---------|-----------|
-| `src/lib/shopify.ts` | Ajouter `sellingPlanGroups` dans `PRODUCTS_QUERY` et `PRODUCT_BY_HANDLE_QUERY`. Mettre a jour les interfaces `ShopifyProduct` et `ProductDetail` pour inclure les donnees de selling plans (nom, options de livraison, prix ajuste, frequence). |
+| # | Fichier | Description |
+|---|---------|-------------|
+| 1 | `src/components/dashboard/mystack/MyStackSection.tsx` | Composant principal de la page, orchestre les 5 sections (A-E) avec staggered fade-in |
+| 2 | `src/components/dashboard/mystack/NextDeliveryHero.tsx` | Section A : Hero "Prochaine Livraison" avec boutons Repousser / Pause |
+| 3 | `src/components/dashboard/mystack/CurrentStackList.tsx` | Section B : Liste des produits dans la box avec actions Echanger / Retirer |
+| 4 | `src/components/dashboard/mystack/AIRecommendationCard.tsx` | Section C : Recommandation IA (Gemini 2.5 Flash) avec upsell |
+| 5 | `src/components/dashboard/mystack/CoachingTierSelector.tsx` | Section D : Grille des 3 tiers d'abonnement IA |
+| 6 | `src/components/dashboard/mystack/SettingsDangerZone.tsx` | Section E : Paiement, adresse, lien annulation |
+| 7 | `src/components/dashboard/mystack/index.ts` | Barrel export |
 
-Structure des donnees selling plan ajoutees :
-```text
-sellingPlanGroups(first: 3) {
-  edges {
-    node {
-      name
-      sellingPlans(first: 5) {
-        edges {
-          node {
-            id
-            name
-            options { name value }
-            priceAdjustments {
-              adjustmentValue {
-                ... on SellingPlanPercentagePriceAdjustment { adjustmentPercentage }
-                ... on SellingPlanFixedAmountPriceAdjustment { adjustmentAmount { amount currencyCode } }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
+### Fichiers a modifier
+
+| # | Fichier | Changement |
+|---|---------|-------------|
+| 8 | `src/pages/Dashboard.tsx` | Ajouter "mystack" au type `Section`, ajouter l'entree dans `menuItems` (icone `Package`), rendre `<MyStackSection />` dans le switch AnimatePresence |
+| 9 | `src/components/dashboard/MobileBottomNav.tsx` | Ajouter "mystack" au type `Section` et dans les `navItems` (6 items au total, ou remplacement du lien settings qui passe dans "general" uniquement) |
 
 ---
 
-### 4. Corriger la detection de l'image Supplement Facts
+### Details techniques par section
 
-| Fichier | Changement |
-|---------|-----------|
-| `src/components/dashboard/pdp/IngredientsLabel.tsx` | Ameliorer l'algorithme de detection : 1) Chercher d'abord par mots-cles dans alt-text/URL (supplement, facts, label, nutrition, ingredients). 2) Si aucun resultat, chercher les patterns de fichiers (`generated-label`, `back`, `rear`). 3) Fallback: utiliser l'**avant-derniere** image du set (convention catalogue ou les labels sont a la fin). 4) Augmenter le nombre d'images chargees de 10 a 20 dans la query `PRODUCT_BY_HANDLE_QUERY`. |
+**Section A -- NextDeliveryHero**
+- Card blanche avec `rounded-[20px]`, padding 24px, shadow `0 4px 12px rgba(0,0,0,0.03)`
+- Flexbox : gauche = icone CalendarBlank + date prochaine livraison (H2) + badge "Actif" vert
+- Droite = bouton primaire "Repousser de 15 jours" (bg accent, radius 12px) + bouton outline "Mettre en pause"
+- Donnees mockees (date : 15 novembre, statut : Actif)
 
----
+**Section B -- CurrentStackList**
+- Liste verticale de produits mockes (Magnesium, Omega 3, Ashwagandha)
+- Chaque ligne : image 64x64 (radius 8px, bg `#F8FAFC`), nom (H3 18px), quantite (x1), prix
+- Boutons discrets a droite : "Echanger" et "Retirer" (text gris, hover accent)
 
-### 5. Redesigner la PDP Purchase Box avec "Buy once" / "Add to pack"
+**Section C -- AIRecommendationCard**
+- Card avec bordure `1px #00D09C` et background `rgba(0, 208, 156, 0.05)`
+- Header : icone Sparkle + "Analyse Gemini 2.5 Flash"
+- Texte dynamique base sur les check-ins recents (mocke initialement)
+- Mini-card produit suggeree avec bouton "Ajouter au Stack"
+- **Future** : appellera l'edge function `ai-shop-recommendations` avec le contexte des produits actuels du stack
 
-| Fichier | Changement |
-|---------|-----------|
-| `src/components/dashboard/pdp/ProductPurchaseBox.tsx` | Refonte complete de la zone d'achat |
+**Section D -- CoachingTierSelector**
+- Grille 3 colonnes (1 col mobile) avec gap 24px
+- Basic (0$), Go AI (7.99$), Premium AI (24.99$)
+- La carte active a une bordure 2px accent + badge "Plan Actuel"
+- Bouton "Mettre a niveau" sur la carte superieure
+- Donnees mockees (plan actuel = Go AI)
+- **Future** : connecte a Stripe pour la gestion reelle
 
-Nouveau design :
-
-```text
-+---------------------------------------------+
-|  [VitaSync]                                  |
-|  Ashwagandha KSM-66                          |
-|  [Adaptogen]                                 |
-|                                              |
-|  "Supports stress resilience and calm..."    |
-|                                              |
-|  [Lab-tested] [Clean formula] [Easy routine] |
-|                                              |
-|  --- Purchase Options ---------------------- |
-|                                              |
-|  ( ) Buy once              $24.99            |
-|  (*) Subscribe & Save      $22.49  [-10%]    |
-|      Deliver every: [30 days v]              |
-|      "Free shipping - Cancel anytime"        |
-|                                              |
-|  [====== Add to pack ==================]     |
-|                                              |
-|  [Ask VitaSync about this]                   |
-+---------------------------------------------+
-```
-
-Logique :
-- **Mode "Buy once"** : Ajoute au panier normalement (sans selling plan)
-- **Mode "Subscribe & Save"** : Ajoute au panier avec le `sellingPlanId` selectionne. Le bouton devient "Add to pack". Un selecteur de frequence (30j, 60j, 90j, etc.) apparait sous l'option
-- Le prix affiche est dynamiquement calcule selon le `priceAdjustment` du selling plan (pourcentage ou montant fixe)
-- Si aucun selling plan n'existe pour le produit, seul "Buy once" est affiche (pas de section Subscribe)
+**Section E -- SettingsDangerZone**
+- Grid 2 colonnes (1 col mobile)
+- Carte "Moyen de paiement" : icone Visa, `**** 4242`, bouton outline "Modifier"
+- Carte "Adresse de livraison" : texte adresse mockee, bouton outline "Modifier"
+- En bas centre : lien texte gris 14px "Annuler mon abonnement", hover rouge discret
 
 ---
 
-### 6. Afficher le prix d'abonnement sur les cartes produit dans la boutique
+### Navigation
 
-| Fichier | Changement |
-|---------|-----------|
-| `src/components/dashboard/shop/ProductGroupCard.tsx` | Sous le prix de base, afficher le prix avec abonnement et la frequence |
+- Nouvelle entree dans la sidebar desktop : icone `Package` (Phosphor), label "Mon Stack" entre "Shop" et "Settings"
+- Sur mobile bottom nav : ajouter l'icone `Package` -- la barre passera a 6 items. Si trop serre, on remplace l'entree "Settings" dans la bottom nav (Settings reste accessible dans le menu "General" de la sidebar desktop)
 
-Design de la carte :
+### Animations
 
-```text
-+---------------------------+
-|  [Image produit]          |
-|                           |
-|  Ashwagandha KSM-66      |
-|  Adaptogen                |
-|                           |
-|  $24.99                   |
-|  or $22.49/mo (Subscribe) |
-|                           |
-|  [Add to cart]            |
-+---------------------------+
-```
+- Toutes les sections (A-E) entrent avec un stagger de 100ms : `opacity 0->1, translateY 20px->0, duration 400ms`
+- Boutons : `transition: all 0.2s ease-in-out` sur les hover states
+- Les cartes produit dans la liste (Section B) ont un hover leger (elevation + border-color change)
 
-- Si le produit a des selling plans : afficher "or $XX.XX/mo" en vert sous le prix principal, avec la frequence la plus courte
-- Si pas de selling plan : afficher uniquement le prix de base
+### Design System applique
 
----
-
-### 7. Mettre a jour le cart store pour supporter les selling plans
-
-| Fichier | Changement |
-|---------|-----------|
-| `src/stores/cartStore.ts` | Ajouter `sellingPlanId?: string` a l'interface `CartItem`. Modifier `addItem` pour passer le `sellingPlanId` dans la mutation `cartCreate`/`cartLinesAdd` quand present. |
-| `src/lib/shopify.ts` | Modifier `createShopifyCart` et `addLineToShopifyCart` pour inclure `sellingPlanId` dans les lignes du panier. |
-
----
-
-### 8. Mettre a jour le CartDrawer pour distinguer les achats uniques des abonnements
-
-| Fichier | Changement |
-|---------|-----------|
-| `src/components/dashboard/CartDrawer.tsx` | Afficher un badge "Subscribe" ou "One-time" a cote de chaque article. Pour les articles avec selling plan, afficher la frequence de livraison. |
-
----
-
-### Resume des fichiers modifies
-
-| # | Fichier | Action |
-|---|---------|--------|
-| 1 | Secret `SHOPIFY_STOREFRONT_ACCESS_TOKEN` | Mise a jour via outil securise |
-| 2 | `supabase/functions/shopify-storefront-proxy/index.ts` | Basculer vers API Storefront |
-| 3 | `src/lib/shopify.ts` | Ajouter sellingPlanGroups aux queries + interfaces + support dans cart functions |
-| 4 | `src/components/dashboard/pdp/IngredientsLabel.tsx` | Meilleure detection image label |
-| 5 | `src/components/dashboard/pdp/ProductPurchaseBox.tsx` | Refonte Buy once / Subscribe |
-| 6 | `src/components/dashboard/shop/ProductGroupCard.tsx` | Afficher prix abonnement |
-| 7 | `src/stores/cartStore.ts` | Support sellingPlanId |
-| 8 | `src/components/dashboard/CartDrawer.tsx` | Badges abonnement/unique |
-| 9 | `supabase/functions/ai-shop-recommendations/index.ts` | Basculer aussi vers Storefront API |
+- Fond page : `#F8FAFC` (deja le bg du dashboard)
+- Cards : `bg-white rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] p-6`
+- Accent : `#00D09C` (variable `primary` deja configuree)
+- Texte principal : `#0F172A` / Secondaire : `#64748B` / Bordures : `#E2E8F0`
+- Boutons : radius 12px, transitions 200ms
+- Espacement entre sections : 48px (`space-y-12`)
 

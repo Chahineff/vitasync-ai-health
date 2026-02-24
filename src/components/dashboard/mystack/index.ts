@@ -5,3 +5,5 @@ export { AIRecommendationCard } from './AIRecommendationCard';
 export { CoachingTierSelector } from './CoachingTierSelector';
 export { SettingsDangerZone } from './SettingsDangerZone';
 export { ShopifyConnectBanner } from './ShopifyConnectBanner';
+export { OrderHistory } from './OrderHistory';
+export { AddressModal } from './AddressModal';

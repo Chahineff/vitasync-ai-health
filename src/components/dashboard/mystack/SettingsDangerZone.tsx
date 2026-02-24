@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CreditCard, MapPin, PlugsConnected } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { AddressModal } from './AddressModal';
 import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 
 interface SettingsDangerZoneProps {
@@ -9,7 +12,8 @@ interface SettingsDangerZoneProps {
 }
 
 export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps) {
-  const { isConnected, customer: customerData, disconnect } = customer;
+  const { isConnected, customer: customerData, disconnect, executeQuery, refresh } = customer;
+  const [addressModalOpen, setAddressModalOpen] = useState(false);
 
   const address = customerData?.defaultAddress;
   const hasAddress = !!address;
@@ -21,6 +25,17 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
         address.country,
       ].filter(Boolean)
     : [];
+
+  const handlePaymentClick = () => {
+    if (!isConnected) {
+      toast.info('Connectez votre compte Shopify pour gérer vos moyens de paiement');
+      return;
+    }
+    // Shopify doesn't expose payment method management via Customer Account API
+    // Redirect to the Shopify account page
+    window.open('https://shopify.com/99633365360/account', '_blank');
+    toast.info('Vous allez être redirigé vers votre espace Shopify pour gérer vos moyens de paiement');
+  };
 
   return (
     <motion.div
@@ -42,9 +57,9 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
           <Button
             variant="outline"
             className="rounded-xl transition-all duration-200 ease-in-out border-border"
-            onClick={() => {}}
+            onClick={handlePaymentClick}
           >
-            Ajouter
+            Gérer
           </Button>
         </div>
 
@@ -67,7 +82,7 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
               <Button
                 variant="outline"
                 className="rounded-xl transition-all duration-200 ease-in-out border-border"
-                onClick={() => {}}
+                onClick={() => setAddressModalOpen(true)}
               >
                 Modifier
               </Button>
@@ -80,7 +95,13 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
               <Button
                 variant="outline"
                 className="rounded-xl transition-all duration-200 ease-in-out border-border"
-                onClick={() => {}}
+                onClick={() => {
+                  if (!isConnected) {
+                    toast.info('Connectez votre compte Shopify pour ajouter une adresse');
+                    return;
+                  }
+                  setAddressModalOpen(true);
+                }}
               >
                 Ajouter
               </Button>
@@ -107,6 +128,14 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
           Annuler mon abonnement
         </button>
       </div>
+
+      <AddressModal
+        open={addressModalOpen}
+        onOpenChange={setAddressModalOpen}
+        currentAddress={customerData?.defaultAddress || null}
+        executeQuery={executeQuery}
+        onSuccess={refresh}
+      />
     </motion.div>
   );
 }

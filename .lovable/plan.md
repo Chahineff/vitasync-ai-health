@@ -1,64 +1,64 @@
 
 
-# Plan : MyStack -- Afficher les vraies donnees Shopify (zero faux contenu)
+# Plan : MyStack -- Banniere plein ecran + gestion paiement/adresse depuis VitaSync
 
-## Probleme actuel
+## Objectif
 
-Plusieurs composants de la page "Mon Stack" affichent des donnees fictives en fallback au lieu de refléter la réalité de l'utilisateur :
-
-| Composant | Donnee fictive | Correction |
-|---|---|---|
-| NextDeliveryHero | "15 Novembre", statut "Actif" | Afficher "Aucun abonnement actif" si pas de contrat |
-| CurrentStackList | Charge des produits Storefront meme sans abonnement | Afficher un etat vide "Votre box est vide" |
-| SettingsDangerZone | Adresse "12 Rue de la Sante, 75013 Paris" + VISA 4242 | Afficher "Non defini" avec bouton "Ajouter" |
-| CoachingTierSelector | "Go AI" code en dur comme plan actuel | "Gratuit" comme plan par defaut |
+1. La banniere "Connectez votre compte Shopify" occupe tout l'espace quand l'utilisateur n'est pas connecte -- seul le selecteur de coaching IA reste visible en dessous.
+2. Une fois connecte, tout le reste s'affiche (abonnement, stack, historique, parametres).
+3. L'adresse de livraison est modifiable directement depuis VitaSync (deja fait via AddressModal, a verifier).
+4. Pour le moyen de paiement : l'API Shopify Customer Account ne permet PAS de gerer les moyens de paiement (c'est reserve a l'Admin API dans un environnement PCI-compliant). On redirigera donc vers la page de compte Shopify du client, mais avec un message clair et un bouton bien integre.
 
 ---
 
 ## Modifications prevues
 
-### 1. NextDeliveryHero -- etat vide realiste
+### 1. MyStackSection -- Layout conditionnel
 
-- Si aucun abonnement actif (`subscriptions` vide ou pas de contrat ACTIVE) :
-  - Titre : "Aucun abonnement actif"
-  - Badge : "Plan gratuit"
-  - Desactiver les boutons "Repousser" et "Mettre en pause"
-  - Ajouter un CTA "Decouvrir nos formules" qui redirige vers le Shop
-- Supprimer le fallback "15 Novembre"
+Quand `!isConnected && !isLoading` :
+- Afficher la ShopifyConnectBanner en version **plein ecran** (grande, centree, avec illustration)
+- Afficher **uniquement** CoachingTierSelector en dessous
+- Masquer NextDeliveryHero, CurrentStackList, OrderHistory, SettingsDangerZone
 
-### 2. CurrentStackList -- etat vide sans faux produits
+Quand `isConnected` :
+- Masquer la banniere
+- Afficher tous les composants normalement
 
-- Quand l'utilisateur n'est pas connecte a Shopify OU n'a pas d'abonnement :
-  - Ne plus charger les produits Storefront en fallback
-  - Afficher un etat vide : "Votre prochaine box est vide. Explorez notre boutique pour constituer votre stack."
-  - Bouton "Parcourir la boutique"
-- Les produits ne s'affichent que si l'utilisateur est connecte ET a de vraies commandes/abonnements
+### 2. ShopifyConnectBanner -- Version plein ecran
 
-### 3. SettingsDangerZone -- pas de fausses donnees
+Transformer la banniere actuelle en un composant plus imposant :
+- Icone plus grande, centree
+- Titre plus grand et descriptif
+- Liste de benefices (gerer vos abonnements, suivre vos commandes, modifier vos adresses)
+- Bouton CTA proéminent au centre
+- Prend toute la largeur avec plus de padding vertical
 
-**Moyen de paiement :**
-- Si pas de donnees de paiement : afficher "Aucun moyen de paiement enregistre" avec un bouton "Ajouter"
-- Supprimer le fallback "VISA 4242"
+### 3. SettingsDangerZone -- Moyen de paiement
 
-**Adresse de livraison :**
-- Si `customerData?.defaultAddress` est null : afficher "Aucune adresse enregistree" avec un bouton "Ajouter"
-- Supprimer le fallback "12 Rue de la Sante"
+Le moyen de paiement reste un **lien externe** vers la page de compte Shopify car :
+- L'API Customer Account ne supporte pas la gestion des moyens de paiement
+- L'Admin API necessite un environnement PCI-compliant et des scopes specifiques (`write_customer_payment_methods`)
+- C'est la pratique standard de Shopify Headless
 
-### 4. CoachingTierSelector -- plan gratuit par defaut
+On ameliore le bouton avec un message clair : "Gerer sur Shopify" avec une icone de lien externe.
 
-- Changer `isCurrent` pour que "Basic" (Gratuit) soit le plan actuel par defaut
-- "Go AI" et "Premium AI" apparaissent comme options de mise a niveau
-- A terme, ce sera connecte au vrai statut d'abonnement de l'utilisateur
+### 4. AddressModal -- Verification du fonctionnement
+
+Le composant AddressModal utilise deja la mutation `customerAddressCreate` via le proxy `shopify-customer-api`. Il envoie bien les donnees a Shopify. On s'assure que :
+- La mutation utilise les bons champs (`address1`, `city`, `zip`, `territoryCode`)
+- Le `defaultAddress: true` est bien passe pour definir comme adresse par defaut
+- Le callback `onSuccess` rafraichit les donnees apres la sauvegarde
 
 ---
 
 ## Details techniques
 
 **Fichiers modifies :**
-- `src/components/dashboard/mystack/NextDeliveryHero.tsx`
-- `src/components/dashboard/mystack/CurrentStackList.tsx`
-- `src/components/dashboard/mystack/SettingsDangerZone.tsx`
-- `src/components/dashboard/mystack/CoachingTierSelector.tsx`
+- `src/components/dashboard/mystack/MyStackSection.tsx` -- layout conditionnel (banner + coaching seuls quand deconnecte)
+- `src/components/dashboard/mystack/ShopifyConnectBanner.tsx` -- version plein ecran avec avantages listes
+- `src/components/dashboard/mystack/SettingsDangerZone.tsx` -- ameliorer le bouton de paiement avec icone externe
 
-**Aucune modification de base de donnees ou d'edge function requise.** Ce sont uniquement des corrections de logique d'affichage frontend.
+**Aucune edge function ou migration necessaire.** Le proxy `shopify-customer-api` gere deja les mutations d'adresse et les queries de commandes.
+
+**Limitation technique :** La gestion des moyens de paiement directement depuis VitaSync n'est techniquement pas possible avec l'API Customer Account de Shopify. C'est une limitation de Shopify, pas de l'implementation. Le lien vers la page de compte Shopify est la solution standard pour les storefronts headless.
 

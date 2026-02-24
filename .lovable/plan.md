@@ -1,47 +1,40 @@
 
 
-# Plan : Corriger la redirection OAuth et l'acces a la page d'accueil
+# Plan : Corriger la connexion Google/Apple OAuth
 
-## Problemes identifies
+## Probleme racine
 
-### 1. Page d'accueil inaccessible quand on est connecte
-Le composant `OAuthRedirectHandler` dans `App.tsx` redirige **systematiquement** tout utilisateur connecte qui visite `/` vers `/dashboard`. Cela empeche les utilisateurs connectes d'acceder a la page d'accueil, au logo VitaSync, etc.
-
-### 2. Google OAuth ne redirige pas vers le dashboard dans un nouvel onglet
-Apres le retour OAuth sur `/`, la session n'est pas encore chargee au moment ou le handler s'execute, donc la redirection ne se fait pas.
-
----
+Quand l'utilisateur clique "Continuer avec Google" dans un nouvel onglet :
+1. La page redirige vers le broker OAuth (`/~oauth/initiate`)
+2. Google authentifie l'utilisateur (cela fonctionne -- les logs montrent des logins reussis)
+3. Le broker redirige vers la page d'accueil (`/`)
+4. Supabase detecte les tokens dans l'URL et etablit la session **avant** que React ne s'execute
+5. Quand `OAuthRedirectHandler` verifie `window.location.hash`, les tokens ont deja ete nettoyes
+6. Le flag `sessionStorage` n'est jamais pose, donc pas de redirection vers `/dashboard`
+7. L'utilisateur reste sur la page d'accueil et pense ne pas etre connecte
 
 ## Solution
 
-### Modifier `OAuthRedirectHandler` pour ne rediriger que pendant un retour OAuth
+### 1. Poser le flag AVANT la redirection OAuth (Auth.tsx)
 
-Au lieu de rediriger **tous** les utilisateurs connectes depuis `/`, on detecte un **retour OAuth** en verifiant la presence de parametres OAuth dans l'URL (`access_token` dans le hash ou `code` dans les query params). On utilise aussi un flag `sessionStorage` pour gerer le cas ou le hash est nettoye avant que le composant ne s'execute.
+Dans les boutons Google et Apple de la page `/auth`, ajouter `sessionStorage.setItem('oauth_redirect_pending', 'true')` **avant** d'appeler `lovable.auth.signInWithOAuth()`. Ainsi, quand l'utilisateur revient apres l'authentification, le flag est deja present.
 
-Logique :
-1. Au chargement, verifier si l'URL contient des indicateurs OAuth (hash `access_token` ou query `code`)
-2. Si oui, marquer un flag `sessionStorage('oauth_redirect_pending', 'true')`
-3. Quand `user` est charge et que le flag est present, rediriger vers `/dashboard` et supprimer le flag
-4. Si pas de flag OAuth, ne rien faire -- l'utilisateur peut rester sur `/`
+### 2. Simplifier OAuthRedirectHandler (App.tsx)
 
-### Modifier la page `Auth.tsx` pour ne pas rediriger automatiquement
-
-Actuellement, `Auth.tsx` (ligne 47-51) redirige aussi tout utilisateur connecte vers `/dashboard`. Si un utilisateur connecte veut revenir a la page de connexion pour changer de compte, il ne peut pas. On garde cette redirection car c'est le comportement attendu pour la page `/auth` (si on est deja connecte, on va au dashboard).
+Retirer la detection des parametres URL (hash/code) qui est peu fiable. Le handler ne fait plus qu'une seule chose : si le flag `oauth_redirect_pending` existe dans sessionStorage et que l'utilisateur est authentifie, rediriger vers `/dashboard` et supprimer le flag.
 
 ---
 
 ## Details techniques
 
-**Fichier modifie :** `src/App.tsx`
+**Fichiers modifies :**
 
-Changements dans `OAuthRedirectHandler` :
-- Detecter un retour OAuth via `window.location.hash.includes('access_token')` ou `window.location.search.includes('code=')`
-- Utiliser `sessionStorage` comme flag temporaire
-- Ne rediriger vers `/dashboard` que si le flag est actif et l'utilisateur est authentifie
-- Supprimer le flag apres la redirection
+### `src/pages/Auth.tsx`
+- Dans le `onClick` du bouton Google : ajouter `sessionStorage.setItem('oauth_redirect_pending', 'true')` avant l'appel a `lovable.auth.signInWithOAuth("google", ...)`
+- Meme chose pour le bouton Apple
 
-Cela permet :
-- Aux utilisateurs connectes de naviguer librement sur la page d'accueil
-- Au retour OAuth (Google/Apple) de rediriger correctement vers le dashboard
-- Au clic sur le logo VitaSync de fonctionner normalement
+### `src/App.tsx`
+- Supprimer le premier `useEffect` qui detecte `access_token` / `code` dans l'URL (lignes 31-37)
+- Garder le second `useEffect` qui redirige vers `/dashboard` quand le flag est present et l'utilisateur authentifie
 
+Cela garantit que le flag est toujours present au retour de l'OAuth, independamment du traitement de l'URL par Supabase.

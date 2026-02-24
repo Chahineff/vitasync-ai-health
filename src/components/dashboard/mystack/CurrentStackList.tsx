@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowsClockwise, Trash, Spinner } from '@phosphor-icons/react';
+import { Button } from '@/components/ui/button';
 import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
-import { fetchProducts, type ShopifyProduct } from '@/lib/shopify';
 
 interface StackProduct {
   id: string;
@@ -54,36 +54,11 @@ export function CurrentStackList({ index, customer }: CurrentStackListProps) {
   const [products, setProducts] = useState<StackProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch products from Shopify selling plans (subscription products)
+  // Only fetch real order data when connected to Shopify
   useEffect(() => {
     async function loadSubscriptionProducts() {
       if (!isConnected) {
-        // Fallback: Load all products with selling plans from Storefront API
-        setIsLoading(true);
-        try {
-          const allProducts = await fetchProducts(50);
-          // Filter products that have selling plan groups (subscription-eligible)
-          const subProducts = allProducts.filter(
-            p => p.node.sellingPlanGroups?.edges?.length
-          );
-
-          if (subProducts.length > 0) {
-            setProducts(
-              subProducts.slice(0, 5).map(p => ({
-                id: p.node.id,
-                name: p.node.title,
-                image: p.node.images.edges[0]?.node.url || '/placeholder.svg',
-                quantity: 1,
-                price: `${parseFloat(p.node.priceRange.minVariantPrice.amount).toFixed(2)} €`,
-                shopifyProductId: p.node.id,
-              }))
-            );
-          }
-        } catch (err) {
-          console.error('Failed to load subscription products:', err);
-        } finally {
-          setIsLoading(false);
-        }
+        setProducts([]);
         return;
       }
 
@@ -135,8 +110,15 @@ export function CurrentStackList({ index, customer }: CurrentStackListProps) {
           <span className="ml-2 text-muted-foreground">Chargement des produits...</span>
         </div>
       ) : products.length === 0 ? (
-        <div className="bg-card rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-border/50 p-8 text-center">
-          <p className="text-muted-foreground">Aucun produit dans votre stack pour le moment.</p>
+        <div className="bg-card rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-border/50 p-8 text-center space-y-3">
+          <p className="text-muted-foreground">Votre prochaine box est vide. Explorez notre boutique pour constituer votre stack.</p>
+          <Button
+            variant="outline"
+            className="rounded-xl border-border"
+            onClick={() => window.dispatchEvent(new CustomEvent('navigate-tab', { detail: 'shop' }))}
+          >
+            Parcourir la boutique
+          </Button>
         </div>
       ) : (
         <div className="bg-card rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-border/50 divide-y divide-border/50">

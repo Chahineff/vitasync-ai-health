@@ -12,14 +12,15 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
   const { isConnected, customer: customerData, disconnect } = customer;
 
   const address = customerData?.defaultAddress;
-  const addressLines = address
+  const hasAddress = !!address;
+  const addressLines = hasAddress
     ? [
         address.address1,
         address.address2,
         [address.zip, address.city].filter(Boolean).join(' '),
         address.country,
       ].filter(Boolean)
-    : ['12 Rue de la Santé', '75013 Paris, France'];
+    : [];
 
   return (
     <motion.div
@@ -35,18 +36,15 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
             <CreditCard weight="duotone" className="w-6 h-6 text-foreground/70" />
             <h3 className="text-lg font-semibold text-foreground">Moyen de paiement</h3>
           </div>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-7 bg-muted rounded flex items-center justify-center">
-              <span className="text-xs font-bold text-muted-foreground">VISA</span>
-            </div>
-            <span className="text-base text-foreground font-mono">•••• 4242</span>
-          </div>
+          <p className="text-base text-muted-foreground mb-4">
+            Aucun moyen de paiement enregistré
+          </p>
           <Button
             variant="outline"
             className="rounded-xl transition-all duration-200 ease-in-out border-border"
             onClick={() => {}}
           >
-            Modifier
+            Ajouter
           </Button>
         </div>
 
@@ -56,21 +54,38 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
             <MapPin weight="duotone" className="w-6 h-6 text-foreground/70" />
             <h3 className="text-lg font-semibold text-foreground">Adresse de livraison</h3>
           </div>
-          <p className="text-base text-muted-foreground mb-4 leading-relaxed">
-            {addressLines.map((line, i) => (
-              <span key={i}>
-                {line}
-                {i < addressLines.length - 1 && <br />}
-              </span>
-            ))}
-          </p>
-          <Button
-            variant="outline"
-            className="rounded-xl transition-all duration-200 ease-in-out border-border"
-            onClick={() => {}}
-          >
-            Modifier
-          </Button>
+          {hasAddress ? (
+            <>
+              <p className="text-base text-muted-foreground mb-4 leading-relaxed">
+                {addressLines.map((line, i) => (
+                  <span key={i}>
+                    {line}
+                    {i < addressLines.length - 1 && <br />}
+                  </span>
+                ))}
+              </p>
+              <Button
+                variant="outline"
+                className="rounded-xl transition-all duration-200 ease-in-out border-border"
+                onClick={() => {}}
+              >
+                Modifier
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-base text-muted-foreground mb-4">
+                Aucune adresse enregistrée
+              </p>
+              <Button
+                variant="outline"
+                className="rounded-xl transition-all duration-200 ease-in-out border-border"
+                onClick={() => {}}
+              >
+                Ajouter
+              </Button>
+            </>
+          )}
         </div>
       </div>
 

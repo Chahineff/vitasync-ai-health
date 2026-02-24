@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CreditCard, MapPin, PlugsConnected } from '@phosphor-icons/react';
+import { CreditCard, MapPin, PlugsConnected, ArrowSquareOut } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { AddressModal } from './AddressModal';
@@ -59,7 +59,8 @@ export function SettingsDangerZone({ index, customer }: SettingsDangerZoneProps)
             className="rounded-xl transition-all duration-200 ease-in-out border-border"
             onClick={handlePaymentClick}
           >
-            Gérer
+            Gérer sur Shopify
+            <ArrowSquareOut weight="bold" className="w-4 h-4 ml-1" />
           </Button>
         </div>
 

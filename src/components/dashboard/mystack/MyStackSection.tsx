@@ -10,6 +10,7 @@ import { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 
 export function MyStackSection() {
   const shopifyCustomer = useShopifyCustomer();
+  const showConnectOnly = !shopifyCustomer.isConnected && !shopifyCustomer.isLoading;
 
   return (
     <motion.div
@@ -18,19 +19,30 @@ export function MyStackSection() {
       exit={{ opacity: 0 }}
       className="space-y-12"
     >
-      {!shopifyCustomer.isConnected && !shopifyCustomer.isLoading && (
+      {showConnectOnly && (
         <ShopifyConnectBanner
           onConnect={shopifyCustomer.connect}
           isAuthenticating={shopifyCustomer.isAuthenticating}
           error={shopifyCustomer.error}
         />
       )}
-      <NextDeliveryHero index={0} customer={shopifyCustomer} />
-      <CurrentStackList index={1} customer={shopifyCustomer} />
-      <AIRecommendationCard index={2} />
-      <CoachingTierSelector index={3} />
-      <OrderHistory index={4} customer={shopifyCustomer} />
-      <SettingsDangerZone index={5} customer={shopifyCustomer} />
+
+      {!showConnectOnly && (
+        <>
+          <NextDeliveryHero index={0} customer={shopifyCustomer} />
+          <CurrentStackList index={1} customer={shopifyCustomer} />
+          <AIRecommendationCard index={2} />
+        </>
+      )}
+
+      <CoachingTierSelector index={showConnectOnly ? 1 : 3} />
+
+      {!showConnectOnly && (
+        <>
+          <OrderHistory index={4} customer={shopifyCustomer} />
+          <SettingsDangerZone index={5} customer={shopifyCustomer} />
+        </>
+      )}
     </motion.div>
   );
 }

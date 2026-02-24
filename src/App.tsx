@@ -27,17 +27,7 @@ function OAuthRedirectHandler() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // On mount, detect OAuth callback indicators and set a flag
   useEffect(() => {
-    const hasHashToken = window.location.hash.includes('access_token');
-    const hasCodeParam = window.location.search.includes('code=');
-    if (hasHashToken || hasCodeParam) {
-      sessionStorage.setItem('oauth_redirect_pending', 'true');
-    }
-  }, []);
-
-  useEffect(() => {
-    // Only redirect to dashboard after an OAuth return, not for every authenticated visit
     if (!loading && user && location.pathname === '/' && sessionStorage.getItem('oauth_redirect_pending') === 'true') {
       sessionStorage.removeItem('oauth_redirect_pending');
       navigate('/dashboard', { replace: true });

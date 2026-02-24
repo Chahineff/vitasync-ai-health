@@ -179,6 +179,7 @@ const Auth = () => {
           <button
             type="button"
             onClick={async () => {
+              sessionStorage.setItem('oauth_redirect_pending', 'true');
               setIsLoading(true);
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin,
@@ -208,6 +209,7 @@ const Auth = () => {
           <button
             type="button"
             onClick={async () => {
+              sessionStorage.setItem('oauth_redirect_pending', 'true');
               setIsLoading(true);
               const { error } = await lovable.auth.signInWithOAuth("apple", {
                 redirect_uri: window.location.origin,

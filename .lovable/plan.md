@@ -1,64 +1,47 @@
 
 
-# Plan : MyStack -- Banniere plein ecran + gestion paiement/adresse depuis VitaSync
+# Plan : Corriger la redirection OAuth et l'acces a la page d'accueil
 
-## Objectif
+## Problemes identifies
 
-1. La banniere "Connectez votre compte Shopify" occupe tout l'espace quand l'utilisateur n'est pas connecte -- seul le selecteur de coaching IA reste visible en dessous.
-2. Une fois connecte, tout le reste s'affiche (abonnement, stack, historique, parametres).
-3. L'adresse de livraison est modifiable directement depuis VitaSync (deja fait via AddressModal, a verifier).
-4. Pour le moyen de paiement : l'API Shopify Customer Account ne permet PAS de gerer les moyens de paiement (c'est reserve a l'Admin API dans un environnement PCI-compliant). On redirigera donc vers la page de compte Shopify du client, mais avec un message clair et un bouton bien integre.
+### 1. Page d'accueil inaccessible quand on est connecte
+Le composant `OAuthRedirectHandler` dans `App.tsx` redirige **systematiquement** tout utilisateur connecte qui visite `/` vers `/dashboard`. Cela empeche les utilisateurs connectes d'acceder a la page d'accueil, au logo VitaSync, etc.
+
+### 2. Google OAuth ne redirige pas vers le dashboard dans un nouvel onglet
+Apres le retour OAuth sur `/`, la session n'est pas encore chargee au moment ou le handler s'execute, donc la redirection ne se fait pas.
 
 ---
 
-## Modifications prevues
+## Solution
 
-### 1. MyStackSection -- Layout conditionnel
+### Modifier `OAuthRedirectHandler` pour ne rediriger que pendant un retour OAuth
 
-Quand `!isConnected && !isLoading` :
-- Afficher la ShopifyConnectBanner en version **plein ecran** (grande, centree, avec illustration)
-- Afficher **uniquement** CoachingTierSelector en dessous
-- Masquer NextDeliveryHero, CurrentStackList, OrderHistory, SettingsDangerZone
+Au lieu de rediriger **tous** les utilisateurs connectes depuis `/`, on detecte un **retour OAuth** en verifiant la presence de parametres OAuth dans l'URL (`access_token` dans le hash ou `code` dans les query params). On utilise aussi un flag `sessionStorage` pour gerer le cas ou le hash est nettoye avant que le composant ne s'execute.
 
-Quand `isConnected` :
-- Masquer la banniere
-- Afficher tous les composants normalement
+Logique :
+1. Au chargement, verifier si l'URL contient des indicateurs OAuth (hash `access_token` ou query `code`)
+2. Si oui, marquer un flag `sessionStorage('oauth_redirect_pending', 'true')`
+3. Quand `user` est charge et que le flag est present, rediriger vers `/dashboard` et supprimer le flag
+4. Si pas de flag OAuth, ne rien faire -- l'utilisateur peut rester sur `/`
 
-### 2. ShopifyConnectBanner -- Version plein ecran
+### Modifier la page `Auth.tsx` pour ne pas rediriger automatiquement
 
-Transformer la banniere actuelle en un composant plus imposant :
-- Icone plus grande, centree
-- Titre plus grand et descriptif
-- Liste de benefices (gerer vos abonnements, suivre vos commandes, modifier vos adresses)
-- Bouton CTA proéminent au centre
-- Prend toute la largeur avec plus de padding vertical
-
-### 3. SettingsDangerZone -- Moyen de paiement
-
-Le moyen de paiement reste un **lien externe** vers la page de compte Shopify car :
-- L'API Customer Account ne supporte pas la gestion des moyens de paiement
-- L'Admin API necessite un environnement PCI-compliant et des scopes specifiques (`write_customer_payment_methods`)
-- C'est la pratique standard de Shopify Headless
-
-On ameliore le bouton avec un message clair : "Gerer sur Shopify" avec une icone de lien externe.
-
-### 4. AddressModal -- Verification du fonctionnement
-
-Le composant AddressModal utilise deja la mutation `customerAddressCreate` via le proxy `shopify-customer-api`. Il envoie bien les donnees a Shopify. On s'assure que :
-- La mutation utilise les bons champs (`address1`, `city`, `zip`, `territoryCode`)
-- Le `defaultAddress: true` est bien passe pour definir comme adresse par defaut
-- Le callback `onSuccess` rafraichit les donnees apres la sauvegarde
+Actuellement, `Auth.tsx` (ligne 47-51) redirige aussi tout utilisateur connecte vers `/dashboard`. Si un utilisateur connecte veut revenir a la page de connexion pour changer de compte, il ne peut pas. On garde cette redirection car c'est le comportement attendu pour la page `/auth` (si on est deja connecte, on va au dashboard).
 
 ---
 
 ## Details techniques
 
-**Fichiers modifies :**
-- `src/components/dashboard/mystack/MyStackSection.tsx` -- layout conditionnel (banner + coaching seuls quand deconnecte)
-- `src/components/dashboard/mystack/ShopifyConnectBanner.tsx` -- version plein ecran avec avantages listes
-- `src/components/dashboard/mystack/SettingsDangerZone.tsx` -- ameliorer le bouton de paiement avec icone externe
+**Fichier modifie :** `src/App.tsx`
 
-**Aucune edge function ou migration necessaire.** Le proxy `shopify-customer-api` gere deja les mutations d'adresse et les queries de commandes.
+Changements dans `OAuthRedirectHandler` :
+- Detecter un retour OAuth via `window.location.hash.includes('access_token')` ou `window.location.search.includes('code=')`
+- Utiliser `sessionStorage` comme flag temporaire
+- Ne rediriger vers `/dashboard` que si le flag est actif et l'utilisateur est authentifie
+- Supprimer le flag apres la redirection
 
-**Limitation technique :** La gestion des moyens de paiement directement depuis VitaSync n'est techniquement pas possible avec l'API Customer Account de Shopify. C'est une limitation de Shopify, pas de l'implementation. Le lien vers la page de compte Shopify est la solution standard pour les storefronts headless.
+Cela permet :
+- Aux utilisateurs connectes de naviguer librement sur la page d'accueil
+- Au retour OAuth (Google/Apple) de rediriger correctement vers le dashboard
+- Au clic sur le logo VitaSync de fonctionner normalement
 

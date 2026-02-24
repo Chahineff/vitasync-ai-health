@@ -26,6 +26,21 @@ serve(async (req) => {
 
     const { query, variables } = await req.json();
 
+    // Validate query depth to prevent abuse
+    if (!query || typeof query !== 'string') {
+      return new Response(
+        JSON.stringify({ errors: [{ message: "Invalid query" }] }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const openBraces = (query.match(/\{/g) || []).length;
+    if (openBraces > 10) {
+      return new Response(
+        JSON.stringify({ errors: [{ message: "Query too complex" }] }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const response = await fetch(STOREFRONT_API_URL, {
       method: "POST",
       headers: {

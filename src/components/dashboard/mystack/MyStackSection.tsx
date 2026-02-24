@@ -5,6 +5,7 @@ import { AIRecommendationCard } from './AIRecommendationCard';
 import { CoachingTierSelector } from './CoachingTierSelector';
 import { SettingsDangerZone } from './SettingsDangerZone';
 import { ShopifyConnectBanner } from './ShopifyConnectBanner';
+import { OrderHistory } from './OrderHistory';
 import { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 
 export function MyStackSection() {
@@ -28,7 +29,8 @@ export function MyStackSection() {
       <CurrentStackList index={1} customer={shopifyCustomer} />
       <AIRecommendationCard index={2} />
       <CoachingTierSelector index={3} />
-      <SettingsDangerZone index={4} customer={shopifyCustomer} />
+      <OrderHistory index={4} customer={shopifyCustomer} />
+      <SettingsDangerZone index={5} customer={shopifyCustomer} />
     </motion.div>
   );
 }

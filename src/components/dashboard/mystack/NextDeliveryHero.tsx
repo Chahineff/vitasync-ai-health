@@ -14,17 +14,19 @@ export function NextDeliveryHero({ index, customer }: NextDeliveryHeroProps) {
   const { t } = useTranslation();
   const { isConnected, isLoading, subscriptions } = customer;
 
-  // For now, show mock data or real subscription data
   const activeContract = subscriptions.find(s => s.status === 'ACTIVE');
+  const hasSubscription = !!activeContract;
+
   const nextDate = activeContract?.nextBillingDate
     ? new Date(activeContract.nextBillingDate).toLocaleDateString('fr-FR', {
         day: 'numeric',
         month: 'long',
       })
-    : '15 Novembre';
+    : null;
 
-  const status = activeContract ? activeContract.status : 'ACTIVE';
-  const statusLabel = status === 'ACTIVE' ? 'Actif' : status === 'PAUSED' ? 'En pause' : status;
+  const statusLabel = hasSubscription
+    ? (activeContract.status === 'PAUSED' ? 'En pause' : 'Actif')
+    : 'Plan gratuit';
 
   return (
     <motion.div
@@ -50,12 +52,14 @@ export function NextDeliveryHero({ index, customer }: NextDeliveryHeroProps) {
                     <Spinner className="w-5 h-5 animate-spin" />
                     Chargement...
                   </span>
-                ) : (
+                ) : hasSubscription ? (
                   `Prochaine livraison le ${nextDate}`
+                ) : (
+                  'Aucun abonnement actif'
                 )}
               </h2>
               <Badge className={`mt-1 ${
-                status === 'ACTIVE'
+                hasSubscription
                   ? 'bg-primary/15 text-primary border-primary/20 hover:bg-primary/20'
                   : 'bg-muted text-muted-foreground border-border'
               }`}>
@@ -66,22 +70,33 @@ export function NextDeliveryHero({ index, customer }: NextDeliveryHeroProps) {
 
           {/* Right: Actions */}
           <div className="flex items-center gap-3">
-            <Button
-              className="rounded-xl transition-all duration-200 ease-in-out"
-              disabled={!isConnected || isLoading}
-              onClick={() => {}}
-            >
-              <Clock weight="bold" className="w-4 h-4 mr-1" />
-              Repousser de 15 jours
-            </Button>
-            <Button
-              variant="outline"
-              className="rounded-xl transition-all duration-200 ease-in-out border-border"
-              disabled={!isConnected || isLoading}
-              onClick={() => {}}
-            >
-              Mettre en pause
-            </Button>
+            {hasSubscription ? (
+              <>
+                <Button
+                  className="rounded-xl transition-all duration-200 ease-in-out"
+                  disabled={!isConnected || isLoading}
+                  onClick={() => {}}
+                >
+                  <Clock weight="bold" className="w-4 h-4 mr-1" />
+                  Repousser de 15 jours
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-xl transition-all duration-200 ease-in-out border-border"
+                  disabled={!isConnected || isLoading}
+                  onClick={() => {}}
+                >
+                  Mettre en pause
+                </Button>
+              </>
+            ) : (
+              <Button
+                className="rounded-xl transition-all duration-200 ease-in-out"
+                onClick={() => window.dispatchEvent(new CustomEvent('navigate-tab', { detail: 'shop' }))}
+              >
+                Découvrir nos formules
+              </Button>
+            )}
           </div>
         </div>
       </div>

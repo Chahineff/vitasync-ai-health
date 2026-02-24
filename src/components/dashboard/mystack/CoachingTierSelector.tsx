@@ -20,7 +20,7 @@ const TIERS: Tier[] = [
     price: '0',
     priceLabel: 'Gratuit',
     features: ['5 conversations/jour', 'Historique 7 jours', 'Chat texte uniquement'],
-    isCurrent: false,
+    isCurrent: true,
     isUpgrade: false,
   },
   {
@@ -29,8 +29,8 @@ const TIERS: Tier[] = [
     price: '7,99',
     priceLabel: '7,99 $/mois',
     features: ['20 conversations/jour', 'Historique 14 jours', 'Analyse de documents (5/mois)'],
-    isCurrent: true,
-    isUpgrade: false,
+    isCurrent: false,
+    isUpgrade: true,
   },
   {
     id: 'premium-ai',

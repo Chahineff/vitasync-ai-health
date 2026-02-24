@@ -1,9 +1,10 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { DailyCheckinProvider } from "@/hooks/useDailyCheckin";
 import { ThemeProvider } from "next-themes";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -21,12 +22,29 @@ import ShopifyCallback from "./pages/ShopifyCallback";
 
 const queryClient = new QueryClient();
 
+function OAuthRedirectHandler() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // After OAuth callback, user lands on "/" with a session.
+    // Redirect authenticated users from "/" to "/dashboard".
+    if (!loading && user && location.pathname === "/") {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, loading, location.pathname, navigate]);
+
+  return null;
+}
+
 function AppContent() {
   useCartSync();
   
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <OAuthRedirectHandler />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />

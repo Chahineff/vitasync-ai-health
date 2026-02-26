@@ -1,40 +1,56 @@
 
 
-# Plan : Corriger la connexion Google/Apple OAuth
+# Plan de modifications
 
-## Probleme racine
+## 1. Navbar responsive et adaptative
 
-Quand l'utilisateur clique "Continuer avec Google" dans un nouvel onglet :
-1. La page redirige vers le broker OAuth (`/~oauth/initiate`)
-2. Google authentifie l'utilisateur (cela fonctionne -- les logs montrent des logins reussis)
-3. Le broker redirige vers la page d'accueil (`/`)
-4. Supabase detecte les tokens dans l'URL et etablit la session **avant** que React ne s'execute
-5. Quand `OAuthRedirectHandler` verifie `window.location.hash`, les tokens ont deja ete nettoyes
-6. Le flag `sessionStorage` n'est jamais pose, donc pas de redirection vers `/dashboard`
-7. L'utilisateur reste sur la page d'accueil et pense ne pas etre connecte
+**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
 
-## Solution
+**Corrections** :
+- Remplacer la largeur fixe par un systeme de marges responsives progressives
+- Sur mobile (<768px) : marges de 12px de chaque cote
+- Sur tablette (768-1024px) : marges de 24px
+- Sur desktop (1024-1440px) : marges de 40px
+- Sur grand ecran (>1440px) : max-width de 1400px centre
+- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
+- La navbar gardera son design flottant capsule actuel
 
-### 1. Poser le flag AVANT la redirection OAuth (Auth.tsx)
+**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
 
-Dans les boutons Google et Apple de la page `/auth`, ajouter `sessionStorage.setItem('oauth_redirect_pending', 'true')` **avant** d'appeler `lovable.auth.signInWithOAuth()`. Ainsi, quand l'utilisateur revient apres l'authentification, le flag est deja present.
+---
 
-### 2. Simplifier OAuthRedirectHandler (App.tsx)
+## 2. Page About - En attente du PDF
 
-Retirer la detection des parametres URL (hash/code) qui est peu fiable. Le handler ne fait plus qu'une seule chose : si le flag `oauth_redirect_pending` existe dans sessionStorage et que l'utilisateur est authentifie, rediriger vers `/dashboard` et supprimer le flag.
+Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
+
+---
+
+## 3. Page Blog - Etat vide + systeme d'administration
+
+**Etat vide** :
+- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
+- Garder le hero et le design existant
+- Supprimer les articles en dur
+
+**Systeme d'administration des articles** :
+- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
+- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
+- La page Blog affichera dynamiquement les articles depuis la base de donnees
+- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
+
+**Fichiers modifies** :
+- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
+- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
+- Migration SQL : creation de la table `blog_posts`
 
 ---
 
 ## Details techniques
 
-**Fichiers modifies :**
+| Tache | Fichiers | Complexite |
+|-------|----------|------------|
+| Navbar responsive | `src/index.css` | Faible |
+| Blog etat vide | `src/pages/Blog.tsx` | Faible |
+| Table blog_posts + RLS | Migration SQL | Moyenne |
+| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
 
-### `src/pages/Auth.tsx`
-- Dans le `onClick` du bouton Google : ajouter `sessionStorage.setItem('oauth_redirect_pending', 'true')` avant l'appel a `lovable.auth.signInWithOAuth("google", ...)`
-- Meme chose pour le bouton Apple
-
-### `src/App.tsx`
-- Supprimer le premier `useEffect` qui detecte `access_token` / `code` dans l'URL (lignes 31-37)
-- Garder le second `useEffect` qui redirige vers `/dashboard` quand le flag est present et l'utilisateur authentifie
-
-Cela garantit que le flag est toujours present au retour de l'OAuth, independamment du traitement de l'URL par Supabase.

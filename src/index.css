@@ -529,24 +529,23 @@
 
   /* Sticky Navigation - Floating Capsule */
   .nav-sticky {
-    @apply fixed top-4 z-50 transition-all duration-500;
+    @apply fixed top-4 z-50;
     @apply rounded-2xl backdrop-blur-2xl border border-white/10;
     left: 12px;
     right: 12px;
     width: auto;
     background: hsl(220 20% 10% / 0.78);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
-    animation: nav-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: nav-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background 0.5s, border-color 0.5s, box-shadow 0.5s;
   }
 
-  @keyframes nav-slide-in {
+  @keyframes nav-fade-in {
     0% {
       opacity: 0;
-      transform: translateY(-20px);
     }
     100% {
       opacity: 1;
-      transform: translateY(0);
     }
   }
 

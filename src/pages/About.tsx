@@ -8,12 +8,14 @@ import {
   Brain, 
   Heart, 
   ShieldCheck, 
-  Users 
+  Users,
+  ListChecks,
+  ChatCircle,
+  Package,
+  FileArrowUp
 } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SplineBackground } from "@/components/sections/SplineBackground";
-
-const valueIcons = [Brain, Heart, ShieldCheck, Users];
 
 const About = () => {
   const { t } = useTranslation();
@@ -41,11 +43,11 @@ const About = () => {
     },
   ];
 
-  const team = [
-    { name: "Dr. Sarah Chen", role: "CEO & Co-fondatrice", bio: "PhD en bioinformatique, ex-Google Health" },
-    { name: "Marc Durand", role: "CTO & Co-fondateur", bio: "Expert IA, ex-DeepMind" },
-    { name: "Dr. Émilie Petit", role: "Directrice Scientifique", bio: "Médecin nutritionniste, 15 ans d'expérience" },
-    { name: "Antoine Moreau", role: "VP Produit", bio: "Ex-Alan, spécialiste HealthTech" },
+  const facts = [
+    { icon: ListChecks, value: t("about.fact1Value"), label: t("about.fact1Label") },
+    { icon: ChatCircle, value: t("about.fact2Value"), label: t("about.fact2Label") },
+    { icon: Package, value: t("about.fact3Value"), label: t("about.fact3Label") },
+    { icon: FileArrowUp, value: t("about.fact4Value"), label: t("about.fact4Label") },
   ];
 
   return (
@@ -70,17 +72,20 @@ const About = () => {
                 {t("about.title")}{" "}
                 <span className="gradient-text">{t("about.titleHighlight")}</span>
               </h1>
-              <p className="text-lg text-foreground/60">
+              <p className="text-lg text-foreground/60 mb-4">
                 {t("about.subtitle")}
+              </p>
+              <p className="text-sm text-foreground/40 italic">
+                {t("about.heroMicro")}
               </p>
             </motion.div>
           </div>
         </section>
 
-        {/* Story */}
+        {/* Story + Facts */}
         <section className="section-padding">
           <div className="container-custom">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
               <ScrollReveal>
                 <div>
                   <span className="text-sm text-secondary uppercase tracking-widest mb-4 block">
@@ -94,27 +99,27 @@ const About = () => {
                     <p>{t("about.storyP2")}</p>
                     <p>{t("about.storyP3")}</p>
                   </div>
+                  <div className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/10">
+                    <p className="text-sm text-foreground/50 italic">
+                      🤖 {t("about.storyAI")}
+                    </p>
+                  </div>
                 </div>
               </ScrollReveal>
               <ScrollReveal delay={0.2}>
                 <GlassCard className="p-8">
-                  <div className="grid grid-cols-2 gap-8 text-center">
-                    <div>
-                      <span className="text-4xl md:text-5xl font-light gradient-text">500K+</span>
-                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat1")}</p>
-                    </div>
-                    <div>
-                      <span className="text-4xl md:text-5xl font-light gradient-text-reverse">95%</span>
-                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat2")}</p>
-                    </div>
-                    <div>
-                      <span className="text-4xl md:text-5xl font-light gradient-text">2M+</span>
-                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat3")}</p>
-                    </div>
-                    <div>
-                      <span className="text-4xl md:text-5xl font-light gradient-text-reverse">50+</span>
-                      <p className="text-sm text-foreground/50 mt-2">{t("about.stat4")}</p>
-                    </div>
+                  <div className="space-y-6">
+                    {facts.map((fact, index) => (
+                      <div key={index} className="flex items-start gap-4">
+                        <div className="icon-container shrink-0">
+                          <fact.icon size={24} weight="light" className="text-primary" />
+                        </div>
+                        <div>
+                          <span className="text-lg font-medium gradient-text block">{fact.value}</span>
+                          <p className="text-sm text-foreground/50 mt-0.5">{fact.label}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </GlassCard>
               </ScrollReveal>
@@ -152,41 +157,8 @@ const About = () => {
           </div>
         </section>
 
-        {/* Team */}
-        <section className="section-padding">
-          <div className="container-custom">
-            <ScrollReveal>
-              <div className="text-center mb-16">
-                <span className="text-sm text-secondary uppercase tracking-widest mb-4 block">
-                  {t("about.teamBadge")}
-                </span>
-                <h2 className="text-3xl md:text-4xl font-light tracking-tight text-foreground">
-                  {t("about.teamTitle")}
-                </h2>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {team.map((member, index) => (
-                <ScrollReveal key={member.name} delay={index * 0.1}>
-                  <GlassCard hover className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary mx-auto mb-4 flex items-center justify-center">
-                      <span className="text-2xl text-primary-foreground font-light">
-                        {member.name.split(" ").map(n => n[0]).join("")}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-light text-foreground">{member.name}</h3>
-                    <p className="text-sm text-primary mb-2">{member.role}</p>
-                    <p className="text-sm text-foreground/50">{member.bio}</p>
-                  </GlassCard>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* CTA */}
-        <section className="section-padding bg-gradient-subtle">
+        <section className="section-padding">
           <div className="container-custom">
             <ScrollReveal>
               <GlassCard className="max-w-3xl mx-auto text-center p-12">

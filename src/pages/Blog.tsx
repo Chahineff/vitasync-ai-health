@@ -5,50 +5,43 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 import { motion } from "framer-motion";
-import { ArrowRight, Clock, Tag } from "@phosphor-icons/react";
+import { ArrowRight, Clock, Tag, NotePencil } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SplineBackground } from "@/components/sections/SplineBackground";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  category: string | null;
+  read_time: string | null;
+  created_at: string;
+}
 
 const Blog = () => {
   const { t } = useTranslation();
 
-  const articles = [
-    {
-      slug: "ia-nutrition-revolution",
-      title: t("blog.article1.title"),
-      excerpt: t("blog.article1.excerpt"),
-      category: t("blog.article1.category"),
-      readTime: "5 min",
-      date: "15 Jan 2025",
-      gradient: "from-primary to-accent",
+  const { data: articles = [], isLoading } = useQuery({
+    queryKey: ["blog-posts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_posts" as any)
+        .select("id, slug, title, excerpt, category, read_time, created_at")
+        .eq("published", true)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data || []) as unknown as BlogPost[];
     },
-    {
-      slug: "comprendre-biomarqueurs",
-      title: t("blog.article2.title"),
-      excerpt: t("blog.article2.excerpt"),
-      category: t("blog.article2.category"),
-      readTime: "8 min",
-      date: "12 Jan 2025",
-      gradient: "from-secondary to-primary",
-    },
-    {
-      slug: "sommeil-complements",
-      title: t("blog.article3.title"),
-      excerpt: t("blog.article3.excerpt"),
-      category: t("blog.article3.category"),
-      readTime: "6 min",
-      date: "8 Jan 2025",
-      gradient: "from-accent to-secondary",
-    },
-    {
-      slug: "stress-cortisol-gestion",
-      title: t("blog.article4.title"),
-      excerpt: t("blog.article4.excerpt"),
-      category: t("blog.article4.category"),
-      readTime: "7 min",
-      date: "5 Jan 2025",
-      gradient: "from-primary to-secondary",
-    },
+  });
+
+  const gradients = [
+    "from-primary to-accent",
+    "from-secondary to-primary",
+    "from-accent to-secondary",
+    "from-primary to-secondary",
   ];
 
   return (
@@ -80,50 +73,67 @@ const Blog = () => {
           </div>
         </section>
 
-        {/* Articles Grid */}
+        {/* Articles Grid or Empty State */}
         <section className="section-padding">
           <div className="container-custom">
-            <div className="grid md:grid-cols-2 gap-8">
-              {articles.map((article, index) => (
-                <ScrollReveal key={article.slug} delay={index * 0.1}>
-                  <Link to={`/blog/${article.slug}`} className="block group">
-                    <GlassCard hover className="h-full">
-                      {/* Article Image Placeholder */}
-                      <div className={`h-48 rounded-xl bg-gradient-to-br ${article.gradient} mb-6 opacity-20 group-hover:opacity-30 transition-opacity`} />
-                      
-                      {/* Meta */}
-                      <div className="flex items-center gap-4 mb-4">
-                        <span className="inline-flex items-center gap-1.5 text-xs text-primary">
-                          <Tag size={14} weight="light" />
-                          {article.category}
+            {isLoading ? (
+              <div className="flex justify-center py-20">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              </div>
+            ) : articles.length === 0 ? (
+              <ScrollReveal>
+                <GlassCard className="max-w-2xl mx-auto text-center py-16 px-8">
+                  <NotePencil size={56} weight="light" className="mx-auto text-foreground/30 mb-6" />
+                  <h2 className="text-2xl font-light tracking-tight text-foreground mb-3">
+                    {t("blog.emptyTitle")}
+                  </h2>
+                  <p className="text-foreground/50">
+                    {t("blog.emptySubtitle")}
+                  </p>
+                </GlassCard>
+              </ScrollReveal>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-8">
+                {articles.map((article, index) => (
+                  <ScrollReveal key={article.id} delay={index * 0.1}>
+                    <Link to={`/blog/${article.slug}`} className="block group">
+                      <GlassCard hover className="h-full">
+                        <div className={`h-48 rounded-xl bg-gradient-to-br ${gradients[index % gradients.length]} mb-6 opacity-20 group-hover:opacity-30 transition-opacity`} />
+                        <div className="flex items-center gap-4 mb-4">
+                          {article.category && (
+                            <span className="inline-flex items-center gap-1.5 text-xs text-primary">
+                              <Tag size={14} weight="light" />
+                              {article.category}
+                            </span>
+                          )}
+                          {article.read_time && (
+                            <span className="inline-flex items-center gap-1.5 text-xs text-foreground/50">
+                              <Clock size={14} weight="light" />
+                              {article.read_time}
+                            </span>
+                          )}
+                          <span className="text-xs text-foreground/40">
+                            {new Date(article.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <h2 className="text-xl font-light tracking-tight text-foreground mb-3 group-hover:text-primary transition-colors">
+                          {article.title}
+                        </h2>
+                        {article.excerpt && (
+                          <p className="text-sm text-foreground/50 mb-4">
+                            {article.excerpt}
+                          </p>
+                        )}
+                        <span className="inline-flex items-center gap-2 text-sm text-primary group-hover:gap-3 transition-all">
+                          {t("blog.readArticle")}
+                          <ArrowRight size={16} weight="light" />
                         </span>
-                        <span className="inline-flex items-center gap-1.5 text-xs text-foreground/50">
-                          <Clock size={14} weight="light" />
-                          {article.readTime}
-                        </span>
-                        <span className="text-xs text-foreground/40">
-                          {article.date}
-                        </span>
-                      </div>
-
-                      {/* Content */}
-                      <h2 className="text-xl font-light tracking-tight text-foreground mb-3 group-hover:text-primary transition-colors">
-                        {article.title}
-                      </h2>
-                      <p className="text-sm text-foreground/50 mb-4">
-                        {article.excerpt}
-                      </p>
-
-                      {/* Read More */}
-                      <span className="inline-flex items-center gap-2 text-sm text-primary group-hover:gap-3 transition-all">
-                        {t("blog.readArticle")}
-                        <ArrowRight size={16} weight="light" />
-                      </span>
-                    </GlassCard>
-                  </Link>
-                </ScrollReveal>
-              ))}
-            </div>
+                      </GlassCard>
+                    </Link>
+                  </ScrollReveal>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

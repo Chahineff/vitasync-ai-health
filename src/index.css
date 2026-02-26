@@ -529,8 +529,11 @@
 
   /* Sticky Navigation - Floating Capsule */
   .nav-sticky {
-    @apply fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[96%] max-w-6xl;
+    @apply fixed top-4 z-50 transition-all duration-500;
     @apply rounded-2xl backdrop-blur-2xl border border-white/10;
+    left: 12px;
+    right: 12px;
+    width: auto;
     background: hsl(220 20% 10% / 0.78);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
     animation: nav-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -539,11 +542,35 @@
   @keyframes nav-slide-in {
     0% {
       opacity: 0;
-      transform: translateX(-50%) translateY(-20px);
+      transform: translateY(-20px);
     }
     100% {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateY(0);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .nav-sticky {
+      left: 24px;
+      right: 24px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nav-sticky {
+      left: 40px;
+      right: 40px;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .nav-sticky {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1400px;
     }
   }
 

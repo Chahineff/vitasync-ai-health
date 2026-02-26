@@ -536,7 +536,7 @@
     width: auto;
     background: hsl(220 20% 10% / 0.78);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
-    animation: nav-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: nav-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   @keyframes nav-slide-in {

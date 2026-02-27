@@ -19,6 +19,7 @@ serve(async (req) => {
     const CLIENT_ID = Deno.env.get("SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     if (!SHOP_ID || !CLIENT_ID) {
       return new Response(

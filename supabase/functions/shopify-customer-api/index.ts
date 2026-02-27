@@ -55,7 +55,7 @@ serve(async (req) => {
     const userId = claimsData.claims.sub;
 
     // Get stored customer token
-    const { data: tokenRow, error: fetchErr } = await supabase
+    const { data: tokenRow, error: fetchErr } = await supabaseAdmin
       .from("shopify_customer_tokens")
       .select("*")
       .eq("user_id", userId)
@@ -92,7 +92,7 @@ serve(async (req) => {
         const errText = await refreshRes.text();
         console.error("Token refresh failed:", errText);
         // Clean up invalid tokens
-        await supabase.from("shopify_customer_tokens").delete().eq("user_id", userId);
+        await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
         return new Response(
           JSON.stringify({ error: "Session expired, please re-authenticate", code: "TOKEN_EXPIRED" }),
           { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -103,7 +103,7 @@ serve(async (req) => {
       accessToken = refreshData.access_token;
       const newExpiresAt = new Date(Date.now() + refreshData.expires_in * 1000).toISOString();
 
-      await supabase
+      await supabaseAdmin
         .from("shopify_customer_tokens")
         .update({
           access_token: refreshData.access_token,

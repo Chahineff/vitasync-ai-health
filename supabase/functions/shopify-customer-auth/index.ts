@@ -132,7 +132,7 @@ serve(async (req) => {
       }
 
       // Upsert token in database
-      const { error: dbError } = await supabase
+      const { error: dbError } = await supabaseAdmin
         .from("shopify_customer_tokens")
         .upsert({
           user_id: userId,
@@ -160,7 +160,7 @@ serve(async (req) => {
 
     // ── Action: refresh ──
     if (action === "refresh") {
-      const { data: tokenRow, error: fetchErr } = await supabase
+      const { data: tokenRow, error: fetchErr } = await supabaseAdmin
         .from("shopify_customer_tokens")
         .select("*")
         .eq("user_id", userId)
@@ -190,7 +190,7 @@ serve(async (req) => {
         const errText = await refreshRes.text();
         console.error("Token refresh failed:", errText);
         // If refresh fails, delete the token row (user needs to re-auth)
-        await supabase.from("shopify_customer_tokens").delete().eq("user_id", userId);
+        await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
         return new Response(
           JSON.stringify({ error: "Token refresh failed, please re-authenticate" }),
           { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -200,7 +200,7 @@ serve(async (req) => {
       const refreshData = await refreshRes.json();
       const expiresAt = new Date(Date.now() + refreshData.expires_in * 1000).toISOString();
 
-      await supabase
+      await supabaseAdmin
         .from("shopify_customer_tokens")
         .update({
           access_token: refreshData.access_token,
@@ -217,7 +217,7 @@ serve(async (req) => {
 
     // ── Action: status ──
     if (action === "status") {
-      const { data: tokenRow } = await supabase
+      const { data: tokenRow } = await supabaseAdmin
         .from("shopify_customer_tokens")
         .select("shopify_customer_id, expires_at, scopes")
         .eq("user_id", userId)
@@ -235,7 +235,7 @@ serve(async (req) => {
 
     // ── Action: disconnect ──
     if (action === "disconnect") {
-      await supabase.from("shopify_customer_tokens").delete().eq("user_id", userId);
+      await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
       return new Response(
         JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }

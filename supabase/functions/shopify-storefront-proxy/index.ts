@@ -10,6 +10,26 @@ const SHOPIFY_STORE_DOMAIN = "vitasync2.myshopify.com";
 const SHOPIFY_API_VERSION = "2025-07";
 const STOREFRONT_API_URL = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
+const MAX_QUERY_LENGTH = 4000;
+const MAX_QUERY_DEPTH = 7;
+const MAX_BRACE_COUNT = 15;
+const FETCH_TIMEOUT_MS = 10000;
+
+/** Calculate the maximum nesting depth of a GraphQL query */
+function calculateQueryDepth(query: string): number {
+  let maxDepth = 0;
+  let currentDepth = 0;
+  for (const char of query) {
+    if (char === '{') {
+      currentDepth++;
+      if (currentDepth > maxDepth) maxDepth = currentDepth;
+    } else if (char === '}') {
+      currentDepth--;
+    }
+  }
+  return maxDepth;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -26,36 +46,72 @@ serve(async (req) => {
 
     const { query, variables } = await req.json();
 
-    // Validate query depth to prevent abuse
+    // Validate query is a string
     if (!query || typeof query !== 'string') {
       return new Response(
         JSON.stringify({ errors: [{ message: "Invalid query" }] }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Query length limit
+    if (query.length > MAX_QUERY_LENGTH) {
+      return new Response(
+        JSON.stringify({ errors: [{ message: "Query too large" }] }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Brace count check
     const openBraces = (query.match(/\{/g) || []).length;
-    if (openBraces > 10) {
+    if (openBraces > MAX_BRACE_COUNT) {
       return new Response(
         JSON.stringify({ errors: [{ message: "Query too complex" }] }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const response = await fetch(STOREFRONT_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": STOREFRONT_TOKEN,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
+    // Depth analysis
+    const depth = calculateQueryDepth(query);
+    if (depth > MAX_QUERY_DEPTH) {
+      return new Response(
+        JSON.stringify({ errors: [{ message: "Query nesting too deep" }] }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    const data = await response.json();
+    // Fetch with timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-    return new Response(JSON.stringify(data), {
-      status: response.ok ? 200 : response.status,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    try {
+      const response = await fetch(STOREFRONT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Storefront-Access-Token": STOREFRONT_TOKEN,
+        },
+        body: JSON.stringify({ query, variables }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeout);
+      const data = await response.json();
+
+      return new Response(JSON.stringify(data), {
+        status: response.ok ? 200 : response.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    } catch (fetchError) {
+      clearTimeout(timeout);
+      if (fetchError instanceof DOMException && fetchError.name === "AbortError") {
+        return new Response(
+          JSON.stringify({ errors: [{ message: "Request timed out" }] }),
+          { status: 504, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw fetchError;
+    }
   } catch (error: unknown) {
     console.error("Shopify proxy error:", error);
     const message = error instanceof Error ? error.message : "Unknown error";

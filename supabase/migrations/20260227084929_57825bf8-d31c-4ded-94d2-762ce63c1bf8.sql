@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users can view their own shopify tokens" ON public.shopify_customer_tokens;

@@ -19,6 +19,7 @@ serve(async (req) => {
     const CLIENT_ID = Deno.env.get("SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     if (!SHOP_ID || !CLIENT_ID) {
       return new Response(
@@ -40,6 +41,9 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
+    // Service role client for token operations (bypasses RLS)
+    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
     const token = authHeader.replace("Bearer ", "");
     const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
@@ -51,7 +55,7 @@ serve(async (req) => {
     const userId = claimsData.claims.sub;
 
     // Get stored customer token
-    const { data: tokenRow, error: fetchErr } = await supabase
+    const { data: tokenRow, error: fetchErr } = await supabaseAdmin
       .from("shopify_customer_tokens")
       .select("*")
       .eq("user_id", userId)
@@ -88,7 +92,7 @@ serve(async (req) => {
         const errText = await refreshRes.text();
         console.error("Token refresh failed:", errText);
         // Clean up invalid tokens
-        await supabase.from("shopify_customer_tokens").delete().eq("user_id", userId);
+        await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
         return new Response(
           JSON.stringify({ error: "Session expired, please re-authenticate", code: "TOKEN_EXPIRED" }),
           { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -99,7 +103,7 @@ serve(async (req) => {
       accessToken = refreshData.access_token;
       const newExpiresAt = new Date(Date.now() + refreshData.expires_in * 1000).toISOString();
 
-      await supabase
+      await supabaseAdmin
         .from("shopify_customer_tokens")
         .update({
           access_token: refreshData.access_token,

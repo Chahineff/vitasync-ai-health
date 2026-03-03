@@ -23,9 +23,40 @@ export function parseChartBlocks(content: string): {
   charts: ChartData[];
 } {
   const charts: ChartData[] = [];
-  const regex = /\[\[CHART:(bar|line|pie):([^\]]+)\]\]/g;
-
-  const text = content.replace(regex, (match, type, rawData) => {
+  
+  // Find [[CHART:type: markers and then extract balanced JSON
+  const marker = /\[\[CHART:(bar|line|pie):/g;
+  let result = '';
+  let lastIndex = 0;
+  let m;
+  
+  while ((m = marker.exec(content)) !== null) {
+    const type = m[1] as 'bar' | 'line' | 'pie';
+    const jsonStart = m.index + m[0].length;
+    
+    // Find the matching closing by counting braces
+    let depth = 0;
+    let jsonEnd = -1;
+    for (let i = jsonStart; i < content.length; i++) {
+      if (content[i] === '{') depth++;
+      else if (content[i] === '}') {
+        depth--;
+        if (depth === 0) {
+          // Check if followed by ]]
+          if (content.substring(i + 1, i + 3) === ']]') {
+            jsonEnd = i + 1;
+            break;
+          }
+        }
+      }
+    }
+    
+    if (jsonEnd === -1) continue;
+    
+    const rawData = content.substring(jsonStart, jsonEnd);
+    result += content.substring(lastIndex, m.index);
+    lastIndex = jsonEnd + 2; // skip ]]
+    
     try {
       const parsed = JSON.parse(rawData) as {
         title?: string;
@@ -39,21 +70,21 @@ export function parseChartBlocks(content: string): {
         const yKeys = parsed.yKeys || Object.keys(parsed.data[0]).filter(k => k !== xKey);
         
         charts.push({
-          type: type as 'bar' | 'line' | 'pie',
+          type,
           title: parsed.title || 'Graphique',
           data: parsed.data,
           xKey,
           yKeys,
         });
-        return `__CHART_${charts.length - 1}__`;
+        result += `__CHART_${charts.length - 1}__`;
       }
     } catch (e) {
       console.warn('Failed to parse chart data:', e);
     }
-    return '';
-  });
-
-  return { text, charts };
+  }
+  
+  result += content.substring(lastIndex);
+  return { text: result, charts };
 }
 
 export function ChatChartBlock({ chart }: { chart: ChartData }) {

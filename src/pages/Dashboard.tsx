@@ -27,6 +27,56 @@ import { DashboardTutorial } from "@/components/dashboard/DashboardTutorial";
 import { Card } from "@/components/ui/card";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "analyses" | "settings" | "help";
+
+/* ── Welcome Overlay with typewriter + gradient glow ── */
+function WelcomeOverlay() {
+  const text = "Bienvenue dans votre dashboard";
+  const [displayed, setDisplayed] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(interval);
+    }, 40);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+      className="fixed inset-0 z-[55] bg-background flex flex-col items-center justify-center gap-6"
+    >
+      <motion.img
+        src={vitasyncLogo}
+        alt="VitaSync"
+        className="w-16 h-16"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="relative"
+      >
+        {/* Glow behind text */}
+        <div className="absolute inset-0 blur-2xl opacity-40 bg-gradient-to-r from-[hsl(174,60%,50%)] to-[hsl(140,55%,45%)] rounded-full scale-150" />
+        <h1
+          className="relative text-3xl md:text-4xl font-light tracking-tight text-center bg-gradient-to-r from-[hsl(174,60%,50%)] via-[hsl(155,55%,48%)] to-[hsl(140,55%,45%)] bg-200% bg-clip-text text-transparent animate-gradient-shift"
+        >
+          {displayed}
+          <span className="animate-cursor-blink text-primary">|</span>
+        </h1>
+      </motion.div>
+    </motion.div>
+  );
+}
 // Custom VitaSync icon component for Coach IA
 const VitaSyncIcon = ({
   className,

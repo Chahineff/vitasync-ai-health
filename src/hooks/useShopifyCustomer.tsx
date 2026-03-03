@@ -48,6 +48,7 @@ interface UseShopifyCustomerReturn {
   disconnect: () => Promise<void>;
   refresh: () => Promise<void>;
   executeQuery: (query: string, variables?: Record<string, unknown>) => Promise<unknown>;
+  processCallback: () => Promise<boolean>;
 }
 
 // ═══════════════ PKCE Helpers ═══════════════

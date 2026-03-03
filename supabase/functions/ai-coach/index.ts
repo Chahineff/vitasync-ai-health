@@ -259,7 +259,7 @@ function formatEnrichedProducts(products: EnrichedProductSummary[]): string {
   }).join('\n\n');
 }
 
-// Fetch recent check-ins for the user (last 7 days)
+// Fetch recent check-ins for the user (variable window based on model)
 interface DailyCheckin {
   sleep_quality: number | null;
   energy_level: number | null;
@@ -268,10 +268,16 @@ interface DailyCheckin {
   checkin_date: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function fetchRecentCheckins(supabase: any, userId: string): Promise<DailyCheckin[]> {
+// History window: 7 days for 2.5 Flash, 90 days for 3 Flash/Pro
+function getHistoryDays(model: string): number {
+  if (model === 'google/gemini-2.5-flash-lite') return 7;
+  return 90; // 3 Flash and 3 Pro get 90 days
+}
+
+// deno-lint-ignore no-explicit-any
+async function fetchRecentCheckins(supabase: any, userId: string, historyDays: number = 7): Promise<DailyCheckin[]> {
   const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 7);
+  startDate.setDate(startDate.getDate() - historyDays);
 
   const { data, error } = await supabase
     .from("daily_checkins")
@@ -824,6 +830,24 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    // Parse request body early to determine model for history window
+    let requestBody: unknown;
+    try {
+      requestBody = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const requestedModel = (requestBody as Record<string, unknown>)?.model as string || 'google/gemini-3-flash-preview';
+    const historyDays = getHistoryDays(requestedModel);
+    console.log(`History window: ${historyDays} days for model ${requestedModel}`);
+
     const [userProfileResult, healthProfileResult, recentCheckins, catalog, userSupplements, enrichedProducts] = await Promise.all([
       supabaseClient
         .from("profiles")
@@ -835,7 +859,7 @@ Deno.serve(async (req) => {
         .select("*")
         .eq("user_id", userId)
         .single(),
-      fetchRecentCheckins(supabaseClient, userId),
+      fetchRecentCheckins(supabaseClient, userId, historyDays),
       fetchShopifyCatalog(),
       fetchUserSupplements(supabaseClient, userId),
       fetchEnrichedProductData(serviceClient)
@@ -853,21 +877,7 @@ Deno.serve(async (req) => {
     const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends, userSupplements, enrichedProducts);
     console.log("System prompt length:", systemPrompt.length, "chars");
 
-    // Parse and validate request body
-    let requestBody: unknown;
-    try {
-      requestBody = await req.json();
-    } catch {
-      return new Response(
-        JSON.stringify({ error: "Invalid JSON in request body" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // Validate messages structure
+    // Validate messages structure (requestBody already parsed above)
     const validation = validateMessages((requestBody as Record<string, unknown>)?.messages);
     if (!validation.valid || !validation.data) {
       console.error("Message validation failed:", validation.error);
@@ -894,7 +904,6 @@ Deno.serve(async (req) => {
       'google/gemini-3-pro-preview'
     ];
     
-    const requestedModel = (requestBody as Record<string, unknown>)?.model as string || 'google/gemini-3-flash-preview';
     const modelVersion = (requestBody as Record<string, unknown>)?.modelVersion as string || '2.5';
     const model = ALLOWED_MODELS.includes(requestedModel) 
       ? requestedModel 

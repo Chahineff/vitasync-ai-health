@@ -212,32 +212,7 @@ const Dashboard = () => {
       </AnimatePresence>
       {/* Welcome Phase Overlay */}
       <AnimatePresence>
-        {welcomePhase && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            className="fixed inset-0 z-[55] bg-background flex flex-col items-center justify-center gap-6"
-          >
-            <motion.img
-              src={vitasyncLogo}
-              alt="VitaSync"
-              className="w-16 h-16"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-            />
-            <motion.h1
-              className="text-3xl md:text-4xl font-light tracking-tight text-foreground text-center"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
-              Bienvenue dans votre dashboard
-            </motion.h1>
-          </motion.div>
-        )}
+        {welcomePhase && <WelcomeOverlay />}
       </AnimatePresence>
       {/* Sidebar - Hidden on mobile/tablet, visible on desktop */}
       <aside className={`fixed top-4 bottom-4 left-4 z-50 glass-sidebar-floating hidden lg:flex flex-col transition-all duration-300 ease-out ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>

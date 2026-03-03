@@ -395,7 +395,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
       <MobileStickyCart product={product} selectedVariantIndex={selectedVariantIndex} />
     </>
   );
-}
+});
 
 function ProductDetailSkeleton({ onBack, t }: { onBack: () => void; t: (key: string) => string }) {
   return (

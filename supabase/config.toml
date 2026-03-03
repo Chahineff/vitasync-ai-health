@@ -17,3 +17,9 @@ verify_jwt = false
 
 [functions.shopify-storefront-proxy]
 verify_jwt = false
+
+[functions.shopify-customer-api]
+verify_jwt = false
+
+[functions.shopify-customer-auth]
+verify_jwt = false

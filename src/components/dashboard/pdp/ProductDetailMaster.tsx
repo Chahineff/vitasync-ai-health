@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ShoppingCart, Heart, Flask, Leaf, ShieldCheck, Flag, Plus } from '@phosphor-icons/react';
 import { fetchProductByHandle, fetchProducts, ProductDetail, ShopifyProduct } from '@/lib/shopify';
@@ -48,12 +48,12 @@ const reassuranceItems = [
   { icon: Flag, label: 'Fabriqué en France' },
 ];
 
-export function ProductDetailMaster({ 
+export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMasterProps>(function ProductDetailMaster({ 
   handle, 
   onBack, 
   onProductSelect,
   recommendedByAI = false 
-}: ProductDetailMasterProps) {
+}, ref) {
   const { t } = useTranslation();
   const [currentHandle, setCurrentHandle] = useState(handle);
   const [productCache, setProductCache] = useState<Map<string, CachedProduct>>(new Map());
@@ -395,7 +395,7 @@ export function ProductDetailMaster({
       <MobileStickyCart product={product} selectedVariantIndex={selectedVariantIndex} />
     </>
   );
-}
+});
 
 function ProductDetailSkeleton({ onBack, t }: { onBack: () => void; t: (key: string) => string }) {
   return (

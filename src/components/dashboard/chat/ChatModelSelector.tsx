@@ -63,7 +63,7 @@ export function ChatModelSelector({ selectedModel, onModelChange }: ChatModelSel
           whileTap={{ scale: 0.98 }}
           className={cn(
             "flex items-center gap-2 px-3 py-2 rounded-xl",
-            "bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20",
+            "bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 hover:border-border dark:hover:border-white/20",
             "transition-all duration-200",
             "text-sm font-medium text-foreground/80"
           )}
@@ -85,7 +85,7 @@ export function ChatModelSelector({ selectedModel, onModelChange }: ChatModelSel
 
       <DropdownMenuContent 
         align="start" 
-        className="w-64 bg-background/95 backdrop-blur-xl border-white/10"
+        className="w-64 bg-background/95 backdrop-blur-xl border-border/50"
       >
         {AI_MODELS.map((model) => (
           <DropdownMenuItem

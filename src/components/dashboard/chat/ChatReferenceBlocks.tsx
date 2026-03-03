@@ -172,7 +172,7 @@ export function MyStackCard() {
             {timeIcon(s.time_of_day)}
             <span className="text-foreground font-medium">{s.product_name}</span>
             {s.dosage && <span className="text-muted-foreground">• {s.dosage}</span>}
-            {s.recommended_by_ai && <Brain weight="fill" className="w-3 h-3 text-primary ml-auto" title="Recommandé par IA" />}
+            {s.recommended_by_ai && <Brain weight="fill" className="w-3 h-3 text-primary ml-auto" />}
           </div>
         ))}
       </div>

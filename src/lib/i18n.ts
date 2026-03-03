@@ -373,6 +373,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "settings.profileUpdatedDesc": "Vos informations ont été enregistrées.",
     "settings.language": "Langue",
     "settings.languageSubtitle": "Choisissez la langue de l'interface",
+    "settings.restartTutorial": "Tutoriel",
+    "settings.restartTutorialDesc": "Relancer la visite guidée du dashboard",
+    "settings.restartTutorialBtn": "Relancer le tutoriel",
 
     // PDP (Product Detail Page)
     "pdp.backToShop": "Retour à la boutique",
@@ -838,6 +841,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "settings.profileUpdatedDesc": "Your information has been saved.",
     "settings.language": "Language",
     "settings.languageSubtitle": "Choose the interface language",
+    "settings.restartTutorial": "Tutorial",
+    "settings.restartTutorialDesc": "Restart the dashboard guided tour",
+    "settings.restartTutorialBtn": "Restart tutorial",
 
     // PDP (Product Detail Page)
     "pdp.backToShop": "Back to shop",
@@ -1303,6 +1309,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "settings.profileUpdatedDesc": "Tu información ha sido guardada.",
     "settings.language": "Idioma",
     "settings.languageSubtitle": "Elige el idioma de la interfaz",
+    "settings.restartTutorial": "Tutorial",
+    "settings.restartTutorialDesc": "Reiniciar la visita guiada del dashboard",
+    "settings.restartTutorialBtn": "Reiniciar tutorial",
 
     // PDP (Product Detail Page)
     "pdp.backToShop": "Volver a la tienda",

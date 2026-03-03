@@ -52,8 +52,32 @@ serve(async (req) => {
       });
     }
 
-    // Download the PDF from storage to get its URL for the AI
-    const fileUrl = analysis.file_url;
+    // Download the PDF from storage as base64
+    const filePath = analysis.file_url;
+    // Extract bucket path: file_url is like "userId/filename.pdf"
+    const { data: fileData, error: downloadError } = await supabase.storage
+      .from('blood-tests')
+      .download(filePath);
+
+    if (downloadError || !fileData) {
+      console.error("Download error:", downloadError);
+      return new Response(JSON.stringify({ error: "Could not download file" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Convert to base64
+    const arrayBuffer = await fileData.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const chunkSize = 8192;
+    let binary = "";
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+      for (let j = 0; j < chunk.length; j++) {
+        binary += String.fromCharCode(chunk[j]);
+      }
+    }
+    const base64Pdf = btoa(binary);
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -62,9 +86,8 @@ serve(async (req) => {
       });
     }
 
-    // Use Gemini 3 Flash for OCR + analysis
     const systemPrompt = `Tu es un expert en analyses sanguines et biologie médicale.
-L'utilisateur t'envoie une analyse sanguine (résultats de laboratoire). Tu dois :
+L'utilisateur t'envoie une analyse sanguine (résultats de laboratoire) en PDF. Tu dois :
 
 1. EXTRAIRE les valeurs importantes du document (OCR si nécessaire)
 2. IDENTIFIER les valeurs anormales (hors normes)  
@@ -97,12 +120,15 @@ Réponds en JSON strict avec cette structure:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { 
             role: "user", 
-            content: `Voici l'URL de mon analyse sanguine au format PDF : ${fileUrl}\n\nAnalyse ce document et retourne les résultats en JSON.`
+            content: [
+              { type: "text", text: "Analyse ce document PDF d'analyse sanguine et retourne les résultats en JSON." },
+              { type: "image_url", image_url: { url: `data:application/pdf;base64,${base64Pdf}` } }
+            ]
           },
         ],
         temperature: 0.2,

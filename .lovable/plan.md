@@ -1,45 +1,56 @@
 
 
-## Two Issues to Fix
+# Plan de modifications
 
-### Issue 1: Shopify Connection Not Persisting
+## 1. Navbar responsive et adaptative
 
-**Root Cause Analysis:**
-The edge function logs show: `"Shopify API returned 401 after token validation: {"errors":[{"message":"Invalid token, missing prefix shcat_."}]}"`. This means:
-- The OAuth flow completes and a token is stored in `shopify_customer_tokens`
-- But when `shopify-customer-api` later tries to use that token to call Shopify's Customer Account API, the token is rejected
-- The `shopify-customer-api` function also has a **local validation** (`accessToken.startsWith("shcat_")`) that would delete the token before even trying Shopify
+**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
 
-The likely cause: The token exchange is returning an access token that doesn't have the `shcat_` prefix. This can happen if the Client ID was recently changed or the OAuth scopes aren't correct. Since the Client ID was just updated to `13693c2b-e54c-4c79-9d7c-1e7071211cb1`, the old tokens in the database are now invalid for the new Client ID.
+**Corrections** :
+- Remplacer la largeur fixe par un systeme de marges responsives progressives
+- Sur mobile (<768px) : marges de 12px de chaque cote
+- Sur tablette (768-1024px) : marges de 24px
+- Sur desktop (1024-1440px) : marges de 40px
+- Sur grand ecran (>1440px) : max-width de 1400px centre
+- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
+- La navbar gardera son design flottant capsule actuel
 
-**Additionally**, there's a **callback race condition**: The `ShopifyCallback` page renders `useShopifyCustomer`, which on mount checks the URL for `code` + `state` params. But the callback page also has its own `useEffect` with a fallback redirect. The hook redirects via `window.history.replaceState({}, '', '/dashboard')` which doesn't trigger a React Router navigation, so the user may land on the dashboard without the hook properly re-initializing.
+**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
 
-**Plan:**
-1. **Fix the callback redirect**: Replace `window.history.replaceState` with proper React Router navigation (pass `navigate` function or use a callback). The `ShopifyCallback` page should handle the redirect after success.
-2. **Remove the overly strict `shcat_` prefix validation** in `shopify-customer-api`. Shopify's own API will reject invalid tokens anyway — we already handle 401 responses. This client-side prefix check is causing legitimate tokens to be deleted.
-3. **Add debug logging** to the token exchange response in `shopify-customer-auth` to log the token prefix so we can diagnose if Shopify is returning a different format.
-4. **Fix the callback flow** in `ShopifyCallback.tsx`: Instead of relying on the hook to detect URL params, explicitly call `handleCallback` and use `navigate('/dashboard', { replace: true })` on success.
+---
 
-### Issue 2: "Réanalyser" Button with AI Model Selection
+## 2. Page About - En attente du PDF
 
-**What to build:**
-- Add a "Réanalyser" button next to analyzed blood tests
-- When clicked, show a model selector dropdown (same models as the chat: VitaSync 2.5 Flash, VitaSync 3 Flash, VitaSync 3 Pro)
-- Default model: VitaSync 3 Flash (google/gemini-3-flash-preview)
-- Pass the selected model to the `analyze-blood-test` edge function
-- Update the edge function to accept an optional `model` parameter
+Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
 
-**Changes:**
-1. **`src/components/dashboard/BloodTestSection.tsx`**: Add a "Réanalyser" button with a model selector dropdown next to the "Analysé" badge or in the analysis detail view. Reuse the `AI_MODELS` array from `ChatModelSelector.tsx`.
-2. **`supabase/functions/analyze-blood-test/index.ts`**: Accept an optional `model` field in the request body. Default to `google/gemini-3-flash-preview`. Use it in the AI gateway call instead of the hardcoded `google/gemini-2.5-flash`.
+---
 
-### Technical Details
+## 3. Page Blog - Etat vide + systeme d'administration
 
-**Files to modify:**
-- `src/hooks/useShopifyCustomer.tsx` — Fix callback handling, expose `handleCallback` or refactor flow
-- `src/pages/ShopifyCallback.tsx` — Properly orchestrate callback + redirect
-- `supabase/functions/shopify-customer-api/index.ts` — Remove `shcat_` prefix check, add logging
-- `supabase/functions/shopify-customer-auth/index.ts` — Add token prefix logging on exchange
-- `src/components/dashboard/BloodTestSection.tsx` — Add "Réanalyser" button with model picker
-- `supabase/functions/analyze-blood-test/index.ts` — Accept `model` parameter
+**Etat vide** :
+- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
+- Garder le hero et le design existant
+- Supprimer les articles en dur
+
+**Systeme d'administration des articles** :
+- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
+- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
+- La page Blog affichera dynamiquement les articles depuis la base de donnees
+- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
+
+**Fichiers modifies** :
+- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
+- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
+- Migration SQL : creation de la table `blog_posts`
+
+---
+
+## Details techniques
+
+| Tache | Fichiers | Complexite |
+|-------|----------|------------|
+| Navbar responsive | `src/index.css` | Faible |
+| Blog etat vide | `src/pages/Blog.tsx` | Faible |
+| Table blog_posts + RLS | Migration SQL | Moyenne |
+| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
 

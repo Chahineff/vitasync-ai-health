@@ -125,16 +125,8 @@ serve(async (req) => {
       console.log("Token refreshed successfully, prefix:", accessToken.substring(0, 6));
     }
 
-    // Validate token format before calling Shopify
-    if (!accessToken.startsWith("shcat_")) {
-      console.error("Invalid Shopify token format, prefix:", accessToken.substring(0, 10));
-      // Token is malformed - clean up and ask user to re-authenticate
-      await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
-      return new Response(
-        JSON.stringify({ error: "Invalid Shopify session, please reconnect your account", code: "TOKEN_EXPIRED" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-    }
+    // Log token format for debugging
+    console.log("Using Shopify token, prefix:", accessToken.substring(0, 6), "length:", accessToken.length);
 
     // Execute Customer Account API GraphQL query
     const { query, variables } = await req.json();

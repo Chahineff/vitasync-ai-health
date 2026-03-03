@@ -31,7 +31,7 @@ serve(async (req) => {
       });
     }
 
-    const { analysisId } = await req.json();
+    const { analysisId, model: requestedModel } = await req.json();
     if (!analysisId) {
       return new Response(JSON.stringify({ error: "analysisId required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -122,7 +122,7 @@ Réponds en JSON strict avec cette structure:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: requestedModel || "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           { 

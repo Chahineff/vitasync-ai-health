@@ -1,24 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 
 export default function ShopifyCallback() {
   const navigate = useNavigate();
-  const { isAuthenticating } = useShopifyCustomer();
+  const { processCallback } = useShopifyCustomer();
+  const processedRef = useRef(false);
 
   useEffect(() => {
-    // The hook handles the callback automatically
-    // Once done, it redirects to /dashboard
-    // This is just a loading screen
-    const timeout = setTimeout(() => {
-      // Fallback redirect if callback takes too long
-      if (!isAuthenticating) {
-        navigate('/dashboard', { replace: true });
-      }
-    }, 15000);
+    if (processedRef.current) return;
+    processedRef.current = true;
 
-    return () => clearTimeout(timeout);
-  }, [navigate, isAuthenticating]);
+    processCallback().then((success) => {
+      navigate('/dashboard', { replace: true });
+    });
+  }, [processCallback, navigate]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">

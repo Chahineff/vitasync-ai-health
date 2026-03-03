@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -167,9 +167,11 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     }
   }, [user]);
 
-  // Fetch customer data
+  // Fetch customer data (with dedup guard)
+  const fetchingRef = useRef(false);
   const fetchCustomerData = useCallback(async () => {
-    if (!isConnected) return;
+    if (!isConnected || fetchingRef.current) return;
+    fetchingRef.current = true;
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke('shopify-customer-api', {
@@ -177,6 +179,12 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
       });
 
       if (fnError) throw fnError;
+
+      // Handle TOKEN_EXPIRED from edge function
+      if (data?.code === 'TOKEN_EXPIRED' || data?.code === 'NOT_LINKED') {
+        setIsConnected(false);
+        return;
+      }
 
       if (data?.data?.customer) {
         const c = data.data.customer;
@@ -201,6 +209,8 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
         setIsConnected(false);
       }
       setError(msg);
+    } finally {
+      fetchingRef.current = false;
     }
   }, [isConnected]);
 

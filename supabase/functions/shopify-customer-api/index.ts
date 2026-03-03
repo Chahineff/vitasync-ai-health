@@ -151,8 +151,18 @@ serve(async (req) => {
 
     const data = await graphqlRes.json();
 
+    // If Shopify returns 401, the token is invalid (likely due to concurrent refresh race)
+    if (graphqlRes.status === 401) {
+      console.error("Shopify API returned 401 after token validation:", JSON.stringify(data));
+      await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
+      return new Response(
+        JSON.stringify({ error: "Shopify session expired, please reconnect", code: "TOKEN_EXPIRED" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     return new Response(JSON.stringify(data), {
-      status: graphqlRes.ok ? 200 : graphqlRes.status,
+      status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: unknown) {

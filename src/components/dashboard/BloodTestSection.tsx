@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
+import { BloodTestViewer } from './BloodTestViewer';
 
 interface BloodTestAnalysis {
   id: string;

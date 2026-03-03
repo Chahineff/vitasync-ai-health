@@ -7,6 +7,14 @@ import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { ProductRecommendationCard, parseProductRecommendations, SubscriptionCard } from '../ProductRecommendationCard';
 import { ChatQuizBlock, parseQuizBlock } from './ChatQuizBlock';
 import { ChatChartBlock, parseChartBlocks } from './ChatChartBlock';
+import { 
+  parseReferenceBlocks, 
+  HealthProfileCard, 
+  BloodTestCard, 
+  MyStackCard, 
+  ProductDetailCard, 
+  ReportButton 
+} from './ChatReferenceBlocks';
 
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
@@ -23,14 +31,18 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
   const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(content);
   // Parse charts from content
   const chartResult = parseChartBlocks(quiz ? beforeQuiz : content);
-  const { text, products, subscription } = parseProductRecommendations(chartResult.text);
+  // Parse reference blocks
+  const refResult = parseReferenceBlocks(chartResult.text);
+  // Parse products
+  const { text, products, subscription } = parseProductRecommendations(refResult.text);
   const charts = chartResult.charts;
+  const references = refResult.references;
   
   const streamingCursor = isStreaming ? (
     <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 align-middle animate-cursor-blink" />
   ) : null;
 
-  if (products.length === 0 && !subscription && !quiz && charts.length === 0) {
+  if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
         <ReactMarkdown>{content}</ReactMarkdown>
@@ -58,16 +70,17 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     );
   }
 
-  const parts = text.split(/__(?:PRODUCT|CHART)_(\d+)__/);
+  const parts = text.split(/__(?:PRODUCT|CHART|REF)_(\d+)__/);
   const elements: React.ReactNode[] = [];
   
   // Build a map of placeholder positions
-  const placeholderRegex = /__(?:PRODUCT|CHART)_(\d+)__/g;
-  const placeholders: Array<{ type: 'product' | 'chart'; index: number }> = [];
+  const placeholderRegex = /__(?:PRODUCT|CHART|REF)_(\d+)__/g;
+  const placeholders: Array<{ type: 'product' | 'chart' | 'ref'; index: number }> = [];
   let m;
   while ((m = placeholderRegex.exec(text)) !== null) {
-    const isChart = text.substring(m.index, m.index + 8) === '__CHART_';
-    placeholders.push({ type: isChart ? 'chart' : 'product', index: parseInt(m[1], 10) });
+    const prefix = text.substring(m.index, m.index + 7);
+    const type = prefix === '__CHART' ? 'chart' : prefix === '__REF_' ? 'ref' : 'product';
+    placeholders.push({ type, index: parseInt(m[1], 10) });
   }
   
   let elementCounter = 0;
@@ -84,6 +97,11 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
         const chart = charts[placeholder.index];
         if (chart) {
           elements.push(<ChatChartBlock key={`el-${elementCounter++}`} chart={chart} />);
+        }
+      } else if (placeholder?.type === 'ref') {
+        const ref = references[placeholder.index];
+        if (ref) {
+          elements.push(renderReference(ref, elementCounter++));
         }
       }
     } else if (part && part.trim()) {
@@ -105,6 +123,23 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
   }
   
   return <div className="space-y-2">{elements}</div>;
+}
+
+function renderReference(ref: { type: string; id?: string }, keyIdx: number): React.ReactNode {
+  switch (ref.type) {
+    case 'health_profile':
+      return <HealthProfileCard key={`ref-${keyIdx}`} />;
+    case 'blood_test':
+      return <BloodTestCard key={`ref-${keyIdx}`} analysisId={ref.id || ''} />;
+    case 'my_stack':
+      return <MyStackCard key={`ref-${keyIdx}`} />;
+    case 'product_detail':
+      return <ProductDetailCard key={`ref-${keyIdx}`} productTitle={ref.id || ''} />;
+    case 'report':
+      return <ReportButton key={`ref-${keyIdx}`} reportType={ref.id || 'stack'} />;
+    default:
+      return null;
+  }
 }
 
 function TTSButton({ content }: { content: string }) {

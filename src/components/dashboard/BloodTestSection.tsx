@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
+import { BloodTestViewer } from './BloodTestViewer';
 
 interface BloodTestAnalysis {
   id: string;
@@ -26,6 +27,7 @@ export function BloodTestSection() {
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<BloodTestAnalysis[]>([]);
   const [selectedAnalysis, setSelectedAnalysis] = useState<BloodTestAnalysis | null>(null);
+  const [viewingAnalysis, setViewingAnalysis] = useState<BloodTestAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState<string | null>(null);
@@ -209,9 +211,8 @@ export function BloodTestSection() {
     return data.signedUrl;
   };
 
-  const handleViewPdf = async (fileUrl: string) => {
-    const url = await getSignedUrl(fileUrl);
-    if (url) window.open(url, '_blank');
+  const handleViewPdf = (analysis: BloodTestAnalysis) => {
+    setViewingAnalysis(analysis);
   };
 
   const severityColor = (severity: string) => {
@@ -230,6 +231,15 @@ export function BloodTestSection() {
     );
   }
 
+  // Inline PDF viewer mode
+  if (viewingAnalysis) {
+    return (
+      <BloodTestViewer
+        analysis={viewingAnalysis}
+        onBack={() => setViewingAnalysis(null)}
+      />
+    );
+  }
   return (
     <div
       ref={dropRef}
@@ -356,7 +366,7 @@ export function BloodTestSection() {
                 >
                   {/* PDF preview link */}
                   <button
-                    onClick={() => handleViewPdf(selectedAnalysis.file_url)}
+                    onClick={() => handleViewPdf(selectedAnalysis)}
                     className="w-full flex items-center gap-3 p-4 rounded-[16px] bg-card border border-border/50 hover:border-primary/30 transition-colors text-left"
                   >
                     <Eye weight="duotone" className="w-6 h-6 text-primary" />

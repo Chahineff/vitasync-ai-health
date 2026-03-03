@@ -53,8 +53,10 @@ serve(async (req) => {
     }
 
     // Download the PDF from storage as base64
-    const filePath = analysis.file_url;
-    // Extract bucket path: file_url is like "userId/filename.pdf"
+    // file_url is stored as "blood-tests/userId/filename.pdf", strip bucket prefix
+    const rawPath = analysis.file_url;
+    const filePath = rawPath.startsWith('blood-tests/') ? rawPath.slice('blood-tests/'.length) : rawPath;
+    console.log("Downloading from blood-tests bucket, path:", filePath);
     const { data: fileData, error: downloadError } = await supabase.storage
       .from('blood-tests')
       .download(filePath);

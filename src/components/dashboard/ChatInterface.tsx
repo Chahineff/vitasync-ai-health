@@ -32,6 +32,18 @@ const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.p
 // Default model
 const DEFAULT_MODEL = AI_MODELS.find(m => m.model === 'google/gemini-3-flash-preview') || AI_MODELS[2];
 
+// Persist model selection in localStorage
+function getSavedModel(): AIModel {
+  try {
+    const saved = localStorage.getItem('vitasync_selected_model');
+    if (saved) {
+      const found = AI_MODELS.find(m => m.model === saved);
+      if (found) return found;
+    }
+  } catch {}
+  return DEFAULT_MODEL;
+}
+
 export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
   const { healthProfile } = useHealthProfile();
@@ -42,7 +54,12 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [hasCalledFirstMessage, setHasCalledFirstMessage] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<AIModel>(DEFAULT_MODEL);
+  const [selectedModel, setSelectedModel] = useState<AIModel>(getSavedModel);
+
+  const handleModelChange = (model: AIModel) => {
+    setSelectedModel(model);
+    localStorage.setItem('vitasync_selected_model', model.model);
+  };
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<ChatInputRef>(null);
   const fullContentRef = useRef('');
@@ -254,7 +271,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const isNewConversation = messages.length === 0;
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] md:h-[calc(100vh-2rem)] min-h-0 md:min-h-[600px] bg-background/30 md:rounded-3xl overflow-hidden md:border md:border-white/10 backdrop-blur-xl">
+    <div className="flex h-[calc(100dvh-4rem)] md:h-[calc(100vh-2rem)] min-h-0 md:min-h-[600px] bg-background/30 md:rounded-3xl overflow-hidden md:border md:border-border/50 backdrop-blur-xl">
       {/* Sidebar - hidden on mobile, shown via sheet */}
       <ChatSidebar
         conversations={conversations}
@@ -269,7 +286,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative min-w-0">
         {/* Header with Model Selector + Mobile sidebar toggle */}
-        <div className="px-3 md:px-4 py-3 border-b border-white/5 flex items-center justify-between gap-2">
+        <div className="px-3 md:px-4 py-3 border-b border-border/50 flex items-center justify-between gap-2">
           {/* Mobile sidebar trigger */}
           <MobileChatSidebarTrigger
             conversations={conversations}
@@ -280,7 +297,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           />
           <ChatModelSelector 
             selectedModel={selectedModel} 
-            onModelChange={setSelectedModel} 
+            onModelChange={handleModelChange} 
           />
         </div>
 
@@ -308,7 +325,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
               {/* Typing Indicator - without bubble */}
               {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                <TypingIndicator />
+                <TypingIndicator selectedModel={selectedModel.model} />
               )}
               <div ref={messagesEndRef} />
             </div>
@@ -353,13 +370,13 @@ function MobileChatSidebarTrigger({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors md:hidden"
+        className="p-2 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10 hover:bg-muted dark:hover:bg-white/10 transition-colors md:hidden"
         aria-label="Historique des conversations"
       >
         <List weight="light" className="w-5 h-5 text-foreground" />
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-[280px] p-0 bg-background/95 backdrop-blur-xl border-white/10">
+        <SheetContent side="left" className="w-[280px] p-0 bg-background/95 backdrop-blur-xl border-border/50">
           <SheetTitle className="sr-only">Historique des conversations</SheetTitle>
           <ChatSidebar
             conversations={conversations}

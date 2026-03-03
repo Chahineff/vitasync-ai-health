@@ -193,12 +193,12 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
               initial={{ opacity: 0, y: 10, height: 0 }}
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: 10, height: 0 }}
-              className="flex items-center gap-3 mb-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 overflow-hidden"
+              className="flex items-center gap-3 mb-3 px-4 py-3 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10 overflow-hidden"
             >
               {filePreview ? (
                 <img src={filePreview} className="w-12 h-12 rounded-lg object-cover" alt="Preview" />
               ) : (
-                <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-muted dark:bg-white/10 flex items-center justify-center">
                   <FileIcon weight="light" className="w-6 h-6 text-foreground/60" />
                 </div>
               )}

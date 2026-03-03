@@ -181,7 +181,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card-premium rounded-2xl p-5 border border-white/10 mb-6"
+      className="glass-card-premium rounded-2xl p-5 border border-border/50 dark:border-white/10 mb-6"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -200,7 +200,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
         <button
           onClick={handleRefresh}
           disabled={loading}
-          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all disabled:opacity-50"
+          className="p-2 rounded-lg bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 transition-all disabled:opacity-50"
           title={t('shop.refreshRecommendations')}
         >
           <ArrowClockwise className={`w-4 h-4 text-foreground/60 ${loading ? 'animate-spin' : ''}`} />

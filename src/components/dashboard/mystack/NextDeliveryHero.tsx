@@ -90,12 +90,21 @@ export function NextDeliveryHero({ index, customer }: NextDeliveryHeroProps) {
                 </Button>
               </>
             ) : (
-              <Button
-                className="rounded-xl transition-all duration-200 ease-in-out"
-                onClick={() => window.dispatchEvent(new CustomEvent('navigate-tab', { detail: 'shop' }))}
-              >
-                Découvrir nos formules
-              </Button>
+              <div className="flex items-center gap-3 flex-wrap">
+                <Button
+                  className="rounded-xl transition-all duration-200 ease-in-out"
+                  onClick={() => window.dispatchEvent(new CustomEvent('navigate-tab', { detail: 'coach' }))}
+                >
+                  Créer ta formule avec le Coach IA
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-xl transition-all duration-200 ease-in-out border-border"
+                  onClick={() => window.dispatchEvent(new CustomEvent('navigate-tab', { detail: 'shop' }))}
+                >
+                  Parcourir la boutique
+                </Button>
+              </div>
             )}
           </div>
         </div>

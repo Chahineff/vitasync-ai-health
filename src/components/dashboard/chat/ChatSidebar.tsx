@@ -98,7 +98,7 @@ export function ChatSidebar({
   }} transition={{
     duration: 0.3,
     ease: "easeInOut"
-  }} className={cn("relative h-full border-r border-white/10 flex flex-col bg-background/30 backdrop-blur-xl overflow-hidden flex-shrink-0", isMobileOverlay ? "flex" : "hidden md:flex")}>
+  }} className={cn("relative h-full border-r border-border/50 flex flex-col bg-muted/30 dark:bg-background/30 backdrop-blur-xl overflow-hidden flex-shrink-0", isMobileOverlay ? "flex" : "hidden md:flex")}>
       {/* Header with New Chat button */}
       <div className="p-3 flex items-center justify-between min-w-[72px]">
         <AnimatePresence mode="wait">
@@ -132,7 +132,7 @@ export function ChatSidebar({
       {!isCollapsed && <div className="px-3 pb-3">
           <div className="relative">
             <MagnifyingGlass weight="light" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
-            <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Rechercher..." className={cn("w-full pl-9 pr-8 py-2.5 rounded-xl", "bg-white/5 border border-white/10", "text-sm font-light text-foreground placeholder:text-foreground/40", "focus:outline-none focus:border-primary/40 focus:bg-white/8", "transition-all duration-200")} />
+            <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Rechercher..." className={cn("w-full pl-9 pr-8 py-2.5 rounded-xl", "bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10", "text-sm font-light text-foreground placeholder:text-foreground/40", "focus:outline-none focus:border-primary/40 focus:bg-muted dark:focus:bg-white/8", "transition-all duration-200")} />
             {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-white/10 transition-colors">
                 <X weight="bold" className="w-3 h-3 text-foreground/40" />
               </button>}
@@ -171,7 +171,7 @@ export function ChatSidebar({
             x: 0
           }} transition={{
             delay: groupIndex * 0.1 + convIndex * 0.05
-          }} onClick={() => onSelectConversation(conv.id)} className={cn("w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all group relative", currentConversationId === conv.id ? 'bg-white/10 text-foreground' : 'text-foreground/60 hover:bg-white/5 hover:text-foreground')} title={isCollapsed ? conv.title || 'Conversation' : undefined}>
+          }} onClick={() => onSelectConversation(conv.id)} className={cn("w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all group relative", currentConversationId === conv.id ? 'bg-primary/10 dark:bg-white/10 text-foreground' : 'text-foreground/60 hover:bg-muted/50 dark:hover:bg-white/5 hover:text-foreground')} title={isCollapsed ? conv.title || 'Conversation' : undefined}>
                   {/* Active indicator */}
                   {currentConversationId === conv.id}
                   

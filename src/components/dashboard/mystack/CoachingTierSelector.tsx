@@ -109,18 +109,18 @@ export function CoachingTierSelector({ index }: CoachingTierSelectorProps) {
               </Button>
             ) : tier.isUpgrade ? (
               <Button
-                className="w-full rounded-xl transition-all duration-200 ease-in-out"
-                onClick={() => {}}
+                disabled
+                className="w-full rounded-xl transition-all duration-200 ease-in-out opacity-60"
               >
-                Mettre à niveau
+                Bientôt disponible
               </Button>
             ) : (
               <Button
+                disabled
                 variant="outline"
-                className="w-full rounded-xl transition-all duration-200 ease-in-out border-border"
-                onClick={() => {}}
+                className="w-full rounded-xl transition-all duration-200 ease-in-out border-border opacity-60"
               >
-                Rétrograder
+                Bientôt disponible
               </Button>
             )}
           </div>

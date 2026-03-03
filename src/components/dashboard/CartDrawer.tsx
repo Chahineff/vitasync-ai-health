@@ -34,8 +34,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
-      setIsOpen(false);
+      window.location.href = checkoutUrl;
     }
   };
 
@@ -44,8 +43,8 @@ export function CartDrawer({ children }: CartDrawerProps) {
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background/95 backdrop-blur-xl border-l border-white/10">
-        <SheetHeader className="flex-shrink-0 pb-4 border-b border-white/10">
+      <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background/95 backdrop-blur-xl border-l border-border/50">
+        <SheetHeader className="flex-shrink-0 pb-4 border-b border-border/50">
           <SheetTitle className="flex items-center gap-2 text-foreground">
             <ShoppingCart weight="light" className="w-5 h-5" />
             Panier
@@ -77,10 +76,10 @@ export function CartDrawer({ children }: CartDrawerProps) {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
-                      className="flex gap-4 p-3 rounded-xl bg-white/5 border border-white/10"
+                      className="flex gap-4 p-3 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10"
                     >
                       {/* Image */}
-                      <div className="w-16 h-16 rounded-lg bg-white/5 overflow-hidden flex-shrink-0">
+                      <div className="w-16 h-16 rounded-lg bg-muted/50 dark:bg-white/5 overflow-hidden flex-shrink-0">
                         {item.product.node.images?.edges?.[0]?.node && (
                           <img
                             src={item.product.node.images.edges[0].node.url}
@@ -149,7 +148,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
               </div>
 
               {/* Footer */}
-              <div className="flex-shrink-0 pt-4 mt-4 border-t border-white/10 space-y-4">
+              <div className="flex-shrink-0 pt-4 mt-4 border-t border-border/50 space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-foreground/60 font-light">Total</span>
                   <span className="text-xl font-semibold text-foreground">

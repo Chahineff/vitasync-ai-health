@@ -136,7 +136,7 @@ serve(async (req) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: accessToken,
       },
       body: JSON.stringify({ query, variables }),
     });

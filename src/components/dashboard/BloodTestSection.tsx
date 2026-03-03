@@ -27,6 +27,7 @@ export function BloodTestSection() {
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<BloodTestAnalysis[]>([]);
   const [selectedAnalysis, setSelectedAnalysis] = useState<BloodTestAnalysis | null>(null);
+  const [viewingAnalysis, setViewingAnalysis] = useState<BloodTestAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState<string | null>(null);
@@ -210,9 +211,8 @@ export function BloodTestSection() {
     return data.signedUrl;
   };
 
-  const handleViewPdf = async (fileUrl: string) => {
-    const url = await getSignedUrl(fileUrl);
-    if (url) window.open(url, '_blank');
+  const handleViewPdf = (analysis: BloodTestAnalysis) => {
+    setViewingAnalysis(analysis);
   };
 
   const severityColor = (severity: string) => {

@@ -175,6 +175,31 @@ async function fetchUserSupplements(supabase: any, userId: string): Promise<User
   return data || [];
 }
 
+// Fetch blood test analyses for context
+interface BloodTestSummary {
+  id: string;
+  file_name: string;
+  status: string;
+  deficiencies: unknown;
+  analyzed_at: string | null;
+}
+
+// deno-lint-ignore no-explicit-any
+async function fetchBloodTestAnalyses(supabase: any, userId: string): Promise<BloodTestSummary[]> {
+  const { data, error } = await supabase
+    .from("blood_test_analyses")
+    .select("id, file_name, status, deficiencies, analyzed_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Error fetching blood test analyses:", error);
+    return [];
+  }
+  return data || [];
+}
+
 // Fetch condensed enriched product data (scientific knowledge base)
 interface EnrichedProductSummary {
   shopify_product_title: string;
@@ -489,6 +514,7 @@ RÈGLE D'OR : Conseil → Options → Achat (jamais l'inverse)
 • TOUJOURS dire "Voici 2 options, tu préfères laquelle ?"
 • Limiter les recommandations :
   - MAXIMUM 2 PRODUITS par réponse (jamais plus !)
+  - Ne recommande JAMAIS le même produit (même ProductID) plus d'une fois dans une même réponse
   - Prospect (quiz non fait) → max 2 produits starter
   - Client (quiz fait) → max 2 produits optimal
 
@@ -598,7 +624,9 @@ function buildEnrichedSystemPrompt(
   catalog: string,
   trends: Trends | null,
   userSupplements: UserSupplement[] = [],
-  enrichedProducts: EnrichedProductSummary[] = []
+  enrichedProducts: EnrichedProductSummary[] = [],
+  rawCheckins: DailyCheckin[] = [],
+  bloodTests: BloodTestSummary[] = []
 ): string {
   const contextParts: string[] = [];
   
@@ -704,6 +732,38 @@ DIRECTIVES COMPLÉMENTS ACTUELS:
 • Ne recommande PAS un produit que l'utilisateur prend déjà (évite les doublons)
 • Vérifie les interactions possibles entre compléments actuels et toute nouvelle recommandation
 • Si l'utilisateur demande un produit qu'il prend déjà → informe-le et propose un ajustement de dosage si pertinent`;
+
+  // Inject raw check-in data for real charts
+  if (rawCheckins.length > 0) {
+    const checkinLines = rawCheckins.map(c => {
+      const parts: string[] = [];
+      if (c.sleep_quality !== null) parts.push(`sommeil=${c.sleep_quality}`);
+      if (c.energy_level !== null) parts.push(`énergie=${c.energy_level}`);
+      if (c.stress_level !== null) parts.push(`stress=${c.stress_level}`);
+      if (c.mood) parts.push(`humeur=${c.mood}`);
+      return `${c.checkin_date}: ${parts.join(', ')}`;
+    });
+    fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+📅 DONNÉES BRUTES CHECK-INS (${rawCheckins.length} derniers jours)
+═══════════════════════════════════════════════════════════════
+${checkinLines.join('\n')}
+
+⚠️ RÈGLE GRAPHIQUES: Quand tu génères des graphiques sur les données de santé de l'utilisateur, utilise UNIQUEMENT ces vraies valeurs. Ne JAMAIS inventer de données.`;
+  }
+
+  // Inject blood test analyses context
+  if (bloodTests.length > 0) {
+    const btLines = bloodTests.map(bt => {
+      const defs = Array.isArray(bt.deficiencies) ? (bt.deficiencies as Array<{name?: string}>).map(d => d.name || '').filter(Boolean).join(', ') : '';
+      return `- ID: ${bt.id} | Fichier: ${bt.file_name} | Statut: ${bt.status}${defs ? ` | Carences: ${defs}` : ''}`;
+    });
+    fullPrompt += `\n\n═══════════════════════════════════════════════════════════════
+🩸 ANALYSES SANGUINES DE L'UTILISATEUR (${bloodTests.length})
+═══════════════════════════════════════════════════════════════
+${btLines.join('\n')}
+
+Pour référencer une analyse dans ta réponse, utilise: [[BLOOD_TEST:id]]`;
+  }
 
   // Inject scientific knowledge base (condensed)
   if (enrichedProducts.length > 0) {
@@ -848,7 +908,7 @@ Deno.serve(async (req) => {
     const historyDays = getHistoryDays(requestedModel);
     console.log(`History window: ${historyDays} days for model ${requestedModel}`);
 
-    const [userProfileResult, healthProfileResult, recentCheckins, catalog, userSupplements, enrichedProducts] = await Promise.all([
+    const [userProfileResult, healthProfileResult, recentCheckins, catalog, userSupplements, enrichedProducts, bloodTestAnalyses] = await Promise.all([
       supabaseClient
         .from("profiles")
         .select("first_name, last_name")
@@ -862,7 +922,8 @@ Deno.serve(async (req) => {
       fetchRecentCheckins(supabaseClient, userId, historyDays),
       fetchShopifyCatalog(),
       fetchUserSupplements(supabaseClient, userId),
-      fetchEnrichedProductData(serviceClient)
+      fetchEnrichedProductData(serviceClient),
+      fetchBloodTestAnalyses(supabaseClient, userId)
     ]);
 
     const userProfile = userProfileResult.data;
@@ -874,7 +935,7 @@ Deno.serve(async (req) => {
     console.log("User supplements:", userSupplements.length);
     console.log("Enriched products loaded:", enrichedProducts.length);
 
-    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends, userSupplements, enrichedProducts);
+    const systemPrompt = buildEnrichedSystemPrompt(userProfile, healthProfile, catalog, trends, userSupplements, enrichedProducts, recentCheckins, bloodTestAnalyses);
     console.log("System prompt length:", systemPrompt.length, "chars");
 
     // Validate messages structure (requestBody already parsed above)
@@ -952,13 +1013,38 @@ QUAND UTILISER :
 • Pour illustrer des tendances de check-ins (sommeil, énergie, stress)
 • Pour montrer la répartition de son stack de compléments
 • Pour comparer des valeurs (avant/après, objectif vs réalité)
-• TOUJOURS utiliser les vraies données de check-in si disponibles
+• TOUJOURS utiliser les vraies données de check-in (section DONNÉES BRUTES) si disponibles
 
 RÈGLES :
 • Le JSON doit être sur UNE SEULE LIGNE (pas de retour à la ligne dans le JSON)
 • Vérifie que le JSON est valide avant de l'envoyer
 • Maximum 1-2 graphiques par réponse
-• Accompagne toujours le graphique d'une analyse textuelle`;
+• Accompagne toujours le graphique d'une analyse textuelle
+
+═══════════════════════════════════════════════════════════════
+RÉFÉRENCES INTERACTIVES (FONCTIONNALITÉ EXCLUSIVE)
+═══════════════════════════════════════════════════════════════
+
+Tu peux intégrer des blocs interactifs dans tes réponses :
+
+• [[HEALTH_PROFILE]] - Affiche le profil santé complet de l'utilisateur
+• [[BLOOD_TEST:id]] - Affiche une analyse sanguine (utilise l'ID exact de la section ANALYSES SANGUINES)
+• [[MY_STACK]] - Affiche le stack de compléments actuel de l'utilisateur
+• [[PRODUCT_DETAIL:productTitle]] - Affiche les détails scientifiques d'un produit (utilise le titre exact du produit)
+• [[REPORT:stack]] ou [[REPORT:health]] - Génère un rapport PDF téléchargeable
+
+QUAND UTILISER :
+• [[HEALTH_PROFILE]] quand l'utilisateur demande "montre-moi mon profil", "mes infos santé"
+• [[MY_STACK]] quand il demande "qu'est-ce que je prends ?", "mon stack actuel"
+• [[PRODUCT_DETAIL:titre]] quand il veut des détails scientifiques approfondis sur un produit
+• [[BLOOD_TEST:id]] quand il parle de ses analyses sanguines
+• [[REPORT:stack]] quand il demande un rapport de son stack, un récapitulatif ou un PDF
+• [[REPORT:health]] quand il veut un bilan santé complet
+
+RÈGLES RÉFÉRENCES :
+• Place chaque bloc sur sa propre ligne
+• Ne répète pas les mêmes données en texte si tu utilises un bloc interactif
+• Maximum 3 blocs de référence par réponse`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

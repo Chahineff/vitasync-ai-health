@@ -10,10 +10,10 @@ const SHOPIFY_STORE_DOMAIN = "vitasync2.myshopify.com";
 const SHOPIFY_API_VERSION = "2025-07";
 const STOREFRONT_API_URL = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
-const MAX_QUERY_LENGTH = 4000;
-const MAX_QUERY_DEPTH = 7;
-const MAX_BRACE_COUNT = 15;
-const FETCH_TIMEOUT_MS = 10000;
+const MAX_QUERY_LENGTH = 6000;
+const MAX_QUERY_DEPTH = 10;
+const MAX_BRACE_COUNT = 30;
+const FETCH_TIMEOUT_MS = 15000;
 
 /** Calculate the maximum nesting depth of a GraphQL query */
 function calculateQueryDepth(query: string): number {

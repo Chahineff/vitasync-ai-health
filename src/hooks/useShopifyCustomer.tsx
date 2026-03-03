@@ -167,6 +167,52 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     }
   }, [user]);
 
+  // Helper: invoke shopify-customer-api with automatic silent retry on TOKEN_EXPIRED
+  const retryCountRef = useRef(0);
+  const invokeWithRetry = useCallback(async (
+    query: string,
+    variables?: Record<string, unknown>,
+    maxRetries = 1,
+  ): Promise<unknown> => {
+    const { data, error: fnError } = await supabase.functions.invoke('shopify-customer-api', {
+      body: { query, variables },
+    });
+
+    if (fnError) throw fnError;
+
+    // If token expired, wait briefly (let concurrent refresh settle) then retry once
+    if (data?.code === 'TOKEN_EXPIRED' && retryCountRef.current < maxRetries) {
+      retryCountRef.current++;
+      console.log('Token expired, silent retry attempt', retryCountRef.current);
+
+      // Re-check connection status (token may have been refreshed by another call)
+      const { data: statusData } = await supabase.functions.invoke('shopify-customer-auth', {
+        body: { action: 'status' },
+      });
+
+      if (!statusData?.connected) {
+        retryCountRef.current = 0;
+        setIsConnected(false);
+        return null;
+      }
+
+      // Wait 500ms for refresh to propagate, then retry
+      await new Promise((r) => setTimeout(r, 500));
+      const result = await invokeWithRetry(query, variables, 0); // no further retries
+      retryCountRef.current = 0;
+      return result;
+    }
+
+    if (data?.code === 'TOKEN_EXPIRED' || data?.code === 'NOT_LINKED') {
+      retryCountRef.current = 0;
+      setIsConnected(false);
+      return null;
+    }
+
+    retryCountRef.current = 0;
+    return data;
+  }, []);
+
   // Fetch customer data (with dedup guard)
   const fetchingRef = useRef(false);
   const fetchCustomerData = useCallback(async () => {
@@ -174,20 +220,12 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     fetchingRef.current = true;
 
     try {
-      const { data, error: fnError } = await supabase.functions.invoke('shopify-customer-api', {
-        body: { query: CUSTOMER_DATA_QUERY },
-      });
+      const data = await invokeWithRetry(CUSTOMER_DATA_QUERY) as Record<string, unknown> | null;
+      if (!data) return;
 
-      if (fnError) throw fnError;
-
-      // Handle TOKEN_EXPIRED from edge function
-      if (data?.code === 'TOKEN_EXPIRED' || data?.code === 'NOT_LINKED') {
-        setIsConnected(false);
-        return;
-      }
-
-      if (data?.data?.customer) {
-        const c = data.data.customer;
+      const customerData = (data as any)?.data?.customer;
+      if (customerData) {
+        const c = customerData;
         setCustomer({
           firstName: c.firstName,
           lastName: c.lastName,
@@ -205,23 +243,16 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     } catch (err) {
       console.error('Failed to fetch customer data:', err);
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      if (msg.includes('TOKEN_EXPIRED') || msg.includes('NOT_LINKED')) {
-        setIsConnected(false);
-      }
       setError(msg);
     } finally {
       fetchingRef.current = false;
     }
-  }, [isConnected]);
+  }, [isConnected, invokeWithRetry]);
 
-  // Execute arbitrary GraphQL query
+  // Execute arbitrary GraphQL query (with auto-retry)
   const executeQuery = useCallback(async (query: string, variables?: Record<string, unknown>) => {
-    const { data, error: fnError } = await supabase.functions.invoke('shopify-customer-api', {
-      body: { query, variables },
-    });
-    if (fnError) throw fnError;
-    return data;
-  }, []);
+    return invokeWithRetry(query, variables);
+  }, [invokeWithRetry]);
 
   // Connect (initiate OAuth)
   const connect = useCallback(async () => {

@@ -13,7 +13,9 @@ import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
 import QuickCoachWidget from "@/components/dashboard/QuickCoachWidget";
 import { SupplementTrackerEnhanced } from "@/components/dashboard/SupplementTrackerEnhanced";
-import ProgressChart from "@/components/dashboard/ProgressChart";
+import { MyStackPreviewWidget } from "@/components/dashboard/MyStackPreviewWidget";
+import { AnalysesPreviewWidget } from "@/components/dashboard/AnalysesPreviewWidget";
+import { AwaitingAnalysis } from "@/components/dashboard/AwaitingAnalysis";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { ShopSection } from "@/components/dashboard/ShopSection";
 import { ProductDetailSection } from "@/components/dashboard/ProductDetailSection";
@@ -62,7 +64,7 @@ const Dashboard = () => {
     return false;
   });
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [hasInteractedWithCoach, setHasInteractedWithCoach] = useState(false);
+  
   const [searchFocused, setSearchFocused] = useState(false);
   const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -330,7 +332,7 @@ const Dashboard = () => {
         {/* Add padding bottom on mobile for bottom nav */}
         <div id="dashboard-scroll-container" className={`flex-1 overflow-auto overflow-x-hidden ${activeSection === 'coach' ? 'p-0 pb-0 lg:p-8 lg:pb-8' : 'p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
-              {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} hasInteractedWithCoach={hasInteractedWithCoach} />}
+              {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} onGoToStack={() => handleSectionChange("mystack")} onGoToAnalyses={() => handleSectionChange("analyses")} />}
               {activeSection === "coach" && <motion.div key="coach" initial={{
             opacity: 0,
             scale: 0.97,
@@ -342,7 +344,7 @@ const Dashboard = () => {
           }} exit={{
             opacity: 0
           }}>
-                  <ChatInterface onFirstMessage={() => setHasInteractedWithCoach(true)} />
+                  <ChatInterface />
                 </motion.div>}
               {activeSection === "supplements" && <motion.div key="supplements" initial={{
             opacity: 0,
@@ -456,14 +458,16 @@ interface DashboardHomeProps {
   formatDate: () => string;
   onGoToCoach: () => void;
   onGoToShop: () => void;
-  hasInteractedWithCoach: boolean;
+  onGoToStack: () => void;
+  onGoToAnalyses: () => void;
 }
 const DashboardHome = ({
   userName,
   formatDate,
   onGoToCoach,
   onGoToShop,
-  hasInteractedWithCoach
+  onGoToStack,
+  onGoToAnalyses,
 }: DashboardHomeProps) => {
   const {
     t
@@ -524,10 +528,16 @@ const DashboardHome = ({
       <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.34 }}>
+      <SupplementTrackerEnhanced />
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.46 }}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SupplementTrackerEnhanced />
-        <ProgressChart showAwaitingState={!hasInteractedWithCoach} onStartDiagnostic={onGoToShop} />
+        <MyStackPreviewWidget onGoToStack={onGoToStack} />
+        <AnalysesPreviewWidget onGoToAnalyses={onGoToAnalyses} />
       </div>
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.58 }}>
+      <AwaitingAnalysis title="Boutique" onStartDiagnostic={onGoToShop} />
     </motion.div>
   </motion.div>;
 };

@@ -72,10 +72,10 @@ serve(async (req) => {
     let accessToken = tokenRow.access_token;
     const expiresAt = new Date(tokenRow.expires_at);
     const now = new Date();
-    const bufferMs = 60 * 1000; // 1 minute buffer
+    const bufferMs = 2 * 60 * 1000; // 2 minute buffer
 
     if (now.getTime() + bufferMs >= expiresAt.getTime()) {
-      console.log("Token expired, refreshing...");
+      console.log("Token expired or expiring soon, refreshing...");
       const tokenEndpoint = `https://shopify.com/authentication/${SHOP_ID}/oauth/token`;
 
       const refreshRes = await fetch(tokenEndpoint, {
@@ -90,7 +90,7 @@ serve(async (req) => {
 
       if (!refreshRes.ok) {
         const errText = await refreshRes.text();
-        console.error("Token refresh failed:", errText);
+        console.error("Token refresh failed:", refreshRes.status, errText);
         // Clean up invalid tokens
         await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
         return new Response(
@@ -100,8 +100,19 @@ serve(async (req) => {
       }
 
       const refreshData = await refreshRes.json();
+      console.log("Token refresh response keys:", Object.keys(refreshData));
+
+      if (!refreshData.access_token) {
+        console.error("Refresh response missing access_token");
+        await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
+        return new Response(
+          JSON.stringify({ error: "Token refresh returned invalid data, please re-authenticate", code: "TOKEN_EXPIRED" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       accessToken = refreshData.access_token;
-      const newExpiresAt = new Date(Date.now() + refreshData.expires_in * 1000).toISOString();
+      const newExpiresAt = new Date(Date.now() + (refreshData.expires_in || 3600) * 1000).toISOString();
 
       await supabaseAdmin
         .from("shopify_customer_tokens")
@@ -111,6 +122,19 @@ serve(async (req) => {
           expires_at: newExpiresAt,
         })
         .eq("user_id", userId);
+
+      console.log("Token refreshed successfully, prefix:", accessToken.substring(0, 6));
+    }
+
+    // Validate token format before calling Shopify
+    if (!accessToken.startsWith("shcat_")) {
+      console.error("Invalid Shopify token format, prefix:", accessToken.substring(0, 10));
+      // Token is malformed - clean up and ask user to re-authenticate
+      await supabaseAdmin.from("shopify_customer_tokens").delete().eq("user_id", userId);
+      return new Response(
+        JSON.stringify({ error: "Invalid Shopify session, please reconnect your account", code: "TOKEN_EXPIRED" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
     }
 
     // Execute Customer Account API GraphQL query

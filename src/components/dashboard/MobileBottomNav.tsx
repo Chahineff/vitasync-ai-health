@@ -17,13 +17,13 @@ interface MobileBottomNavProps {
 export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: MobileBottomNavProps) {
   const { t } = useTranslation();
 
-  const navItems = [
-    { id: "home" as Section, labelKey: "dashboard.home", icon: House },
-    { id: "coach" as Section, labelKey: "dashboard.coach", icon: VitaSyncIcon },
-    { id: "supplements" as Section, labelKey: "dashboard.supplements", icon: FirstAidKit },
-    { id: "shop" as Section, labelKey: "dashboard.shop", icon: Storefront },
-    { id: "mystack" as Section, labelKey: "dashboard.mystack", icon: Package },
-    { id: "analyses" as Section, label: "Analyses", icon: TestTube },
+  const navItems: Array<{ id: Section; labelKey?: string; label?: string; icon: any }> = [
+    { id: "home", labelKey: "dashboard.home", icon: House },
+    { id: "coach", labelKey: "dashboard.coach", icon: VitaSyncIcon },
+    { id: "supplements", labelKey: "dashboard.supplements", icon: FirstAidKit },
+    { id: "shop", labelKey: "dashboard.shop", icon: Storefront },
+    { id: "mystack", labelKey: "dashboard.mystack", icon: Package },
+    { id: "analyses", label: "Analyses", icon: TestTube },
   ];
 
   const displaySection = activeSection === "product" ? "shop" : activeSection;

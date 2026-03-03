@@ -921,6 +921,46 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Add chart generation capability for 3 Flash and 3 Pro only
+    if (model === 'google/gemini-3-flash-preview' || model === 'google/gemini-3-pro-preview') {
+      finalSystemPrompt += `
+
+═══════════════════════════════════════════════════════════════
+GRAPHIQUES INTERACTIFS (FONCTIONNALITÉ EXCLUSIVE)
+═══════════════════════════════════════════════════════════════
+
+Tu peux générer des graphiques directement dans le chat pour visualiser des données.
+
+FORMAT OBLIGATOIRE :
+[[CHART:type:{"title":"Titre","data":[{"label":"A","value":10},{"label":"B","value":20}],"xKey":"label","yKeys":["value"]}]]
+
+Types disponibles : bar, line, pie
+
+EXEMPLES :
+
+📊 Graphique en barres (suivi énergie) :
+[[CHART:bar:{"title":"Niveau d'énergie (7 derniers jours)","data":[{"jour":"Lun","énergie":3},{"jour":"Mar","énergie":4},{"jour":"Mer","énergie":2},{"jour":"Jeu","énergie":5},{"jour":"Ven","énergie":4}],"xKey":"jour","yKeys":["énergie"]}]]
+
+📈 Graphique en lignes (tendances) :
+[[CHART:line:{"title":"Évolution sommeil vs stress","data":[{"sem":"S1","sommeil":3,"stress":4},{"sem":"S2","sommeil":4,"stress":3}],"xKey":"sem","yKeys":["sommeil","stress"]}]]
+
+🥧 Camembert (répartition) :
+[[CHART:pie:{"title":"Répartition des compléments","data":[{"type":"Vitamines","count":3},{"type":"Minéraux","count":2},{"type":"Adaptogènes","count":1}],"xKey":"type","yKeys":["count"]}]]
+
+QUAND UTILISER :
+• Quand l'utilisateur demande une visualisation de ses données
+• Pour illustrer des tendances de check-ins (sommeil, énergie, stress)
+• Pour montrer la répartition de son stack de compléments
+• Pour comparer des valeurs (avant/après, objectif vs réalité)
+• TOUJOURS utiliser les vraies données de check-in si disponibles
+
+RÈGLES :
+• Le JSON doit être sur UNE SEULE LIGNE (pas de retour à la ligne dans le JSON)
+• Vérifie que le JSON est valide avant de l'envoyer
+• Maximum 1-2 graphiques par réponse
+• Accompagne toujours le graphique d'une analyse textuelle`;
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {

@@ -66,7 +66,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
   const placeholders: Array<{ type: 'product' | 'chart'; index: number }> = [];
   let m;
   while ((m = placeholderRegex.exec(text)) !== null) {
-    const isChart = text.substring(m.index, m.index + 9) === '__CHART_';
+    const isChart = text.substring(m.index, m.index + 8) === '__CHART';
     placeholders.push({ type: isChart ? 'chart' : 'product', index: parseInt(m[1], 10) });
   }
   

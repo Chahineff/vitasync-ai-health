@@ -240,6 +240,7 @@ export function BloodTestSection() {
       />
     );
   }
+  return (
     <div
       ref={dropRef}
       className="space-y-6 relative"

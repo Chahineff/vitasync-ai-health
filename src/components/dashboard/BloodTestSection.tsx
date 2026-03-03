@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Upload, Spinner, TestTube, Warning, Pill, Trash, Eye } from '@phosphor-icons/react';
+import { FileText, Upload, Spinner, TestTube, Warning, Pill, Trash, Eye, CloudArrowUp } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
+import { cn } from '@/lib/utils';
 
 interface BloodTestAnalysis {
   id: string;
@@ -19,6 +20,8 @@ interface BloodTestAnalysis {
   analyzed_at: string | null;
 }
 
+const BUCKET_NAME = 'blood-tests';
+
 export function BloodTestSection() {
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<BloodTestAnalysis[]>([]);
@@ -26,6 +29,9 @@ export function BloodTestSection() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dropRef = useRef<HTMLDivElement>(null);
+  const dragCounter = useRef(0);
 
   const fetchAnalyses = useCallback(async () => {
     if (!user) return;
@@ -48,35 +54,39 @@ export function BloodTestSection() {
 
   useEffect(() => { fetchAnalyses(); }, [fetchAnalyses]);
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
+  // Core upload logic (shared between click and drag-and-drop)
+  const uploadFile = async (file: File) => {
+    if (!user) return;
 
     if (!file.name.toLowerCase().endsWith('.pdf')) {
       toast.error('Seuls les fichiers PDF sont acceptés');
       return;
     }
 
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error('Le fichier ne doit pas dépasser 20 Mo');
+      return;
+    }
+
     setUploading(true);
     try {
-      // Upload to storage
+      // Upload to dedicated blood-tests bucket
       const fileName = `${user.id}/${Date.now()}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('vitasyncdata')
-        .upload(fileName, file);
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(fileName, file, { contentType: 'application/pdf' });
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage.from('vitasyncdata').getPublicUrl(fileName);
-      const fileUrl = urlData.publicUrl;
+      // Store the storage path (not a public URL since bucket is private)
+      const storagePath = `${BUCKET_NAME}/${fileName}`;
 
       // Create record
       const { data: record, error: insertError } = await supabase
         .from('blood_test_analyses')
         .insert({
           user_id: user.id,
-          file_url: fileUrl,
+          file_url: storagePath,
           file_name: file.name,
           status: 'pending',
         })
@@ -97,7 +107,49 @@ export function BloodTestSection() {
       toast.error('Erreur lors de l\'upload');
     } finally {
       setUploading(false);
-      e.target.value = '';
+    }
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadFile(file);
+    e.target.value = '';
+  };
+
+  // Drag and drop handlers
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    dragCounter.current = 0;
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      await uploadFile(file);
     }
   };
 
@@ -143,6 +195,25 @@ export function BloodTestSection() {
     }
   };
 
+  const getSignedUrl = async (fileUrl: string) => {
+    // fileUrl format: "blood-tests/userId/timestamp_filename.pdf"
+    const path = fileUrl.replace(`${BUCKET_NAME}/`, '');
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .createSignedUrl(path, 3600); // 1 hour
+
+    if (error || !data?.signedUrl) {
+      toast.error('Impossible d\'ouvrir le fichier');
+      return null;
+    }
+    return data.signedUrl;
+  };
+
+  const handleViewPdf = async (fileUrl: string) => {
+    const url = await getSignedUrl(fileUrl);
+    if (url) window.open(url, '_blank');
+  };
+
   const severityColor = (severity: string) => {
     switch (severity) {
       case 'important': case 'critique': return 'text-red-500';
@@ -160,12 +231,40 @@ export function BloodTestSection() {
   }
 
   return (
-    <div className="space-y-6">
+    <div
+      ref={dropRef}
+      className="space-y-6 relative"
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {/* Drag overlay */}
+      <AnimatePresence>
+        {isDragging && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-primary/10 border-2 border-dashed border-primary backdrop-blur-sm"
+          >
+            <div className="text-center">
+              <CloudArrowUp weight="duotone" className="w-16 h-16 text-primary mx-auto mb-3" />
+              <p className="text-lg font-medium text-primary">Déposez votre PDF ici</p>
+              <p className="text-sm text-muted-foreground">Formats acceptés : PDF (max 20 Mo)</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-light tracking-tight text-foreground">Mes Analyses</h2>
         <label className="cursor-pointer">
           <input type="file" accept=".pdf" onChange={handleUpload} className="hidden" disabled={uploading} />
-          <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${uploading ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground hover:bg-primary/90'}`}>
+          <div className={cn(
+            "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+            uploading ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground hover:bg-primary/90'
+          )}>
             {uploading ? <Spinner className="w-4 h-4 animate-spin" /> : <Upload weight="bold" className="w-4 h-4" />}
             {uploading ? 'Upload...' : 'Importer un PDF'}
           </div>
@@ -173,16 +272,22 @@ export function BloodTestSection() {
       </div>
 
       {analyses.length === 0 ? (
-        <div className="bg-card rounded-[20px] border border-border/50 p-12 text-center">
-          <TestTube weight="duotone" className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
-          <h3 className="text-lg font-medium text-foreground mb-2">Aucune analyse sanguine</h3>
-          <p className="text-sm text-muted-foreground mb-6">Importez vos résultats d'analyses sanguines en PDF pour obtenir une analyse IA personnalisée.</p>
-          <label className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
-            <input type="file" accept=".pdf" onChange={handleUpload} className="hidden" />
-            <Upload weight="bold" className="w-5 h-5" />
-            Importer un PDF
-          </label>
-        </div>
+        <label className="cursor-pointer block">
+          <input type="file" accept=".pdf" onChange={handleUpload} className="hidden" disabled={uploading} />
+          <div className={cn(
+            "bg-card rounded-[20px] border-2 border-dashed p-12 text-center transition-all",
+            isDragging ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
+          )}>
+            <CloudArrowUp weight="duotone" className="w-14 h-14 mx-auto mb-4 text-muted-foreground/40" />
+            <h3 className="text-lg font-medium text-foreground mb-2">Aucune analyse sanguine</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Importez vos résultats d'analyses sanguines en PDF pour obtenir une analyse IA personnalisée.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Cliquez ici ou glissez-déposez un fichier PDF (max 20 Mo)
+            </p>
+          </div>
+        </label>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: File list */}
@@ -191,11 +296,12 @@ export function BloodTestSection() {
               <motion.button
                 key={analysis.id}
                 onClick={() => setSelectedAnalysis(analysis)}
-                className={`w-full text-left p-4 rounded-[16px] border transition-all ${
+                className={cn(
+                  "w-full text-left p-4 rounded-[16px] border transition-all",
                   selectedAnalysis?.id === analysis.id
                     ? 'bg-primary/10 border-primary/30'
                     : 'bg-card border-border/50 hover:border-border'
-                }`}
+                )}
                 whileHover={{ scale: 1.01 }}
               >
                 <div className="flex items-start gap-3">
@@ -226,6 +332,15 @@ export function BloodTestSection() {
                 </div>
               </motion.button>
             ))}
+
+            {/* Upload more button */}
+            <label className="cursor-pointer block">
+              <input type="file" accept=".pdf" onChange={handleUpload} className="hidden" disabled={uploading} />
+              <div className="w-full p-4 rounded-[16px] border-2 border-dashed border-border/50 hover:border-primary/30 text-center transition-colors">
+                <Upload weight="light" className="w-5 h-5 mx-auto mb-1 text-muted-foreground" />
+                <p className="text-xs text-muted-foreground">Ajouter une analyse</p>
+              </div>
+            </label>
           </div>
 
           {/* Right: Analysis details */}
@@ -240,18 +355,16 @@ export function BloodTestSection() {
                   className="space-y-6"
                 >
                   {/* PDF preview link */}
-                  <a
-                    href={selectedAnalysis.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 rounded-[16px] bg-card border border-border/50 hover:border-primary/30 transition-colors"
+                  <button
+                    onClick={() => handleViewPdf(selectedAnalysis.file_url)}
+                    className="w-full flex items-center gap-3 p-4 rounded-[16px] bg-card border border-border/50 hover:border-primary/30 transition-colors text-left"
                   >
                     <Eye weight="duotone" className="w-6 h-6 text-primary" />
                     <div>
                       <p className="text-sm font-medium text-foreground">{selectedAnalysis.file_name}</p>
                       <p className="text-xs text-muted-foreground">Cliquez pour ouvrir le PDF</p>
                     </div>
-                  </a>
+                  </button>
 
                   {selectedAnalysis.status === 'completed' && selectedAnalysis.analysis_text ? (
                     <>
@@ -292,11 +405,12 @@ export function BloodTestSection() {
                           <div className="space-y-2">
                             {selectedAnalysis.deficiencies.map((d, i) => (
                               <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/30">
-                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                <span className={cn(
+                                  "text-xs px-2 py-0.5 rounded-full font-medium",
                                   d.severity === 'important' ? 'bg-red-500/10 text-red-500' :
                                   d.severity === 'modéré' ? 'bg-amber-500/10 text-amber-500' :
                                   'bg-yellow-500/10 text-yellow-500'
-                                }`}>{d.severity}</span>
+                                )}>{d.severity}</span>
                                 <div>
                                   <p className="font-medium text-foreground">{d.name}</p>
                                   <p className="text-sm text-muted-foreground">{d.description}</p>

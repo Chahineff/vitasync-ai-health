@@ -231,7 +231,15 @@ export function BloodTestSection() {
     );
   }
 
-  return (
+  // Inline PDF viewer mode
+  if (viewingAnalysis) {
+    return (
+      <BloodTestViewer
+        analysis={viewingAnalysis}
+        onBack={() => setViewingAnalysis(null)}
+      />
+    );
+  }
     <div
       ref={dropRef}
       className="space-y-6 relative"

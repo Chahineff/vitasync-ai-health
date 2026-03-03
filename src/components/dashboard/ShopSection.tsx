@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, SpinnerGap, Sparkle, X } from '@phosphor-icons/react';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
@@ -23,7 +23,7 @@ interface ShopSectionProps {
 
 const ITEMS_PER_PAGE = 20;
 
-export function ShopSection({ onProductSelect }: ShopSectionProps) {
+export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function ShopSection({ onProductSelect }, ref) {
   const { t } = useTranslation();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,7 +173,7 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div ref={ref} className="h-full flex flex-col">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
@@ -334,4 +334,4 @@ export function ShopSection({ onProductSelect }: ShopSectionProps) {
       </div>
     </div>
   );
-}
+});

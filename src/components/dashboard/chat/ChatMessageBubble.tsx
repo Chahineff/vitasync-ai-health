@@ -70,6 +70,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     placeholders.push({ type: isChart ? 'chart' : 'product', index: parseInt(m[1], 10) });
   }
   
+  let elementCounter = 0;
   parts.forEach((part, index) => {
     if (index % 2 === 1) {
       const placeholderIdx = Math.floor(index / 2);
@@ -77,17 +78,17 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
       if (placeholder?.type === 'product') {
         const product = products[placeholder.index];
         if (product) {
-          elements.push(<ProductRecommendationCard key={`product-${placeholder.index}`} product={product} />);
+          elements.push(<ProductRecommendationCard key={`el-${elementCounter++}`} product={product} />);
         }
       } else if (placeholder?.type === 'chart') {
         const chart = charts[placeholder.index];
         if (chart) {
-          elements.push(<ChatChartBlock key={`chart-${placeholder.index}`} chart={chart} />);
+          elements.push(<ChatChartBlock key={`el-${elementCounter++}`} chart={chart} />);
         }
       }
     } else if (part && part.trim()) {
       elements.push(
-        <div key={`text-${index}`} className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+        <div key={`el-${elementCounter++}`} className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
           <ReactMarkdown>{part.trim()}</ReactMarkdown>
         </div>
       );

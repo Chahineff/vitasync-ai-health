@@ -374,22 +374,18 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     }
   }, [isConnected, fetchCustomerData]);
 
-  // Handle callback on mount if URL has code
-  useEffect(() => {
+  // Expose handleCallback for ShopifyCallback page
+  const processCallback = useCallback(async () => {
     const url = new URL(window.location.href);
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
 
-    if (code && state && window.location.pathname === '/shopify-callback') {
-      setIsAuthenticating(true);
-      handleCallback(code, state).then((success) => {
-        setIsAuthenticating(false);
-        if (success) {
-          // Redirect back to dashboard mystack
-          window.history.replaceState({}, '', '/dashboard');
-        }
-      });
-    }
+    if (!code || !state) return false;
+
+    setIsAuthenticating(true);
+    const success = await handleCallback(code, state);
+    setIsAuthenticating(false);
+    return success;
   }, [handleCallback]);
 
   return {
@@ -403,5 +399,6 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     disconnect,
     refresh,
     executeQuery,
+    processCallback,
   };
 }

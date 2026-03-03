@@ -120,6 +120,7 @@ serve(async (req) => {
       }
 
       const tokenData = await tokenRes.json();
+      console.log("Token exchange success — token prefix:", tokenData.access_token?.substring(0, 6), "length:", tokenData.access_token?.length, "has_refresh:", !!tokenData.refresh_token);
       const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000).toISOString();
 
       // Extract Shopify customer ID from id_token if present

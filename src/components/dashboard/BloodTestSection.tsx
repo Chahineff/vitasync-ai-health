@@ -1,12 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Upload, Spinner, TestTube, Warning, Pill, Trash, Eye, CloudArrowUp } from '@phosphor-icons/react';
+import { FileText, Upload, Spinner, TestTube, Warning, Pill, Trash, Eye, CloudArrowUp, ArrowsClockwise, CaretDown } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import { BloodTestViewer } from './BloodTestViewer';
+import { AI_MODELS, type AIModel } from './chat/ChatModelSelector';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface BloodTestAnalysis {
   id: string;
@@ -155,7 +162,7 @@ export function BloodTestSection() {
     }
   };
 
-  const triggerAnalysis = async (analysisId: string) => {
+  const triggerAnalysis = async (analysisId: string, model?: string) => {
     setAnalyzing(analysisId);
     try {
       const session = await supabase.auth.getSession();
@@ -167,7 +174,7 @@ export function BloodTestSection() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${session.data.session?.access_token}`,
           },
-          body: JSON.stringify({ analysisId }),
+          body: JSON.stringify({ analysisId, model }),
         }
       );
 
@@ -364,17 +371,57 @@ export function BloodTestSection() {
                   exit={{ opacity: 0 }}
                   className="space-y-6"
                 >
-                  {/* PDF preview link */}
-                  <button
-                    onClick={() => handleViewPdf(selectedAnalysis)}
-                    className="w-full flex items-center gap-3 p-4 rounded-[16px] bg-card border border-border/50 hover:border-primary/30 transition-colors text-left"
-                  >
-                    <Eye weight="duotone" className="w-6 h-6 text-primary" />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{selectedAnalysis.file_name}</p>
-                      <p className="text-xs text-muted-foreground">Cliquez pour ouvrir le PDF</p>
-                    </div>
-                  </button>
+                  {/* PDF preview link + Réanalyser */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleViewPdf(selectedAnalysis)}
+                      className="flex-1 flex items-center gap-3 p-4 rounded-[16px] bg-card border border-border/50 hover:border-primary/30 transition-colors text-left"
+                    >
+                      <Eye weight="duotone" className="w-6 h-6 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{selectedAnalysis.file_name}</p>
+                        <p className="text-xs text-muted-foreground">Cliquez pour ouvrir le PDF</p>
+                      </div>
+                    </button>
+
+                    {selectedAnalysis.status === 'completed' && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            disabled={analyzing === selectedAnalysis.id}
+                            className={cn(
+                              "flex items-center gap-2 px-4 py-3 rounded-[16px] border text-sm font-medium transition-all whitespace-nowrap",
+                              analyzing === selectedAnalysis.id
+                                ? "bg-muted text-muted-foreground border-border/50"
+                                : "bg-card border-border/50 hover:border-primary/30 text-foreground"
+                            )}
+                          >
+                            {analyzing === selectedAnalysis.id ? (
+                              <Spinner className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <ArrowsClockwise weight="bold" className="w-4 h-4" />
+                            )}
+                            Réanalyser
+                            <CaretDown weight="bold" className="w-3 h-3" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border-border/50">
+                          {AI_MODELS.map((m) => (
+                            <DropdownMenuItem
+                              key={m.model}
+                              onClick={() => triggerAnalysis(selectedAnalysis.id, m.model)}
+                              className="cursor-pointer"
+                            >
+                              <div>
+                                <p className="text-sm font-medium">{m.label}</p>
+                                <p className="text-xs text-muted-foreground">{m.description}</p>
+                              </div>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
 
                   {selectedAnalysis.status === 'completed' && selectedAnalysis.analysis_text ? (
                     <>

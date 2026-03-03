@@ -23,22 +23,25 @@ const STATIC_PRODUCTS = [
 
 function matchImage(staticName: string, shopifyProducts: ShopifyProduct[]): string | null {
   const lower = staticName.toLowerCase();
+  // Exact / substring match
   for (const p of shopifyProducts) {
-    if (p.node.title.toLowerCase().includes(lower) || lower.includes(p.node.title.toLowerCase().split(" ")[0])) {
+    const title = p.node.title.toLowerCase();
+    if (title.includes(lower) || lower.includes(title.split(" ")[0])) {
       const img = p.node.images.edges[0]?.node.url;
       if (img) return img;
     }
   }
-  // Fuzzy: match first word
-  const firstWord = lower.split(" ")[0];
-  if (firstWord.length >= 4) {
+  // Match each word (>= 4 chars) from the static name against shopify titles
+  const words = lower.split(/[\s-]+/).filter(w => w.length >= 4);
+  for (const word of words) {
     for (const p of shopifyProducts) {
-      if (p.node.title.toLowerCase().includes(firstWord)) {
+      if (p.node.title.toLowerCase().includes(word)) {
         const img = p.node.images.edges[0]?.node.url;
         if (img) return img;
       }
     }
   }
+  // Also match tag as keyword
   return null;
 }
 

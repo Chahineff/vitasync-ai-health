@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Moon, Lightning, Brain, ArrowRight, Microphone, ChartDonut, TrendUp, Calendar } from "@phosphor-icons/react";
+import { Moon, Lightning, Brain, ArrowRight, Microphone, TrendUp, Package, TestTube, Storefront } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
-/* ── Circular Progress (replica of DailyCheckinWidget) ── */
+/* ── Circular Progress ── */
 function CircularProgress({ value, max, colorClass, delay = 0 }: { value: number; max: number; colorClass: string; delay?: number }) {
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
@@ -28,7 +28,7 @@ function CircularProgress({ value, max, colorClass, delay = 0 }: { value: number
   );
 }
 
-/* ── MetricCard (replica) ── */
+/* ── MetricCard ── */
 function MetricCard({ icon, label, value, trend, colorClass, bgClass, delay = 0 }: {
   icon: React.ReactNode; label: string; value: number; trend: number;
   colorClass: string; bgClass: string; delay?: number;
@@ -62,30 +62,7 @@ function MetricCard({ icon, label, value, trend, colorClass, bgClass, delay = 0 
   );
 }
 
-/* ── CountUp (replica of ProgressChart) ── */
-function CountUpNumber({ value }: { value: number }) {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    const duration = 1000;
-    const start = performance.now();
-    const step = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(eased * value));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [value]);
-  return <span className="text-2xl font-light text-foreground">{display}%</span>;
-}
-
 export function TutorialHomeDemo() {
-  const weeklyData = [
-    { day: "L", value: 100 }, { day: "M", value: 80 }, { day: "M", value: 100 },
-    { day: "J", value: 60 }, { day: "V", value: 100 }, { day: "S", value: 40 }, { day: "D", value: 0 },
-  ];
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -172,10 +149,10 @@ export function TutorialHomeDemo() {
         </div>
       </motion.div>
 
-      {/* Grid: SupplementTracker + ProgressChart replicas */}
+      {/* Row 1: Supplement Tracker + Shop Preview */}
       <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.34 }}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Simplified Supplement Tracker preview */}
+          {/* Supplement Tracker preview */}
           <div className="glass-card-premium rounded-3xl p-4 md:p-6 border border-white/10">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
@@ -195,7 +172,7 @@ export function TutorialHomeDemo() {
                 { name: "Créatine Monohydrate", time: "Matin", checked: true },
                 { name: "Magnésium Bisglycinate", time: "Soir", checked: true },
                 { name: "Oméga-3 EPA/DHA", time: "Midi", checked: false },
-              ].map((s, i) => (
+              ].map((s) => (
                 <div key={s.name} className={cn("flex items-center gap-3 p-3 rounded-xl border transition-all",
                   s.checked ? "bg-emerald-500/5 border-emerald-500/20" : "bg-white/5 border-white/10"
                 )}>
@@ -213,64 +190,80 @@ export function TutorialHomeDemo() {
             </div>
           </div>
 
-          {/* ProgressChart replica */}
-          <div className="glass-card-premium rounded-3xl p-6 border border-white/10">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <ChartDonut weight="light" className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-light tracking-tight text-foreground">Progression Santé</h3>
-                  <p className="text-xs text-foreground/50 font-light">Cette semaine</p>
-                </div>
+          {/* Shop/Boutique preview widget */}
+          <div className="glass-card-premium rounded-3xl p-4 md:p-6 border border-white/10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Storefront weight="light" className="w-5 h-5 text-primary" />
               </div>
-              <div className="flex items-center gap-1 text-secondary text-sm font-medium">
-                <TrendUp weight="bold" className="w-4 h-4" />
-                <span>+12%</span>
+              <div>
+                <h3 className="text-lg font-light tracking-tight text-foreground">Boutique</h3>
+                <p className="text-xs text-foreground/50 font-light">Compléments adaptés à ton profil</p>
               </div>
             </div>
-            {/* Donut */}
-            <div className="flex items-center justify-center mb-6">
-              <div className="relative w-32 h-32">
-                <svg viewBox="0 0 120 120" className="w-full h-full transform -rotate-90">
-                  <circle cx="60" cy="60" r="48" fill="none" stroke="currentColor" strokeWidth="8" className="text-white/10" />
-                  <motion.circle cx="60" cy="60" r="48" fill="none" strokeWidth="8" strokeLinecap="round"
-                    className="text-secondary" stroke="currentColor"
-                    strokeDasharray={2 * Math.PI * 48}
-                    initial={{ strokeDashoffset: 2 * Math.PI * 48 }}
-                    animate={{ strokeDashoffset: 2 * Math.PI * 48 * (1 - 0.78) }}
-                    transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <CountUpNumber value={78} />
-                  <span className="text-xs text-foreground/50">Adhérence</span>
-                </div>
-              </div>
-            </div>
-            {/* Weekly bars */}
-            <div className="border-t border-white/10 pt-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Calendar weight="light" className="w-4 h-4 text-foreground/50" />
-                <span className="text-xs font-medium text-foreground/60 uppercase tracking-wide">7 derniers jours</span>
-              </div>
-              <div className="flex items-end justify-between gap-2 h-16">
-                {weeklyData.map((item, index) => (
-                  <div key={index} className="flex-1 flex flex-col items-center gap-1">
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: `${item.value}%` }}
-                      transition={{ duration: 0.6, delay: 0.3 + index * 0.08, type: "spring", bounce: 0.3 }}
-                      className={cn("w-full rounded-t-sm",
-                        item.value === 100 ? "bg-secondary" : item.value >= 60 ? "bg-primary/60" : item.value > 0 ? "bg-amber-400/60" : "bg-white/20"
-                      )}
-                      style={{ minHeight: item.value > 0 ? "4px" : "2px" }}
-                    />
-                    <span className="text-[10px] text-foreground/40 font-light">{item.day}</span>
+            <div className="space-y-3">
+              {["Créatine Monohydrate", "Whey Isolate", "Ashwagandha KSM-66"].map((name, i) => (
+                <div key={name} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-lg">💊</span>
                   </div>
-                ))}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-light text-foreground truncate">{name}</p>
+                    <p className="text-xs text-foreground/40">{["29,99 €", "44,99 €", "27,99 €"][i]}</p>
+                  </div>
+                  <div className="px-2 py-1 rounded-lg bg-primary/10 text-primary text-[10px] font-medium border border-primary/20">
+                    Voir
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Row 2: MyStack Preview + Analyses Preview */}
+      <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.46 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* MyStack Preview */}
+          <div className="glass-card-premium rounded-3xl p-4 md:p-6 border border-white/10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
+                <Package weight="light" className="w-5 h-5 text-secondary" />
               </div>
+              <div>
+                <h3 className="text-lg font-light tracking-tight text-foreground">Mon Stack</h3>
+                <p className="text-xs text-foreground/50 font-light">4 compléments actifs</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {["Créatine", "Whey Isolate", "Magnésium", "Oméga-3"].map(name => (
+                <div key={name} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/10">
+                  <div className="w-2 h-2 rounded-full bg-secondary shrink-0" />
+                  <p className="text-sm font-light text-foreground">{name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Analyses Preview */}
+          <div className="glass-card-premium rounded-3xl p-4 md:p-6 border border-white/10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <TestTube weight="light" className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-light tracking-tight text-foreground">Mes Analyses</h3>
+                <p className="text-xs text-foreground/50 font-light">Dernier bilan analysé</p>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-light text-foreground">bilan_fevrier_2026.pdf</p>
+                <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-medium border border-emerald-500/20">
+                  Analysé ✓
+                </div>
+              </div>
+              <p className="text-xs text-foreground/40">2 valeurs hors normes · 2 compléments suggérés</p>
             </div>
           </div>
         </div>

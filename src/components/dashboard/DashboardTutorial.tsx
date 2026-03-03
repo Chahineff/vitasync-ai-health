@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   House, FirstAidKit, Storefront, Gear, Question, DeviceMobile,
   User, Crown, CheckCircle, ArrowRight, ArrowLeft, SignOut, CaretLeft,
+  Package, TestTube,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,6 +13,8 @@ import {
   TutorialCoachDemo,
   TutorialSupplementsDemo,
   TutorialShopDemo,
+  TutorialMyStackDemo,
+  TutorialAnalysesDemo,
   TutorialSettingsDemo,
 } from "./tutorial";
 
@@ -21,17 +24,18 @@ interface DashboardTutorialProps {
   onComplete: () => void;
 }
 
-/* ── VitaSync icon (same as Dashboard.tsx) ── */
 const VitaSyncIcon = ({ className, weight }: { className?: string; weight?: string }) => (
   <img src={vitasyncLogo} alt="Coach IA" className={className || "w-5 h-5"} />
 );
 
-/* ── Step config ── */
+/* ── Step config (7 steps) ── */
 const STEPS = [
   { id: "home", label: "Accueil", icon: House, bubble: "Chaque jour, remplis ton check-in pour que ton Coach IA s'adapte à toi." },
   { id: "coach", label: "Coach IA", icon: VitaSyncIcon, bubble: "Pose tes questions santé à VitaSync. Il connaît ton profil et s'adapte à tes besoins." },
   { id: "supplements", label: "Suppléments", icon: FirstAidKit, bubble: "Suis ta routine et coche tes prises. Exemple : Créatine le matin, Magnésium le soir." },
   { id: "shop", label: "Boutique", icon: Storefront, bubble: "Découvre une large sélection de compléments adaptés à ton profil." },
+  { id: "mystack", label: "Mon Stack", icon: Package, bubble: "Connecte ton compte boutique pour suivre tes commandes, abonnements et livraisons." },
+  { id: "analyses", label: "Mes Analyses", icon: TestTube, bubble: "Importe tes analyses sanguines en PDF et laisse l'IA les décrypter pour toi." },
   { id: "settings", label: "Paramètres", icon: Gear, bubble: "Modifie ton profil de santé, change de thème, ajuste tes préférences à tout moment." },
 ];
 
@@ -40,6 +44,8 @@ const DEMO_MAP: Record<string, React.FC> = {
   coach: TutorialCoachDemo,
   supplements: TutorialSupplementsDemo,
   shop: TutorialShopDemo,
+  mystack: TutorialMyStackDemo,
+  analyses: TutorialAnalysesDemo,
   settings: TutorialSettingsDemo,
 };
 
@@ -67,8 +73,9 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
   const DemoComponent = DEMO_MAP[step.id];
   const isLast = currentStep === STEPS.length - 1;
 
-  const menuItems = STEPS.slice(0, 4); // home, coach, supplements, shop
-  const generalItems = [STEPS[4]]; // settings
+  // Sidebar split: first 6 items in "Menu", last 1 in "Général"
+  const menuItems = STEPS.slice(0, 6);
+  const generalItems = [STEPS[6]]; // settings
 
   const updateCursorTarget = useCallback((stepIndex: number) => {
     const el = sidebarRefs.current[stepIndex];
@@ -133,19 +140,18 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[60] bg-background"
     >
-      {/* Skip button */}
+      {/* Skip button — more prominent */}
       <button
         onClick={onComplete}
-        className="absolute top-4 right-4 z-[70] text-foreground/50 hover:text-foreground transition-colors text-sm flex items-center gap-1 px-4 py-2 rounded-xl bg-card/60 border border-border/20 backdrop-blur-md pointer-events-auto"
+        className="absolute top-4 right-4 z-[70] text-foreground/70 hover:text-foreground transition-colors text-sm font-medium flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-card/80 border border-border/30 backdrop-blur-md pointer-events-auto shadow-lg shadow-black/10 hover:bg-card/90"
       >
-        Passer
+        Passer le tutoriel
       </button>
 
       <div className="h-full flex w-full">
-        {/* ═══ SIDEBAR (desktop) — exact replica of Dashboard.tsx ═══ */}
+        {/* ═══ SIDEBAR (desktop) ═══ */}
         {!isMobile && (
           <aside className="fixed top-4 bottom-4 left-4 z-[61] glass-sidebar-floating flex flex-col w-72 pointer-events-none">
-            {/* Logo */}
             <div className="p-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <img alt="VitaSync" className="w-8 h-8" src={vitasyncLogo} />
@@ -181,7 +187,7 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
               <p className="px-3 text-xs font-medium text-foreground/40 uppercase tracking-wider mb-3 mt-8">Général</p>
               <nav className="space-y-1">
                 {generalItems.map((item, gi) => {
-                  const globalIdx = 4 + gi;
+                  const globalIdx = 6 + gi;
                   return (
                     <button
                       key={item.id}
@@ -264,7 +270,6 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
 
           {/* ═══ FLOATING BUBBLE + CONTROLS ═══ */}
           <div className="p-4 lg:p-8 pt-0 pointer-events-auto">
-            {/* Explanatory bubble */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -284,7 +289,7 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
               </motion.div>
             </AnimatePresence>
 
-            {/* Controls */}
+            {/* Controls — enhanced visibility */}
             <div className="flex items-center justify-between">
               <div className="flex gap-2">
                 {STEPS.map((_, i) => (
@@ -292,23 +297,23 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
                     key={i}
                     className={cn(
                       "h-1.5 rounded-full transition-all duration-300",
-                      i === currentStep ? "w-6 bg-primary" : i < currentStep ? "w-1.5 bg-primary/50" : "w-1.5 bg-foreground/15"
+                      i === currentStep ? "w-8 bg-primary" : i < currentStep ? "w-2 bg-primary/50" : "w-2 bg-foreground/15"
                     )}
                   />
                 ))}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {currentStep > 0 && (
                   <button
                     onClick={handlePrev}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card/60 border border-border/20 text-foreground/70 text-sm font-medium hover:bg-card/80 transition-colors"
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-card/80 border border-border/30 text-foreground/80 text-sm font-medium hover:bg-card transition-colors shadow-md"
                   >
                     <ArrowLeft weight="bold" className="w-4 h-4" /> Retour
                   </button>
                 )}
                 <button
                   onClick={handleNext}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold shadow-xl shadow-primary/30 hover:bg-primary/90 transition-colors"
                 >
                   {isLast ? (
                     <><CheckCircle weight="bold" className="w-4 h-4" /> C'est parti !</>
@@ -321,18 +326,18 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
           </div>
         </main>
 
-        {/* ═══ MOBILE BOTTOM NAV (replica of MobileBottomNav) ═══ */}
+        {/* ═══ MOBILE BOTTOM NAV ═══ */}
         {isMobile && (
           <nav className="fixed bottom-0 left-0 right-0 z-[61] pointer-events-none">
             <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-white/10" />
-            <div className="relative flex items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+            <div className="relative flex items-center justify-around px-1 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
               {STEPS.map((s, i) => {
                 const isActive = currentStep === i && phase === "showing";
                 return (
                   <button
                     key={s.id}
                     ref={(el) => { sidebarRefs.current[i] = el; }}
-                    className="relative flex flex-col items-center gap-1 px-3 py-2 min-w-[56px]"
+                    className="relative flex flex-col items-center gap-0.5 px-2 py-1.5 min-w-[44px]"
                   >
                     {isActive && (
                       <motion.div
@@ -351,7 +356,7 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
                         className={cn("w-5 h-5 transition-colors", isActive ? "text-primary" : "text-foreground/60")}
                       />
                     </motion.div>
-                    <span className={cn("text-[10px] font-medium relative z-10", isActive ? "text-primary" : "text-foreground/50")}>
+                    <span className={cn("text-[9px] font-medium relative z-10", isActive ? "text-primary" : "text-foreground/50")}>
                       {s.label.split(" ")[0]}
                     </span>
                   </button>

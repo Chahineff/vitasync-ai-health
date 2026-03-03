@@ -340,20 +340,29 @@ export function parseProductRecommendations(content: string): {
   
   // Clean up any remaining malformed product tags and orphan text
   const cleanedText = text
-    .replace(/\[\[PRODUCT:[^\]]*\]\]/g, '')   // Remove remaining malformed closed tags
-    .replace(/\[\[PRODUCT:[^\]]*$/gm, '')     // Remove unclosed tags at end
-    .replace(/\[\[PROD[^\]]*$/gm, '')         // Remove partial tag starts
-    .replace(/\[\[P[^\]]*$/gm, '')            // Remove very early partial tags
-    .replace(/\[\[[^\]]*$/gm, '')             // Remove any unclosed [[ at end of line
-    .replace(/\bproduit\s*:\s*$/gim, '')      // Remove orphan "produit:" at end
-    .replace(/\bproduit\s*:\s*\n/gi, '\n')    // Remove orphan "produit:" mid-text
-    .replace(/\bproduit\s*:\s*(?=\s|$)/gim, '') // Remove standalone "produit:" anywhere
-    .replace(/^\s*\n/gm, '\n')               // Clean up extra blank lines
+    .replace(/\[\[PRODUCT:[^\]]*\]\]/g, '')
+    .replace(/\[\[PRODUCT:[^\]]*$/gm, '')
+    .replace(/\[\[PROD[^\]]*$/gm, '')
+    .replace(/\[\[P[^\]]*$/gm, '')
+    .replace(/\[\[[^\]]*$/gm, '')
+    .replace(/\bproduit\s*:\s*$/gim, '')
+    .replace(/\bproduit\s*:\s*\n/gi, '\n')
+    .replace(/\bproduit\s*:\s*(?=\s|$)/gim, '')
+    .replace(/^\s*\n/gm, '\n')
     .trim();
+
+  // Deduplicate products by productId (keep first occurrence)
+  const seen = new Set<string>();
+  const uniqueProducts = products.filter(p => {
+    const key = p.productId;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
   
   return { 
     text: cleanedText, 
-    products,
+    products: uniqueProducts,
     subscription: subscriptionResult.subscription
   };
 }

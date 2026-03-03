@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ResponsiveContainer, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ArrowsOutSimple, X } from '@phosphor-icons/react';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 interface ChartData {
   type: 'bar' | 'line' | 'pie';
@@ -24,7 +26,6 @@ export function parseChartBlocks(content: string): {
 } {
   const charts: ChartData[] = [];
   
-  // Find [[CHART:type: markers and then extract balanced JSON
   const marker = /\[\[CHART:(bar|line|pie):/g;
   let result = '';
   let lastIndex = 0;
@@ -34,7 +35,6 @@ export function parseChartBlocks(content: string): {
     const type = m[1] as 'bar' | 'line' | 'pie';
     const jsonStart = m.index + m[0].length;
     
-    // Find the matching closing by counting braces
     let depth = 0;
     let jsonEnd = -1;
     for (let i = jsonStart; i < content.length; i++) {
@@ -42,7 +42,6 @@ export function parseChartBlocks(content: string): {
       else if (content[i] === '}') {
         depth--;
         if (depth === 0) {
-          // Check if followed by ]]
           if (content.substring(i + 1, i + 3) === ']]') {
             jsonEnd = i + 1;
             break;
@@ -55,7 +54,7 @@ export function parseChartBlocks(content: string): {
     
     const rawData = content.substring(jsonStart, jsonEnd);
     result += content.substring(lastIndex, m.index);
-    lastIndex = jsonEnd + 2; // skip ]]
+    lastIndex = jsonEnd + 2;
     
     try {
       const parsed = JSON.parse(rawData) as {
@@ -87,92 +86,114 @@ export function parseChartBlocks(content: string): {
   return { text: result, charts };
 }
 
+function ChartRenderer({ chart, height }: { chart: ChartData; height: number }) {
+  switch (chart.type) {
+    case 'bar':
+      return (
+        <ResponsiveContainer width="100%" height={height}>
+          <BarChart data={chart.data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis dataKey={chart.xKey} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+            <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '12px',
+                fontSize: '12px',
+              }}
+            />
+            <Legend />
+            {chart.yKeys.map((key, i) => (
+              <Bar key={key} dataKey={key} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[6, 6, 0, 0]} />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      );
+
+    case 'line':
+      return (
+        <ResponsiveContainer width="100%" height={height}>
+          <LineChart data={chart.data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis dataKey={chart.xKey} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+            <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '12px',
+                fontSize: '12px',
+              }}
+            />
+            <Legend />
+            {chart.yKeys.map((key, i) => (
+              <Line key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2} dot={{ r: 4 }} />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      );
+
+    case 'pie':
+      return (
+        <ResponsiveContainer width="100%" height={height}>
+          <PieChart>
+            <Pie
+              data={chart.data}
+              dataKey={chart.yKeys[0]}
+              nameKey={chart.xKey}
+              cx="50%"
+              cy="50%"
+              outerRadius={height * 0.35}
+              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+            >
+              {chart.data.map((_, i) => (
+                <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '12px',
+                fontSize: '12px',
+              }}
+            />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      );
+
+    default:
+      return null;
+  }
+}
+
 export function ChatChartBlock({ chart }: { chart: ChartData }) {
-  const chartElement = useMemo(() => {
-    switch (chart.type) {
-      case 'bar':
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={chart.data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey={chart.xKey} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-              <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                }}
-              />
-              {chart.yKeys.map((key, i) => (
-                <Bar key={key} dataKey={key} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[6, 6, 0, 0]} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        );
-
-      case 'line':
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={chart.data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey={chart.xKey} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-              <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                }}
-              />
-              {chart.yKeys.map((key, i) => (
-                <Line key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2} dot={{ r: 4 }} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-        );
-
-      case 'pie':
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={chart.data}
-                dataKey={chart.yKeys[0]}
-                nameKey={chart.xKey}
-                cx="50%"
-                cy="50%"
-                outerRadius={90}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              >
-                {chart.data.map((_, i) => (
-                  <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                }}
-              />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        );
-
-      default:
-        return null;
-    }
-  }, [chart]);
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="my-4 p-4 rounded-2xl bg-card border border-border/50">
-      <h4 className="text-sm font-semibold text-foreground mb-3">{chart.title}</h4>
-      {chartElement}
-    </div>
+    <>
+      <div className="my-4 p-4 rounded-2xl bg-card border border-border/50 group relative">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-sm font-semibold text-foreground">{chart.title}</h4>
+          <button
+            onClick={() => setExpanded(true)}
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            title="Agrandir"
+          >
+            <ArrowsOutSimple weight="bold" className="w-4 h-4" />
+          </button>
+        </div>
+        <ChartRenderer chart={chart} height={250} />
+      </div>
+
+      <Dialog open={expanded} onOpenChange={setExpanded}>
+        <DialogContent className="max-w-4xl w-[95vw] p-6">
+          <DialogTitle className="text-lg font-semibold mb-4">{chart.title}</DialogTitle>
+          <ChartRenderer chart={chart} height={450} />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

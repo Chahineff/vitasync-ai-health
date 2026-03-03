@@ -178,31 +178,32 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
       body: { query, variables },
     });
 
-    if (fnError) throw fnError;
+    // Parse error body for code — supabase.functions.invoke throws FunctionsHttpError
+    // for non-2xx but the response body may contain our custom code
+    if (fnError) {
+      // Try to extract the JSON body from the error context
+      let errorCode: string | undefined;
+      try {
+        const ctx = (fnError as any)?.context;
+        if (ctx && typeof ctx.json === 'function') {
+          const body = await ctx.json();
+          errorCode = body?.code;
+        }
+      } catch {
+        // ignore parse failures
+      }
 
-    // If token expired, wait briefly (let concurrent refresh settle) then retry once
-    if (data?.code === 'TOKEN_EXPIRED' && retryCountRef.current < maxRetries) {
-      retryCountRef.current++;
-      console.log('Token expired, silent retry attempt', retryCountRef.current);
-
-      // Re-check connection status (token may have been refreshed by another call)
-      const { data: statusData } = await supabase.functions.invoke('shopify-customer-auth', {
-        body: { action: 'status' },
-      });
-
-      if (!statusData?.connected) {
-        retryCountRef.current = 0;
+      if (errorCode === 'NOT_LINKED' || errorCode === 'TOKEN_EXPIRED') {
+        console.log('Shopify not linked or token expired, disconnecting silently');
         setIsConnected(false);
+        setError(null); // Don't show error for expected states
         return null;
       }
 
-      // Wait 500ms for refresh to propagate, then retry
-      await new Promise((r) => setTimeout(r, 500));
-      const result = await invokeWithRetry(query, variables, 0); // no further retries
-      retryCountRef.current = 0;
-      return result;
+      throw fnError;
     }
 
+    // Handle codes returned in successful (2xx) responses too
     if (data?.code === 'TOKEN_EXPIRED' || data?.code === 'NOT_LINKED') {
       retryCountRef.current = 0;
       setIsConnected(false);

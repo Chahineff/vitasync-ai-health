@@ -6,10 +6,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Shopify config — use Admin API to avoid Storefront 401
+// Shopify config — use Storefront API (Admin API returns 401)
 const SHOPIFY_STORE_DOMAIN = "vitasync2.myshopify.com";
 const SHOPIFY_API_VERSION = "2025-07";
-const SHOPIFY_ADMIN_URL = `https://${SHOPIFY_STORE_DOMAIN}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
+const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
 interface ShopifyProductNode {
   id: string;
@@ -31,9 +31,9 @@ interface ShopifyProductNode {
 }
 
 async function fetchShopifyCatalog(): Promise<{ catalog: string; handles: string[] }> {
-  const adminToken = Deno.env.get("SHOPIFY_ACCESS_TOKEN");
-  if (!adminToken) {
-    console.warn("SHOPIFY_ACCESS_TOKEN not configured");
+  const storefrontToken = Deno.env.get("SHOPIFY_STOREFRONT_ACCESS_TOKEN");
+  if (!storefrontToken) {
+    console.warn("SHOPIFY_STOREFRONT_ACCESS_TOKEN not configured");
     return { catalog: "Catalogue non disponible.", handles: [] };
   }
 
@@ -65,17 +65,17 @@ async function fetchShopifyCatalog(): Promise<{ catalog: string; handles: string
       }
     `;
 
-    const response = await fetch(SHOPIFY_ADMIN_URL, {
+    const response = await fetch(SHOPIFY_STOREFRONT_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Shopify-Access-Token": adminToken,
+        "X-Shopify-Storefront-Access-Token": storefrontToken,
       },
       body: JSON.stringify({ query }),
     });
 
     if (!response.ok) {
-      console.error("Shopify API error:", response.status);
+      console.error("Shopify Storefront API error:", response.status);
       return { catalog: "Catalogue non disponible.", handles: [] };
     }
 

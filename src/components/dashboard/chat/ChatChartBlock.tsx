@@ -23,8 +23,8 @@ export function parseChartBlocks(content: string): {
   charts: ChartData[];
 } {
   const charts: ChartData[] = [];
-  // Use a non-greedy match that handles nested brackets in JSON
-  const regex = /\[\[CHART:(bar|line|pie):([\s\S]*?)\]\]/g;
+  // Match [[CHART:type:{json}]] - use greedy match for JSON content between first { and last }
+  const regex = /\[\[CHART:(bar|line|pie):(\{[\s\S]*?\})\]\]/g;
 
   const text = content.replace(regex, (match, type, rawData) => {
     try {

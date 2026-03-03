@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 import { ProductRecommendationCard, parseProductRecommendations, SubscriptionCard } from '../ProductRecommendationCard';
 import { ChatQuizBlock, parseQuizBlock } from './ChatQuizBlock';
+import { ChatChartBlock, parseChartBlocks } from './ChatChartBlock';
 
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
@@ -20,13 +21,16 @@ interface ChatMessageBubbleProps {
 function MessageContent({ content, isStreaming, onQuizComplete }: { content: string; isStreaming?: boolean; onQuizComplete?: (summary: string) => void }) {
   // Check for quiz blocks first
   const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(content);
-  const { text, products, subscription } = parseProductRecommendations(quiz ? beforeQuiz : content);
+  // Parse charts from content
+  const chartResult = parseChartBlocks(quiz ? beforeQuiz : content);
+  const { text, products, subscription } = parseProductRecommendations(chartResult.text);
+  const charts = chartResult.charts;
   
   const streamingCursor = isStreaming ? (
     <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 align-middle animate-cursor-blink" />
   ) : null;
 
-  if (products.length === 0 && !subscription && !quiz) {
+  if (products.length === 0 && !subscription && !quiz && charts.length === 0) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
         <ReactMarkdown>{content}</ReactMarkdown>
@@ -54,17 +58,32 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     );
   }
 
-  const parts = text.split(/__PRODUCT_(\d+)__/);
+  const parts = text.split(/__(?:PRODUCT|CHART)_(\d+)__/);
   const elements: React.ReactNode[] = [];
+  
+  // Build a map of placeholder positions
+  const placeholderRegex = /__(?:PRODUCT|CHART)_(\d+)__/g;
+  const placeholders: Array<{ type: 'product' | 'chart'; index: number }> = [];
+  let m;
+  while ((m = placeholderRegex.exec(text)) !== null) {
+    const isChart = text.substring(m.index, m.index + 9) === '__CHART_';
+    placeholders.push({ type: isChart ? 'chart' : 'product', index: parseInt(m[1], 10) });
+  }
   
   parts.forEach((part, index) => {
     if (index % 2 === 1) {
-      const productIndex = parseInt(part, 10);
-      const product = products[productIndex];
-      if (product) {
-        elements.push(
-          <ProductRecommendationCard key={`product-${productIndex}`} product={product} />
-        );
+      const placeholderIdx = Math.floor(index / 2);
+      const placeholder = placeholders[placeholderIdx];
+      if (placeholder?.type === 'product') {
+        const product = products[placeholder.index];
+        if (product) {
+          elements.push(<ProductRecommendationCard key={`product-${placeholder.index}`} product={product} />);
+        }
+      } else if (placeholder?.type === 'chart') {
+        const chart = charts[placeholder.index];
+        if (chart) {
+          elements.push(<ChatChartBlock key={`chart-${placeholder.index}`} chart={chart} />);
+        }
       }
     } else if (part && part.trim()) {
       elements.push(

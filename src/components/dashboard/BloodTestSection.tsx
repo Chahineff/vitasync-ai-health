@@ -357,7 +357,7 @@ export function BloodTestSection() {
                 >
                   {/* PDF preview link */}
                   <button
-                    onClick={() => handleViewPdf(selectedAnalysis.file_url)}
+                    onClick={() => handleViewPdf(selectedAnalysis)}
                     className="w-full flex items-center gap-3 p-4 rounded-[16px] bg-card border border-border/50 hover:border-primary/30 transition-colors text-left"
                   >
                     <Eye weight="duotone" className="w-6 h-6 text-primary" />

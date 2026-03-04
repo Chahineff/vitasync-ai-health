@@ -194,6 +194,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Conditions d'utilisation",
     "footer.legalNotice": "Mentions légales",
     "footer.cookies": "Cookies",
+    "footer.cgv": "CGV",
+    "footer.disclaimer": "Disclaimer santé",
+    "footer.shipping": "Livraison & Retours",
     "footer.copyright": "Tous droits réservés.",
     "footer.madeWith": "Fait avec ❤️ pour votre santé",
 
@@ -662,6 +665,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Terms of Use",
     "footer.legalNotice": "Legal Notice",
     "footer.cookies": "Cookies",
+    "footer.cgv": "Terms of Sale",
+    "footer.disclaimer": "Health Disclaimer",
+    "footer.shipping": "Shipping & Returns",
     "footer.copyright": "All rights reserved.",
     "footer.madeWith": "Made with ❤️ for your health",
 
@@ -1130,6 +1136,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.terms": "Términos de Uso",
     "footer.legalNotice": "Aviso Legal",
     "footer.cookies": "Cookies",
+    "footer.cgv": "CGV",
+    "footer.disclaimer": "Aviso de salud",
+    "footer.shipping": "Envío y Devoluciones",
     "footer.copyright": "Todos los derechos reservados.",
     "footer.madeWith": "Hecho con ❤️ para tu salud",
 

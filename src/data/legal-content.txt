@@ -1,0 +1,447 @@
+Politique de Livraison et Retours
+Conditions d'expedition, zones de livraison et retours - Fulfillment par Supliful
+
+1. Presentation du Service de Livraison
+Les produits VitaSync sont fabriques et expedies par notre partenaire fulfillment Supliful (Brand On Demand, Inc., Delaware, USA) depuis ses entrepots situes principalement a Arvada, Colorado, USA. Les produits sont fabriques a la demande en mode white-label (etiquetage a la commande avec la marque VitaSync).
+2. Zones de Livraison et Tarifs
+ZonePays couvertsTarifDelai estimeTransporteurUSA48 Etats contigus
+(hors Alaska, Hawai)4,50 $4-10 jours ouvresUSPS Ground
+AdvantageZone 1Canada17,00 $3-5 jours + douaneFedEx
+InternationalZone 2France, Belgique, Pays-Bas,
+Italie, Portugal, UK,
+Danemark, Suede, Norvege,
+Finlande, Croatie18,00 $3-5 jours + douaneFedEx
+InternationalZone 3Australie, Coree du Sud,
+Philippines, Pologne,
+Roumanie, Japon, Israel,
+Nouvelle-Zelande20,00 $3-5 jours + douaneFedEx
+International? PAYS NON DESSERVIS : Allemagne, Espagne (interdite suite a des refus douaniers systematiques), Autriche, Suisse, Irlande. Cette liste est susceptible d'evoluer. Si votre pays n'est pas dans les zones ci-dessus, la livraison n'est malheureusement pas disponible.
+3. Livraison Internationale - Douane et Taxes
+? IMPORTANT - DDU (Delivery Duties Unpaid) : Toutes les livraisons internationales (hors USA) sont effectuees en mode DDU. Cela signifie que le client final assume l'integralite des droits de douane, taxes d'importation et frais de dedouanement de son pays. Supliful ne gere pas les formalites douanieres. VitaSync n'a aucun controle sur les droits et taxes appliques par votre pays. Ces frais additionnels ne sont ni inclus dans le prix du produit ni dans les frais de livraison affiches.
+• Les commandes vers le Royaume-Uni necessitent un numero EORI.
+• Les delais de dedouanement peuvent ajouter 1 a 5 jours ouvres supplementaires.
+• En cas de rejet douanier, le colis est retourne et aucun remboursement n'est prevu par le fulfiller.
+4. Delais de Livraison
+Les delais indiques sont des estimations et commencent a courir a compter de l'expedition du colis (et non de la commande). Le delai entre la commande et l'expedition peut varier de 1 a 3 jours ouvres (etiquetage a la demande). Les delais ne sont pas garantis et peuvent etre impactes par les periodes de forte demande, les conditions meteorologiques ou les formalites douanieres.
+Conformement a l'article L. 216-1 du Code de la consommation, a defaut de date de livraison indiquee lors de la commande, la livraison doit intervenir dans un delai de 30 jours. En cas de depassement de ce delai, l'acheteur peut, apres mise en demeure restee infructueuse, resoudre le contrat et obtenir le remboursement integral sous 14 jours.
+5. Suivi de Commande
+Un numero de suivi est fourni par email des l'expedition du colis. Le suivi est disponible via le site du transporteur (USPS ou FedEx).
+6. Politique de Retours
+6.1 Droit de retractation (14 jours)
+Conformement aux articles L. 221-18 et suivants du Code de la consommation, vous disposez de 14 jours calendaires apres reception pour exercer votre droit de retractation, sans motif. Pour exercer ce droit, contactez-nous a contact@vitasync.com avec votre numero de commande.
+Exception sante/hygiene : Le droit de retractation ne s'applique pas aux complements alimentaires dont le sceau de securite a ete brise apres livraison (Art. L. 221-28, 5 du Code de la consommation), pour des raisons de protection de la sante et d'hygiene.
+6.2 Produits defectueux ou endommages
+Si vous recevez un produit defectueux, endommage ou mal imprime, contactez-nous dans les 30 jours suivant la reception avec une photo du probleme. VitaSync prendra en charge le remplacement ou le remboursement.
+6.3 Colis perdus en transit
+Si votre colis est perdu en transit, nous procederons a un remplacement ou un remboursement apres verification aupres du transporteur.
+6.4 Cas exclus de remboursement
+• Erreur d'adresse de livraison fournie par le client.
+• Colis non reclame aupres du transporteur.
+• Remords d'acheteur (apres ouverture du sceau).
+• Rejet douanier du colis dans le pays de destination.
+• Colis FedEx non collecte au point de retrait (destruction sans compensation par FedEx).
+6.5 Modalites de remboursement
+Les remboursements sont effectues sur le moyen de paiement original dans un delai de 14 jours suivant la reception du retour ou la preuve de perte. Pour les consommateurs UE, le remboursement inclut les frais de livraison initiale (au tarif standard). Les frais de retour sont a la charge de l'acheteur sauf en cas de produit defectueux.
+7. Garanties Legales
+Independamment de la presente politique, le consommateur beneficie des garanties legales de conformite (Art. L.
+217-3 et suivants du Code de la consommation) et des vices caches (Art. 1641 et suivants du Code civil).
+8. Contact
+Pour toute question relative a une livraison ou un retour :
+Email : contact@vitasync.com
+Delai de reponse : 48h ouvrees maximum
+
+Conditions Generales d'Utilisation
+Regles d'utilisation de la plateforme VitaSync
+
+1. Preambule et Objet
+Les presentes Conditions Generales d'Utilisation (ci-apres 'CGU') regissent l'acces et l'utilisation de la plateforme VitaSync, accessible a l'adresse vitasync-ai-health.lovable.app (ci-apres 'la Plateforme').
+VitaSync est une plateforme de bien-etre et nutrition propulsee par l'intelligence artificielle, proposant un coach IA personnalise, un suivi de complements alimentaires, des analyses informatives de resultats sanguins, une boutique en ligne de complements et des outils de suivi quotidien.
+? AVERTISSEMENT FONDAMENTAL : VitaSync est une plateforme d'information sur le bien-etre et le mode de vie. Elle ne constitue PAS un dispositif medical au sens du Reglement (UE) 2017/745 (MDR). Les informations et recommandations fournies ne constituent PAS un avis medical, un diagnostic ou un traitement. VitaSync n'est PAS un service de prescription. Consultez toujours un professionnel de sante qualifie avant toute decision concernant votre sante ou votre alimentation.
+En creant un compte ou en utilisant la Plateforme, l'Utilisateur accepte sans reserve les presentes CGU ainsi que la Politique de Confidentialite et les Conditions Generales de Vente.
+2. Definitions
+• 'Plateforme' : Le site web VitaSync et l'ensemble de ses fonctionnalites.
+• 'Utilisateur' : Toute personne physique majeure (18 ans+) inscrite sur la Plateforme.
+• 'Coach IA' : L'assistant d'intelligence artificielle VitaSync, base sur les modeles Google Gemini.
+• 'Stack' : L'ensemble des complements alimentaires suivis par un Utilisateur.
+• 'Check-in' : Le bilan quotidien de bien-etre saisi par l'Utilisateur.
+• 'Produits' : Les complements alimentaires commercialises via la boutique VitaSync.
+• 'Systeme IA' : Tout composant utilisant l'intelligence artificielle (Coach, analyses sanguines, recommandations).
+3. Inscription et Compte Utilisateur
+3.1 L'inscription est reservee aux personnes majeures (18 ans et plus). L'Utilisateur s'engage a fournir des informations exactes et a jour. Le mot de passe doit contenir au minimum 8 caracteres avec au moins une majuscule, un chiffre et un caractere special.
+3.2 Apres l'inscription, l'Utilisateur est invite a completer un questionnaire de sante (onboarding) pour permettre la personnalisation des recommandations. Ce questionnaire est volontaire mais necessaire pour beneficier des recommandations personnalisees.
+3.3 L'Utilisateur peut demander la suppression de son compte a tout moment via les parametres du dashboard. Cette suppression entraine l'effacement de l'ensemble des donnees conformement a la Politique de Confidentialite et au RGPD (Art. 17).
+4. Description des Services
+4.1 Coach IA VitaSync
+Le Coach IA est un assistant conversationnel de bien-etre et nutrition fournissant des recommandations personnalisees basees sur le profil de l'Utilisateur. Trois niveaux de modeles sont disponibles : VitaSync Lite, VitaSync
+3.0 et VitaSync Pro.
+? Transparence IA (EU AI Act, Art. 50) : Vous interagissez avec un systeme d'intelligence artificielle propulse par Google Gemini. Il ne s'agit pas d'un professionnel de sante humain. Toutes les reponses sont generees par une technologie IA. Les recommandations sont a titre informatif et educatif uniquement.
+4.2 Suivi des complements (Supplement Tracker)
+L'Utilisateur peut ajouter, suivre et gerer ses complements alimentaires quotidiens avec des rappels de prise. Un systeme de logs permet de suivre l'adherence.
+4.3 Analyses sanguines (information uniquement)
+L'Utilisateur peut uploader ses resultats d'analyses sanguines au format PDF. L'IA fournit un contexte educatif general sur les valeurs. Cette fonctionnalite ne constitue PAS une interpretation medicale, un diagnostic ou une evaluation clinique. Seul un professionnel de sante agree peut interpreter correctement les resultats dans le contexte d'un historique medical complet.
+4.4 Boutique VitaSync
+VitaSync propose un catalogue de complements alimentaires via Shopify. Les conditions d'achat sont regies par les Conditions Generales de Vente et la Politique de Livraison et Retours.
+5. Limitations de Responsabilite
+? VitaSync n'est PAS un service medical. La Plateforme ne remplace en aucun cas une consultation medicale. VitaSync decline toute responsabilite en cas de dommage resultant de l'utilisation des recommandations IA sans validation prealable par un professionnel de sante.
+• VitaSync ne garantit pas l'exactitude des analyses IA sur les resultats sanguins.
+• VitaSync ne peut etre tenu responsable des effets indesirables lies a la prise de complements alimentaires.
+• VitaSync ne garantit pas la disponibilite permanente de la Plateforme.
+• Les recommandations de produits sont des informations generales de bien-etre, pas des prescriptionsmedicales.
+• L'Utilisateur est seul responsable de l'utilisation qu'il fait des informations fournies.
+• Les complements alimentaires peuvent interagir avec des medicaments. L'Utilisateur doit consulter son medecinou pharmacien avant tout nouveau complement.
+Responsabilite IA : Conformement a la Directive (UE) 2024/2853 sur la responsabilite du fait des produits (applicable a partir du 9 decembre 2026), VitaSync sera soumis a un regime de responsabilite stricte pour les defauts lies a l'IA.
+Les clauses de limitation de responsabilite des presentes CGU ne peuvent pas exclure cette responsabilite legale.
+6. Obligations de l'Utilisateur
+• Fournir des informations exactes, notamment concernant ses allergies et conditions medicales.
+• Ne pas utiliser la Plateforme a des fins illegales ou non autorisees.
+• Ne pas tenter d'acceder aux donnees d'autres utilisateurs.
+• Ne pas detourner le Coach IA de son usage prevu (bien-etre et nutrition).
+• Consulter un professionnel de sante avant de prendre des complements, surtout en cas de grossesse,traitement medical ou pathologie existante.
+• Signaler immediatement toute faille de securite constatee a contact@vitasync.com.
+• Ne pas utiliser la Plateforme si l'Utilisateur est mineur (moins de 18 ans).
+7. Tarification et Abonnements
+• Free : Acces gratuit aux fonctionnalites de base (Coach IA Lite, suivi complements, check-ins).
+• Go : Abonnement payant avec Coach IA 3.0, analyses sanguines et fonctionnalites avancees.
+• Premium : Abonnement premium avec Coach IA Pro, analyses illimitees, quiz interactifs.
+Les achats de complements via la boutique sont independants de l'abonnement et regis par les CGV. Les abonnements sont geres via Shopify pour le paiement et la facturation.
+8. Propriete Intellectuelle
+L'ensemble des elements de la Plateforme (design, code, textes, logos, bases de donnees scientifiques) sont la propriete exclusive de VitaSync ou de ses partenaires. Toute reproduction, representation ou exploitation non autorisee est interdite conformement aux articles L.335-2 et suivants du Code de la propriete intellectuelle.
+L'Utilisateur conserve la propriete de ses donnees personnelles et de sante. En utilisant la Plateforme, l'Utilisateur accorde a VitaSync une licence limitee et non exclusive d'utilisation de ses donnees aux seules fins de fourniture du service.
+9. Resiliation
+L'Utilisateur peut resilier son compte a tout moment. VitaSync se reserve le droit de suspendre ou supprimer un compte en cas de violation des presentes CGU, de comportement abusif ou de tentative de fraude. En cas de resiliation, les donnees sont traitees conformement a la Politique de Confidentialite.
+10. Droit Applicable et Litiges
+Les presentes CGU sont soumises au droit francais. Si vous residez dans l'Union europeenne, vous beneficiez egalement des dispositions imperatives de la loi de protection des consommateurs du pays dans lequel vous residez. Rien dans les presentes conditions n'affecte vos droits en tant que consommateur au titre de la legislation nationale applicable.
+En cas de litige, les parties s'engagent a rechercher une solution amiable. Conformement a l'article L. 612-1 du Code de la consommation, l'Utilisateur peut recourir gratuitement a un mediateur de la consommation. Plateforme europeenne de reglement des litiges en ligne : https://ec.europa.eu/consumers/odr.
+11. Modifications des CGU
+VitaSync se reserve le droit de modifier les presentes CGU. Les modifications prennent effet des leur publication. L'Utilisateur sera informe par email ou notification in-app en cas de modification substantielle. La poursuite de l'utilisation apres modification vaut acceptation des nouvelles CGU.
+
+Conditions Generales de Vente
+Vente de complements alimentaires - E-commerce international
+
+1. Objet et Champ d'Application
+Les presentes Conditions Generales de Vente (ci-apres 'CGV') regissent les ventes de complements alimentaires realisees via la boutique en ligne VitaSync (ci-apres 'la Boutique'), accessible depuis la Plateforme VitaSync. Toute commande implique l'acceptation sans reserve des presentes CGV.
+Les CGV applicables sont celles en vigueur au jour de la commande. VitaSync se reserve le droit de les modifier a tout moment, les modifications ne s'appliquant qu'aux commandes posterieures.
+2. Identification du Vendeur
+VitaSync
+Plateforme de bien-etre et nutrition
+Email : contact@vitasync.com
+Site : vitasync-ai-health.lovable.app
+? Note : Les informations completes du vendeur (denomination sociale SASU, SIRET, RCS, siege social, TVA intracommunautaire, capital social) seront ajoutees des l'immatriculation de la societe.
+3. Produits
+3.1 Nature des produits
+VitaSync commercialise des complements alimentaires au sens de la Directive 2002/46/CE et du Decret francais 2006-352. Ces produits sont des denrees alimentaires et ne sont pas des medicaments.
+? Disclaimers reglementaires obligatoires :
+USA (21 CFR 101.93 - DSHEA) : These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
+UE (Directive 2002/46/CE) : Les complements alimentaires ne doivent pas etre utilises comme substituts d'un regime alimentaire varie et equilibre et d'un mode de vie sain. Ne pas depasser la dose journaliere recommandee. Tenir hors de la portee des jeunes enfants.
+Information generale : Les informations fournies sont a titre informatif uniquement et ne constituent pas un avis medical. Consultez un professionnel de sante avant de commencer tout programme de complementation, en particulier si vous etes enceinte, allaitante, sous traitement medicamenteux ou souffrez d'une condition medicale.
+3.2 Fabrication et qualite
+Les produits sont fabriques et expedies par Supliful (Brand On Demand, Inc., Delaware, USA) en mode white-label depuis des sites de fabrication enregistres aupres de la FDA, adherant aux standards GMP (Good Manufacturing Practices). Les certifications tierces (NSF International) sont disponibles pour certains fournisseurs. Les certificats d'analyse (COAs) sont disponibles par lot sur demande.
+3.3 Allegations de sante
+VitaSync utilise exclusivement des allegations de sante autorisees : pour l'UE, seules les allegations inscrites au Registre de l'Union des allegations autorisees par l'EFSA (Reglement CE 1924/2006) sont utilisees, mot pour mot. Pour les USA, seules les allegations de type structure/fonction conformes au DSHEA sont utilisees, accompagnees du disclaimer obligatoire.
+4. Prix
+Les prix sont indiques en dollars americains (USD), toutes taxes comprises pour les livraisons aux Etats-Unis. Pour les livraisons internationales, les droits de douane et taxes d'importation sont a la charge du client (livraison en mode DDU - Delivery Duties Unpaid). Les frais de livraison sont indiques avant la validation de la commande. VitaSync se reserve le droit de modifier ses prix a tout moment, les commandes etant facturees au prix en vigueur lors de la validation.
+5. Commande et Paiement
+Les commandes sont passees via Shopify. Le paiement est securise par Shopify Payments (PCI DSS Level 1). Les moyens de paiement acceptes sont indiques lors du processus de commande. La commande est definitive apres validation du paiement. Un email de confirmation est envoye a l'Utilisateur.
+6. Livraison
+Les conditions detaillees de livraison sont decrites dans la Politique de Livraison et Retours. En resume :
+ZoneTarifDelaiTransporteurUSA (48 Etats contigus)4,50 $4-10 jours ouvresUSPS GroundCanada (Zone 1)17,00 $3-5 jours + douaneFedEx InternationalEurope (Zone 2 - France, UK, Benelux...)18,00 $3-5 jours + douaneFedEx InternationalReste du monde (Zone 3)20,00 $3-5 jours + douaneFedEx InternationalConformement a l'article L. 216-1 du Code de la consommation, a defaut de date de livraison indiquee, la livraison doit intervenir dans les 30 jours suivant la conclusion du contrat. En cas de retard, l'acheteur peut mettre en demeure le vendeur puis, si le delai supplementaire raisonnable n'est pas respecte, resoudre le contrat et obtenir le remboursement integral sous 14 jours.
+7. Droit de Retractation
+Conformement aux articles L. 221-18 et suivants du Code de la consommation, le consommateur dispose d'un delai de 14 jours calendaires a compter de la reception du produit pour exercer son droit de retractation, sans avoir a justifier de motif ni a payer de penalites.
+? Exception - Produits scelles : Conformement a l'article L. 221-28, 5 du Code de la consommation, le droit de retractation ne peut etre exerce pour les biens scelles ne pouvant etre renvoyes pour des raisons de protection de la sante ou d'hygiene et ayant ete descelles apres la livraison. Les complements alimentaires dont le sceau d'inviolabilite a ete brise apres livraison ne sont pas eligibles au retour pour des raisons sanitaires. Cette exception est portee a la connaissance du consommateur avant la validation de sa commande.
+En cas d'exercice du droit de retractation (produit scelle non ouvert), VitaSync rembourse tous les paiements, y compris les frais de livraison initiale (au tarif standard), dans un delai de 14 jours suivant la notification de la retractation. Le remboursement peut etre differe jusqu'a la reception des biens retournes. Les frais de retour sont a la charge de l'acheteur.
+Penalites de retard de remboursement : En cas de retard, les sommes sont majorees de 10% si le remboursement intervient dans les 30 jours, de 20% entre 30 et 60 jours, et de 50% au-dela.
+8. Garanties Legales
+Le consommateur beneficie des garanties legales prevues par le Code de la consommation :
+• Garantie legale de conformite (Art. L. 217-3 et suivants) : VitaSync est tenu de livrer un bien conforme au contrat. Le consommateur dispose d'un delai de 2 ans a compter de la delivrance du bien pour agir.
+• Garantie legale des vices caches (Art. 1641 et suivants du Code civil) : VitaSync est tenu des vices caches rendant le bien impropre a l'usage auquel on le destine.
+9. Mediation et Reglement des Litiges
+Conformement a l'article L. 612-1 du Code de la consommation, en cas de litige non resolu directement avec VitaSync, le consommateur peut recourir gratuitement a un mediateur de la consommation. Le nom et les coordonnees du mediateur seront communiques des la designation de celui-ci.
+Plateforme europeenne de reglement des litiges en ligne : https://ec.europa.eu/consumers/odr
+10. Loi Applicable
+Les presentes CGV sont regies par le droit francais. Si vous residez dans l'Union europeenne, vous beneficiez egalement des dispositions imperatives de la loi de protection des consommateurs du pays dans lequel vous residez. Rien dans les presentes conditions n'affecte vos droits en tant que consommateur au titre de la legislation nationale applicable.
+11. Donnees Personnelles
+Les donnees collectees lors des commandes sont traitees conformement a notre Politique de Confidentialite et au RGPD. Les donnees de facturation sont conservees pendant 10 ans conformement aux obligations comptables.
+
+Disclaimer Sante et Medical
+Avertissements reglementaires - FDA, UE, EU AI Act, Directive 2002/46/CE
+
+Ce document regroupe l'ensemble des avertissements reglementaires applicables a la plateforme VitaSync, a ses services d'intelligence artificielle et aux complements alimentaires commercialises. Ces disclaimers doivent etre affiches sur le site conformement aux reglementations en vigueur.
+1. Disclaimer General - VitaSync n'est pas un Service Medical
+? VitaSync est une plateforme d'information sur le bien-etre et le mode de vie. Les informations et recommandations fournies ne constituent PAS un avis medical, un diagnostic ou un traitement. VitaSync n'est PAS un dispositif medical au sens du Reglement (UE) 2017/745 (MDR). Consultez toujours un professionnel de sante qualifie avant toute decision concernant votre sante ou votre alimentation.
+Emplacement : Footer de toutes les pages du site + page d'accueil + dashboard
+2. Disclaimer Intelligence Artificielle (EU AI Act, Art. 50)
+? Disclosure IA obligatoire : Vous interagissez avec un systeme d'intelligence artificielle propulse par Google
+Gemini. Il ne s'agit pas d'un professionnel de sante humain. Toutes les reponses sont generees par une technologie IA. Les recommandations du Coach IA sont des informations generales de bien-etre, pas des prescriptions medicales.
+Emplacement : Affiche sur chaque interaction avec le Coach IA (debut de conversation + rappel periodique)
+Ce disclaimer est requis par le Reglement (UE) 2024/1689 (EU AI Act) qui impose aux fournisseurs de systemes IA une obligation de transparence (Art. 50) envers les utilisateurs. L'obligation de litteratie en IA (Art. 4) est applicable depuis le 2 fevrier 2025.
+3. Disclaimer Analyses Sanguines
+? IMPORTANT : L'analyse de vos resultats sanguins est fournie a titre informatif et educatif uniquement. Elle ne constitue PAS une interpretation medicale, un diagnostic ou une evaluation clinique. Seul un professionnel de sante agree peut interpreter correctement vos resultats dans le contexte de votre historique medical complet. Si des valeurs semblent hors normes, consultez immediatement votre medecin. Ne retardez jamais une consultation medicale sur la base des informations fournies par VitaSync.
+Emplacement : Affiche avant chaque analyse de resultats sanguins (ecran d'upload + page de resultats)
+Ce disclaimer est essentiel pour eviter la requalification de VitaSync en dispositif medical. Selon le guide MDCG 2019-11, si l'IA se contente d'afficher des valeurs sanguines avec un contexte educatif general, cela reste du bien-etre. Si elle interprete les valeurs, signale des anomalies ou correle des biomarqueurs, elle franchit la ligne du dispositif medical (min. Classe IIa, necessite un Organisme Notifie).
+4. Disclaimer Complements Alimentaires - Recommandations IA
+? Les suggestions de complements alimentaires sont des informations generales de bien-etre, pas des prescriptions medicales. Les complements peuvent interagir avec des medicaments. Consultez votre medecin ou pharmacien avant tout nouveau complement, particulierement en cas de grossesse, allaitement, traitement medicamenteux ou condition medicale. Les resultats individuels peuvent varier.
+Emplacement : Affiche avec chaque recommandation de complement par le Coach IA ou l'analyse sanguine
+5. Disclaimer FDA/DSHEA (Marche americain)
+? FDA DISCLAIMER (21 CFR 101.93) : These statements have not been evaluated by the Food and Drug
+Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
+Emplacement : Sur chaque page produit, a proximite immediate de chaque allegation structure/fonction. Texte en gras.
+Ce disclaimer est obligatoire en vertu du DSHEA (Dietary Supplement Health and Education Act) de 1994 pour tout complement alimentaire portant une allegation de type structure/fonction (ex: 'calcium builds strong bones'). La distinction est critique : les allegations structure/fonction sont autorisees, mais les allegations de type 'disease claim' (pretendre traiter/prevenir une maladie) requalifient le produit en medicament non approuve, passible de saisies, injonctions et jusqu'a 3 ans de prison + 10 000 $ d'amende. La FTC (Sections 5 et 12 FTC Act) exige en outre que toute allegation soit etayee par des preuves scientifiques competentes et fiables.
+6. Disclaimer UE - Directive 2002/46/CE
+
+Emplacement : Sur chaque page produit + emballage (via Supliful pour les produits expedies en UE)
+Ces mentions sont imposees par l'article 6(2) de la Directive 2002/46/CE. Il est formellement INTERDIT d'attribuer aux complements des proprietes de prevention, de traitement ou de guerison de maladies. Seules les allegations de sante prealablement autorisees par l'EFSA et inscrites au Registre UE (Reglement CE 1924/2006) peuvent etre utilisees, mot pour mot.
+7. Disclaimer Combine International (Pages Produit)
+Le disclaimer suivant doit figurer sur chaque page produit du site VitaSync, combinant les exigences FDA et UE :
+INFORMATIONS REGLEMENTAIRES
+† Ces declarations n'ont pas ete evaluees par la Food and Drug Administration. Ce produit n'est pas destine a diagnostiquer, traiter, guerir ou prevenir une quelconque maladie.
+Les complements alimentaires ne doivent pas etre utilises comme substituts d'un regime alimentaire varie et equilibre et d'un mode de vie sain. Ne pas depasser la dose journaliere recommandee. Tenir hors de la portee des jeunes enfants.
+Les informations fournies sur ce site le sont a titre informatif uniquement et ne constituent pas un avis medical. Consultez un professionnel de sante avant de commencer tout programme de complementation, en particulier si vous etes enceinte, allaitante, sous traitement medicamenteux ou souffrez d'une condition medicale. Les resultats individuels peuvent varier.
+8. Disclaimer Footer (Version Condensee)
+Version condensee pour le footer du site, applicable a toutes les pages :
+VitaSync est une plateforme d'information sur le bien-etre. Les produits proposes sont des complements alimentaires et non des medicaments. Les recommandations IA ne constituent pas un avis medical. Consultez un professionnel de sante avant toute decision concernant votre sante. † These statements have not been evaluated by the FDA. Not intended to diagnose, treat, cure, or prevent any disease.
+9. Responsabilite Civile et Directive Produits Defectueux
+La Directive (UE) 2024/2853 sur la responsabilite du fait des produits (applicable aux produits mis sur le marche a partir du 9 decembre 2026) inclut explicitement les logiciels et systemes IA dans la definition de 'produit'. VitaSync sera soumis a un regime de responsabilite stricte pour les defauts IA. Les clauses de limitation de responsabilite dans les CGU/CGV ne peuvent pas exclure cette responsabilite legale. La charge de la preuve est allegee : si le plaignant demontre des 'difficultes excessives' dues a la complexite technique, le tribunal peut presumer le defaut et/ou le lien de causalite.
+10. Tableau de Synthese - Ou Placer Chaque Disclaimer
+DisclaimerEmplacementObligatoireGeneral (pas un service medical)Footer toutes pages + landing + dashboardOuiTransparence IA (EU AI Act)Chaque interaction Coach IAOui (depuis 02/2025)
+Analyses sanguinesEcran upload + page resultatsOui (evite MDR)Recommandation complementsAvec chaque reco IAOuiFDA/DSHEAChaque page produit (pres des allegations)Oui (marche USA)UE Directive 2002/46Chaque page produitOui (marche UE)Combine internationalPages produit (bloc complet)RecommandeFooter condenseFooter site (toutes pages)Recommande
+Mentions Legales
+Informations legales obligatoires - LCEN Art. 6 III-1
+
+1. Editeur du Site
+Conformement a l'article 6 III-1 de la Loi n 2004-575 du 21 juin 2004 pour la Confiance dans l'Economie Numerique (LCEN), le site vitasync-ai-health.lovable.app est edite par :
+VitaSync
+Plateforme de bien-etre et nutrition propulsee par l'intelligence artificielle
+Email de contact : contact@vitasync.com
+Directeur de la publication : Le responsable legal de VitaSync
+? Structure juridique en cours de creation : Conformement au Code civil (art. 388) et au Code de commerce (art. L.121-2), VitaSync est en cours de creation sous forme de SASU (Societe par Actions Simplifiee Unipersonnelle), seule forme juridique permettant l'activite commerciale avec autorisation parentale (Loi 2010-658). Les mentions suivantes seront mises a jour des l'immatriculation : denomination sociale, forme juridique SASU, numero SIRET/SIREN, RCS et ville du greffe, capital social, adresse du siege social, numero de TVA intracommunautaire.
+2. Hebergement
+Lovable Cloud (front-end et deploiement) - lovable.dev
+Supabase Inc. (base de donnees, authentification, stockage) - 970 Toa Payoh North #07-04, Singapore 318992 supabase.com
+Shopify Inc. (e-commerce et paiements) - 151 O'Connor Street, Ottawa, Ontario, Canada K2P 2L8 - shopify.com
+3. Nature du Site - Avertissements Reglementaires
+? AVERTISSEMENT IMPORTANT : VitaSync est une plateforme d'information sur le bien-etre et le mode de vie. VitaSync n'est PAS un dispositif medical au sens du Reglement (UE) 2017/745 (MDR), un service de diagnostic, un substitut a une consultation medicale ou un service de prescription. Les complements alimentaires proposes sont des denrees alimentaires au sens de la Directive 2002/46/CE et ne sont pas des medicaments. Ils ne pretendent pas guerir, traiter ou prevenir une quelconque maladie (Art. 6(2) Directive 2002/46/CE). Consultez un professionnel de sante qualifie avant toute prise de complements.
+4. Intelligence Artificielle - Transparence
+Conformement au Reglement (UE) 2024/1689 (EU AI Act), VitaSync informe ses utilisateurs que la Plateforme utilise des systemes d'intelligence artificielle (Google Gemini) pour fournir des recommandations de bien-etre, analyser les resultats sanguins a titre informatif et animer le Coach IA. Ces systemes ne constituent pas des dispositifs medicaux et ne sont pas classes comme systemes IA a haut risque. La finalite prevue de VitaSync est exclusivement le bien-etre et l'information generale.
+5. Complements Alimentaires - Reglementation
+Les complements alimentaires commercialises par VitaSync sont conformes aux reglementations suivantes :
+• France : Decret 2006-352 du 20 mars 2006 relatif aux complements alimentaires. Declaration prealable obligatoire aupres de la DGAL via le teleservice Compl'Alim.
+• Union europeenne : Directive 2002/46/CE. Reglement (CE) 1924/2006 sur les allegations de sante (seules les allegations autorisees EFSA et inscrites au Registre UE sont utilisees).
+• Etats-Unis : DSHEA (Dietary Supplement Health and Education Act) de 1994. 21 CFR Part 111 (cGMP). 21 CFR Part 101.93 (disclaimer obligatoire).
+• Fabrication : Sites de fabrication (Supliful) enregistres aupres de la FDA, adherant aux standards GMP, avec certifications tierces NSF International pour certains fournisseurs. COAs disponibles par lot sur demande.
+6. Propriete Intellectuelle
+L'ensemble des elements composant le site sont proteges par le droit de la propriete intellectuelle. Toute reproduction, representation, modification ou exploitation non autorisee est interdite (articles L.335-2 et suivants du Code de la propriete intellectuelle).
+7. Protection des Donnees Personnelles
+Conformement au RGPD (UE 2016/679) et a la loi Informatique et Libertes, l'Utilisateur dispose de droits sur ses donnees personnelles. VitaSync traite des donnees de sante (Art. 9 RGPD) avec consentement explicite. Pour plus de details, consultez notre Politique de Confidentialite. Contact DPO : contact@vitasync.com. Autorite de controle : CNIL, 3 Place de Fontenoy, 75007 Paris.
+8. Cookies
+Le site utilise des cookies techniques necessaires a son fonctionnement. Voir notre Politique de Cookies.
+9. Limitation de Responsabilite
+VitaSync s'efforce de maintenir le site accessible et les informations a jour, mais ne peut garantir l'absence d'erreurs ou d'interruptions. L'utilisation du site se fait aux risques et perils de l'Utilisateur. VitaSync ne saurait etre tenu responsable des dommages directs ou indirects resultant de l'utilisation du site.
+10. Droit Applicable
+Les presentes mentions legales sont soumises au droit francais. En cas de litige, et apres tentative de resolution amiable, les tribunaux francais seront competents.
+11. Credits
+Conception et developpement : VitaSync avec Lovable.dev
+Intelligence artificielle : Google Gemini (via Lovable AI Gateway)
+Icones : Phosphor Icons
+Design system : shadcn/ui, Tailwind CSS
+E-commerce : Shopify Storefront API
+Fournisseur produits : Supliful (Brand On Demand, Inc., Delaware, USA)
+
+Politique de Cookies V2
+Politique de Cookies
+Utilisation des cookies et technologies similaires - Art. 82 Loi Informatique et Libertes
+
+1. Qu'est-ce qu'un Cookie ?
+Un cookie est un petit fichier texte depose sur votre navigateur lors de la visite d'un site web. Les cookies permettent au site de memoriser certaines informations pour ameliorer votre experience. Les technologies similaires (localStorage, sessionStorage) sont egalement couvertes par cette politique.
+2. Cookies Utilises par VitaSync
+Cookie / StockageTypeFinaliteDureeRequissb-*-auth-token
+(Supabase)TechniqueSession JWT, refresh autoSession + refresh Ouitheme
+(localStorage)PreferenceTheme clair/sombrePersistantNonsidebar-collapsed
+(localStorage)PreferenceEtat de la sidebarPersistantNonlocale
+(localStorage)PreferenceLangue (fr/en/es)PersistantNonoauth_redirect (sessionStorage)TechniqueRedirection OAuthSessionOuicookie-consent
+(localStorage)TechniqueChoix cookiesPersistantOuiLovable AnalyticsAnalyticsStats anonymiseesVariableNon3. Cookies et Services Tiers
+• Shopify : Cookies de session pour le panier d'achat et le processus de paiement.
+• Supabase : Cookies d'authentification pour la gestion de la session.
+• Spline : Chargement 3D de la landing page (aucun tracking).
+Page 1
+Politique de Cookies V2
+
+4. Gestion de vos Cookies
+Vous pouvez configurer votre navigateur pour accepter, refuser ou supprimer les cookies. Le refus des cookies techniques d'authentification rendra impossible l'utilisation de votre compte VitaSync.
+5. Base Legale
+Les cookies strictement necessaires sont deposes sans consentement prealable (article 82 de la loi Informatique et Libertes, lignes directrices CNIL). Les cookies non essentiels (analytics) sont soumis a votre consentement recueilli via la banniere de cookies.
+6. Contact
+Pour toute question relative aux cookies : contact@vitasync.com
+Page 2
+
+Politique de Confidentialite
+Protection des donnees personnelles et de sante - Conformite RGPD, CCPA, HDS
+
+VitaSync accorde une importance primordiale a la protection de vos donnees personnelles, en particulier vos donnees de sante. Cette politique decrit de maniere transparente comment nous collectons, utilisons, stockons et protegeons vos informations conformement au Reglement General sur la Protection des Donnees (RGPD - UE 2016/679), a la loi Informatique et Libertes du 6 janvier 1978 modifiee, au California Consumer Privacy Act (CCPA) et aux autres reglementations applicables.
+1. Responsable du Traitement
+Le responsable du traitement des donnees est :
+VitaSync
+Plateforme de bien-etre et nutrition propulsee par l'IA
+Contact DPO : contact@vitasync.com
+Site web : vitasync-ai-health.lovable.app
+? Note importante : VitaSync est en cours de structuration juridique. Des la creation de la structure juridique (SASU envisagee), les informations completes (denomination sociale, SIRET, siege social, RCS) seront mises a jour dans ce document et dans les mentions legales.
+2. Donnees Collectees
+2.1 Donnees d'identification
+• Prenom, nom, adresse email (lors de l'inscription)
+• Date de naissance (facultatif, pour personnaliser les recommandations)
+• Photo de profil (avatar, stocke dans un bucket prive Supabase)
+• Identifiant unique UUID genere automatiquement
+2.2 Donnees de sante (categorie speciale - Art. 9 RGPD)
+? ATTENTION - Donnees sensibles : Ces donnees constituent des donnees de sante au sens de l'article 4(15) et du considerant 35 du RGPD, ainsi que des donnees relatives a la sante au sens de l'article 9(1). Leur traitement repose exclusivement sur votre consentement explicite (Art. 9(2)(a) RGPD). Ce consentement est recueilli de maniere distincte pour chaque finalite de traitement, via des cases a cocher specifiques lors de l'onboarding et avant chaque upload d'analyses sanguines. Vous pouvez retirer ce consentement a tout moment.
+• Objectifs de sante (energie, performance, sommeil, nutrition)
+• Problemes de sante actuels declares
+• Niveau d'activite physique et types de sport pratiques
+• Qualite du sommeil, niveau de stress, humeur (check-ins quotidiens notes de 1 a 5)
+• Allergies et conditions medicales declarees
+• Regime alimentaire et preferences de formes de complements
+• Budget mensuel pour les complements
+• Analyses sanguines (fichiers PDF uploades dans un bucket prive chiffre)
+• Resultats d'analyses : biomarqueurs, valeurs anormales, carences detectees
+• Historique des complements alimentaires suivis (nom, dosage, horaire de prise)
+2.3 Donnees de navigation et techniques
+• Adresse IP (anonymisee), type de navigateur, systeme d'exploitation
+• Pages visitees, duree des sessions (via Lovable Analytics)
+• Preferences d'interface : theme (clair/sombre), langue, etat de la sidebar
+• Donnees de session d'authentification (tokens JWT Supabase)
+2.4 Donnees de transactions
+• Historique des commandes via Shopify (lie au compte Shopify de l'utilisateur)
+• Tokens d'acces Shopify Customer Account API (chiffres, stockes cote serveur uniquement)
+• Adresse de livraison (geree via Shopify, pas stockee directement par VitaSync)
+3. Finalites et Bases Legales du Traitement
+FinaliteBase legale (RGPD)Donnees concerneesGestion du compte utilisateurExecution du contrat (Art. 6(1)(b))Email, nom, mot de passePersonnalisation IA des recommandationsConsentement explicite (Art. 9(2)(a))Profil sante, check-ins, analysesSuivi des complements alimentairesConsentement explicite (Art. 9(2)(a))Stack, dosages, horairesAnalyse des resultats sanguins par IAConsentement explicite (Art. 9(2)(a))PDF analyses, biomarqueursBoutique et transactions ShopifyExecution du contrat (Art. 6(1)(b))Commandes, adresse livraisonCoach IA (conversations)Consentement explicite (Art. 9(2)(a))Messages, profil santeAmelioration du service et analyticsInteret legitime (Art. 6(1)(f))Donnees navigation anonymiseesSecurite et prevention des fraudesInteret legitime (Art. 6(1)(f))Logs, adresses IP, tokens4. Stockage, Securite et Hebergement des Donnees de Sante
+4.1 Infrastructure technique
+Vos donnees sont hebergees sur l'infrastructure Supabase (basee sur PostgreSQL) deployee via Lovable Cloud. Les mesures de securite suivantes sont implementees :
+• Row Level Security (RLS) : Chaque table est protegee par des politiques RLS garantissant qu'un utilisateur ne peut acceder qu'a ses propres donnees.
+• Chiffrement au repos : Chiffrement AES-256 au niveau du disque.
+• Chiffrement en transit : Toutes les communications utilisent HTTPS/TLS 1.2+.
+• Buckets de stockage prives : Les fichiers d'analyses sanguines et avatars sont dans des buckets prives avec acces restreint par user_id.
+• Tokens Shopify : Stockes cote serveur uniquement via service_role_key, inaccessibles depuis le client.
+• Authentification : Supabase Auth avec JWT, refresh automatique, verification par email.
+• Validation des entrees : Validation stricte dans les edge functions (longueur max, roles autorises, profondeur GraphQL limitee).
+4.2 Hebergement des donnees de sante (HDS)
+? AVIS IMPORTANT - Certification HDS : L'article L.1111-8 du Code de la sante publique impose que tout hebergeur de donnees de sante a caractere personnel soit certifie HDS (Hebergeur Donnees de Sante). Le referentiel HDS v2.0 (obligatoire depuis novembre 2024) exige le stockage physique des donnees de sante exclusivement au sein de l'EEE. VitaSync s'engage a migrer le stockage des donnees de sante vers un hebergeur certifie HDS (OVHcloud, Scalingo, Google Cloud France) avant la mise en production definitive. Dans l'intervalle, les donnees de sante sont traitees avec les garanties maximales offertes par Supabase (chiffrement, RLS, isolation).
+4.3 Analyse d'Impact relative a la Protection des Donnees (AIPD)
+Conformement a l'article 35 du RGPD, VitaSync realise une Analyse d'Impact relative a la Protection des Donnees
+(AIPD) prealablement a tout traitement de donnees de sante par IA. Cette AIPD est exigee car VitaSync remplit 4 des 9 criteres du CEPD/CNIL : evaluation et profilage (IA analyse resultats sanguins et cree profils sante), decision automatisee a effets significatifs (recommandations sante generees par IA), donnees sensibles (Art. 9), technologie innovante (Google Gemini traitant donnees sante).
+4.4 Duree de conservation
+Type de donneesDuree de conservationCompte utilisateurJusqu'a la suppression du compteDonnees de sante (profil, check-ins)Jusqu'a la suppression du compte ou retrait du consentementAnalyses sanguines (PDF)Jusqu'a suppression manuelle par l'utilisateurConversations IAJusqu'a suppression manuelle par l'utilisateurTokens ShopifyJusqu'a deconnexion ou expirationLogs techniques90 jours maximumDonnees de facturation10 ans (obligation legale comptable)5. Sous-traitants et Transferts de Donnees
+Sous-traitantRoleLocalisationGarantiesSupabaseBDD, auth, stockageUSA (AWS)SOC 2 Type II, AES-256Lovable CloudDeploiement, gateway IAUE / USAInfrastructure securiseeGoogle (Gemini)Modeles IA (coach, analyses)USADPA Google Cloud, ISO 27001, certifie DPFShopifyE-commerce, paiementsCanada/USAPCI DSS Level 1, SOC 2ElevenLabsTranscription vocaleUSAChiffrement en transitSuplifulFulfillment (white-label)USA (Colorado)FDA-registered, GMPTransferts internationaux : Les transferts vers les Etats-Unis sont encadres par le Data Privacy Framework UE-USA (decision d'adequation du 10 juillet 2023, confirmee par le Tribunal UE le 3 septembre 2025) et/ou les clauses contractuelles types (CCT) de la Commission europeenne comme mecanisme de secours. Un Transfer Impact Assessment (TIA) est realise pour chaque transfert. VitaSync maintient une vigilance accrue conformement aux recommandations de la CNIL concernant l'hebergement de donnees de sante chez des fournisseurs cloud americains (Cloud Act, FISA 702). Les donnees transmises a l'IA Google Gemini sont pseudonymisees avant envoi.
+6. Vos Droits (RGPD Art. 15-22)
+• Droit d'acces (Art. 15) : Obtenir une copie de l'ensemble de vos donnees personnelles.
+• Droit de rectification (Art. 16) : Corriger vos donnees inexactes ou incompletes.
+• Droit a l'effacement (Art. 17) : Demander la suppression de votre compte et de toutes les donnees associees.
+• Droit a la limitation (Art. 18) : Restreindre temporairement le traitement de vos donnees.
+• Droit a la portabilite (Art. 20) : Recevoir vos donnees dans un format structure et lisible par machine (JSON).
+• Droit d'opposition (Art. 21) : Vous opposer au traitement base sur l'interet legitime.
+• Retrait du consentement : Retirer votre consentement a tout moment sans affecter la legalite du traitement anterieur.
+• Droit de ne pas faire l'objet d'une decision automatisee (Art. 22) : Les recommandations IA de VitaSync sont informatives et ne produisent pas d'effets juridiques.
+Pour exercer vos droits, contactez-nous a : contact@vitasync.com. Nous repondrons dans un delai de 30 jours.
+Vous disposez egalement du droit de deposer une reclamation aupres de la CNIL (3 Place de Fontenoy, 75007 Paris, www.cnil.fr) ou de l'autorite de protection des donnees de votre pays.
+7. Traitement Specifique des Donnees de Sante et IA
+VitaSync traite des donnees de sante au sens de l'article 9 du RGPD. Ce traitement est strictement encadre :
+• Le consentement explicite est recueilli avant tout traitement de donnees de sante, via des cases a cocherdistinctes pour chaque finalite.
+• L'IA VitaSync (Google Gemini) ne pose aucun diagnostic medical. Toutes les suggestions sont a titre informatif et educatif uniquement.
+• Les analyses sanguines sont traitees par l'IA en mode stateless : aucune donnee n'est conservee par le modeleIA apres le traitement.
+• Les donnees transmises a Google Gemini sont pseudonymisees (aucun identifiant direct).
+• L'utilisateur peut supprimer ses analyses sanguines et ses conversations IA a tout moment.
+• Les recommandations de complements sont basees sur des donnees scientifiques et des allegations de santeautorisees par l'EFSA.
+? Transparence IA (EU AI Act, Art. 50) : Conformement au Reglement (UE) 2024/1689, VitaSync informe clairement les utilisateurs qu'ils interagissent avec un systeme d'intelligence artificielle (Google Gemini). Le Coach IA et l'analyse de resultats sanguins sont des fonctionnalites alimentees par l'IA, pas des services medicaux humains.
+8. Protection des Mineurs
+VitaSync s'adresse exclusivement aux personnes majeures (18 ans et plus). Lors de l'onboarding, une verification d'age est effectuee. Si l'utilisateur declare etre mineur, l'acces aux fonctionnalites de recommandation est restreint. Nous ne collectons pas sciemment de donnees sur les mineurs. Si nous decouvrons avoir collecte des donnees d'un mineur, nous les supprimerons immediatement.
+9. Droits specifiques CCPA (residents californiens)
+Si vous residez en Californie, vous beneficiez de droits supplementaires en vertu du CCPA : droit de connaitre les categories de donnees collectees et leur finalite, droit de suppression, droit de refuser la vente de vos donnees (VitaSync ne vend aucune donnee personnelle), droit de non-discrimination. Pour exercer ces droits : contact@vitasync.com.
+10. Modifications de cette Politique
+Nous nous reservons le droit de modifier cette politique a tout moment. En cas de modification substantielle, vous serez informe par email ou notification in-app au moins 30 jours avant l'entree en vigueur des modifications. La date de derniere mise a jour est indiquee en haut de ce document.
+11. Contact
+Pour toute question relative a cette politique ou a vos donnees personnelles :
+Email : contact@vitasync.com
+Delegue a la Protection des Donnees (DPO) : contact@vitasync.com
+Site web : vitasync-ai-health.lovable.app
+VITASYNC	Politique de Livraison et Retours
+
+VITASYNC	Politique de Livraison et Retours
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Politique de Livraison et Retours
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Conditions Generales d'Utilisation V2
+
+VITASYNC	Conditions Generales d'Utilisation V2
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Conditions Generales d'Utilisation V2
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Conditions Generales de Vente
+
+VITASYNC	Conditions Generales de Vente
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Conditions Generales de Vente
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Disclaimer Sante et Medical
+
+VITASYNC	Disclaimer Sante et Medical
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Disclaimer Sante et Medical
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Mentions Legales V2
+
+VITASYNC	Mentions Legales V2
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Mentions Legales V2
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC
+
+VITASYNC
+
+VitaSync - Document confidentiel - 04/03/2026
+
+VitaSync - Document confidentiel - 04/03/2026
+
+VITASYNC
+
+VitaSync - Document confidentiel - 04/03/2026
+
+VITASYNC	Politique de Confidentialite V2
+
+VITASYNC	Politique de Confidentialite V2
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+
+VITASYNC	Politique de Confidentialite V2
+
+VitaSync - Document confidentiel - 04/03/2026	Page 1
+

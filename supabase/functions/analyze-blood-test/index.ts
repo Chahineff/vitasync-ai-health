@@ -1,35 +1,55 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.90.1";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const ALLOWED_ORIGINS = [
+  "https://vitasyncai.lovable.app",
+  "https://id-preview--7f75c63b-4202-49a9-a875-e20700f8a0c8.lovable.app",
+  "http://localhost:5173",
+  "http://localhost:8080",
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("Origin") || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Vary": "Origin",
+  };
+}
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Auth
+    // Auth - validate user with anon key + user token (respects RLS)
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !user) {
+    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const userId = claimsData.claims.sub as string;
+
+    // Service role client ONLY for storage downloads (requires elevated access)
+    const supabaseAdmin = createClient(supabaseUrl, serviceKey);
 
     const { analysisId, model: requestedModel } = await req.json();
     if (!analysisId) {
@@ -38,12 +58,12 @@ serve(async (req) => {
       });
     }
 
-    // Fetch the analysis record
-    const { data: analysis, error: fetchError } = await supabase
+    // Fetch the analysis record (user-scoped via RLS)
+    const { data: analysis, error: fetchError } = await supabaseUser
       .from("blood_test_analyses")
       .select("*")
       .eq("id", analysisId)
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .single();
 
     if (fetchError || !analysis) {
@@ -57,7 +77,7 @@ serve(async (req) => {
     const rawPath = analysis.file_url;
     const filePath = rawPath.startsWith('blood-tests/') ? rawPath.slice('blood-tests/'.length) : rawPath;
     console.log("Downloading from blood-tests bucket, path:", filePath);
-    const { data: fileData, error: downloadError } = await supabase.storage
+    const { data: fileData, error: downloadError } = await supabaseAdmin.storage
       .from('blood-tests')
       .download(filePath);
 
@@ -176,8 +196,8 @@ Réponds en JSON strict avec cette structure:
       };
     }
 
-    // Update the analysis record with results
-    const { error: updateError } = await supabase
+    // Update the analysis record with results (user-scoped via RLS)
+    const { error: updateError } = await supabaseUser
       .from("blood_test_analyses")
       .update({
         analysis_text: parsedResult.analysis_text || content,
@@ -188,7 +208,7 @@ Réponds en JSON strict avec cette structure:
         analyzed_at: new Date().toISOString(),
       })
       .eq("id", analysisId)
-      .eq("user_id", user.id);
+      .eq("user_id", userId);
 
     if (updateError) {
       console.error("Update error:", updateError);

@@ -23,3 +23,9 @@ verify_jwt = false
 
 [functions.shopify-customer-auth]
 verify_jwt = false
+
+[functions.user-data-export]
+verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = false

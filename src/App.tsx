@@ -9,6 +9,7 @@ import { DailyCheckinProvider } from "@/hooks/useDailyCheckin";
 import { ThemeProvider } from "next-themes";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { useCartSync } from "@/hooks/useCartSync";
+import { CookieBanner } from "@/components/ui/CookieBanner";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
@@ -72,6 +73,7 @@ function AppContent() {
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <CookieBanner />
     </BrowserRouter>
   );
 }

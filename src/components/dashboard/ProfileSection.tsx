@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise } from "@phosphor-icons/react";
+import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise, DownloadSimple, Trash, Warning } from "@phosphor-icons/react";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +31,9 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
   const [dateOfBirth, setDateOfBirth] = useState(profile?.date_of_birth || "");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Sync state when profile changes
   useEffect(() => {
@@ -330,6 +334,97 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
 
       {/* Health Profile Section */}
       <HealthProfileSection />
+
+      {/* GDPR: Data Export & Account Deletion */}
+      <div className="glass-card rounded-2xl p-6 space-y-4">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <DownloadSimple weight="light" className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-medium text-foreground">Vos données personnelles</h3>
+            <p className="text-sm text-foreground/50">RGPD — Art. 15 & 17</p>
+          </div>
+        </div>
+
+        <button
+          onClick={async () => {
+            setIsExporting(true);
+            try {
+              const { data, error } = await supabase.functions.invoke("user-data-export");
+              if (error) throw error;
+              const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `vitasync-export-${new Date().toISOString().split("T")[0]}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+              toast({ title: "Export terminé", description: "Vos données ont été téléchargées." });
+            } catch {
+              toast({ title: "Erreur", description: "Impossible d'exporter vos données.", variant: "destructive" });
+            } finally {
+              setIsExporting(false);
+            }
+          }}
+          disabled={isExporting}
+          className="w-full px-4 py-3 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/20 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+        >
+          {isExporting ? <SpinnerGap size={18} className="animate-spin" /> : <DownloadSimple size={18} />}
+          {isExporting ? "Export en cours..." : "Exporter mes données (JSON)"}
+        </button>
+
+        <div className="border-t border-border/50 pt-4">
+          {!showDeleteConfirm ? (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="w-full px-4 py-3 rounded-xl bg-destructive/10 text-destructive text-sm font-medium border border-destructive/20 hover:bg-destructive/20 transition-colors flex items-center justify-center gap-2"
+            >
+              <Trash size={18} />
+              Supprimer mon compte
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                <Warning size={20} className="text-destructive flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-destructive">
+                  Cette action est <strong>irréversible</strong>. Toutes vos données, conversations, analyses et fichiers seront définitivement supprimés.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-medium border border-border/50 hover:bg-muted/80 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    try {
+                      const { error } = await supabase.functions.invoke("delete-account", {
+                        body: { confirm: true },
+                      });
+                      if (error) throw error;
+                      toast({ title: "Compte supprimé", description: "Votre compte a été supprimé." });
+                      window.location.href = "/";
+                    } catch {
+                      toast({ title: "Erreur", description: "Impossible de supprimer le compte.", variant: "destructive" });
+                    } finally {
+                      setIsDeleting(false);
+                    }
+                  }}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-destructive text-destructive-foreground text-sm font-medium hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isDeleting ? <SpinnerGap size={16} className="animate-spin" /> : <Trash size={16} />}
+                  {isDeleting ? "Suppression..." : "Confirmer"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Mobile/Tablet only: Help Center & Sign Out */}
       {(onNavigateToHelp || onSignOut) && (

@@ -8,14 +8,27 @@ import { useToast } from "@/hooks/use-toast";
 import { lovable } from "@/integrations/lovable/index";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 
+const passwordRegex = {
+  uppercase: /[A-Z]/,
+  lowercase: /[a-z]/,
+  digit: /[0-9]/,
+  special: /[^A-Za-z0-9]/,
+};
+
 const signInSchema = z.object({
   email: z.string().email("Email invalide"),
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+  password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
 });
 
 const signUpSchema = z.object({
   email: z.string().email("Email invalide"),
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+  password: z
+    .string()
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    .regex(passwordRegex.uppercase, "Doit contenir au moins une majuscule")
+    .regex(passwordRegex.lowercase, "Doit contenir au moins une minuscule")
+    .regex(passwordRegex.digit, "Doit contenir au moins un chiffre")
+    .regex(passwordRegex.special, "Doit contenir au moins un caractère spécial (!@#$...)"),
   firstName: z.string().min(1, "Le prénom est requis"),
   lastName: z.string().min(1, "Le nom est requis"),
   dateOfBirth: z.string().optional(),
@@ -251,6 +264,38 @@ const Auth = () => {
                 </button>
               </div>
               {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
+              {/* Password strength indicator (signup only) */}
+              {isSignUp && password.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  {(() => {
+                    const checks = [
+                      { label: "8+ caractères", ok: password.length >= 8 },
+                      { label: "Majuscule", ok: passwordRegex.uppercase.test(password) },
+                      { label: "Minuscule", ok: passwordRegex.lowercase.test(password) },
+                      { label: "Chiffre", ok: passwordRegex.digit.test(password) },
+                      { label: "Caractère spécial", ok: passwordRegex.special.test(password) },
+                    ];
+                    const score = checks.filter(c => c.ok).length;
+                    const barColor = score <= 2 ? "bg-red-500" : score <= 3 ? "bg-yellow-500" : score <= 4 ? "bg-blue-500" : "bg-green-500";
+                    return (
+                      <>
+                        <div className="flex gap-1">
+                          {[1,2,3,4,5].map(i => (
+                            <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= score ? barColor : "bg-foreground/10"}`} />
+                          ))}
+                        </div>
+                        <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                          {checks.map(c => (
+                            <span key={c.label} className={`text-xs ${c.ok ? "text-green-500" : "text-foreground/40"}`}>
+                              {c.ok ? "✓" : "○"} {c.label}
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
             </div>
 
             {isSignUp && (

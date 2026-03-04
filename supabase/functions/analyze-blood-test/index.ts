@@ -58,12 +58,12 @@ serve(async (req) => {
       });
     }
 
-    // Fetch the analysis record
-    const { data: analysis, error: fetchError } = await supabase
+    // Fetch the analysis record (user-scoped via RLS)
+    const { data: analysis, error: fetchError } = await supabaseUser
       .from("blood_test_analyses")
       .select("*")
       .eq("id", analysisId)
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .single();
 
     if (fetchError || !analysis) {

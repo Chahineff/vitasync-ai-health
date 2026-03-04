@@ -296,6 +296,7 @@ const Auth = () => {
                   })()}
                 </div>
               )}
+            </div>
 
             {isSignUp && (
               <div>

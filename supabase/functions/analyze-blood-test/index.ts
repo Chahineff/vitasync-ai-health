@@ -196,8 +196,8 @@ Réponds en JSON strict avec cette structure:
       };
     }
 
-    // Update the analysis record with results
-    const { error: updateError } = await supabase
+    // Update the analysis record with results (user-scoped via RLS)
+    const { error: updateError } = await supabaseUser
       .from("blood_test_analyses")
       .update({
         analysis_text: parsedResult.analysis_text || content,
@@ -208,7 +208,7 @@ Réponds en JSON strict avec cette structure:
         analyzed_at: new Date().toISOString(),
       })
       .eq("id", analysisId)
-      .eq("user_id", user.id);
+      .eq("user_id", userId);
 
     if (updateError) {
       console.error("Update error:", updateError);

@@ -21,6 +21,7 @@ function getCorsHeaders(req: Request) {
 const CUSTOMER_API_VERSION = "2025-01";
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

@@ -388,6 +388,8 @@
     background-image: linear-gradient(135deg, #00F0FF, #00FFC2, #00F0FF);
     background-size: 200% 200%;
     animation: gradient-shift 8s ease infinite;
+    padding-bottom: 0.15em;
+    margin-bottom: -0.15em;
   }
 
   .hero-text-shadow {

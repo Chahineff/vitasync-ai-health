@@ -1,50 +1,56 @@
 
 
-# Plan: 7 Legal Pages + Footer Link Fix
+# Plan de modifications
 
-## Problem
-- Footer legal links (`privacy`, `terms`, `legalNotice`, `cookies`) all point to `"#"` which just scrolls to top
-- Missing pages for: CGV, CGU, Disclaimer Santé, Mentions Légales, Politique de Confidentialité, Politique Cookies, Politique Livraison & Retours
-- PDFs could not be parsed — **I need you to paste the text content or re-upload as .txt/.docx files**
+## 1. Navbar responsive et adaptative
 
-## Architecture
+**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
 
-### 7 New Pages to Create
+**Corrections** :
+- Remplacer la largeur fixe par un systeme de marges responsives progressives
+- Sur mobile (<768px) : marges de 12px de chaque cote
+- Sur tablette (768-1024px) : marges de 24px
+- Sur desktop (1024-1440px) : marges de 40px
+- Sur grand ecran (>1440px) : max-width de 1400px centre
+- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
+- La navbar gardera son design flottant capsule actuel
 
-| # | PDF | Route | Page File |
-|---|-----|-------|-----------|
-| 1 | Politique de Confidentialité | `/privacy` | `src/pages/legal/Privacy.tsx` |
-| 2 | Conditions d'Utilisation (CGU) | `/terms` | `src/pages/legal/Terms.tsx` |
-| 3 | Mentions Légales | `/legal-notice` | `src/pages/legal/LegalNotice.tsx` |
-| 4 | Politique Cookies | `/cookies` | `src/pages/legal/Cookies.tsx` |
-| 5 | Conditions Générales de Vente (CGV) | `/cgv` | `src/pages/legal/CGV.tsx` |
-| 6 | Disclaimer Santé/Médical | `/disclaimer` | `src/pages/legal/Disclaimer.tsx` |
-| 7 | Politique Livraison & Retours | `/shipping` | `src/pages/legal/Shipping.tsx` |
+**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
 
-### Shared Layout Component
-Create `src/components/layout/LegalPageLayout.tsx` — a reusable wrapper with:
-- Navbar at top
-- Clean, sober typography (prose-style, readable)
-- Title + last updated date
-- Sections with headings and body text
-- Footer at bottom
-- VitaSync design language (same bg, fonts, spacing) but minimal — no flashy gradients
+---
 
-### Footer Updates (`Footer.tsx`)
-- Update the 4 existing legal links from `"#"` to real routes
-- Add 3 missing links: CGV, Disclaimer, Livraison & Retours
-- Use `<Link to="...">` instead of `<a href="#">`
+## 2. Page About - En attente du PDF
 
-### Router Updates (`App.tsx`)
-- Add 7 new `<Route>` entries
+Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
 
-### i18n Updates (`i18n.ts`)
-- Add footer link labels for the 3 new entries (CGV, Disclaimer, Livraison)
+---
 
-## Blocker
-**I cannot read the PDF content.** Please either:
-1. Paste the text from each PDF in chat, or
-2. Re-upload as `.txt` or `.docx` files
+## 3. Page Blog - Etat vide + systeme d'administration
 
-Once I have the content, I'll populate each page with the exact text from your documents.
+**Etat vide** :
+- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
+- Garder le hero et le design existant
+- Supprimer les articles en dur
+
+**Systeme d'administration des articles** :
+- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
+- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
+- La page Blog affichera dynamiquement les articles depuis la base de donnees
+- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
+
+**Fichiers modifies** :
+- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
+- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
+- Migration SQL : creation de la table `blog_posts`
+
+---
+
+## Details techniques
+
+| Tache | Fichiers | Complexite |
+|-------|----------|------------|
+| Navbar responsive | `src/index.css` | Faible |
+| Blog etat vide | `src/pages/Blog.tsx` | Faible |
+| Table blog_posts + RLS | Migration SQL | Moyenne |
+| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
 

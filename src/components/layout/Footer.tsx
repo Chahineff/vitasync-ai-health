@@ -52,16 +52,25 @@ export function Footer() {
     }],
     legal: [{
       label: t("footer.privacy"),
-      href: "#"
+      href: "/privacy"
     }, {
       label: t("footer.terms"),
-      href: "#"
+      href: "/terms"
     }, {
       label: t("footer.legalNotice"),
-      href: "#"
+      href: "/legal-notice"
     }, {
       label: t("footer.cookies"),
-      href: "#"
+      href: "/cookies"
+    }, {
+      label: t("footer.cgv"),
+      href: "/cgv"
+    }, {
+      label: t("footer.disclaimer"),
+      href: "/disclaimer"
+    }, {
+      label: t("footer.shipping"),
+      href: "/shipping"
     }]
   };
 
@@ -132,9 +141,9 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.legal.map(link => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-foreground/50 hover:text-foreground transition-colors">
+                  <Link to={link.href} className="text-sm text-foreground/50 hover:text-foreground transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

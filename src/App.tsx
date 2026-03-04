@@ -19,6 +19,13 @@ import Onboarding from "./pages/Onboarding";
 import Product from "./pages/Product";
 import NotFound from "./pages/NotFound";
 import ShopifyCallback from "./pages/ShopifyCallback";
+import Privacy from "./pages/legal/Privacy";
+import Terms from "./pages/legal/Terms";
+import LegalNotice from "./pages/legal/LegalNotice";
+import CookiesPage from "./pages/legal/Cookies";
+import CGV from "./pages/legal/CGV";
+import Disclaimer from "./pages/legal/Disclaimer";
+import Shipping from "./pages/legal/Shipping";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +62,13 @@ function AppContent() {
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/product/:handle" element={<Product />} />
         <Route path="/shopify-callback" element={<ShopifyCallback />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/legal-notice" element={<LegalNotice />} />
+        <Route path="/cookies" element={<CookiesPage />} />
+        <Route path="/cgv" element={<CGV />} />
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/shipping" element={<Shipping />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

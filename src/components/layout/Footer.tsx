@@ -84,7 +84,7 @@ export function Footer() {
               <img alt="VitaSync" className="w-10 h-10" src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" />
               <span className="text-xl font-medium tracking-tight text-foreground">VitaSync</span>
             </Link>
-            <p className="text-sm text-foreground/50 mb-6 max-w-xs">
+            <p className="text-sm text-foreground/60 mb-6 max-w-xs">
               {t("footer.description")}
             </p>
             <div className="flex gap-4">
@@ -93,7 +93,7 @@ export function Footer() {
                   key={social.label} 
                   href={social.href} 
                   aria-label={social.label} 
-                  className="w-10 h-10 rounded-xl bg-background border border-border/50 flex items-center justify-center text-foreground/50 hover:text-primary hover:border-primary/30 transition-all duration-200"
+                  className="w-10 h-10 rounded-xl bg-background border border-border/50 flex items-center justify-center text-foreground/60 hover:text-primary hover:border-primary/30 transition-all duration-200"
                 >
                   <social.icon size={20} weight="light" />
                 </a>
@@ -107,7 +107,7 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.product.map(link => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-foreground/50 hover:text-foreground transition-colors">
+                    <a href={link.href} className="text-sm text-foreground/60 hover:text-foreground transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -122,11 +122,11 @@ export function Footer() {
               {footerLinks.company.map(link => (
                 <li key={link.label}>
                   {link.href.startsWith("/") ? (
-                    <Link to={link.href} className="text-sm text-foreground/50 hover:text-foreground transition-colors">
+                    <Link to={link.href} className="text-sm text-foreground/60 hover:text-foreground transition-colors">
                       {link.label}
                     </Link>
                   ) : (
-                    <a href={link.href} className="text-sm text-foreground/50 hover:text-foreground transition-colors">
+                    <a href={link.href} className="text-sm text-foreground/60 hover:text-foreground transition-colors">
                       {link.label}
                     </a>
                   )}
@@ -141,7 +141,7 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.legal.map(link => (
                 <li key={link.label}>
-                  <Link to={link.href} className="text-sm text-foreground/50 hover:text-foreground transition-colors">
+                  <Link to={link.href} className="text-sm text-foreground/60 hover:text-foreground transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -152,10 +152,10 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-foreground/40">
+          <p className="text-sm text-foreground/55">
             © {new Date().getFullYear()} VitaSync. {t("footer.copyright")}
           </p>
-          <p className="text-sm text-foreground/40">
+          <p className="text-sm text-foreground/55">
             {t("footer.madeWith")}
           </p>
         </div>

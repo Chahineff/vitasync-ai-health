@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise } from "@phosphor-icons/react";
+import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise, DownloadSimple, Trash, Warning } from "@phosphor-icons/react";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +31,9 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
   const [dateOfBirth, setDateOfBirth] = useState(profile?.date_of_birth || "");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Sync state when profile changes
   useEffect(() => {

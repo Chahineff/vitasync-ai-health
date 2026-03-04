@@ -77,7 +77,7 @@ serve(async (req) => {
     const rawPath = analysis.file_url;
     const filePath = rawPath.startsWith('blood-tests/') ? rawPath.slice('blood-tests/'.length) : rawPath;
     console.log("Downloading from blood-tests bucket, path:", filePath);
-    const { data: fileData, error: downloadError } = await supabase.storage
+    const { data: fileData, error: downloadError } = await supabaseAdmin.storage
       .from('blood-tests')
       .download(filePath);
 

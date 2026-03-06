@@ -1,24 +1,11 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.90.1";
 
-const ALLOWED_ORIGINS = [
-  "https://vitasyncai.lovable.app",
-  "https://id-preview--7f75c63b-4202-49a9-a875-e20700f8a0c8.lovable.app",
-  "http://localhost:5173",
-  "http://localhost:8080",
-];
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
 
-function getCorsHeaders(req: Request) {
-  const origin = req.headers.get("Origin") || "";
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-    "Vary": "Origin",
-  };
-}
-
-// Shopify config — use Storefront API (Admin API returns 401)
+// Shopify config — use Storefront API
 const SHOPIFY_STORE_DOMAIN = "vitasync2.myshopify.com";
 const SHOPIFY_API_VERSION = "2025-07";
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
@@ -77,6 +64,9 @@ async function fetchShopifyCatalog(): Promise<{ catalog: string; handles: string
       }
     `;
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+
     const response = await fetch(SHOPIFY_STOREFRONT_URL, {
       method: "POST",
       headers: {
@@ -84,7 +74,9 @@ async function fetchShopifyCatalog(): Promise<{ catalog: string; handles: string
         "X-Shopify-Storefront-Access-Token": storefrontToken,
       },
       body: JSON.stringify({ query }),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!response.ok) {
       console.error("Shopify Storefront API error:", response.status);
@@ -117,13 +109,14 @@ async function fetchShopifyCatalog(): Promise<{ catalog: string; handles: string
   }
 }
 
-serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    console.log("ai-shop-recommendations: request received");
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -131,6 +124,7 @@ serve(async (req) => {
     // Auth
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
+      console.error("No authorization header");
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -139,13 +133,16 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     if (userError || !user) {
+      console.error("Auth failed:", userError?.message);
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Fetch in parallel: health profile, check-ins, conversations, Shopify catalog
+    console.log("User authenticated:", user.id);
+
+    // Fetch in parallel
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -154,11 +151,12 @@ serve(async (req) => {
       supabase.from("daily_checkins").select("*").eq("user_id", user.id)
         .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
         .order("checkin_date", { ascending: false }),
-      // Get last conversation's recent messages
       supabase.from("conversations").select("id").eq("user_id", user.id)
         .order("updated_at", { ascending: false }).limit(1),
       fetchShopifyCatalog(),
     ]);
+
+    console.log("Data fetched. Catalog handles:", shopifyData.handles.length);
 
     const healthProfile = healthProfileRes.data;
     const checkins = checkinsRes.data || [];
@@ -174,16 +172,16 @@ serve(async (req) => {
         .order("created_at", { ascending: false })
         .limit(10);
       if (messages && messages.length > 0) {
-        conversationContext = messages.reverse().map((m) =>
+        conversationContext = messages.reverse().map((m: { role: string; content: string }) =>
           `${m.role === "user" ? "Utilisateur" : "Coach"}: ${m.content.slice(0, 150)}`
         ).join("\n");
       }
     }
 
     // Build user context
-    const avgSleep = checkins.length ? checkins.reduce((s, c) => s + (c.sleep_quality || 5), 0) / checkins.length : 5;
-    const avgEnergy = checkins.length ? checkins.reduce((s, c) => s + (c.energy_level || 5), 0) / checkins.length : 5;
-    const avgStress = checkins.length ? checkins.reduce((s, c) => s + (c.stress_level || 5), 0) / checkins.length : 5;
+    const avgSleep = checkins.length ? checkins.reduce((s: number, c: { sleep_quality: number | null }) => s + (c.sleep_quality || 5), 0) / checkins.length : 5;
+    const avgEnergy = checkins.length ? checkins.reduce((s: number, c: { energy_level: number | null }) => s + (c.energy_level || 5), 0) / checkins.length : 5;
+    const avgStress = checkins.length ? checkins.reduce((s: number, c: { stress_level: number | null }) => s + (c.stress_level || 5), 0) / checkins.length : 5;
 
     const systemPrompt = `Tu es VitaSync AI, expert en nutrition et compléments alimentaires.
 Ton rôle: analyser le profil de l'utilisateur et recommander entre 2 et 4 produits du catalogue Shopify réel.
@@ -215,12 +213,14 @@ ou: {"recommendations": ["handle1", "handle2", "handle3", "handle4"]}`;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      // Fallback without AI
+      console.warn("LOVABLE_API_KEY not configured, using fallback");
       const fallback = shopifyData.handles.slice(0, 3);
       return new Response(JSON.stringify({ recommendations: fallback }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    console.log("Calling AI gateway for recommendations...");
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -239,7 +239,8 @@ ou: {"recommendations": ["handle1", "handle2", "handle3", "handle4"]}`;
     });
 
     if (!aiResponse.ok) {
-      console.error("AI error:", aiResponse.status, await aiResponse.text());
+      const errText = await aiResponse.text();
+      console.error("AI error:", aiResponse.status, errText);
       if (aiResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
           status: 429,
@@ -254,6 +255,7 @@ ou: {"recommendations": ["handle1", "handle2", "handle3", "handle4"]}`;
 
     const aiData = await aiResponse.json();
     const content = aiData.choices?.[0]?.message?.content || "";
+    console.log("AI response content:", content.slice(0, 200));
 
     let recommendations: string[] = [];
     try {
@@ -268,7 +270,7 @@ ou: {"recommendations": ["handle1", "handle2", "handle3", "handle4"]}`;
 
     // Validate against real catalog handles
     const validRecommendations = recommendations
-      .filter((handle) => shopifyData.handles.includes(handle))
+      .filter((handle: string) => shopifyData.handles.includes(handle))
       .slice(0, 4);
 
     console.log("AI Recommendations:", validRecommendations);

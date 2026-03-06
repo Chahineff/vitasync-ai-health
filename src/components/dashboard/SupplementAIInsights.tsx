@@ -118,7 +118,7 @@ export function SupplementAIInsights() {
               Analyse IA
             </h3>
             <p className="text-xs text-foreground/50 font-light">
-              Propulsé par Gemini 3 Pro
+              Propulsé par Gemini 2.5 Flash
             </p>
           </div>
         </div>

@@ -23,6 +23,9 @@ export interface ProductRecommendation {
   variantId: string;
   name: string;
   price: string;
+  aiTimeOfDay?: string;
+  aiDosage?: string;
+  aiMealTiming?: string;
 }
 
 interface ProductData {
@@ -145,8 +148,16 @@ export function ProductRecommendationCard({ product }: ProductRecommendationCard
     ensureAllProducts().then(() => {
       const found = findProductInCache(product.productId, product.name);
       if (found) {
-        const inferredTime = inferTimeOfDay(found.node.title, found.node.description || '');
-        setSelectedTime(inferredTime);
+        // Use AI-provided time if available, otherwise infer from product
+        const timeOfDay = product.aiTimeOfDay || inferTimeOfDay(found.node.title, found.node.description || '');
+        setSelectedTime(timeOfDay);
+        
+        // Use AI-provided dosage if available
+        if (product.aiDosage) setDosage(product.aiDosage);
+        
+        // Use AI-provided meal timing if available
+        if (product.aiMealTiming) setMealTiming(product.aiMealTiming);
+        
         setProductData({
           imageUrl: found.node.images.edges[0]?.node.url || '',
           title: found.node.title,
@@ -496,27 +507,47 @@ export function ProductRecommendationCard({ product }: ProductRecommendationCard
   );
 }
 
-// Parse product tags from AI response - improved to handle edge cases
+// Parse product tags from AI response - extended format with AI scheduling
+// Format: [[PRODUCT:productId:variantId:nom:prix]] or [[PRODUCT:productId:variantId:nom:prix:time:dosage:meal]]
 export function parseProductRecommendations(content: string): {
   text: string;
   products: ProductRecommendation[];
   subscription: ParsedSubscriptionBlock | null;
 } {
-  // First, check for subscription blocks
   const subscriptionResult = parseSubscriptionBlock(content);
   let textToProcess = subscriptionResult.text;
   
-  const regex = /\[\[PRODUCT:((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):([^:\]]+):([^\]]+)\]\]/g;
+  // Extended regex: optional time:dosage:meal fields
+  const regex = /\[\[PRODUCT:((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):([^:\]]+):([^:\]]+?)(?::([^:\]]+):([^:\]]*):([^:\]]*))?)?\]\]/g;
   const products: ProductRecommendation[] = [];
   
-  const text = textToProcess.replace(regex, (match, productId, variantId, name, price) => {
+  const text = textToProcess.replace(regex, (match, productId, variantId, name, price, time, dosage, meal) => {
     if (productId && variantId && name && price) {
-      products.push({ 
+      const rec: ProductRecommendation = { 
         productId: productId.trim(), 
         variantId: variantId.trim(), 
         name: name.trim(), 
         price: price.trim() 
-      });
+      };
+      // Map AI time values
+      if (time) {
+        const t = time.trim().toLowerCase();
+        if (['morning', 'matin'].includes(t)) rec.aiTimeOfDay = 'morning';
+        else if (['noon', 'midi'].includes(t)) rec.aiTimeOfDay = 'noon';
+        else if (['afternoon', 'après-midi', 'apres-midi'].includes(t)) rec.aiTimeOfDay = 'afternoon';
+        else if (['evening', 'soir'].includes(t)) rec.aiTimeOfDay = 'evening';
+        else rec.aiTimeOfDay = t;
+      }
+      if (dosage) rec.aiDosage = dosage.trim();
+      // Map AI meal timing values
+      if (meal) {
+        const m = meal.trim().toLowerCase();
+        if (['before', 'avant'].includes(m)) rec.aiMealTiming = 'before';
+        else if (['during', 'pendant'].includes(m)) rec.aiMealTiming = 'during';
+        else if (['after', 'après', 'apres'].includes(m)) rec.aiMealTiming = 'after';
+        else rec.aiMealTiming = 'none';
+      }
+      products.push(rec);
       return `__PRODUCT_${products.length - 1}__`;
     }
     return '';

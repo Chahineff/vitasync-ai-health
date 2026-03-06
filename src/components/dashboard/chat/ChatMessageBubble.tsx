@@ -44,7 +44,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
 
   if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0) {
     return (
-      <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+      <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed chat-markdown">
         <ReactMarkdown>{content}</ReactMarkdown>
         {streamingCursor}
       </div>
@@ -56,13 +56,13 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     return (
       <div className="space-y-4">
         {beforeQuiz && (
-          <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+        <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed chat-markdown">
             <ReactMarkdown>{beforeQuiz}</ReactMarkdown>
           </div>
         )}
         <ChatQuizBlock quiz={quiz} onComplete={onQuizComplete || (() => {})} />
         {afterQuiz && (
-          <div className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+          <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed chat-markdown">
             <ReactMarkdown>{afterQuiz}</ReactMarkdown>
           </div>
         )}
@@ -106,7 +106,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
       }
     } else if (part && part.trim()) {
       elements.push(
-        <div key={`el-${elementCounter++}`} className="prose prose-sm dark:prose-invert max-w-none font-light leading-relaxed">
+        <div key={`el-${elementCounter++}`} className="prose prose-sm dark:prose-invert max-w-none leading-relaxed chat-markdown">
           <ReactMarkdown>{part.trim()}</ReactMarkdown>
         </div>
       );

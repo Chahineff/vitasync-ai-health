@@ -1,25 +1,11 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.90.1";
 
-const ALLOWED_ORIGINS = [
-  "https://vitasyncai.lovable.app",
-  "https://id-preview--7f75c63b-4202-49a9-a875-e20700f8a0c8.lovable.app",
-  "http://localhost:5173",
-  "http://localhost:8080",
-];
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
 
-function getCorsHeaders(req: Request) {
-  const origin = req.headers.get("Origin") || "";
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-    "Vary": "Origin",
-  };
-}
-
-serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -40,11 +26,14 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     if (userError || !user) {
+      console.error("Auth error:", userError?.message);
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    console.log("Authenticated user:", user.id);
 
     // Fetch all data in parallel
     const thirtyDaysAgo = new Date();
@@ -52,11 +41,9 @@ serve(async (req) => {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const [healthProfileRes, supplementsRes, logsRes, checkinsRes, conversationsRes] = await Promise.all([
+    const [healthProfileRes, supplementsRes, checkinsRes, conversationsRes] = await Promise.all([
       supabase.from("user_health_profiles").select("*").eq("user_id", user.id).single(),
       supabase.from("supplement_tracking").select("*").eq("user_id", user.id).eq("active", true),
-      supabase.from("supplement_logs").select("*")
-        .gte("taken_at", thirtyDaysAgo.toISOString()),
       supabase.from("daily_checkins").select("*").eq("user_id", user.id)
         .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
         .order("checkin_date", { ascending: false }),
@@ -68,11 +55,37 @@ serve(async (req) => {
     const supplements = supplementsRes.data || [];
     const checkins = checkinsRes.data || [];
 
+    console.log("Supplements found:", supplements.length);
+
+    // If no supplements, return friendly message
+    if (supplements.length === 0) {
+      return new Response(JSON.stringify({
+        insights: {
+          regularity_score: 0,
+          regularity_comment: "Aucun complément suivi. Ajoutez des compléments à votre suivi pour obtenir une analyse personnalisée.",
+          supplement_reviews: [],
+          recommendations: "Commencez par ajouter vos compléments au suivi quotidien pour que l'IA puisse analyser votre régularité et vous donner des conseils personnalisés."
+        }
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Filter logs for this user's supplements
     const supplementIds = supplements.map((s: { id: string }) => s.id);
-    const allLogs = (logsRes.data || []).filter((l: { tracking_id: string }) => 
-      supplementIds.includes(l.tracking_id)
-    );
+    
+    const logsRes = await supabase
+      .from("supplement_logs")
+      .select("*")
+      .in("tracking_id", supplementIds)
+      .gte("taken_at", thirtyDaysAgo.toISOString());
+
+    const allLogs = logsRes.data || [];
+    console.log("Logs found:", allLogs.length);
+
+    if (logsRes.error) {
+      console.error("Logs fetch error:", logsRes.error);
+    }
 
     // Fetch recent coach conversation
     let conversationContext = "";
@@ -137,11 +150,14 @@ INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse stru
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
+      console.error("LOVABLE_API_KEY not configured");
       return new Response(JSON.stringify({ error: "AI not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    console.log("Calling AI gateway...");
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -223,7 +239,7 @@ INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse stru
     }
 
     const aiData = await aiResponse.json();
-    console.log("AI response:", JSON.stringify(aiData).slice(0, 500));
+    console.log("AI response received, choices:", aiData.choices?.length);
 
     // Extract tool call result
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
@@ -232,6 +248,7 @@ INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse stru
     if (toolCall?.function?.arguments) {
       try {
         insights = JSON.parse(toolCall.function.arguments);
+        console.log("Parsed tool call insights successfully");
       } catch (e) {
         console.error("Failed to parse tool call args:", e);
       }
@@ -240,6 +257,7 @@ INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse stru
     // Fallback: try to parse from content
     if (!insights) {
       const content = aiData.choices?.[0]?.message?.content || "";
+      console.log("Trying content fallback, length:", content.length);
       try {
         const jsonMatch = content.match(/\{[\s\S]*\}/);
         if (jsonMatch) insights = JSON.parse(jsonMatch[0]);
@@ -247,12 +265,14 @@ INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse stru
     }
 
     if (!insights) {
+      console.error("Failed to extract insights from AI response");
       return new Response(JSON.stringify({ error: "Failed to parse AI insights" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    console.log("Returning insights successfully");
     return new Response(JSON.stringify({ insights }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

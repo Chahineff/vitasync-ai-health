@@ -518,7 +518,16 @@ export function parseProductRecommendations(content: string): {
   let textToProcess = subscriptionResult.text;
   
   // Extended regex: optional time:dosage:meal fields
-  const regex = /\[\[PRODUCT:((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):((?:gid:\/\/[^:\]]+\/[^:\]]+\/[^:\]]+|[^:\]]+)):([^:\]]+):([^:\]]+?)(?::([^:\]]+):([^:\]]*):([^:\]]*))?)?\]\]/g;
+  const regex = new RegExp(
+    '\\[\\[PRODUCT:' +
+    '((?:gid://[^:\\]]+/[^:\\]]+/[^:\\]]+|[^:\\]]+))' + // productId
+    ':((?:gid://[^:\\]]+/[^:\\]]+/[^:\\]]+|[^:\\]]+))' + // variantId
+    ':([^:\\]]+)' +   // name
+    ':([^:\\]]+?)' +   // price
+    '(?::([^:\\]]+):([^:\\]]*):([^:\\]]*))?' + // optional time:dosage:meal
+    '\\]\\]',
+    'g'
+  );
   const products: ProductRecommendation[] = [];
   
   const text = textToProcess.replace(regex, (match, productId, variantId, name, price, time, dosage, meal) => {

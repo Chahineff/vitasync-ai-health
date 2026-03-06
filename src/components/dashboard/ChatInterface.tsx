@@ -123,6 +123,21 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     await supabase.from('messages').insert({ conversation_id: conversationId, role, content });
   };
 
+  // Generate a smart title using AI after first exchange
+  const generateConversationTitle = useCallback(async (conversationId: string, userMsg: string, assistantMsg: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-coach-title', {
+        body: { userMessage: userMsg, assistantMessage: assistantMsg.slice(0, 500) }
+      });
+      if (!error && data?.title) {
+        await supabase.from('conversations').update({ title: data.title }).eq('id', conversationId);
+        loadConversations();
+      }
+    } catch (e) {
+      console.error('Title generation failed:', e);
+    }
+  }, []);
+
   // Handle guided suggestion prompt submission
   const handleGuidedPromptSubmit = useCallback((prompt: string) => {
     chatInputRef.current?.setValue(prompt);
@@ -246,6 +261,11 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           .from('conversations')
           .update({ updated_at: new Date().toISOString() })
           .eq('id', conversationId);
+        
+        // Generate smart title for new conversations (first exchange only)
+        if (messages.length === 0) {
+          generateConversationTitle(conversationId, userMessage, assistantMessage);
+        }
       }
     } catch (error) {
       console.error('Chat error:', error);

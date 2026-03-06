@@ -25,6 +25,7 @@ interface ChatInterfaceProps {
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
+const TITLE_GENERATION_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // Official VitaSync PNG Logo
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
@@ -122,6 +123,21 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const saveMessage = async (conversationId: string, role: 'user' | 'assistant', content: string) => {
     await supabase.from('messages').insert({ conversation_id: conversationId, role, content });
   };
+
+  // Generate a smart title using AI after first exchange
+  const generateConversationTitle = useCallback(async (conversationId: string, userMsg: string, assistantMsg: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-coach-title', {
+        body: { userMessage: userMsg, assistantMessage: assistantMsg.slice(0, 500) }
+      });
+      if (!error && data?.title) {
+        await supabase.from('conversations').update({ title: data.title }).eq('id', conversationId);
+        loadConversations();
+      }
+    } catch (e) {
+      console.error('Title generation failed:', e);
+    }
+  }, []);
 
   // Handle guided suggestion prompt submission
   const handleGuidedPromptSubmit = useCallback((prompt: string) => {
@@ -246,6 +262,11 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           .from('conversations')
           .update({ updated_at: new Date().toISOString() })
           .eq('id', conversationId);
+        
+        // Generate smart title for new conversations (first exchange only)
+        if (messages.length === 0) {
+          generateConversationTitle(conversationId, userMessage, assistantMessage);
+        }
       }
     } catch (error) {
       console.error('Chat error:', error);

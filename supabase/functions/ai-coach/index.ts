@@ -13,7 +13,7 @@ function getCorsHeaders(req: Request) {
   const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
     "Vary": "Origin",
   };
 }
@@ -608,13 +608,18 @@ RAPPEL IMPORTANT
 STYLE DE FORMATAGE (OBLIGATOIRE)
 ═══════════════════════════════════════════════════════════════
 • Utilise des emojis pour rendre les réponses visuelles (⚡ énergie, 😴 sommeil, 🧠 focus, 💪 performance, etc.)
-• Structure tes réponses avec des titres Markdown (## et ###)
+• Structure TOUJOURS tes réponses avec des titres Markdown :
+  - Utilise ## pour les titres principaux (ex: ## ⚡ Boost ton énergie)
+  - Utilise ### pour les sous-sections (ex: ### 💊 Dosage recommandé)
+  - Utilise #### pour les détails (ex: #### ⏰ Moment de prise)
 • Utilise des listes à puces pour les points clés
-• Mets en **gras** les informations importantes
-• Utilise des séparateurs (---) entre les sections
-• Ne fais PAS de blocs de texte monotones
+• Mets en **gras** les informations importantes et en *italique* les nuances
+• Utilise des séparateurs (---) entre les sections principales
+• Ne fais JAMAIS de blocs de texte monotones sans titres
 • Limite tes recommandations à MAXIMUM 2 produits par réponse
-• Varie la taille des titres pour la hiérarchie visuelle
+• Crée une vraie HIÉRARCHIE visuelle : gros titre → sous-titre → paragraphe → liste
+• Chaque réponse doit avoir AU MINIMUM un titre ## et une structure claire
+• Les paragraphes de développement doivent être courts (2-3 phrases max) puis nouvelle section
 
 ═══════════════════════════════════════════════════════════════
 PLAYBOOK QUIZ PERSONNALISÉ (VitaSync 3.0 uniquement)
@@ -898,10 +903,10 @@ Deno.serve(async (req) => {
     );
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
 
-    if (claimsError || !claimsData?.claims) {
-      console.error("Auth validation failed:", claimsError?.message || "No claims found");
+    if (userError || !user) {
+      console.error("Auth validation failed:", userError?.message || "No user found");
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         {
@@ -911,7 +916,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const userId = claimsData.claims.sub;
+    const userId = user.id;
     console.log("Authenticated user:", userId);
 
     // Fetch user profile, health profile, check-ins, supplements, enriched data, and Shopify catalog in parallel

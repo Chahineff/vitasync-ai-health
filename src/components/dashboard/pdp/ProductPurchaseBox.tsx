@@ -6,6 +6,8 @@ import {
   SpinnerGap,
   ChatCircleDots,
   Repeat,
+  Minus,
+  Plus,
 } from '@phosphor-icons/react';
 import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
@@ -14,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductPurchaseBoxProps {
   product: ProductDetail;
@@ -31,11 +34,13 @@ export function ProductPurchaseBox({
   enrichedSummary,
 }: ProductPurchaseBoxProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [purchaseMode, setPurchaseMode] = useState<'once' | 'subscribe'>('subscribe');
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   
   const addItem = useCartStore(state => state.addItem);
   

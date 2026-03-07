@@ -177,6 +177,16 @@ const Dashboard = () => {
     }
   }, [loading, healthProfileLoading, healthProfile]);
 
+  // Listen for navigate-tab custom events from child components
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as Section;
+      if (detail) handleSectionChange(detail);
+    };
+    window.addEventListener('navigate-tab', handler);
+    return () => window.removeEventListener('navigate-tab', handler);
+  }, []);
+
   // Persist sidebar collapsed state
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));

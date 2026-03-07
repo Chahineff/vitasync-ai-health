@@ -85,7 +85,7 @@ export function ProductPurchaseBox({
         variantId: selectedVariant.id,
         variantTitle: selectedVariant.title,
         price: selectedVariant.price,
-        quantity: 1,
+        quantity: quantity,
         selectedOptions: selectedVariant.selectedOptions || [],
         ...(effectiveMode === 'subscribe' && selectedPlan ? {
           sellingPlanId: selectedPlan.id,
@@ -305,7 +305,13 @@ export function ProductPurchaseBox({
       </motion.button>
 
       {/* Ask VitaSync */}
-      <button className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+      <button
+        onClick={() => {
+          const question = `Que penses-tu de ${product.title} pour moi ? Est-ce adapté à mon profil et mes objectifs ?`;
+          navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
+        }}
+        className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+      >
         <ChatCircleDots weight="light" className="w-4 h-4" />
         Demander à VitaSync
       </button>

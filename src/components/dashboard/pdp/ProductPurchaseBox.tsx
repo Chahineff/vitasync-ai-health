@@ -205,7 +205,9 @@ export function ProductPurchaseBox({
                   {effectiveMode === 'subscribe' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
                 </div>
                 <div>
-                  <span className="font-semibold text-foreground">Abonnement Mensuel</span>
+                  <span className="font-semibold text-foreground">
+                    {selectedPlan ? `Abonnement — ${getDeliveryFrequency(selectedPlan)}` : 'Abonnement'}
+                  </span>
                   {discountPct && (
                     <Badge className="ml-2 bg-primary/10 text-primary border-primary/20 text-xs font-semibold">
                       -{discountPct}%

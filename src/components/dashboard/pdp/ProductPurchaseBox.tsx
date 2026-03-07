@@ -6,6 +6,8 @@ import {
   SpinnerGap,
   ChatCircleDots,
   Repeat,
+  Minus,
+  Plus,
 } from '@phosphor-icons/react';
 import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
@@ -14,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductPurchaseBoxProps {
   product: ProductDetail;
@@ -31,11 +34,13 @@ export function ProductPurchaseBox({
   enrichedSummary,
 }: ProductPurchaseBoxProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [purchaseMode, setPurchaseMode] = useState<'once' | 'subscribe'>('subscribe');
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   
   const addItem = useCartStore(state => state.addItem);
   
@@ -80,7 +85,7 @@ export function ProductPurchaseBox({
         variantId: selectedVariant.id,
         variantTitle: selectedVariant.title,
         price: selectedVariant.price,
-        quantity: 1,
+        quantity: quantity,
         selectedOptions: selectedVariant.selectedOptions || [],
         ...(effectiveMode === 'subscribe' && selectedPlan ? {
           sellingPlanId: selectedPlan.id,
@@ -200,7 +205,9 @@ export function ProductPurchaseBox({
                   {effectiveMode === 'subscribe' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
                 </div>
                 <div>
-                  <span className="font-semibold text-foreground">Abonnement Mensuel</span>
+                  <span className="font-semibold text-foreground">
+                    {selectedPlan ? `Abonnement — ${getDeliveryFrequency(selectedPlan)}` : 'Abonnement'}
+                  </span>
                   {discountPct && (
                     <Badge className="ml-2 bg-primary/10 text-primary border-primary/20 text-xs font-semibold">
                       -{discountPct}%
@@ -264,6 +271,26 @@ export function ProductPurchaseBox({
         </button>
       </div>
 
+      {/* Quantity Selector */}
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-foreground/60 font-medium">Quantité</span>
+        <div className="flex items-center gap-3 border border-border/50 rounded-xl px-2 py-1">
+          <button
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground"
+          >
+            <Minus weight="bold" className="w-4 h-4" />
+          </button>
+          <span className="text-base font-semibold text-foreground w-8 text-center">{quantity}</span>
+          <button
+            onClick={() => setQuantity(quantity + 1)}
+            className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground"
+          >
+            <Plus weight="bold" className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
       {/* CTA Button */}
       <motion.button
         onClick={handleAddToCart}
@@ -300,7 +327,13 @@ export function ProductPurchaseBox({
       </motion.button>
 
       {/* Ask VitaSync */}
-      <button className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+      <button
+        onClick={() => {
+          const question = `Que penses-tu de ${product.title} pour moi ? Est-ce adapté à mon profil et mes objectifs ?`;
+          navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
+        }}
+        className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+      >
         <ChatCircleDots weight="light" className="w-4 h-4" />
         Demander à VitaSync
       </button>

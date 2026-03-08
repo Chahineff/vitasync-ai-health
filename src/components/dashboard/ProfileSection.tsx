@@ -36,6 +36,51 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const { healthProfile } = useHealthProfile();
+  const { supplements } = useSupplementTracking();
+
+  // Profile completion
+  const completionItems = useMemo(() => {
+    const items = [
+      { label: "Photo de profil", done: !!profile?.avatar_url },
+      { label: "Nom & prénom", done: !!(profile?.first_name && profile?.last_name) },
+      { label: "Date de naissance", done: !!profile?.date_of_birth },
+      { label: "Profil santé", done: !!healthProfile?.onboarding_completed },
+      { label: "Premier complément", done: supplements.length > 0 },
+    ];
+    return items;
+  }, [profile, healthProfile, supplements]);
+
+  const completionPct = useMemo(() => {
+    const done = completionItems.filter(i => i.done).length;
+    return Math.round((done / completionItems.length) * 100);
+  }, [completionItems]);
+
+  const handleChangePassword = async () => {
+    if (newPassword.length < 6) {
+      toast({ title: "Mot de passe trop court", description: "Minimum 6 caractères.", variant: "destructive" });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: "Mots de passe différents", description: "Les deux mots de passe ne correspondent pas.", variant: "destructive" });
+      return;
+    }
+    setIsChangingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Mot de passe modifié", description: "Votre nouveau mot de passe est actif." });
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+    setIsChangingPassword(false);
+  };
 
   // Sync state when profile changes
   useEffect(() => {

@@ -195,7 +195,9 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     });
 
       if (!response.ok) {
-        throw new Error('Erreur de communication avec le coach');
+        const errorText = await response.text();
+        console.error('AI Coach error:', response.status, errorText);
+        throw new Error(`Erreur ${response.status}: ${errorText}`);
       }
 
       const reader = response.body?.getReader();

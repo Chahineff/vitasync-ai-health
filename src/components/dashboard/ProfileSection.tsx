@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise, DownloadSimple, Trash, Warning } from "@phosphor-icons/react";
+import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise, DownloadSimple, Trash, Warning, Lock, Eye, EyeSlash, CheckCircle, Circle } from "@phosphor-icons/react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
@@ -10,7 +10,69 @@ import { useI18n } from "@/hooks/useTranslation";
 import { languages, type Locale } from "@/lib/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 import { HealthProfileSection } from "./HealthProfileSection";
+import { useHealthProfile } from "@/hooks/useHealthProfile";
+import { useSupplementTracking } from "@/hooks/useSupplementTracking";
 import { cn } from "@/lib/utils";
+import { Bell } from "@phosphor-icons/react";
+import { Switch } from "@/components/ui/switch";
+
+function NotificationPreferences() {
+  const { toast } = useToast();
+  const { healthProfile, updateHealthProfile } = useHealthProfile();
+  const [suppReminders, setSuppReminders] = useState(true);
+  const [analysisReady, setAnalysisReady] = useState(true);
+  const [weeklySummary, setWeeklySummary] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (healthProfile && !loaded) {
+      setSuppReminders((healthProfile as any).notify_supplement_reminders ?? true);
+      setAnalysisReady((healthProfile as any).notify_analysis_ready ?? true);
+      setWeeklySummary((healthProfile as any).notify_weekly_summary ?? false);
+      setLoaded(true);
+    }
+  }, [healthProfile, loaded]);
+
+  const toggle = async (key: string, value: boolean, setter: (v: boolean) => void) => {
+    setter(value);
+    await updateHealthProfile({ [key]: value } as any);
+    toast({ title: "Préférence mise à jour" });
+  };
+
+  const prefs = [
+    { key: "notify_supplement_reminders", label: "Rappels de compléments", desc: "Matin, midi et soir", value: suppReminders, setter: setSuppReminders },
+    { key: "notify_analysis_ready", label: "Analyse prête", desc: "Quand vos résultats sont disponibles", value: analysisReady, setter: setAnalysisReady },
+    { key: "notify_weekly_summary", label: "Résumé hebdomadaire", desc: "Récap de votre semaine par email", value: weeklySummary, setter: setWeeklySummary },
+  ];
+
+  return (
+    <div className="glass-card rounded-2xl p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Bell weight="light" className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="font-medium text-foreground">Notifications</h3>
+          <p className="text-sm text-foreground/50">Gérez vos préférences de notification</p>
+        </div>
+      </div>
+      <div className="space-y-4">
+        {prefs.map(pref => (
+          <div key={pref.key} className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-foreground">{pref.label}</p>
+              <p className="text-xs text-foreground/40">{pref.desc}</p>
+            </div>
+            <Switch
+              checked={pref.value}
+              onCheckedChange={(v) => toggle(pref.key, v, pref.setter)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 interface ProfileSectionProps {
   onNavigateToHelp?: () => void;
@@ -34,6 +96,51 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const { healthProfile } = useHealthProfile();
+  const { supplements } = useSupplementTracking();
+
+  // Profile completion
+  const completionItems = useMemo(() => {
+    const items = [
+      { label: "Photo de profil", done: !!profile?.avatar_url },
+      { label: "Nom & prénom", done: !!(profile?.first_name && profile?.last_name) },
+      { label: "Date de naissance", done: !!profile?.date_of_birth },
+      { label: "Profil santé", done: !!healthProfile?.onboarding_completed },
+      { label: "Premier complément", done: supplements.length > 0 },
+    ];
+    return items;
+  }, [profile, healthProfile, supplements]);
+
+  const completionPct = useMemo(() => {
+    const done = completionItems.filter(i => i.done).length;
+    return Math.round((done / completionItems.length) * 100);
+  }, [completionItems]);
+
+  const handleChangePassword = async () => {
+    if (newPassword.length < 6) {
+      toast({ title: "Mot de passe trop court", description: "Minimum 6 caractères.", variant: "destructive" });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: "Mots de passe différents", description: "Les deux mots de passe ne correspondent pas.", variant: "destructive" });
+      return;
+    }
+    setIsChangingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Mot de passe modifié", description: "Votre nouveau mot de passe est actif." });
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+    setIsChangingPassword(false);
+  };
 
   // Sync state when profile changes
   useEffect(() => {
@@ -150,6 +257,38 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
           {t("settings.subtitle")}
         </p>
       </div>
+
+      {/* Profile Completion Bar */}
+      {completionPct < 100 && (
+        <div className="glass-card rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-foreground">Profil {completionPct}% complet</h3>
+            <span className="text-xs text-primary font-medium">{completionItems.filter(i => i.done).length}/{completionItems.length}</span>
+          </div>
+          <div className="h-2 rounded-full bg-muted/50 overflow-hidden mb-3">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+              initial={{ width: 0 }}
+              animate={{ width: `${completionPct}%` }}
+              transition={{ duration: 0.8 }}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {completionItems.filter(i => !i.done).map(item => (
+              <span key={item.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                <Circle weight="bold" className="w-3 h-3" />
+                {item.label}
+              </span>
+            ))}
+            {completionItems.filter(i => i.done).map(item => (
+              <span key={item.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/30 text-foreground/40 text-xs">
+                <CheckCircle weight="fill" className="w-3 h-3 text-primary" />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Theme Toggle */}
       <ThemeToggle />
@@ -334,6 +473,72 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
 
       {/* Health Profile Section */}
       <HealthProfileSection />
+
+      {/* Security - Password Change */}
+      <div className="glass-card rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Lock weight="light" className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-medium text-foreground">Sécurité</h3>
+            <p className="text-sm text-foreground/50">Changer votre mot de passe</p>
+          </div>
+        </div>
+        <div className="space-y-3 max-w-md">
+          <div className="relative">
+            <input
+              type={showNewPassword ? "text" : "password"}
+              value={newPassword}
+              onChange={e => setNewPassword(e.target.value)}
+              placeholder="Nouveau mot de passe"
+              className="w-full px-4 py-3 pr-10 rounded-xl bg-foreground/5 border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/60"
+            >
+              {showNewPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          {newPassword && (
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-all",
+                    newPassword.length < 6 ? "w-1/4 bg-destructive" :
+                    newPassword.length < 10 ? "w-1/2 bg-yellow-500" :
+                    "w-full bg-primary"
+                  )}
+                />
+              </div>
+              <span className="text-xs text-foreground/40">
+                {newPassword.length < 6 ? "Faible" : newPassword.length < 10 ? "Moyen" : "Fort"}
+              </span>
+            </div>
+          )}
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={e => setConfirmPassword(e.target.value)}
+            placeholder="Confirmer le mot de passe"
+            className="w-full px-4 py-3 rounded-xl bg-foreground/5 border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          <button
+            onClick={handleChangePassword}
+            disabled={isChangingPassword || !newPassword || !confirmPassword}
+            className="w-full px-4 py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/20 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {isChangingPassword ? <SpinnerGap size={16} className="animate-spin" /> : <Lock size={16} />}
+            {isChangingPassword ? "Modification..." : "Modifier le mot de passe"}
+          </button>
+        </div>
+      </div>
+
+      {/* Notification Preferences */}
+      <NotificationPreferences />
 
       {/* GDPR: Data Export & Account Deletion */}
       <div className="glass-card rounded-2xl p-6 space-y-4">

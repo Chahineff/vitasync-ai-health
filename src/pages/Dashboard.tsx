@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Robot, Storefront, Gear, Question, SignOut, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight, Package, TestTube } from "@phosphor-icons/react";
+import { Robot, Storefront, Gear, Question, SignOut, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight, Package, TestTube, BookOpen, ChatCircleDots, Lifebuoy, MagnifyingGlass as SearchIcon } from "@phosphor-icons/react";
 import { MyStackSection } from "@/components/dashboard/mystack";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
@@ -24,7 +24,12 @@ import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
 import { BloodTestSection } from "@/components/dashboard/BloodTestSection";
 import { MobileBottomNav } from "@/components/dashboard/MobileBottomNav";
 import { DashboardTutorial } from "@/components/dashboard/DashboardTutorial";
+import { LogoutConfirmModal, LogoutFarewellOverlay } from "@/components/dashboard/LogoutConfirmModal";
+import { NotificationPanel } from "@/components/dashboard/NotificationPanel";
+import { HealthScoreWidget } from "@/components/dashboard/HealthScoreWidget";
+import { WeeklyGoalsWidget } from "@/components/dashboard/WeeklyGoalsWidget";
 import { Card } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "analyses" | "settings" | "help";
 
@@ -119,6 +124,8 @@ const Dashboard = () => {
   const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
   const [welcomePhase, setWelcomePhase] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [logoutPhase, setLogoutPhase] = useState(false);
   const menuItems = [{
     id: "home" as Section,
     label: t("dashboard.home"),
@@ -238,9 +245,14 @@ const Dashboard = () => {
     setSelectedProductHandle(null);
     handleSectionChange("shop");
   };
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
+    setShowLogoutModal(true);
+  };
+  const confirmSignOut = async () => {
+    setShowLogoutModal(false);
+    setLogoutPhase(true);
     await signOut();
-    navigate("/");
+    setTimeout(() => navigate("/"), 1500);
   };
   const formatDate = () => {
     const localeMap = {
@@ -274,6 +286,10 @@ const Dashboard = () => {
       <AnimatePresence>
         {welcomePhase && <WelcomeOverlay />}
       </AnimatePresence>
+      {/* Logout Confirm Modal */}
+      <LogoutConfirmModal open={showLogoutModal} onClose={() => setShowLogoutModal(false)} onConfirm={confirmSignOut} />
+      {/* Logout Farewell Overlay */}
+      <LogoutFarewellOverlay visible={logoutPhase} />
       {/* Sidebar - Hidden on mobile/tablet, visible on desktop */}
       <aside className={`fixed top-4 bottom-4 left-4 z-50 glass-sidebar-floating hidden lg:flex flex-col transition-all duration-300 ease-out ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
         {/* Logo & Collapse Button */}
@@ -393,7 +409,10 @@ const Dashboard = () => {
 
       {/* Main - with margin-left to compensate for fixed sidebar */}
       <main className={`flex-1 flex flex-col h-screen max-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
-        
+        {/* Top bar with notifications */}
+        <div className="flex items-center justify-end px-4 pt-3 pb-1 lg:px-8">
+          <NotificationPanel />
+        </div>
         {/* Add padding bottom on mobile for bottom nav */}
         <div id="dashboard-scroll-container" className={`flex-1 overflow-x-hidden ${activeSection === 'coach' ? 'overflow-hidden p-0 pb-0 lg:p-4 lg:pb-4' : 'overflow-auto p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
@@ -428,7 +447,7 @@ const Dashboard = () => {
                   <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} onRestartTutorial={handleRestartTutorial} />
                 </motion.div>}
               {activeSection === "help" && <motion.div key="help" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
-                  <HelpSection />
+                  <HelpSection onGoToCoach={() => handleSectionChange("coach")} />
                 </motion.div>}
             </AnimatePresence>}
         </div>
@@ -506,6 +525,8 @@ const DashboardHome = ({
         {formatDate()}
       </motion.p>
     </motion.div>
+    <HealthScoreWidget />
+    <WeeklyGoalsWidget />
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.1 }}>
       <DailyCheckinWidget />
     </motion.div>
@@ -526,24 +547,163 @@ const DashboardHome = ({
     </motion.div>
   </motion.div>;
 };
-const HelpSection = () => {
-  const {
-    t
-  } = useTranslation();
-  return <div className="max-w-2xl">
-    <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("help.title")}</h2>
-    <div className="space-y-4">
-      <div className="glass-card-premium rounded-3xl p-6 border border-white/10">
-        <h3 className="text-lg font-medium text-foreground mb-2">{t("help.faq")}</h3>
-        <p className="text-sm text-foreground/60 font-light mb-4">{t("help.faqDesc")}</p>
-        <Link to="/#faq" className="text-sm text-primary hover:underline">{t("help.viewFaq")}</Link>
+const FAQ_DATA = [
+  { category: "Compléments", q: "Comment ajouter un complément à mon suivi ?", a: "Rendez-vous dans la section 'Compléments', cliquez sur '+ Ajouter un complément', puis renseignez le nom, le dosage et le moment de prise." },
+  { category: "Compléments", q: "Puis-je suivre des compléments non vendus sur VitaSync ?", a: "Oui ! Vous pouvez ajouter manuellement n'importe quel complément, même s'il ne fait pas partie de notre boutique." },
+  { category: "Analyses", q: "Comment importer une analyse sanguine ?", a: "Allez dans 'Mes Analyses', cliquez sur 'Importer une analyse', puis uploadez votre PDF. Notre IA analysera les résultats en quelques secondes." },
+  { category: "Analyses", q: "Mes données médicales sont-elles sécurisées ?", a: "Absolument. Vos données sont chiffrées, stockées sur des serveurs sécurisés, et accessibles uniquement par vous. Nous respectons le RGPD." },
+  { category: "Coach IA", q: "Le Coach IA peut-il remplacer un médecin ?", a: "Non. Le Coach IA fournit des conseils de bien-être basés sur vos données, mais ne pose jamais de diagnostic. Consultez un professionnel pour tout problème de santé." },
+  { category: "Coach IA", q: "Comment le Coach IA personnalise-t-il ses conseils ?", a: "Il utilise votre profil santé, vos check-ins quotidiens, vos analyses sanguines et votre stack actuel pour des recommandations sur mesure." },
+  { category: "Compte", q: "Comment modifier mon profil santé ?", a: "Allez dans Paramètres, puis cliquez sur 'Modifier' dans la section Profil Santé pour relancer le questionnaire." },
+  { category: "Compte", q: "Comment supprimer mon compte ?", a: "Dans Paramètres, descendez jusqu'à 'Vos données personnelles' puis cliquez sur 'Supprimer mon compte'. L'action est irréversible." },
+  { category: "Mon Stack", q: "Qu'est-ce que le Stack Mensuel ?", a: "C'est votre sélection personnalisée de compléments, construite avec l'aide du Coach IA, livrée chaque mois avec -10% d'abonnement." },
+  { category: "Mon Stack", q: "Comment modifier ma commande mensuelle ?", a: "Depuis 'Mon Stack', vous pouvez ajouter, retirer ou modifier les quantités de chaque produit à tout moment." },
+];
+
+const QUICK_GUIDES = [
+  { num: "01", title: "Ajouter un complément", desc: "Depuis la section Compléments, ajoutez votre stack et suivez vos prises quotidiennes.", icon: FirstAidKit },
+  { num: "02", title: "Importer une analyse", desc: "Uploadez votre PDF d'analyse sanguine pour une lecture automatique par l'IA.", icon: TestTube },
+  { num: "03", title: "Utiliser le Coach IA", desc: "Posez vos questions santé, demandez des recommandations personnalisées.", icon: ChatCircleDots },
+  { num: "04", title: "Construire mon stack", desc: "Créez votre abonnement mensuel avec les produits recommandés par le Coach.", icon: Package },
+];
+
+interface HelpSectionProps {
+  onGoToCoach?: () => void;
+}
+
+const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
+  const { t } = useTranslation();
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const categories = [...new Set(FAQ_DATA.map(f => f.category))];
+  const filtered = FAQ_DATA.filter(f => {
+    const matchSearch = !search || f.q.toLowerCase().includes(search.toLowerCase()) || f.a.toLowerCase().includes(search.toLowerCase());
+    const matchCategory = !activeCategory || f.category === activeCategory;
+    return matchSearch && matchCategory;
+  });
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl space-y-8">
+      <div>
+        <h2 className="text-2xl font-light tracking-tight text-foreground mb-2">{t("help.title")}</h2>
+        <p className="text-foreground/50 text-sm">Trouvez des réponses, des guides et de l'aide</p>
       </div>
-      <div className="glass-card-premium rounded-3xl p-6 border border-white/10">
-        <h3 className="text-lg font-medium text-foreground mb-2">{t("help.contact")}</h3>
-        <p className="text-sm text-foreground/60 font-light mb-4">{t("help.contactDesc")}</p>
-        <Link to="/contact" className="text-sm text-primary hover:underline">{t("help.contactUs")}</Link>
+
+      {/* Quick Guides */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <BookOpen weight="fill" className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-medium text-foreground">Guides rapides</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {QUICK_GUIDES.map((guide, i) => (
+            <motion.div
+              key={guide.num}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.07 }}
+              className="glass-card rounded-2xl p-4 hover:border-primary/30 transition-colors group cursor-default"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <guide.icon weight="light" className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-primary/60 font-mono mb-0.5">{guide.num}</p>
+                  <p className="text-sm font-medium text-foreground mb-1">{guide.title}</p>
+                  <p className="text-xs text-foreground/50 leading-relaxed">{guide.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
-  </div>;
+
+      {/* FAQ */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <Question weight="fill" className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-medium text-foreground">Questions fréquentes</h3>
+        </div>
+
+        {/* Search */}
+        <div className="relative mb-4">
+          <SearchIcon weight="light" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Rechercher dans la FAQ..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-muted/30 border border-border/30 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        {/* Category Filters */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <button
+            onClick={() => setActiveCategory(null)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!activeCategory ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-foreground/50 hover:bg-muted/50'}`}
+          >
+            Tout
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activeCategory === cat ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-foreground/50 hover:bg-muted/50'}`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Accordion */}
+        <Accordion type="multiple" className="space-y-2">
+          {filtered.map((faq, i) => (
+            <AccordionItem key={i} value={`faq-${i}`} className="glass-card rounded-2xl border border-border/30 px-4 overflow-hidden">
+              <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline py-4">
+                <div className="flex items-center gap-2 text-left">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary/70 flex-shrink-0">{faq.category}</span>
+                  <span>{faq.q}</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-foreground/60 leading-relaxed pb-4">
+                {faq.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+          {filtered.length === 0 && (
+            <p className="text-sm text-foreground/40 text-center py-8">Aucun résultat pour "{search}"</p>
+          )}
+        </Accordion>
+      </div>
+
+      {/* Contact + Coach IA */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link to="/contact" className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-colors group">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Lifebuoy weight="light" className="w-5 h-5 text-primary" />
+            </div>
+            <h3 className="text-sm font-medium text-foreground">Nous contacter</h3>
+          </div>
+          <p className="text-xs text-foreground/50">Une question ? Notre équipe est là pour vous aider.</p>
+        </Link>
+
+        {onGoToCoach && (
+          <button onClick={onGoToCoach} className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-colors group text-left">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                <img src={vitasyncLogo} alt="" className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-medium text-foreground">Demander au Coach IA</h3>
+            </div>
+            <p className="text-xs text-foreground/50">Posez votre question directement au Coach pour une aide personnalisée.</p>
+          </button>
+        )}
+      </div>
+    </motion.div>
+  );
 };
 export default Dashboard;

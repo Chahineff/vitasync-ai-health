@@ -353,7 +353,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             onModelChange={handleModelChange} 
           />
           {/* Stack toggle button */}
-          {stackItems.length > 0 && !isMobile && (
+          {stackItems.length > 0 && (
             <button
               onClick={() => setStackOpen(!stackIsOpen)}
               className="relative p-2 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10 hover:bg-muted dark:hover:bg-white/10 transition-colors"
@@ -410,11 +410,18 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         </div>
       </div>
 
-      {/* AI Stack Panel - Right side */}
-      {!isMobile && (
+      {/* AI Stack Panel - Desktop: side panel, Mobile: Sheet */}
+      {!isMobile ? (
         <AnimatePresence>
           {stackIsOpen && stackItems.length > 0 && <AIStackPanel />}
         </AnimatePresence>
+      ) : (
+        <Sheet open={stackIsOpen && stackItems.length > 0} onOpenChange={setStackOpen}>
+          <SheetContent side="right" className="w-[340px] p-0">
+            <SheetTitle className="sr-only">Mon Stack Mensuel</SheetTitle>
+            <AIStackPanel />
+          </SheetContent>
+        </Sheet>
       )}
     </div>
   );

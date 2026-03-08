@@ -414,6 +414,69 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
       {/* Health Profile Section */}
       <HealthProfileSection />
 
+      {/* Security - Password Change */}
+      <div className="glass-card rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Lock weight="light" className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-medium text-foreground">Sécurité</h3>
+            <p className="text-sm text-foreground/50">Changer votre mot de passe</p>
+          </div>
+        </div>
+        <div className="space-y-3 max-w-md">
+          <div className="relative">
+            <input
+              type={showNewPassword ? "text" : "password"}
+              value={newPassword}
+              onChange={e => setNewPassword(e.target.value)}
+              placeholder="Nouveau mot de passe"
+              className="w-full px-4 py-3 pr-10 rounded-xl bg-foreground/5 border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/60"
+            >
+              {showNewPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          {newPassword && (
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-all",
+                    newPassword.length < 6 ? "w-1/4 bg-destructive" :
+                    newPassword.length < 10 ? "w-1/2 bg-yellow-500" :
+                    "w-full bg-primary"
+                  )}
+                />
+              </div>
+              <span className="text-xs text-foreground/40">
+                {newPassword.length < 6 ? "Faible" : newPassword.length < 10 ? "Moyen" : "Fort"}
+              </span>
+            </div>
+          )}
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={e => setConfirmPassword(e.target.value)}
+            placeholder="Confirmer le mot de passe"
+            className="w-full px-4 py-3 rounded-xl bg-foreground/5 border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          <button
+            onClick={handleChangePassword}
+            disabled={isChangingPassword || !newPassword || !confirmPassword}
+            className="w-full px-4 py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/20 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {isChangingPassword ? <SpinnerGap size={16} className="animate-spin" /> : <Lock size={16} />}
+            {isChangingPassword ? "Modification..." : "Modifier le mot de passe"}
+          </button>
+        </div>
+      </div>
+
       {/* GDPR: Data Export & Account Deletion */}
       <div className="glass-card rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-3 mb-2">

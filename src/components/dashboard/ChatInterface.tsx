@@ -217,17 +217,17 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           });
           console.log('[VitaSync] Response status:', resp.status, 'attempt:', attempt);
           
-          // Auto-retry on 429/500 once after 3s
-          if ((resp.status === 429 || resp.status === 500) && attempt === 1) {
-            console.log('[VitaSync] Retrying in 3s...');
-            await new Promise(r => setTimeout(r, 3000));
+          // Auto-retry on 429/500/504 once after 5s
+          if ((resp.status === 429 || resp.status === 500 || resp.status === 504) && attempt === 1) {
+            console.log('[VitaSync] Retrying in 5s (status:', resp.status, ')...');
+            await new Promise(r => setTimeout(r, 5000));
             return doFetch(2);
           }
           return resp;
         } catch (fetchError) {
           if (attempt === 1) {
-            console.log('[VitaSync] Network error, retrying in 3s...');
-            await new Promise(r => setTimeout(r, 3000));
+            console.log('[VitaSync] Network error, retrying in 5s...');
+            await new Promise(r => setTimeout(r, 5000));
             return doFetch(2);
           }
           throw new Error("Le coach est temporairement indisponible. Réessaie dans 30 secondes.");

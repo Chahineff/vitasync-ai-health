@@ -1,23 +1,21 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CaretDown, Lightning, Brain, Sparkle, Robot } from '@phosphor-icons/react';
+import { CaretDown, Lightning, Brain, Sparkle } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
 export interface AIModel {
-  version: '2.5' | '3.0' | '5.0' | '5.2';
-  mode: 'flash' | 'pro' | 'mini';
+  version: '2.5' | '3.0';
+  mode: 'flash' | 'pro';
   label: string;
   description: string;
   model: string;
-  provider: 'google' | 'openai';
+  provider: 'google';
 }
 
 export const AI_MODELS: AIModel[] = [
@@ -45,22 +43,6 @@ export const AI_MODELS: AIModel[] = [
     model: 'google/gemini-3-pro-preview',
     provider: 'google',
   },
-  { 
-    version: '5.0', 
-    mode: 'mini', 
-    label: 'VitaSync 5 Mini',
-    description: 'Rapide et polyvalent',
-    model: 'openai/gpt-5-mini',
-    provider: 'openai',
-  },
-  { 
-    version: '5.2', 
-    mode: 'pro', 
-    label: 'VitaSync 5.2',
-    description: 'Raisonnement avancé',
-    model: 'openai/gpt-5.2',
-    provider: 'openai',
-  },
 ];
 
 interface ChatModelSelectorProps {
@@ -69,8 +51,6 @@ interface ChatModelSelectorProps {
 }
 
 function ModelIcon({ model }: { model: AIModel }) {
-  if (model.provider === 'openai' && model.mode === 'pro') return <Robot weight="fill" className="w-4 h-4 text-emerald-500" />;
-  if (model.provider === 'openai') return <Robot weight="fill" className="w-4 h-4 text-sky-500" />;
   if (model.mode === 'pro') return <Brain weight="fill" className="w-4 h-4 text-purple-500" />;
   if (model.version === '3.0') return <Sparkle weight="fill" className="w-4 h-4 text-primary" />;
   return <Lightning weight="fill" className="w-4 h-4 text-yellow-500" />;
@@ -111,32 +91,7 @@ export function ChatModelSelector({ selectedModel, onModelChange }: ChatModelSel
         align="start" 
         className="w-64 bg-background/95 backdrop-blur-xl border-border/50"
       >
-        <DropdownMenuLabel className="text-xs text-foreground/40 uppercase tracking-wider">Google Gemini</DropdownMenuLabel>
-        {AI_MODELS.filter(m => m.provider === 'google').map((model) => (
-          <DropdownMenuItem
-            key={model.model}
-            onClick={() => onModelChange(model)}
-            className={cn(
-              "flex items-center gap-3 cursor-pointer",
-              selectedModel.model === model.model && "bg-primary/10"
-            )}
-          >
-            <ModelIcon model={model} />
-            <div className="flex-1">
-              <p className="text-sm font-medium">{model.label}</p>
-              <p className="text-xs text-foreground/50">{model.description}</p>
-            </div>
-            {selectedModel.model === model.model && (
-              <motion.div
-                layoutId="selectedModel"
-                className="w-2 h-2 rounded-full bg-primary"
-              />
-            )}
-          </DropdownMenuItem>
-        ))}
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-xs text-foreground/40 uppercase tracking-wider">OpenAI GPT</DropdownMenuLabel>
-        {AI_MODELS.filter(m => m.provider === 'openai').map((model) => (
+        {AI_MODELS.map((model) => (
           <DropdownMenuItem
             key={model.model}
             onClick={() => onModelChange(model)}

@@ -184,6 +184,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       console.log('[VitaSync] Session status:', !!sessionData.session, 'Error:', sessionError?.message);
       
+      let accessToken: string;
       if (!sessionData.session?.access_token) {
         // Try refreshing the session
         const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
@@ -193,9 +194,9 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           console.error('[VitaSync] No valid session after refresh');
           throw new Error('Session expirée, veuillez vous reconnecter');
         }
-        var accessToken = refreshed.session.access_token;
+        accessToken = refreshed.session.access_token;
       } else {
-        var accessToken = sessionData.session.access_token;
+        accessToken = sessionData.session.access_token;
       }
       
       console.log('[VitaSync] Token length:', accessToken.length, 'CHAT_URL:', CHAT_URL);

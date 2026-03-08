@@ -13,6 +13,66 @@ import { HealthProfileSection } from "./HealthProfileSection";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
 import { useSupplementTracking } from "@/hooks/useSupplementTracking";
 import { cn } from "@/lib/utils";
+import { Bell } from "@phosphor-icons/react";
+import { Switch } from "@/components/ui/switch";
+
+function NotificationPreferences() {
+  const { toast } = useToast();
+  const { healthProfile, updateHealthProfile } = useHealthProfile();
+  const [suppReminders, setSuppReminders] = useState(true);
+  const [analysisReady, setAnalysisReady] = useState(true);
+  const [weeklySummary, setWeeklySummary] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (healthProfile && !loaded) {
+      setSuppReminders((healthProfile as any).notify_supplement_reminders ?? true);
+      setAnalysisReady((healthProfile as any).notify_analysis_ready ?? true);
+      setWeeklySummary((healthProfile as any).notify_weekly_summary ?? false);
+      setLoaded(true);
+    }
+  }, [healthProfile, loaded]);
+
+  const toggle = async (key: string, value: boolean, setter: (v: boolean) => void) => {
+    setter(value);
+    await updateHealthProfile({ [key]: value } as any);
+    toast({ title: "Préférence mise à jour" });
+  };
+
+  const prefs = [
+    { key: "notify_supplement_reminders", label: "Rappels de compléments", desc: "Matin, midi et soir", value: suppReminders, setter: setSuppReminders },
+    { key: "notify_analysis_ready", label: "Analyse prête", desc: "Quand vos résultats sont disponibles", value: analysisReady, setter: setAnalysisReady },
+    { key: "notify_weekly_summary", label: "Résumé hebdomadaire", desc: "Récap de votre semaine par email", value: weeklySummary, setter: setWeeklySummary },
+  ];
+
+  return (
+    <div className="glass-card rounded-2xl p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Bell weight="light" className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="font-medium text-foreground">Notifications</h3>
+          <p className="text-sm text-foreground/50">Gérez vos préférences de notification</p>
+        </div>
+      </div>
+      <div className="space-y-4">
+        {prefs.map(pref => (
+          <div key={pref.key} className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-foreground">{pref.label}</p>
+              <p className="text-xs text-foreground/40">{pref.desc}</p>
+            </div>
+            <Switch
+              checked={pref.value}
+              onCheckedChange={(v) => toggle(pref.key, v, pref.setter)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 interface ProfileSectionProps {
   onNavigateToHelp?: () => void;

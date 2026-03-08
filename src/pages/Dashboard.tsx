@@ -285,6 +285,10 @@ const Dashboard = () => {
       <AnimatePresence>
         {welcomePhase && <WelcomeOverlay />}
       </AnimatePresence>
+      {/* Logout Confirm Modal */}
+      <LogoutConfirmModal open={showLogoutModal} onClose={() => setShowLogoutModal(false)} onConfirm={confirmSignOut} />
+      {/* Logout Farewell Overlay */}
+      <LogoutFarewellOverlay visible={logoutPhase} />
       {/* Sidebar - Hidden on mobile/tablet, visible on desktop */}
       <aside className={`fixed top-4 bottom-4 left-4 z-50 glass-sidebar-floating hidden lg:flex flex-col transition-all duration-300 ease-out ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
         {/* Logo & Collapse Button */}

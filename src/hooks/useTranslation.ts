@@ -44,7 +44,7 @@ export function useTranslation() {
   }
   
   const t = (key: string): string => {
-    return translations[locale][key] || key;
+    return translations[locale]?.[key] || translations['en']?.[key] || key;
   };
   
   return { t, locale, setLocale };

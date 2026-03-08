@@ -16,8 +16,8 @@ export function LanguageSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-muted/50 transition-colors text-foreground/70 hover:text-foreground">
-        <Globe weight="light" className="w-4 h-4" />
-        <span className="text-sm">{currentLanguage?.flag}</span>
+        <span className="text-base leading-none">{currentLanguage?.flag}</span>
+        <span className="text-sm">{currentLanguage?.label}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="glass-card border-border/50">
         {languages.map((lang) => (

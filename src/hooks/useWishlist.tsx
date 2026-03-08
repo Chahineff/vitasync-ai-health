@@ -9,13 +9,13 @@ export function useWishlist(productHandle: string | null) {
 
   useEffect(() => {
     if (!user || !productHandle) return;
-    supabase
+    (supabase as any)
       .from('user_wishlists')
       .select('id')
       .eq('user_id', user.id)
       .eq('product_handle', productHandle)
       .maybeSingle()
-      .then(({ data }) => setIsWishlisted(!!data));
+      .then(({ data }: any) => setIsWishlisted(!!data));
   }, [user, productHandle]);
 
   const toggle = useCallback(async () => {
@@ -23,14 +23,14 @@ export function useWishlist(productHandle: string | null) {
     setLoading(true);
     try {
       if (isWishlisted) {
-        await supabase
+        await (supabase as any)
           .from('user_wishlists')
           .delete()
           .eq('user_id', user.id)
           .eq('product_handle', productHandle);
         setIsWishlisted(false);
       } else {
-        await supabase
+        await (supabase as any)
           .from('user_wishlists')
           .insert({ user_id: user.id, product_handle: productHandle });
         setIsWishlisted(true);

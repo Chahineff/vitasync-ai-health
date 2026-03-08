@@ -48,7 +48,11 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
               {isActive && (
                 <motion.div
                   layoutId="mobileNavIndicator"
-                  className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/20"
+                  className="absolute inset-0 rounded-xl"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))",
+                    opacity: 0.15,
+                  }}
                   transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                 />
               )}

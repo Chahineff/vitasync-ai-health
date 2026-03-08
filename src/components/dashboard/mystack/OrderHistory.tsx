@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Receipt, ShoppingBag } from '@phosphor-icons/react';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 
 interface Order {
@@ -58,6 +59,7 @@ interface OrderHistoryProps {
 }
 
 export function OrderHistory({ index, customer }: OrderHistoryProps) {
+  const { t, locale } = useTranslation();
   const { isConnected, executeQuery } = customer;
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,7 +108,7 @@ export function OrderHistory({ index, customer }: OrderHistoryProps) {
         );
       } catch (err) {
         console.error('Failed to fetch orders:', err);
-        setError('Impossible de charger l\'historique');
+        setError(t('orders.loadError'));
       } finally {
         setLoading(false);
       }
@@ -117,12 +119,15 @@ export function OrderHistory({ index, customer }: OrderHistoryProps) {
 
   if (!isConnected) return null;
 
+  const localeMap: Record<string, string> = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', ar: 'ar-SA', zh: 'zh-CN', pt: 'pt-BR' };
+  const intlLocale = localeMap[locale] || 'en-US';
+
   const formatPrice = (amount: string, currency: string) => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(parseFloat(amount));
+    return new Intl.NumberFormat(intlLocale, { style: 'currency', currency }).format(parseFloat(amount));
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('fr-FR', {
+    return new Date(dateStr).toLocaleDateString(intlLocale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -137,7 +142,7 @@ export function OrderHistory({ index, customer }: OrderHistoryProps) {
     >
       <div className="flex items-center gap-3 mb-6">
         <Receipt weight="duotone" className="w-6 h-6 text-foreground/70" />
-        <h2 className="text-xl font-semibold text-foreground">Historique des commandes</h2>
+        <h2 className="text-xl font-semibold text-foreground">{t('orders.title')}</h2>
       </div>
 
       {loading ? (
@@ -153,7 +158,7 @@ export function OrderHistory({ index, customer }: OrderHistoryProps) {
       ) : orders.length === 0 ? (
         <div className="bg-card rounded-[20px] p-8 border border-border/50 text-center">
           <ShoppingBag weight="duotone" className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
-          <p className="text-muted-foreground">Aucune commande pour le moment</p>
+          <p className="text-muted-foreground">{t('orders.noOrders')}</p>
         </div>
       ) : (
         <div className="space-y-4">

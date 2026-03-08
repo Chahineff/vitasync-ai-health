@@ -180,18 +180,25 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         await saveMessage(conversationId, 'user', userMessage);
       }
 
-      const session = await supabase.auth.getSession();
-      console.log('[VitaSync] Session status:', !!session.data.session, 'Token:', !!session.data.session?.access_token);
-      console.log('[VitaSync] CHAT_URL:', CHAT_URL);
+      // Refresh session to ensure valid token
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log('[VitaSync] Session status:', !!sessionData.session, 'Error:', sessionError?.message);
       
-      if (!session.data.session?.access_token) {
-        console.error('[VitaSync] No access token available');
-        throw new Error('Session expirée, veuillez vous reconnecter');
+      if (!sessionData.session?.access_token) {
+        // Try refreshing the session
+        const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+        console.log('[VitaSync] Refresh attempt:', !!refreshed.session, 'Error:', refreshError?.message);
+        
+        if (!refreshed.session?.access_token) {
+          console.error('[VitaSync] No valid session after refresh');
+          throw new Error('Session expirée, veuillez vous reconnecter');
+        }
+        var accessToken = refreshed.session.access_token;
+      } else {
+        var accessToken = sessionData.session.access_token;
       }
-
-      let response: Response;
-      try {
-        console.log('[VitaSync] Sending fetch to:', CHAT_URL);
+      
+      console.log('[VitaSync] Token length:', accessToken.length, 'First chars:', accessToken.slice(0, 20));
         response = await fetch(CHAT_URL, {
           method: 'POST',
           headers: {

@@ -60,18 +60,31 @@ export function AIStackPanel() {
     setIsSubscribing(true);
 
     try {
-      // Add all items to cart with subscription
+      const products = await fetchProducts(100);
+      
       for (const item of items) {
-        const gid = item.variantId.startsWith('gid://') 
-          ? item.variantId 
-          : `gid://shopify/ProductVariant/${item.variantId}`;
-        
+        // Resolve the full product from Shopify
+        const match = products.find(p => {
+          const pid = p.node.id.split('/').pop();
+          return pid === item.productId;
+        });
+
+        if (!match) continue;
+
+        const variant = match.node.variants.edges.find(v => {
+          const vid = v.node.id.split('/').pop();
+          return vid === item.variantId || v.node.id === item.variantId;
+        }) || match.node.variants.edges[0];
+
+        if (!variant) continue;
+
         await addToCart({
-          variantId: gid,
-          title: item.name,
-          price: item.price,
+          product: match,
+          variantId: variant.node.id,
+          variantTitle: variant.node.title,
+          price: variant.node.price,
           quantity: item.quantity,
-          imageUrl: images[item.productId] || '',
+          selectedOptions: variant.node.selectedOptions,
         });
       }
 

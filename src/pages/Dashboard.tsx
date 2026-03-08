@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Robot, Storefront, Gear, Question, SignOut, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight, Package, TestTube } from "@phosphor-icons/react";
+import { Robot, Storefront, Gear, Question, SignOut, X, Bell, EnvelopeSimple, MagnifyingGlass, DeviceMobile, House, FirstAidKit, Crown, User, CaretLeft, CaretRight, Package, TestTube, BookOpen, ChatCircleDots, Lifebuoy, MagnifyingGlass as SearchIcon } from "@phosphor-icons/react";
 import { MyStackSection } from "@/components/dashboard/mystack";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { ProfileSection } from "@/components/dashboard/ProfileSection";
@@ -24,7 +24,11 @@ import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
 import { BloodTestSection } from "@/components/dashboard/BloodTestSection";
 import { MobileBottomNav } from "@/components/dashboard/MobileBottomNav";
 import { DashboardTutorial } from "@/components/dashboard/DashboardTutorial";
+import { LogoutConfirmModal, LogoutFarewellOverlay } from "@/components/dashboard/LogoutConfirmModal";
+import { HealthScoreWidget } from "@/components/dashboard/HealthScoreWidget";
+import { WeeklyGoalsWidget } from "@/components/dashboard/WeeklyGoalsWidget";
 import { Card } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "analyses" | "settings" | "help";
 
@@ -119,6 +123,8 @@ const Dashboard = () => {
   const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
   const [welcomePhase, setWelcomePhase] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [logoutPhase, setLogoutPhase] = useState(false);
   const menuItems = [{
     id: "home" as Section,
     label: t("dashboard.home"),
@@ -238,9 +244,14 @@ const Dashboard = () => {
     setSelectedProductHandle(null);
     handleSectionChange("shop");
   };
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
+    setShowLogoutModal(true);
+  };
+  const confirmSignOut = async () => {
+    setShowLogoutModal(false);
+    setLogoutPhase(true);
     await signOut();
-    navigate("/");
+    setTimeout(() => navigate("/"), 1500);
   };
   const formatDate = () => {
     const localeMap = {

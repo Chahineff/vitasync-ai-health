@@ -477,6 +477,9 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
         </div>
       </div>
 
+      {/* Notification Preferences */}
+      <NotificationPreferences />
+
       {/* GDPR: Data Export & Account Deletion */}
       <div className="glass-card rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-3 mb-2">

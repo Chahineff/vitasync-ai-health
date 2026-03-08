@@ -1,56 +1,73 @@
 
 
-# Plan de modifications
+# Mise à jour du tutoriel — Reflet fidèle du dashboard + écran d'introduction
 
-## 1. Navbar responsive et adaptative
-
-**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
-
-**Corrections** :
-- Remplacer la largeur fixe par un systeme de marges responsives progressives
-- Sur mobile (<768px) : marges de 12px de chaque cote
-- Sur tablette (768-1024px) : marges de 24px
-- Sur desktop (1024-1440px) : marges de 40px
-- Sur grand ecran (>1440px) : max-width de 1400px centre
-- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
-- La navbar gardera son design flottant capsule actuel
-
-**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
+## Contexte
+Le dashboard a évolué avec de nouveaux widgets (HealthScoreWidget, WeeklyGoalsWidget, NotificationPanel, section Aide enrichie, Paramètres enrichis avec notifications/sécurité/complétion profil, LogoutConfirmModal). Le tutoriel doit refléter fidèlement ces changements et être précédé d'un écran d'accueil.
 
 ---
 
-## 2. Page About - En attente du PDF
+## 1. Écran d'introduction avant le tutoriel
 
-Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
+**Fichier** : `DashboardTutorial.tsx`
 
----
+Ajouter une phase `"intro"` avant la première étape. Écran plein écran glassmorphism avec :
+- Logo VitaSync animé (float + halo, réutilise le pattern du ChatWelcomeScreen)
+- Titre : "Bienvenue dans le tutoriel VitaSync"
+- Sous-titre : "Découvrez votre dashboard en 7 étapes — moins d'une minute"
+- Bouton "Commencer la visite" (gradient primary)
+- Bouton secondaire "Passer" (texte discret)
 
-## 3. Page Blog - Etat vide + systeme d'administration
-
-**Etat vide** :
-- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
-- Garder le hero et le design existant
-- Supprimer les articles en dur
-
-**Systeme d'administration des articles** :
-- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
-- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
-- La page Blog affichera dynamiquement les articles depuis la base de donnees
-- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
-
-**Fichiers modifies** :
-- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
-- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
-- Migration SQL : creation de la table `blog_posts`
+L'intro s'affiche avant `currentStep = 0`. Un state `showIntro` contrôle l'affichage.
 
 ---
 
-## Details techniques
+## 2. TutorialHomeDemo — Ajout HealthScoreWidget + WeeklyGoalsWidget
 
-| Tache | Fichiers | Complexite |
-|-------|----------|------------|
-| Navbar responsive | `src/index.css` | Faible |
-| Blog etat vide | `src/pages/Blog.tsx` | Faible |
-| Table blog_posts + RLS | Migration SQL | Moyenne |
-| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
+**Fichier** : `src/components/dashboard/tutorial/TutorialHomeDemo.tsx`
+
+Le Home réel affiche maintenant dans cet ordre :
+1. Greeting + date
+2. **HealthScoreWidget** (anneau radial 0-100)
+3. **WeeklyGoalsWidget** (barres de progression par objectif)
+4. DailyCheckinWidget
+5. QuickCoachWidget
+6. SupplementTracker + Boutique (grid 2 cols)
+7. MyStack + Analyses (grid 2 cols)
+
+Le tutoriel actuel manque les items 2 et 3. Ajouter des répliques mockées :
+
+- **Score Santé mock** : Anneau radial SVG animé, score = 78, label "Bon", tendance "+5 vs hier". Réutilise le même code SVG que `HealthScoreWidget` mais avec données statiques.
+- **Objectifs Semaine mock** : 3 mini-cards (Énergie 72%, Sommeil 80%, Anti-stress 60%) avec barres de progression animées et badges tendance.
+
+---
+
+## 3. TutorialSettingsDemo — Ajout Notifications, Sécurité, Complétion
+
+**Fichier** : `src/components/dashboard/tutorial/TutorialSettingsDemo.tsx`
+
+Le Settings réel inclut maintenant : notifications (switches), changement de mot de passe, indicateur de complétion profil. Ajouter :
+
+- **Section Complétion du profil** : Barre de progression mock à 80% avec 4/5 items complétés (avatar ✓, nom ✓, profil santé ✓, première analyse ✓, premier complément ✗)
+- **Section Notifications** : 3 switches avec labels (Rappels compléments, Analyse prête, Résumé hebdomadaire) — auto-toggle animé comme le dark mode actuel
+- **Section Sécurité** : Carte avec icône Lock, champs "Nouveau mot de passe" mockés (non interactifs), indicateur de force
+
+---
+
+## 4. Vérification des autres demos
+
+Les demos Coach, Supplements, Shop, MyStack, Analyses sont déjà assez fidèles au dashboard réel — pas de changements majeurs nécessaires. Ajustements mineurs :
+
+- **TutorialCoachDemo** : Le modèle affiché dans le header dit "VitaSync 3 Flash". Ajouter les nouveaux modèles OpenAI dans le dropdown mock (juste visuel, pas fonctionnel) pour refléter les 5 modèles disponibles.
+
+---
+
+## Fichiers impactés
+
+| Fichier | Action |
+|---|---|
+| `src/components/dashboard/DashboardTutorial.tsx` | Modifier (ajout phase intro) |
+| `src/components/dashboard/tutorial/TutorialHomeDemo.tsx` | Modifier (ajout HealthScore + WeeklyGoals mock) |
+| `src/components/dashboard/tutorial/TutorialSettingsDemo.tsx` | Modifier (ajout notifications, sécurité, complétion) |
+| `src/components/dashboard/tutorial/TutorialCoachDemo.tsx` | Modifier (ajout modèles dans dropdown mock) |
 

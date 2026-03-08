@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { List } from '@phosphor-icons/react';
+import { List, Package } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
@@ -8,6 +8,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, type AIModel, type ChatInputRef } from './chat';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { AIStackPanel } from './chat/AIStackPanel';
+import { useAIStackStore } from '@/stores/aiStackStore';
+import { parseStackCommands } from '@/lib/parse-stack-commands';
 
 interface Message {
   role: 'user' | 'assistant';

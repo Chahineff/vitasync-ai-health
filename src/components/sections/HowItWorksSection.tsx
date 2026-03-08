@@ -104,7 +104,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
         <div 
           className="absolute inset-0 hidden dark:block rounded-3xl"
           style={{
-            background: "hsl(220 20% 8% / 0.95)",
+            background: "hsl(var(--card) / 0.95)",
             border: `1px solid ${accent.border}`,
             boxShadow: `0 0 60px ${accent.glow}, 0 25px 60px rgba(0,0,0,0.3)`,
           }}
@@ -298,7 +298,7 @@ export function HowItWorksSection() {
           <span className="text-[10px] md:text-xs text-primary uppercase tracking-[0.3em] mb-4 block font-medium">
             {t("howItWorks.badge")}
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
             {t("howItWorks.title")}{" "}
             <span className="gradient-text">{t("howItWorks.titleHighlight")}</span>
           </h2>

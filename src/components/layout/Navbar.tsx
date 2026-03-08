@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
+
+const SECTION_IDS = ["how-it-works", "features", "pricing", "faq"];
+
 export function Navbar() {
   const { t } = useTranslation();
   
@@ -21,11 +24,10 @@ export function Navbar() {
   ];
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [hasNotifications, setHasNotifications] = useState(true);
-  const [hasMessages, setHasMessages] = useState(true);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -33,6 +35,40 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // IntersectionObserver for active section tracking
+  useEffect(() => {
+    if (location.pathname !== "/") { setActiveSection(null); return; }
+
+    const observers: IntersectionObserver[] = [];
+    const visibleSections = new Map<string, number>();
+
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            visibleSections.set(id, entry.intersectionRatio);
+          } else {
+            visibleSections.delete(id);
+          }
+          // Pick the section with the highest ratio
+          let best: string | null = null;
+          let bestRatio = 0;
+          visibleSections.forEach((ratio, sectionId) => {
+            if (ratio > bestRatio) { best = sectionId; bestRatio = ratio; }
+          });
+          setActiveSection(best);
+        },
+        { threshold: [0, 0.25, 0.5, 0.75], rootMargin: "-80px 0px -40% 0px" }
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [location.pathname]);
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
@@ -64,16 +100,21 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-5 xl:gap-7">
-              {navLinks.map(link => (
-                <a 
-                  key={link.href} 
-                  href={link.href} 
-                  onClick={e => handleAnchorClick(e, link.href)} 
-                  className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200"
-                >
-                  {t(link.labelKey)}
-                </a>
-              ))}
+              {navLinks.map(link => {
+                const sectionId = link.href.replace("#", "");
+                const isActive = activeSection === sectionId;
+                return (
+                  <a 
+                    key={link.href} 
+                    href={link.href} 
+                    onClick={e => handleAnchorClick(e, link.href)} 
+                    className="nav-link-indicator text-sm transition-colors duration-200"
+                    data-active={isActive || undefined}
+                  >
+                    {t(link.labelKey)}
+                  </a>
+                );
+              })}
               <div className="w-px h-5 bg-border" />
               {pageLinks.map(link => (
                 <Link 

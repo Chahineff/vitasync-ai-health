@@ -602,6 +602,50 @@
     color: hsl(0 0% 100%);
   }
 
+  /* Navbar active link indicator */
+  .nav-link-indicator {
+    @apply relative pb-1;
+  }
+  .nav-link-indicator::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-[2px] rounded-full;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-link-indicator[data-active]::after {
+    transform: scaleX(1);
+  }
+  .nav-link-indicator[data-active] {
+    color: hsl(0 0% 100%) !important;
+  }
+  .dark .nav-link-indicator[data-active] {
+    color: hsl(220 20% 5%) !important;
+  }
+
+  /* Shine hover effect */
+  .shine-hover {
+    @apply relative overflow-hidden;
+  }
+  .shine-hover::before {
+    content: '';
+    @apply absolute inset-0 z-20 pointer-events-none;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.12) 45%,
+      rgba(255, 255, 255, 0.25) 50%,
+      rgba(255, 255, 255, 0.12) 55%,
+      transparent 60%
+    );
+    transform: translateX(-150%);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .shine-hover:hover::before {
+    transform: translateX(150%);
+  }
+
   /* Dark mode refinements */
   .dark .nav-sticky {
     background: hsl(220 15% 92% / 0.85);

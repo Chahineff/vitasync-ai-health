@@ -51,7 +51,7 @@ function FAQItem({
       <div
         className="hidden dark:block rounded-2xl overflow-hidden relative border border-white/[0.06]"
         style={{
-          background: "hsl(220 20% 8% / 0.92)",
+          background: "hsl(var(--card) / 0.92)",
           boxShadow: "0 0 20px rgba(0, 240, 255, 0.04), inset 0 1px 0 rgba(255,255,255,0.03)",
         }}
       >
@@ -103,7 +103,7 @@ export function FAQSection() {
             <span className="text-sm text-primary uppercase tracking-[0.3em] mb-4 block">
               {t("faq.title")}
             </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-4">
               {t("faq.sectionTitle")}{" "}
               <span className="gradient-text">{t("faq.sectionTitleHighlight")}</span>
             </h2>

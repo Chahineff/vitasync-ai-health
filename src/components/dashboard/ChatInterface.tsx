@@ -198,12 +198,15 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         var accessToken = sessionData.session.access_token;
       }
       
-      console.log('[VitaSync] Token length:', accessToken.length, 'First chars:', accessToken.slice(0, 20));
+      console.log('[VitaSync] Token length:', accessToken.length, 'CHAT_URL:', CHAT_URL);
+
+      let response: Response;
+      try {
         response = await fetch(CHAT_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.data.session.access_token}`,
+            'Authorization': `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             messages: [...messages, { role: 'user', content: userMessage }],

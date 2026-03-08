@@ -198,6 +198,38 @@ export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial 
         </p>
       </div>
 
+      {/* Profile Completion Bar */}
+      {completionPct < 100 && (
+        <div className="glass-card rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-foreground">Profil {completionPct}% complet</h3>
+            <span className="text-xs text-primary font-medium">{completionItems.filter(i => i.done).length}/{completionItems.length}</span>
+          </div>
+          <div className="h-2 rounded-full bg-muted/50 overflow-hidden mb-3">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+              initial={{ width: 0 }}
+              animate={{ width: `${completionPct}%` }}
+              transition={{ duration: 0.8 }}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {completionItems.filter(i => !i.done).map(item => (
+              <span key={item.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                <Circle weight="bold" className="w-3 h-3" />
+                {item.label}
+              </span>
+            ))}
+            {completionItems.filter(i => i.done).map(item => (
+              <span key={item.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/30 text-foreground/40 text-xs">
+                <CheckCircle weight="fill" className="w-3 h-3 text-primary" />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Theme Toggle */}
       <ThemeToggle />
 

@@ -317,7 +317,10 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     }
   };
 
-  const isNewConversation = messages.length === 0;
+  const stackItems = useAIStackStore(s => s.items);
+  const stackIsOpen = useAIStackStore(s => s.isOpen);
+  const setStackOpen = useAIStackStore(s => s.setOpen);
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex h-full min-h-0 bg-background/30 md:rounded-3xl overflow-hidden md:border md:border-border/50 backdrop-blur-xl">

@@ -265,6 +265,68 @@ export function useSupplementTracking() {
   const takenCount = supplements.filter((s) => isSupplementTakenToday(s.id)).length;
   const progressPercent = supplements.length > 0 ? Math.round((takenCount / supplements.length) * 100) : 0;
 
+  // Streak calculation
+  const [streakDays, setStreakDays] = useState(0);
+
+  const calculateStreak = useCallback(async () => {
+    if (!user || supplements.length === 0) {
+      setStreakDays(0);
+      return;
+    }
+
+    const trackingIds = supplements.map((s) => s.id);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+    const { data, error } = await supabase
+      .from("supplement_logs" as any)
+      .select("*")
+      .in("tracking_id", trackingIds)
+      .gte("taken_at", thirtyDaysAgo.toISOString());
+
+    if (error) {
+      console.error("Error calculating streak:", error);
+      setStreakDays(0);
+      return;
+    }
+
+    const logsData = (data as unknown as SupplementLog[]) || [];
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Check each day backwards
+    for (let i = 0; i < 30; i++) {
+      const dayStart = new Date(today);
+      dayStart.setDate(dayStart.getDate() - i);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setDate(dayEnd.getDate() + 1);
+
+      const dayLogs = logsData.filter((log) => {
+        const d = new Date(log.taken_at);
+        return d >= dayStart && d < dayEnd;
+      });
+
+      // All supplements taken that day?
+      const uniqueTracking = new Set(dayLogs.map((l) => l.tracking_id));
+      if (uniqueTracking.size >= supplements.length) {
+        streak++;
+      } else if (i === 0) {
+        // Today not yet complete is OK, skip
+        continue;
+      } else {
+        break;
+      }
+    }
+
+    setStreakDays(streak);
+  }, [user, supplements]);
+
+  useEffect(() => {
+    calculateStreak();
+  }, [calculateStreak, logs]);
+
   return {
     supplements,
     logs,
@@ -279,5 +341,6 @@ export function useSupplementTracking() {
     takenCount,
     totalCount: supplements.length,
     progressPercent,
+    streakDays,
   };
 }

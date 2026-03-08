@@ -8,6 +8,9 @@ import {
   Repeat,
   Minus,
   Plus,
+  Star,
+  Package,
+  CheckCircle,
 } from '@phosphor-icons/react';
 import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
@@ -17,6 +20,8 @@ import { cn } from '@/lib/utils';
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useNavigate } from 'react-router-dom';
+import { addBusinessDays, format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 interface ProductPurchaseBoxProps {
   product: ProductDetail;
@@ -24,6 +29,9 @@ interface ProductPurchaseBoxProps {
   relatedProducts?: Array<{ flavor: string; handle: string }>;
   onFlavorChange?: (handle: string) => void;
   enrichedSummary?: string | null;
+  reviewRating?: number | null;
+  reviewCount?: number | null;
+  isInStack?: boolean;
 }
 
 export function ProductPurchaseBox({ 
@@ -32,6 +40,9 @@ export function ProductPurchaseBox({
   relatedProducts,
   onFlavorChange,
   enrichedSummary,
+  reviewRating,
+  reviewCount,
+  isInStack,
 }: ProductPurchaseBoxProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -56,13 +67,15 @@ export function ProductPurchaseBox({
   const basePrice = parseFloat(price.amount);
   const subscriptionPrice = selectedPlan ? calculateSubscriptionPrice(basePrice, selectedPlan) : basePrice;
   const discountPct = selectedPlan ? getDiscountPercentage(selectedPlan) : null;
-
-  // Default to 'subscribe' only if subscription is available
   const effectiveMode = hasSubscription ? purchaseMode : 'once';
+
+  // Estimated delivery dates
+  const deliveryStart = addBusinessDays(new Date(), 3);
+  const deliveryEnd = addBusinessDays(new Date(), 5);
+  const deliveryText = `${format(deliveryStart, 'EEE d', { locale: fr })} - ${format(deliveryEnd, 'EEE d MMM', { locale: fr })}`;
 
   const handleAddToCart = async () => {
     if (!selectedVariant || isAdding) return;
-
     setIsAdding(true);
     try {
       const cartProduct: ShopifyProduct = {
@@ -79,7 +92,6 @@ export function ProductPurchaseBox({
           options: product.options,
         }
       };
-
       await addItem({
         product: cartProduct,
         variantId: selectedVariant.id,
@@ -92,10 +104,9 @@ export function ProductPurchaseBox({
           sellingPlanName: selectedPlan.name,
         } : {}),
       });
-      
       setJustAdded(true);
       toast.success(
-        effectiveMode === 'subscribe' ? 'Ajouté à votre routine' : 'Ajouté au panier',
+        effectiveMode === 'subscribe' ? 'Ajoute a votre routine' : 'Ajoute au panier',
         { description: product.title, position: 'top-center' }
       );
       setTimeout(() => setJustAdded(false), 2000);
@@ -104,6 +115,11 @@ export function ProductPurchaseBox({
     } finally {
       setIsAdding(false);
     }
+  };
+
+  const scrollToReviews = () => {
+    const el = document.getElementById('product-reviews');
+    el?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -118,6 +134,45 @@ export function ProductPurchaseBox({
         <h1 className="text-[30px] lg:text-[36px] font-semibold text-foreground leading-tight tracking-tight">
           {product.title}
         </h1>
+
+        {/* Star Rating */}
+        {reviewRating && reviewRating > 0 && (
+          <button onClick={scrollToReviews} className="flex items-center gap-2 mt-2 group">
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map(i => (
+                <Star
+                  key={i}
+                  weight="fill"
+                  className={cn(
+                    'w-4 h-4',
+                    i <= Math.round(reviewRating) ? 'text-amber-400' : 'text-foreground/15'
+                  )}
+                />
+              ))}
+            </div>
+            <span className="text-sm text-foreground/50 group-hover:text-foreground/70 transition-colors">
+              {reviewRating.toFixed(1)} {reviewCount ? `· ${reviewCount} avis` : ''}
+            </span>
+          </button>
+        )}
+
+        {/* Stack indicator */}
+        {isInStack !== undefined && (
+          <div className={cn(
+            "flex items-center gap-1.5 mt-2 text-sm font-medium",
+            isInStack ? "text-green-600 dark:text-green-400" : "text-foreground/40"
+          )}>
+            {isInStack ? (
+              <>
+                <CheckCircle weight="fill" className="w-4 h-4" />
+                Dans votre routine
+              </>
+            ) : (
+              <span className="text-xs font-light">Pas encore dans votre routine</span>
+            )}
+          </div>
+        )}
+
         {product.productType && (
           <Badge variant="secondary" className="mt-3">
             {product.productType}
@@ -183,9 +238,8 @@ export function ProductPurchaseBox({
         </div>
       )}
 
-      {/* ═══ Purchase Options — Subscribe favored ═══ */}
+      {/* Purchase Options */}
       <div className="space-y-3">
-        {/* Subscribe & Save — HIGHLIGHTED */}
         {hasSubscription && (
           <button
             onClick={() => setPurchaseMode('subscribe')}
@@ -215,9 +269,8 @@ export function ProductPurchaseBox({
                   )}
                 </div>
               </div>
-              <span className="text-lg font-bold text-primary">{subscriptionPrice.toFixed(2)} €</span>
+              <span className="text-lg font-bold text-primary">{subscriptionPrice.toFixed(2)} &euro;</span>
             </div>
-
             {effectiveMode === 'subscribe' && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
@@ -225,7 +278,7 @@ export function ProductPurchaseBox({
                 className="px-4 pb-4 space-y-3"
               >
                 <p className="text-sm text-foreground/60 font-light pl-8">
-                  Livraison gratuite, ajustable à tout moment avec l'IA.
+                  Livraison gratuite, ajustable a tout moment avec l'IA.
                 </p>
                 {sellingPlans.length > 1 && (
                   <div className="flex flex-wrap gap-2 pl-8">
@@ -251,7 +304,6 @@ export function ProductPurchaseBox({
           </button>
         )}
 
-        {/* Buy Once — neutral & understated */}
         <button
           onClick={() => setPurchaseMode('once')}
           className="w-full flex items-center justify-between py-3 px-1 text-left group"
@@ -267,31 +319,25 @@ export function ProductPurchaseBox({
               Achat unique
             </span>
           </div>
-          <span className="text-sm text-foreground/50 font-light">{basePrice.toFixed(2)} €</span>
+          <span className="text-sm text-foreground/50 font-light">{basePrice.toFixed(2)} &euro;</span>
         </button>
       </div>
 
-      {/* Quantity Selector */}
+      {/* Quantity */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-foreground/60 font-medium">Quantité</span>
+        <span className="text-sm text-foreground/60 font-medium">Quantite</span>
         <div className="flex items-center gap-3 border border-border/50 rounded-xl px-2 py-1">
-          <button
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground"
-          >
+          <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground">
             <Minus weight="bold" className="w-4 h-4" />
           </button>
           <span className="text-base font-semibold text-foreground w-8 text-center">{quantity}</span>
-          <button
-            onClick={() => setQuantity(quantity + 1)}
-            className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground"
-          >
+          <button onClick={() => setQuantity(quantity + 1)} className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground">
             <Plus weight="bold" className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* CTA Button */}
+      {/* CTA */}
       <motion.button
         onClick={handleAddToCart}
         disabled={isAdding || !selectedVariant?.availableForSale}
@@ -309,33 +355,30 @@ export function ProductPurchaseBox({
         {isAdding ? (
           <SpinnerGap className="w-5 h-5 animate-spin" />
         ) : justAdded ? (
-          <>
-            <Check weight="bold" className="w-5 h-5" />
-            Ajouté !
-          </>
+          <><Check weight="bold" className="w-5 h-5" /> Ajoute !</>
         ) : effectiveMode === 'subscribe' ? (
-          <>
-            <Repeat weight="bold" className="w-5 h-5" />
-            Démarrer ma routine
-          </>
+          <><Repeat weight="bold" className="w-5 h-5" /> Demarrer ma routine</>
         ) : (
-          <>
-            <ShoppingCartSimple weight="bold" className="w-5 h-5" />
-            Ajouter au panier
-          </>
+          <><ShoppingCartSimple weight="bold" className="w-5 h-5" /> Ajouter au panier</>
         )}
       </motion.button>
+
+      {/* Estimated Delivery */}
+      <div className="flex items-center gap-2 justify-center text-sm text-foreground/50 font-light">
+        <Package weight="light" className="w-4 h-4" />
+        Livraison estimee : {deliveryText}
+      </div>
 
       {/* Ask VitaSync */}
       <button
         onClick={() => {
-          const question = `Que penses-tu de ${product.title} pour moi ? Est-ce adapté à mon profil et mes objectifs ?`;
+          const question = `Que penses-tu de ${product.title} pour moi ? Est-ce adapte a mon profil et mes objectifs ?`;
           navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
         }}
         className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
       >
         <ChatCircleDots weight="light" className="w-4 h-4" />
-        Demander à VitaSync
+        Demander a VitaSync
       </button>
 
       {/* Certifications */}
@@ -349,7 +392,6 @@ export function ProductPurchaseBox({
         </div>
       )}
 
-      {/* Micro Disclaimer */}
       <p className="text-xs text-foreground/40 text-center font-light">
         {t('pdp.disclaimer')}
       </p>

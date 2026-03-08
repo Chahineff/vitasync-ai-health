@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Spinner, Package, MapPin, CreditCard, CalendarCheck } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ShopifyConnectBannerProps {
   onConnect: () => Promise<void>;
@@ -8,14 +9,16 @@ interface ShopifyConnectBannerProps {
   error: string | null;
 }
 
-const benefits = [
-  { icon: Package, label: 'Gérer vos abonnements et produits' },
-  { icon: CalendarCheck, label: 'Suivre vos commandes et livraisons' },
-  { icon: MapPin, label: 'Modifier vos adresses de livraison' },
-  { icon: CreditCard, label: 'Consulter vos moyens de paiement' },
-];
-
 export function ShopifyConnectBanner({ onConnect, isAuthenticating, error }: ShopifyConnectBannerProps) {
+  const { t } = useTranslation();
+
+  const benefits = [
+    { icon: Package, label: t('shopify.benefit1') },
+    { icon: CalendarCheck, label: t('shopify.benefit2') },
+    { icon: MapPin, label: t('shopify.benefit3') },
+    { icon: CreditCard, label: t('shopify.benefit4') },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -28,10 +31,10 @@ export function ShopifyConnectBanner({ onConnect, isAuthenticating, error }: Sho
         </div>
 
         <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-          Connectez votre compte Shopify
+          {t('shopify.connectTitle')}
         </h2>
         <p className="text-muted-foreground max-w-md mb-8">
-          Liez votre compte pour accéder à toutes les fonctionnalités de gestion directement depuis VitaSync.
+          {t('shopify.connectSubtitle')}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 w-full max-w-lg">
@@ -54,11 +57,11 @@ export function ShopifyConnectBanner({ onConnect, isAuthenticating, error }: Sho
           {isAuthenticating ? (
             <>
               <Spinner weight="bold" className="w-5 h-5 mr-2 animate-spin" />
-              Connexion en cours…
+              {t('shopify.connecting')}
             </>
           ) : (
             <>
-              Connecter mon compte
+              {t('shopify.connectBtn')}
               <ArrowRight weight="bold" className="w-5 h-5 ml-2" />
             </>
           )}

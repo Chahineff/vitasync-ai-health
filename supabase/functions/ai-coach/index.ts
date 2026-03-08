@@ -34,15 +34,12 @@ async function fetchShopifyCatalog(): Promise<string> {
   try {
     const query = `
       query {
-        products(first: 100) {
+        products(first: 250) {
           edges {
             node {
               id
               title
-              description
-              productType
               tags
-              vendor
               variants(first: 1) {
                 edges {
                   node {
@@ -82,82 +79,21 @@ async function fetchShopifyCatalog(): Promise<string> {
       return "Aucun produit dans le catalogue.";
     }
 
-    // Categorize products by type
-    const categories: Record<string, string[]> = {
-      "📦 PROTÉINES & MUSCLES": [],
-      "💊 VITAMINES & MINÉRAUX": [],
-      "🧠 NOOTROPIQUES & FOCUS": [],
-      "😴 SOMMEIL & RELAXATION": [],
-      "⚡ ÉNERGIE & PRE-WORKOUT": [],
-      "🏋️ PERFORMANCE & RÉCUPÉRATION": [],
-      "🍃 SANTÉ GÉNÉRALE": [],
-    };
-
-    // Format catalog for the prompt with pack units estimation
-    const allProducts = products.map((edge: { node: { id: string; title: string; description: string; productType: string; tags: string[]; vendor: string; variants: { edges: Array<{ node: { id: string; price: { amount: string; currencyCode: string }; availableForSale: boolean } }> } } }) => {
+    // Compact format: one line per product
+    const allProducts = products.map((edge: { node: { id: string; title: string; tags: string[]; variants: { edges: Array<{ node: { id: string; price: { amount: string; currencyCode: string }; availableForSale: boolean } }> } } }) => {
       const p = edge.node;
       const variant = p.variants.edges[0]?.node;
       const price = variant?.price?.amount || '0';
       const productId = p.id.split('/').pop();
       const variantId = variant?.id?.split('/').pop() || '';
-      const inStock = variant?.availableForSale ? '✓ En stock' : '⚠ Rupture';
-      const tags = p.tags || [];
-      
-      // Estimate pack_units based on product type
-      let packUnits = 30; // Default
-      const title = p.title.toLowerCase();
-      const productType = (p.productType || '').toLowerCase();
-      
-      if (title.includes('powder') || title.includes('poudre') || title.includes('whey') || title.includes('pre-workout')) {
-        packUnits = 30; // ~30 scoops
-      } else if (title.includes('capsule') || title.includes('gummies') || title.includes('omega') || title.includes('vitamin')) {
-        packUnits = 60; // Often 60 capsules
-      }
-      
-      // Categorize
-      let category = "🍃 SANTÉ GÉNÉRALE";
-      if (productType.includes('protein') || title.includes('whey') || title.includes('protéine') || title.includes('creatine')) {
-        category = "📦 PROTÉINES & MUSCLES";
-      } else if (productType.includes('vitamin') || title.includes('vitamin') || title.includes('zinc') || title.includes('magnes')) {
-        category = "💊 VITAMINES & MINÉRAUX";
-      } else if (title.includes('focus') || title.includes('nootropic') || title.includes('brain') || title.includes('alpha-gpc') || title.includes('lion')) {
-        category = "🧠 NOOTROPIQUES & FOCUS";
-      } else if (title.includes('sleep') || title.includes('sommeil') || title.includes('melatonin') || title.includes('5-htp') || title.includes('ashwagandha')) {
-        category = "😴 SOMMEIL & RELAXATION";
-      } else if (title.includes('pre-workout') || title.includes('energy') || title.includes('caffeine') || title.includes('boost')) {
-        category = "⚡ ÉNERGIE & PRE-WORKOUT";
-      } else if (title.includes('bcaa') || title.includes('recovery') || title.includes('glutamine') || title.includes('collagen')) {
-        category = "🏋️ PERFORMANCE & RÉCUPÉRATION";
-      }
-      
-      const productLine = `- ${p.title} | ${inStock} | ${price}$ | ~${packUnits} doses
-    ProductID: ${productId} | VariantID: ${variantId}
-    Tags: ${tags.slice(0, 3).join(', ') || 'N/A'}
-    Pour recommander: [[PRODUCT:${productId}:${variantId}:${p.title}:${price}]]`;
-      
-      // Add to category
-      if (categories[category]) {
-        categories[category].push(productLine);
-      } else {
-        categories["🍃 SANTÉ GÉNÉRALE"].push(productLine);
-      }
-      
-      return productLine;
+      const inStock = variant?.availableForSale ? '✓' : '✗';
+      const tags = (p.tags || []).slice(0, 3).join(',');
+      return `${p.title}|${productId}|${variantId}|${price}$|${inStock}|${tags}`;
     });
 
-    // Build categorized output
-    const categorizedCatalog = Object.entries(categories)
-      .filter(([_, items]) => items.length > 0)
-      .map(([category, items]) => `${category}:\n${items.join('\n\n')}`)
-      .join('\n\n═══════════════════════════════════════════════\n\n');
-
-    return `CATALOGUE VITASYNC (${products.length} produits disponibles)
-═══════════════════════════════════════════════
-
-${categorizedCatalog}
-
-═══════════════════════════════════════════════
-RAPPEL: Utilise [[PRODUCT:id:variantId:nom:prix]] pour recommander`;
+    return `CATALOGUE (${products.length} produits) — Format: Nom|ProductID|VariantID|Prix|Stock|Tags
+${allProducts.join('\n')}
+Pour recommander: [[PRODUCT:productId:variantId:nom:prix:moment:dosage:repas]]`;
   } catch (error) {
     console.error("Error fetching Shopify catalog:", error);
     return "Catalogue non disponible.";
@@ -212,23 +148,19 @@ async function fetchBloodTestAnalyses(supabase: any, userId: string): Promise<Bl
   return data || [];
 }
 
-// Fetch condensed enriched product data (scientific knowledge base)
+// Fetch condensed enriched product data (only essential fields)
 interface EnrichedProductSummary {
   shopify_product_title: string;
-  summary: string | null;
-  key_benefits: unknown;
-  ingredients_detailed: unknown;
-  safety_warnings: unknown;
-  suggested_use: unknown;
   best_for_tags: string[] | null;
   coach_tip: string | null;
+  safety_warnings: unknown;
 }
 
 // deno-lint-ignore no-explicit-any
 async function fetchEnrichedProductData(supabase: any): Promise<EnrichedProductSummary[]> {
   const { data, error } = await supabase
     .from("product_enriched_data")
-    .select("shopify_product_title, summary, key_benefits, ingredients_detailed, safety_warnings, suggested_use, best_for_tags, coach_tip");
+    .select("shopify_product_title, best_for_tags, coach_tip, safety_warnings");
 
   if (error) {
     console.error("Error fetching enriched product data:", error);
@@ -253,47 +185,22 @@ function formatUserSupplements(supplements: UserSupplement[]): string {
 }
 
 function formatEnrichedProducts(products: EnrichedProductSummary[]): string {
-  if (products.length === 0) return "Base de connaissances non disponible.";
+  if (products.length === 0) return "Base non disponible.";
 
   return products.map(p => {
-    const parts: string[] = [`📌 ${p.shopify_product_title}`];
-
-    if (p.summary) {
-      const short = p.summary.length > 60 ? p.summary.slice(0, 60) + '…' : p.summary;
-      parts.push(`  ${short}`);
-    }
-
-    if (p.best_for_tags?.length) {
-      parts.push(`  Tags: ${p.best_for_tags.slice(0, 5).join(', ')}`);
-    }
-
-    // Extract key ingredient names only (condensed)
-    if (p.ingredients_detailed && Array.isArray(p.ingredients_detailed)) {
-      const names = (p.ingredients_detailed as Array<{ name?: string }>)
-        .slice(0, 4)
-        .map(i => i.name || '')
-        .filter(Boolean);
-      if (names.length) parts.push(`  Ingrédients clés: ${names.join(', ')}`);
-    }
-
-    // Safety warnings condensed
-    if (p.safety_warnings) {
-      const warnings = p.safety_warnings as { contraindications?: string[]; interactions?: string[] };
-      if (warnings.contraindications?.length) {
-        parts.push(`  ⚠️ CI: ${warnings.contraindications.slice(0, 3).join('; ')}`);
-      }
-      if (warnings.interactions?.length) {
-        parts.push(`  ⚠️ Interactions: ${warnings.interactions.slice(0, 3).join('; ')}`);
-      }
-    }
-
+    const parts: string[] = [p.shopify_product_title];
+    if (p.best_for_tags?.length) parts.push(`tags:${p.best_for_tags.slice(0, 4).join(',')}`);
     if (p.coach_tip) {
-      const tip = p.coach_tip.length > 80 ? p.coach_tip.slice(0, 80) + '…' : p.coach_tip;
-      parts.push(`  💡 Tip: ${tip}`);
+      const tip = p.coach_tip.length > 60 ? p.coach_tip.slice(0, 60) + '…' : p.coach_tip;
+      parts.push(`tip:${tip}`);
     }
-
-    return parts.join('\n');
-  }).join('\n\n');
+    // Only include critical safety info (contraindications)
+    if (p.safety_warnings) {
+      const w = p.safety_warnings as { contraindications?: string[] };
+      if (w.contraindications?.length) parts.push(`⚠️${w.contraindications.slice(0, 2).join(';')}`);
+    }
+    return parts.join('|');
+  }).join('\n');
 }
 
 // Fetch recent check-ins for the user (variable window based on model)
@@ -1141,7 +1048,7 @@ RÈGLES RÉFÉRENCES :
           })),
         ],
         stream: true,
-        max_tokens: 128000,
+        max_tokens: 4096,
       }),
     });
 
@@ -1179,9 +1086,22 @@ RÈGLES RÉFÉRENCES :
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    console.error("AI coach error:", e);
+    const errorMsg = e instanceof Error ? e.message : String(e);
+    console.error("AI coach error:", errorMsg);
+    console.error("Stack:", e instanceof Error ? e.stack : 'N/A');
+    
+    // Detect specific error types
+    const isTimeout = errorMsg.includes('timeout') || errorMsg.includes('deadline');
+    const isContext = errorMsg.includes('context') || errorMsg.includes('token');
+    
+    const userMessage = isTimeout 
+      ? "Le service IA met trop de temps à répondre. Réessayez dans quelques instants."
+      : isContext
+      ? "La conversation est trop longue. Démarrez une nouvelle conversation."
+      : `Erreur interne: ${errorMsg.slice(0, 100)}`;
+    
     return new Response(
-      JSON.stringify({ error: "Une erreur s'est produite" }),
+      JSON.stringify({ error: userMessage }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

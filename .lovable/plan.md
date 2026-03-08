@@ -1,58 +1,56 @@
-# Diagnostic : "Désolé, une erreur s'est produite"
 
-## Le probleme identifie
 
-Le system prompt de l'Edge Function `ai-coach` fait **127 837 caracteres** (~32K tokens en entree). Avec 97 produits enrichis, le catalogue Shopify complet, les check-ins, le profil sante et l'historique de conversations, la requete envoyee au gateway IA est enorme.
+# Plan de modifications
 
-Combine avec `max_tokens: 128000` en sortie, le gateway IA met trop de temps a repondre ou depasse les limites de tokens/rate. L'Edge Function attend la reponse du gateway, et si celui-ci echoue (timeout, rate limit 429, depassement de contexte), l'erreur est attrapee par le `catch` generique (ligne 1181) qui renvoie simplement `"Une erreur s'est produite"` — et le frontend affiche le message que tu vois.
+## 1. Navbar responsive et adaptative
 
-**Pourquoi ca marche apres ~1h :** Les rate limits du gateway IA se reinitialisant par minute/heure, apres une periode d'attente, les requetes passent a nouveau.
+**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
 
-**Pourquoi ca casse apres des modifications :** Chaque redeploy de l'Edge Function declenche de nouveaux appels de test/premiers messages qui saturent les rate limits.
+**Corrections** :
+- Remplacer la largeur fixe par un systeme de marges responsives progressives
+- Sur mobile (<768px) : marges de 12px de chaque cote
+- Sur tablette (768-1024px) : marges de 24px
+- Sur desktop (1024-1440px) : marges de 40px
+- Sur grand ecran (>1440px) : max-width de 1400px centre
+- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
+- La navbar gardera son design flottant capsule actuel
 
-## Causes racines
+**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
 
-1. **System prompt trop volumineux** (128K chars) — les 97 fiches produits enrichies sont injectees en entier a chaque requete
-2. **max_tokens: 128000** inutilement eleve — le modele n'a jamais besoin de generer 128K tokens de sortie
-3. **Pas de logging granulaire des erreurs gateway** — le `catch` masque si c'est un 429, un timeout, ou un depassement de contexte
-4. **Pas de retry/backoff** cote frontend en cas d'echec transitoire
+---
 
-## Plan de correction
+## 2. Page About - En attente du PDF
 
-### 1. Reduire le system prompt (~60-70% plus petit)
+Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
 
-- Condenser les fiches produits enrichies : garder uniquement `title`, `best_for_tags`, `coach_tip` (pas les ingredients detailles, safety warnings complets, etc.)
-- Limiter le catalogue Shopify a 50 produits les plus pertinents ou ne garder que titre + prix + ID
-- Tronquer le prompt de base : supprimer les exemples redondants
+---
 
-### 2. Reduire max_tokens de 128000 a 4096
+## 3. Page Blog - Etat vide + systeme d'administration
 
-- Les reponses du coach font rarement plus de 500-1000 tokens. 4096 est largement suffisant et evite de bloquer le contexte du modele.
+**Etat vide** :
+- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
+- Garder le hero et le design existant
+- Supprimer les articles en dur
 
-### 3. Ajouter du logging specifique pour les erreurs gateway
+**Systeme d'administration des articles** :
+- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
+- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
+- La page Blog affichera dynamiquement les articles depuis la base de donnees
+- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
 
-- Logger le `response.status` et le corps de la reponse en cas d'erreur du gateway
-- Differencier 429 (rate limit), 402 (credits), timeout, et erreurs de contexte dans les logs
+**Fichiers modifies** :
+- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
+- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
+- Migration SQL : creation de la table `blog_posts`
 
-### 4. Ajouter un retry automatique cote frontend
+---
 
-- Si la reponse est une 500 ou 429, retenter 1 fois apres 3 secondes avant d'afficher l'erreur
-- Afficher un message plus specifique selon le type d'erreur (rate limit vs erreur serveur)
+## Details techniques
 
-### 5. (Optionnel) Cache du system prompt
+| Tache | Fichiers | Complexite |
+|-------|----------|------------|
+| Navbar responsive | `src/index.css` | Faible |
+| Blog etat vide | `src/pages/Blog.tsx` | Faible |
+| Table blog_posts + RLS | Migration SQL | Moyenne |
+| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
 
-- Stocker le system prompt construit en cache (localStorage edge function ou variable globale Deno) pendant 5 min pour eviter de recalculer le catalogue Shopify + produits enrichis a chaque message
-
-## Fichiers impactes
-
-- `supabase/functions/ai-coach/index.ts` — Reduction prompt, max_tokens, logging
-- `src/components/dashboard/ChatInterface.tsx` — Retry logic, messages d'erreur specifiques
-
-## Priorite
-
-1. **Reduire max_tokens** (1 ligne, impact immediat)
-2. **Condenser le system prompt** (impact majeur sur la fiabilite)
-3. **Logging granulaire** (pour diagnostiquer les futurs problemes)
-4. **Retry frontend** (UX resiliente)
-
-Point Important l'IA doit toujous pouvoir proposer tout les different produit du store et analysé les info de l'utlisateur.

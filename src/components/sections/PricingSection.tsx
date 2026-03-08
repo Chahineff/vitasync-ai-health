@@ -29,7 +29,7 @@ function AdaptiveCard({ children, className, popular = false }: { children: Reac
       {/* Light mode */}
       <div
         className={cn(
-          "dark:hidden rounded-2xl overflow-hidden relative",
+          "dark:hidden rounded-2xl overflow-hidden relative shine-hover",
           "bg-white/70 backdrop-blur-xl border border-border/60",
           popular && "border-primary/30",
           className
@@ -44,12 +44,12 @@ function AdaptiveCard({ children, className, popular = false }: { children: Reac
       {/* Dark mode */}
       <div
         className={cn(
-          "hidden dark:block rounded-2xl overflow-hidden relative border",
+          "hidden dark:block rounded-2xl overflow-hidden relative border shine-hover",
           popular ? "border-primary/40" : "border-white/[0.06]",
           className
         )}
         style={{
-          background: "hsl(220 20% 8% / 0.92)",
+          background: "hsl(var(--card) / 0.92)",
           boxShadow: popular
             ? "0 0 30px rgba(0, 240, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.03)"
             : "0 0 20px rgba(0, 240, 255, 0.04), inset 0 1px 0 rgba(255,255,255,0.03)",
@@ -209,7 +209,7 @@ export function PricingSection() {
             <span className="text-xs md:text-sm text-primary uppercase tracking-[0.3em] mb-3 md:mb-4 block">
               {t("pricing.title")}
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-3 md:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
               {t("pricing.subtitle").split(" ").slice(0, -1).join(" ")}{" "}
               <span className="gradient-text-reverse">{t("pricing.subtitle").split(" ").slice(-1)}</span>
             </h2>
@@ -275,7 +275,7 @@ export function PricingSection() {
             <div
               className="hidden dark:block rounded-2xl overflow-hidden border border-white/[0.06]"
               style={{
-                background: "hsl(220 20% 8% / 0.92)",
+                background: "hsl(var(--card) / 0.92)",
                 boxShadow: "0 0 20px rgba(0, 240, 255, 0.04), inset 0 1px 0 rgba(255,255,255,0.03)",
               }}
             >
@@ -323,7 +323,7 @@ export function PricingSection() {
               <p className="text-xs md:text-sm text-foreground/60">{t("pricing.note")}</p>
             </div>
             {/* Dark */}
-            <div className="hidden dark:inline-block px-4 md:px-6 py-3 md:py-4 rounded-2xl border border-white/[0.06]" style={{ background: "hsl(220 20% 8% / 0.92)", boxShadow: "0 0 20px rgba(0, 240, 255, 0.04), inset 0 1px 0 rgba(255,255,255,0.03)" }}>
+            <div className="hidden dark:inline-block px-4 md:px-6 py-3 md:py-4 rounded-2xl border border-white/[0.06]" style={{ background: "hsl(var(--card) / 0.92)", boxShadow: "0 0 20px rgba(0, 240, 255, 0.04), inset 0 1px 0 rgba(255,255,255,0.03)" }}>
               <p className="text-xs md:text-sm text-foreground/60">{t("pricing.note")}</p>
             </div>
           </div>

@@ -34,7 +34,7 @@ function ScrollHighlightText({ text, accentColor }: { text: string; accentColor:
   }, [isInView]);
 
   return (
-    <p ref={containerRef} className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
+    <p ref={containerRef} className="text-sm md:text-base text-muted-foreground mb-6 leading-loose">
       {words.map((word, i) => {
         const wp = Math.min(Math.max((progress * words.length - i) / 1.5, 0), 1);
         return (
@@ -107,14 +107,14 @@ function FeatureBlock({ index }: FeatureBlockProps) {
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <div 
-          className="h-full rounded-3xl overflow-hidden relative p-6 md:p-8 lg:p-10 bg-white/70 dark:bg-transparent backdrop-blur-xl dark:backdrop-blur-none border dark:border-0"
+          className="h-full rounded-3xl overflow-hidden relative p-6 md:p-8 lg:p-10 bg-white/70 dark:bg-transparent backdrop-blur-xl dark:backdrop-blur-none border dark:border-0 shine-hover"
           style={{ borderColor: accent.borderLight }}
         >
           {/* Dark mode card bg */}
           <div 
             className="absolute inset-0 hidden dark:block rounded-3xl"
             style={{
-              background: "hsl(220 20% 8% / 0.92)",
+              background: "hsl(var(--card) / 0.92)",
               border: `1px solid ${accent.border}`,
               boxShadow: `0 0 40px ${accent.glow}`,
             }}
@@ -207,7 +207,7 @@ export function FeaturesSection() {
           <span className="text-xs md:text-sm text-primary uppercase tracking-[0.2em] mb-3 md:mb-4 block font-medium">
             {t("features.badge")}
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-3 md:mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
             {t("features.title")}{" "}
             <span className="gradient-text">{t("features.titleHighlight")}</span>
             {" "}{t("features.titleEnd")}

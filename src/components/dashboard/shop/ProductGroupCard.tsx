@@ -82,7 +82,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
       >
         {/* Image — 65% height */}
         <div className="relative overflow-hidden rounded-t-2xl" style={{ aspectRatio: '3/4' }}>
-          <div className="absolute inset-0 bg-[hsl(210_40%_98%)] dark:bg-white/5" />
+          <div className="absolute inset-0 dark:bg-white/5" style={{ background: "radial-gradient(circle at 50% 40%, hsl(var(--muted)) 0%, hsl(var(--background)) 100%)" }} />
           <AnimatePresence mode="wait">
             {mainImage ? (
               <motion.img
@@ -94,6 +94,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                 src={mainImage.url}
                 alt={mainImage.altText || baseTitle}
                 className="relative w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.10))" }}
               />
             ) : (
               <div className="relative w-full h-full flex items-center justify-center">

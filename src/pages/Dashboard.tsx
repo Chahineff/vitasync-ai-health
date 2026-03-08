@@ -296,28 +296,58 @@ const Dashboard = () => {
           <p className={`px-3 text-xs font-medium text-foreground/40 uppercase tracking-wider mb-3 transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0' : ''}`}>
             {t("dashboard.menu")}
           </p>
-          <nav className="space-y-1">
-            {menuItems.map((item) => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
-                {/* Active indicator bar */}
-                {activeSection === item.id}
-                <item.icon weight="light" className="w-5 h-5 flex-shrink-0" />
-                <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
-                  {item.label}
-                </span>
-              </button>)}
+          <nav className="space-y-1 relative">
+            {menuItems.map((item) => {
+              const displayActive = activeSection === "product" ? "shop" : activeSection;
+              const isActive = displayActive === item.id;
+              return (
+                <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative overflow-hidden ${isActive ? 'text-primary-foreground' : 'text-foreground/70 hover:bg-white/50 hover:text-foreground'}`}>
+                  {/* Animated gradient background */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="sidebarActiveIndicator"
+                      className="absolute inset-0 rounded-xl"
+                      style={{
+                        background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))",
+                      }}
+                      transition={{ type: "spring", stiffness: 350, damping: 30, mass: 0.8 }}
+                    />
+                  )}
+                  <item.icon weight="light" className={`w-5 h-5 flex-shrink-0 relative z-10 ${isActive ? 'brightness-0 invert' : ''}`} />
+                  <span className={`transition-opacity duration-300 relative z-10 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
           </nav>
 
           <p className={`px-3 text-xs font-medium text-foreground/40 uppercase tracking-wider mb-3 mt-8 transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0' : ''}`}>
             {t("dashboard.general")}
           </p>
-          <nav className="space-y-1">
-            {generalItems.map((item) => <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative ${activeSection === item.id ? 'bg-primary/10 text-primary border border-primary/20' : 'text-foreground/70 hover:bg-white/50'}`}>
-                {activeSection === item.id}
-                <item.icon weight="light" className="w-5 h-5 flex-shrink-0" />
-                <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
-                  {item.label}
-                </span>
-              </button>)}
+          <nav className="space-y-1 relative">
+            {generalItems.map((item) => {
+              const displayActive = activeSection === "product" ? "shop" : activeSection;
+              const isActive = displayActive === item.id;
+              return (
+                <button key={item.id} onClick={() => handleSectionChange(item.id)} title={sidebarCollapsed ? item.label : undefined} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light transition-all relative overflow-hidden ${isActive ? 'text-primary-foreground' : 'text-foreground/70 hover:bg-white/50'}`}>
+                  {isActive && (
+                    <motion.div
+                      layoutId="sidebarActiveIndicatorGeneral"
+                      className="absolute inset-0 rounded-xl"
+                      style={{
+                        background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))",
+                      }}
+                      transition={{ type: "spring", stiffness: 350, damping: 30, mass: 0.8 }}
+                    />
+                  )}
+                  <item.icon weight="light" className={`w-5 h-5 flex-shrink-0 relative z-10 ${isActive ? 'brightness-0 invert' : ''}`} />
+                  <span className={`transition-opacity duration-300 relative z-10 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
             <button onClick={handleSignOut} title={sidebarCollapsed ? t("dashboard.signout") : undefined} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-light text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-all">
               <SignOut weight="light" className="w-5 h-5 flex-shrink-0" />
               <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>

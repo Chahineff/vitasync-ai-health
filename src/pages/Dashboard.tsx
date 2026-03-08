@@ -398,30 +398,10 @@ const Dashboard = () => {
         <div id="dashboard-scroll-container" className={`flex-1 overflow-x-hidden ${activeSection === 'coach' ? 'overflow-hidden p-0 pb-0 lg:p-4 lg:pb-4' : 'overflow-auto p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
               {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} onGoToStack={() => handleSectionChange("mystack")} onGoToAnalyses={() => handleSectionChange("analyses")} />}
-              {activeSection === "coach" && <motion.div key="coach" className="h-full" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }}>
+              {activeSection === "coach" && <motion.div key="coach" className="h-full" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <ChatInterface />
                 </motion.div>}
-              {activeSection === "supplements" && <motion.div key="supplements" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }}>
+              {activeSection === "supplements" && <motion.div key="supplements" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("dashboard.supplements")}</h2>
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div className="lg:col-span-3">
@@ -432,82 +412,22 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </motion.div>}
-              {activeSection === "shop" && <motion.div key="shop" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }} className="h-full">
+              {activeSection === "shop" && <motion.div key="shop" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} className="h-full">
                   <ShopSection onProductSelect={handleProductSelect} />
                 </motion.div>}
-              {activeSection === "product" && selectedProductHandle && <motion.div key="product" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }} className="h-full">
+              {activeSection === "product" && selectedProductHandle && <motion.div key="product" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} className="h-full">
                   <ProductDetailSection handle={selectedProductHandle} onBack={handleBackToShop} onProductSelect={handleProductSelect} />
                 </motion.div>}
-              {activeSection === "mystack" && <motion.div key="mystack" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }}>
+              {activeSection === "mystack" && <motion.div key="mystack" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <MyStackSection />
                 </motion.div>}
-              {activeSection === "analyses" && <motion.div key="analyses" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }}>
+              {activeSection === "analyses" && <motion.div key="analyses" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <BloodTestSection />
                 </motion.div>}
-              {activeSection === "settings" && <motion.div key="settings" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }}>
+              {activeSection === "settings" && <motion.div key="settings" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} onRestartTutorial={handleRestartTutorial} />
                 </motion.div>}
-              {activeSection === "help" && <motion.div key="help" initial={{
-            opacity: 0,
-            scale: 0.97,
-            filter: "blur(6px)"
-          }} animate={{
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)"
-          }} exit={{
-            opacity: 0
-          }}>
+              {activeSection === "help" && <motion.div key="help" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <HelpSection />
                 </motion.div>}
             </AnimatePresence>}

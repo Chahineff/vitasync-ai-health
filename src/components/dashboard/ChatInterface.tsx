@@ -258,6 +258,32 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       sseFinishedRef.current = true;
       const assistantMessage = fullContentRef.current;
 
+      // Process stack commands from AI response
+      const { cleanContent, commands } = parseStackCommands(assistantMessage);
+      if (commands.length > 0) {
+        const stackStore = useAIStackStore.getState();
+        for (const cmd of commands) {
+          if (cmd.type === 'add' && cmd.item) {
+            stackStore.addItem(cmd.item);
+          } else if (cmd.type === 'remove' && cmd.productId) {
+            stackStore.removeItem(cmd.productId);
+          } else if (cmd.type === 'update' && cmd.productId && cmd.quantity) {
+            stackStore.updateQuantity(cmd.productId, cmd.quantity);
+          } else if (cmd.type === 'clear') {
+            stackStore.clearStack();
+          }
+        }
+        // Update the displayed message to remove stack command tags
+        if (cleanContent !== assistantMessage) {
+          fullContentRef.current = cleanContent;
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = { role: 'assistant', content: cleanContent };
+            return newMessages;
+          });
+        }
+      }
+
       if (conversationId && assistantMessage) {
         await saveMessage(conversationId, 'assistant', assistantMessage);
         await supabase

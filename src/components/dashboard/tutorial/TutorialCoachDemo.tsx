@@ -12,11 +12,9 @@ const FAKE_CONVERSATIONS = [
 ];
 
 const AI_MODELS = [
-  { id: "vs-3-flash", label: "VitaSync 3 Flash", desc: "Rapide & équilibré", active: true },
-  { id: "vs-3-pro", label: "VitaSync 3 Pro", desc: "Raisonnement avancé", active: false },
-  { id: "vs-5", label: "VitaSync 5", desc: "Haute précision", active: false },
-  { id: "vs-5-mini", label: "VitaSync 5 Mini", desc: "Léger & rapide", active: false },
-  { id: "vs-5-nano", label: "VitaSync 5 Nano", desc: "Ultra-rapide", active: false },
+  { id: "vs-25-flash", label: "VitaSync 2.5 Flash", desc: "Rapide & économique", active: false },
+  { id: "vs-3-flash", label: "VitaSync 3 Flash", desc: "Équilibre optimal", active: true },
+  { id: "vs-3-pro", label: "VitaSync 3 Pro", desc: "Réflexion approfondie", active: false },
 ];
 
 const FAKE_MESSAGES: { role: "user" | "assistant"; content: string }[] = [

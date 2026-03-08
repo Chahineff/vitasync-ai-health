@@ -98,7 +98,6 @@ async function fetchEnrichedProductData(supabase: any) {
 
 function getHistoryDays(model: string): number {
   if (model === 'google/gemini-2.5-flash-lite') return 7;
-  if (model === 'openai/gpt-5-mini') return 30;
   return 90;
 }
 
@@ -357,10 +356,10 @@ Deno.serve(async (req) => {
     let systemPrompt = buildSystemPrompt(profileRes.data, healthRes.data, catalog, trends, supplements, enriched, checkins, bloodTests);
 
     // Add quiz/chart capabilities for 3.0 models
-    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3-pro-preview', 'openai/gpt-5-mini', 'openai/gpt-5.2'];
+    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'];
     const model = ALLOWED_MODELS.includes(requestedModel) ? requestedModel : 'google/gemini-3-flash-preview';
 
-    const isAdvancedModel = ['3.0', '5.0', '5.2'].includes(modelVersion);
+    const isAdvancedModel = modelVersion === '3.0';
     if (isAdvancedModel) {
       systemPrompt += `\n\nQUIZ INTERACTIF:
 [[QUIZ_START]]
@@ -370,7 +369,7 @@ Q1: Question ? | A | B | C | D
 Max 10 questions, 4 options chacune.`;
     }
 
-    const supportsCharts = ['google/gemini-3-flash-preview', 'google/gemini-3-pro-preview', 'openai/gpt-5-mini', 'openai/gpt-5.2'].includes(model);
+    const supportsCharts = ['google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'].includes(model);
     if (supportsCharts) {
       systemPrompt += `\n\nGRAPHIQUES (format sur 1 ligne):
 [[CHART:type:{"title":"...","data":[...],"xKey":"...","yKeys":["..."]}]]
@@ -388,7 +387,7 @@ Max 3 blocs/réponse.`;
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
 
     let response: Response;
     try {
@@ -399,7 +398,7 @@ Max 3 blocs/réponse.`;
           model,
           messages: [{ role: "system", content: systemPrompt }, ...messages.map(m => ({ role: m.role, content: m.content }))],
           stream: true,
-          max_tokens: 8192,
+          max_tokens: 16384,
         }),
         signal: controller.signal,
       });

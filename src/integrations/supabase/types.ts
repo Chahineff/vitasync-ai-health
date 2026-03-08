@@ -408,6 +408,9 @@ export type Database = {
           medical_conditions: string[] | null
           medications_notes: string | null
           monthly_budget: string | null
+          notify_analysis_ready: boolean | null
+          notify_supplement_reminders: boolean | null
+          notify_weekly_summary: boolean | null
           onboarding_completed: boolean | null
           preferred_forms: string[] | null
           shipping_country: string | null
@@ -438,6 +441,9 @@ export type Database = {
           medical_conditions?: string[] | null
           medications_notes?: string | null
           monthly_budget?: string | null
+          notify_analysis_ready?: boolean | null
+          notify_supplement_reminders?: boolean | null
+          notify_weekly_summary?: boolean | null
           onboarding_completed?: boolean | null
           preferred_forms?: string[] | null
           shipping_country?: string | null
@@ -468,6 +474,9 @@ export type Database = {
           medical_conditions?: string[] | null
           medications_notes?: string | null
           monthly_budget?: string | null
+          notify_analysis_ready?: boolean | null
+          notify_supplement_reminders?: boolean | null
+          notify_weekly_summary?: boolean | null
           onboarding_completed?: boolean | null
           preferred_forms?: string[] | null
           shipping_country?: string | null

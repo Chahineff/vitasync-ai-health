@@ -1,26 +1,56 @@
 
 
-# Ajout de VitaSync 5 Mini et VitaSync 5.2 (OpenAI GPT-5-mini & GPT-5.2)
+# Plan de modifications
 
-## Modifications
+## 1. Navbar responsive et adaptative
 
-### 1. `src/components/dashboard/chat/ChatModelSelector.tsx`
+**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
 
-- Elargir le type `AIModel` : ajouter `version: '5.0' | '5.2'` et `mode: 'mini'` aux unions existantes
-- Ajouter 2 nouveaux modeles dans `AI_MODELS` :
-  - `{ version: '5.0', mode: 'mini', label: 'VitaSync 5 Mini', description: 'Rapide et polyvalent', model: 'openai/gpt-5-mini' }`
-  - `{ version: '5.2', mode: 'pro', label: 'VitaSync 5.2', description: 'Raisonnement avancé', model: 'openai/gpt-5.2' }`
-- Ajouter une icone distincte pour les modeles OpenAI dans `ModelIcon` (ex: `ChatCircleDots` ou `Robot` de Phosphor en bleu/vert)
-- Ajouter un separateur visuel dans le dropdown entre les modeles Gemini et OpenAI (label "Google" / "OpenAI")
+**Corrections** :
+- Remplacer la largeur fixe par un systeme de marges responsives progressives
+- Sur mobile (<768px) : marges de 12px de chaque cote
+- Sur tablette (768-1024px) : marges de 24px
+- Sur desktop (1024-1440px) : marges de 40px
+- Sur grand ecran (>1440px) : max-width de 1400px centre
+- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
+- La navbar gardera son design flottant capsule actuel
 
-### 2. `supabase/functions/ai-coach/index.ts`
+**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
 
-- Ajouter `'openai/gpt-5-mini'` et `'openai/gpt-5.2'` dans le tableau `ALLOWED_MODELS` (ligne 359)
-- Dans `getHistoryDays()` : `gpt-5-mini` → 30 jours, `gpt-5.2` → 90 jours (equivalent aux modeles Gemini avances)
-- Dans la condition quiz/chart : activer quiz pour `gpt-5.2`, activer charts+references pour les deux modeles OpenAI (memes capacites que Gemini 3 Flash/Pro)
-- Le system prompt reste strictement identique — memes regles, memes formats `[[PRODUCT:...]]`, `[[STACK_ADD:...]]`, etc.
+---
 
-### Fichiers impactes
-- `src/components/dashboard/chat/ChatModelSelector.tsx` — nouveaux modeles + icones + separateurs
-- `supabase/functions/ai-coach/index.ts` — ALLOWED_MODELS + getHistoryDays + conditions quiz/chart
+## 2. Page About - En attente du PDF
+
+Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
+
+---
+
+## 3. Page Blog - Etat vide + systeme d'administration
+
+**Etat vide** :
+- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
+- Garder le hero et le design existant
+- Supprimer les articles en dur
+
+**Systeme d'administration des articles** :
+- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
+- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
+- La page Blog affichera dynamiquement les articles depuis la base de donnees
+- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
+
+**Fichiers modifies** :
+- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
+- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
+- Migration SQL : creation de la table `blog_posts`
+
+---
+
+## Details techniques
+
+| Tache | Fichiers | Complexite |
+|-------|----------|------------|
+| Navbar responsive | `src/index.css` | Faible |
+| Blog etat vide | `src/pages/Blog.tsx` | Faible |
+| Table blog_posts + RLS | Migration SQL | Moyenne |
+| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
 

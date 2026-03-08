@@ -7,3 +7,4 @@ export { SettingsDangerZone } from './SettingsDangerZone';
 export { ShopifyConnectBanner } from './ShopifyConnectBanner';
 export { OrderHistory } from './OrderHistory';
 export { AddressModal } from './AddressModal';
+export { MonthlySpendBar } from './MonthlySpendBar';

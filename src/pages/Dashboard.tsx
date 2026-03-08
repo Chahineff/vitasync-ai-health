@@ -409,7 +409,10 @@ const Dashboard = () => {
 
       {/* Main - with margin-left to compensate for fixed sidebar */}
       <main className={`flex-1 flex flex-col h-screen max-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
-        
+        {/* Top bar with notifications */}
+        <div className="flex items-center justify-end px-4 pt-3 pb-1 lg:px-8">
+          <NotificationPanel />
+        </div>
         {/* Add padding bottom on mobile for bottom nav */}
         <div id="dashboard-scroll-container" className={`flex-1 overflow-x-hidden ${activeSection === 'coach' ? 'overflow-hidden p-0 pb-0 lg:p-4 lg:pb-4' : 'overflow-auto p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">

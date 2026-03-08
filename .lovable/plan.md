@@ -1,56 +1,55 @@
 
 
-# Plan de modifications
+## Améliorations proposées pour "Mes Analyses"
 
-## 1. Navbar responsive et adaptative
+### A. Améliorations de Design
 
-**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
+1. **Score de santé global (Health Score Hero Card)**
+   - Ajouter en haut de la page un bandeau "hero" avec un score de santé synthétique (0-100) calculé à partir de la dernière analyse (nombre de valeurs normales vs anormales). Cercle de progression animé avec couleur dégradée (rouge → vert). Affiche aussi la date de la dernière analyse et un indicateur de tendance (↑↓) si plusieurs analyses existent.
 
-**Corrections** :
-- Remplacer la largeur fixe par un systeme de marges responsives progressives
-- Sur mobile (<768px) : marges de 12px de chaque cote
-- Sur tablette (768-1024px) : marges de 24px
-- Sur desktop (1024-1440px) : marges de 40px
-- Sur grand ecran (>1440px) : max-width de 1400px centre
-- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
-- La navbar gardera son design flottant capsule actuel
+2. **Timeline / historique visuel**
+   - Remplacer la simple liste de fichiers (colonne gauche) par une timeline verticale avec des nœuds connectés par une ligne. Chaque nœud affiche la date, le nom du fichier, et un mini badge de statut. Donne une meilleure perception de l'historique médical dans le temps.
 
-**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
+3. **Cartes de résumé rapide (stat cards)**
+   - Au-dessus de la zone de détail, afficher 3 mini-cartes glassmorphism : "Valeurs anormales" (count, rouge), "Déficiences" (count, amber), "Compléments suggérés" (count, vert). Permet un aperçu instantané sans scroller.
 
----
+4. **Badges de sévérité améliorés avec icônes**
+   - Remplacer le simple "!" par des icônes de sévérité distinctes (flamme pour critique, triangle warning pour modéré, info pour léger) et ajouter des bordures colorées à gauche des cartes de valeurs anormales (style "accent border").
 
-## 2. Page About - En attente du PDF
+5. **Empty state plus engageant**
+   - Ajouter une illustration/animation Lottie ou une icône animée dans l'état vide, avec un CTA plus visible et un texte expliquant les bénéfices de l'analyse IA.
 
-Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
+### B. Améliorations Fonctionnelles
 
----
+6. **Comparaison entre analyses**
+   - Si l'utilisateur a 2+ analyses, proposer un bouton "Comparer" qui affiche un tableau côte à côte des valeurs anormales entre deux dates, avec des flèches indiquant l'évolution (amélioration / dégradation).
 
-## 3. Page Blog - Etat vide + systeme d'administration
+7. **Export PDF du rapport IA**
+   - Bouton "Exporter le rapport" qui génère un PDF propre contenant le résumé IA, les valeurs anormales, les déficiences et les compléments suggérés, avec le branding VitaSync.
 
-**Etat vide** :
-- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
-- Garder le hero et le design existant
-- Supprimer les articles en dur
+8. **Confirmation de suppression**
+   - Actuellement `handleDelete` supprime directement sans confirmation. Ajouter un `AlertDialog` pour éviter les suppressions accidentelles.
 
-**Systeme d'administration des articles** :
-- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
-- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
-- La page Blog affichera dynamiquement les articles depuis la base de donnees
-- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
+9. **Polling automatique pendant l'analyse**
+   - Quand une analyse est en status `pending`, poller la base toutes les 5 secondes pour détecter automatiquement quand l'analyse est terminée, au lieu de dépendre d'un refresh manuel.
 
-**Fichiers modifies** :
-- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
-- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
-- Migration SQL : creation de la table `blog_posts`
+10. **Localisation (i18n)**
+    - Tous les textes de la section sont en français hardcodé. Les migrer vers le système `useTranslation` existant pour supporter les 6 langues du projet.
 
----
+### C. Plan d'implémentation
 
-## Details techniques
+**Fichiers impactés :**
+- `src/components/dashboard/BloodTestSection.tsx` — Score hero, stat cards, timeline, confirmation suppression, polling, i18n
+- `src/components/dashboard/BloodTestViewer.tsx` — Export PDF, badges améliorés
+- `src/lib/i18n.ts` — Nouvelles clés de traduction
+- Potentiellement un nouveau composant `BloodTestComparison.tsx` pour la comparaison
 
-| Tache | Fichiers | Complexite |
-|-------|----------|------------|
-| Navbar responsive | `src/index.css` | Faible |
-| Blog etat vide | `src/pages/Blog.tsx` | Faible |
-| Table blog_posts + RLS | Migration SQL | Moyenne |
-| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
+**Priorité suggérée :**
+1. Confirmation de suppression + polling (quick wins, UX critique)
+2. Stat cards + badges améliorés (impact visuel fort, effort modéré)
+3. Score de santé hero card (feature phare)
+4. Timeline historique (refonte visuelle de la sidebar)
+5. Comparaison entre analyses (feature avancée)
+6. Export PDF (nécessite une lib comme jsPDF ou une edge function)
+7. i18n (systématique, à faire en dernier)
 

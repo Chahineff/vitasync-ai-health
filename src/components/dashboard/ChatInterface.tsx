@@ -201,30 +201,59 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       
       console.log('[VitaSync] Token length:', accessToken.length, 'CHAT_URL:', CHAT_URL);
 
-      let response: Response;
-      try {
-        response = await fetch(CHAT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            messages: [...messages, { role: 'user', content: userMessage }],
-            model: selectedModel.model,
-            modelVersion: selectedModel.version || '1.0',
-          }),
-        });
-        console.log('[VitaSync] Response status:', response.status);
-      } catch (fetchError) {
-        console.error('[VitaSync] Fetch failed completely:', fetchError);
-        throw new Error(`Erreur réseau: ${fetchError instanceof Error ? fetchError.message : 'Connexion impossible'}`);
-      }
+      const doFetch = async (attempt = 1): Promise<Response> => {
+        try {
+          const resp = await fetch(CHAT_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+              messages: [...messages, { role: 'user', content: userMessage }],
+              model: selectedModel.model,
+              modelVersion: selectedModel.version || '1.0',
+            }),
+          });
+          console.log('[VitaSync] Response status:', resp.status, 'attempt:', attempt);
+          
+          // Auto-retry on 429/500 once after 3s
+          if ((resp.status === 429 || resp.status === 500) && attempt === 1) {
+            console.log('[VitaSync] Retrying in 3s...');
+            await new Promise(r => setTimeout(r, 3000));
+            return doFetch(2);
+          }
+          return resp;
+        } catch (fetchError) {
+          if (attempt === 1) {
+            console.log('[VitaSync] Network error, retrying in 3s...');
+            await new Promise(r => setTimeout(r, 3000));
+            return doFetch(2);
+          }
+          throw new Error(`Erreur réseau: ${fetchError instanceof Error ? fetchError.message : 'Connexion impossible'}`);
+        }
+      };
+
+      const response = await doFetch();
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('[VitaSync] AI Coach error:', response.status, errorText);
-        throw new Error(`Erreur ${response.status}: ${errorText}`);
+        
+        // Parse error for specific messaging
+        let errorMsg = "Désolé, une erreur s'est produite.";
+        try {
+          const parsed = JSON.parse(errorText);
+          if (parsed.error) errorMsg = parsed.error;
+        } catch {}
+        
+        if (response.status === 429) {
+          errorMsg = "⏳ Le service est temporairement surchargé. Réessaie dans quelques instants.";
+        } else if (response.status === 402) {
+          errorMsg = "💳 Crédits IA épuisés. Contacte le support.";
+        }
+        
+        throw new Error(errorMsg);
       }
 
       const reader = response.body?.getReader();

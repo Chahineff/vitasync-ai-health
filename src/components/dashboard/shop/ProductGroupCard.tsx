@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCartSimple, Star, Check, SpinnerGap, Repeat } from '@phosphor-icons/react';
+import { ShoppingCartSimple, Star, Check, SpinnerGap, Repeat, Eye, Heart } from '@phosphor-icons/react';
 import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -11,6 +11,9 @@ interface ProductGroupCardProps {
   group: ProductGroup;
   recommendedByAI?: boolean;
   onProductClick?: (handle: string) => void;
+  onQuickView?: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 function StarRating() {
@@ -26,7 +29,7 @@ function StarRating() {
   );
 }
 
-export function ProductGroupCard({ group, recommendedByAI = false, onProductClick }: ProductGroupCardProps) {
+export function ProductGroupCard({ group, recommendedByAI = false, onProductClick, onQuickView, isFavorite = false, onToggleFavorite }: ProductGroupCardProps) {
   const { t } = useTranslation();
   const [selectedProductIndex, setSelectedProductIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -58,12 +61,9 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
         selectedOptions: selectedVariant.selectedOptions || [],
       });
       setJustAdded(true);
-      toast.success(t('shop.productAdded'), {
-        description: displayProduct.node.title,
-        position: 'top-center',
-      });
+      toast.success(t('shop.productAdded'), { description: displayProduct.node.title, position: 'top-center' });
       setTimeout(() => setJustAdded(false), 2000);
-    } catch (error) {
+    } catch {
       toast.error(t('shop.addError'));
     } finally {
       setIsAdding(false);
@@ -71,16 +71,13 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   };
 
   return (
-    <div
-      onClick={() => onProductClick?.(displayProduct.node.handle)}
-      className={onProductClick ? 'cursor-pointer' : ''}
-    >
+    <div onClick={() => onProductClick?.(displayProduct.node.handle)} className={onProductClick ? 'cursor-pointer' : ''}>
       <motion.div
         whileHover={{ y: -4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         className="rounded-2xl overflow-hidden bg-card border border-border shadow-sm hover:shadow-lg transition-shadow duration-300 group h-full flex flex-col"
       >
-        {/* Image — 65% height */}
+        {/* Image */}
         <div className="relative overflow-hidden rounded-t-2xl" style={{ aspectRatio: '3/4' }}>
           <div className="absolute inset-0 dark:bg-white/5" style={{ background: "radial-gradient(circle at 50% 40%, hsl(var(--muted)) 0%, hsl(var(--background)) 100%)" }} />
           <AnimatePresence mode="wait">
@@ -103,6 +100,28 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             )}
           </AnimatePresence>
 
+          {/* Overlay actions */}
+          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            {/* Favorite */}
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite?.(); }}
+              className={`p-2 rounded-full backdrop-blur-sm border transition-colors ${
+                isFavorite 
+                  ? 'bg-destructive/10 border-destructive/30 text-destructive' 
+                  : 'bg-background/80 border-border text-foreground/60 hover:text-destructive'
+              }`}
+            >
+              <Heart weight={isFavorite ? 'fill' : 'regular'} className="w-4 h-4" />
+            </button>
+            {/* Quick view */}
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView?.(); }}
+              className="p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-foreground/60 hover:text-foreground transition-colors"
+            >
+              <Eye weight="regular" className="w-4 h-4" />
+            </button>
+          </div>
+
           {/* AI Badge */}
           {recommendedByAI && (
             <motion.div
@@ -116,8 +135,8 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             </motion.div>
           )}
 
-          {hasMultipleFlavors && (
-            <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
+          {hasMultipleFlavors && !recommendedByAI && (
+            <div className="absolute top-3 left-3 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
               {flavors.length} {t('shop.flavors')}
             </div>
           )}
@@ -125,23 +144,15 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
 
         {/* Content */}
         <div className="p-4 flex-1 flex flex-col gap-2">
-          {/* Star rating */}
           <StarRating />
-
-          {/* Title */}
           <h3 className="text-base font-bold text-foreground line-clamp-2 leading-snug">{baseTitle}</h3>
-
-          {/* Product type as subtitle */}
           {displayProduct.node.productType && (
             <p className="text-xs text-muted-foreground line-clamp-1">{displayProduct.node.productType}</p>
           )}
 
           {/* Flavor Selector */}
           {hasMultipleFlavors && (
-            <div
-              className="flex flex-wrap gap-1.5 mt-1"
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
+            <div className="flex flex-wrap gap-1.5 mt-1" onMouseLeave={() => setHoveredIndex(null)}>
               {products.slice(0, 4).map((product, index) => {
                 const flavor = getFlavorFromTitle(product.node.title);
                 return (
@@ -150,22 +161,17 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedProductIndex(index); }}
                     onMouseEnter={(e) => { e.stopPropagation(); setHoveredIndex(index); }}
                     className={`px-2 py-1 text-[11px] rounded-lg transition-colors ${
-                      displayIndex === index
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-muted-foreground hover:bg-accent/20'
+                      displayIndex === index ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent/20'
                     }`}
                   >
                     {flavor || 'Original'}
                   </button>
                 );
               })}
-              {products.length > 4 && (
-                <span className="px-2 py-1 text-xs text-muted-foreground">+{products.length - 4}</span>
-              )}
+              {products.length > 4 && <span className="px-2 py-1 text-xs text-muted-foreground">+{products.length - 4}</span>}
             </div>
           )}
 
-          {/* Spacer */}
           <div className="flex-1" />
 
           {/* Subscribe hint */}
@@ -178,43 +184,28 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             return (
               <div className="flex items-center gap-1">
                 <Repeat weight="bold" className="w-3 h-3 text-secondary" />
-                <span className="text-xs text-secondary font-medium">
-                  {subPrice.toFixed(2)} {price.currencyCode}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  /{freq.toLowerCase().replace('every ', '').replace('deliver ', '')}
-                </span>
-                {pct && (
-                  <span className="text-[10px] font-semibold text-secondary">-{pct}%</span>
-                )}
+                <span className="text-xs text-secondary font-medium">{subPrice.toFixed(2)} {price.currencyCode}</span>
+                <span className="text-xs text-muted-foreground">/{freq.toLowerCase().replace('every ', '').replace('deliver ', '')}</span>
+                {pct && <span className="text-[10px] font-semibold text-secondary">-{pct}%</span>}
               </div>
             );
           })()}
 
-          {/* Price + Add button */}
+          {/* Price + Add */}
           <div className="flex items-center justify-between pt-1">
-            <span className="text-xl font-bold text-foreground">
-              {parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}
-            </span>
-
+            <span className="text-xl font-bold text-foreground">{parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}</span>
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !selectedVariant?.availableForSale}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                justAdded
-                  ? 'bg-green-500/15 text-green-600 dark:text-green-400'
-                  : 'bg-accent text-accent-foreground hover:brightness-110'
+                justAdded ? 'bg-green-500/15 text-green-600 dark:text-green-400' : 'bg-accent text-accent-foreground hover:brightness-110'
               } disabled:opacity-40 disabled:cursor-not-allowed`}
             >
               {isAdding ? (
                 <SpinnerGap className="w-4 h-4 animate-spin" />
               ) : justAdded ? (
                 <>
-                  <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: 'spring', bounce: 0.5 }}
-                  >
+                  <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', bounce: 0.5 }}>
                     <Check weight="bold" className="w-4 h-4" />
                   </motion.div>
                   <span className="hidden sm:inline">{t('shop.added')}</span>
@@ -228,9 +219,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             </button>
           </div>
 
-          {!selectedVariant?.availableForSale && (
-            <p className="text-xs text-destructive">{t('shop.outOfStock')}</p>
-          )}
+          {!selectedVariant?.availableForSale && <p className="text-xs text-destructive">{t('shop.outOfStock')}</p>}
         </div>
       </motion.div>
     </div>

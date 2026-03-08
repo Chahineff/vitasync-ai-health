@@ -3,3 +3,6 @@ export { ShopFilters, CATEGORY_MAPPING, type SortOption, type CategoryKey } from
 export { ProductGroupCard } from './ProductGroupCard';
 export { Pagination } from './Pagination';
 export { AIRecommendationsWidget } from './AIRecommendationsWidget';
+export { QuickViewModal } from './QuickViewModal';
+export { ShopSkeletonGrid } from './ShopSkeletonGrid';
+export { BackToTopButton } from './BackToTopButton';

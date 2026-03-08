@@ -521,6 +521,8 @@ const DashboardHome = ({
         {formatDate()}
       </motion.p>
     </motion.div>
+    <HealthScoreWidget />
+    <WeeklyGoalsWidget />
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.1 }}>
       <DailyCheckinWidget />
     </motion.div>
@@ -541,24 +543,163 @@ const DashboardHome = ({
     </motion.div>
   </motion.div>;
 };
-const HelpSection = () => {
-  const {
-    t
-  } = useTranslation();
-  return <div className="max-w-2xl">
-    <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("help.title")}</h2>
-    <div className="space-y-4">
-      <div className="glass-card-premium rounded-3xl p-6 border border-white/10">
-        <h3 className="text-lg font-medium text-foreground mb-2">{t("help.faq")}</h3>
-        <p className="text-sm text-foreground/60 font-light mb-4">{t("help.faqDesc")}</p>
-        <Link to="/#faq" className="text-sm text-primary hover:underline">{t("help.viewFaq")}</Link>
+const FAQ_DATA = [
+  { category: "Compléments", q: "Comment ajouter un complément à mon suivi ?", a: "Rendez-vous dans la section 'Compléments', cliquez sur '+ Ajouter un complément', puis renseignez le nom, le dosage et le moment de prise." },
+  { category: "Compléments", q: "Puis-je suivre des compléments non vendus sur VitaSync ?", a: "Oui ! Vous pouvez ajouter manuellement n'importe quel complément, même s'il ne fait pas partie de notre boutique." },
+  { category: "Analyses", q: "Comment importer une analyse sanguine ?", a: "Allez dans 'Mes Analyses', cliquez sur 'Importer une analyse', puis uploadez votre PDF. Notre IA analysera les résultats en quelques secondes." },
+  { category: "Analyses", q: "Mes données médicales sont-elles sécurisées ?", a: "Absolument. Vos données sont chiffrées, stockées sur des serveurs sécurisés, et accessibles uniquement par vous. Nous respectons le RGPD." },
+  { category: "Coach IA", q: "Le Coach IA peut-il remplacer un médecin ?", a: "Non. Le Coach IA fournit des conseils de bien-être basés sur vos données, mais ne pose jamais de diagnostic. Consultez un professionnel pour tout problème de santé." },
+  { category: "Coach IA", q: "Comment le Coach IA personnalise-t-il ses conseils ?", a: "Il utilise votre profil santé, vos check-ins quotidiens, vos analyses sanguines et votre stack actuel pour des recommandations sur mesure." },
+  { category: "Compte", q: "Comment modifier mon profil santé ?", a: "Allez dans Paramètres, puis cliquez sur 'Modifier' dans la section Profil Santé pour relancer le questionnaire." },
+  { category: "Compte", q: "Comment supprimer mon compte ?", a: "Dans Paramètres, descendez jusqu'à 'Vos données personnelles' puis cliquez sur 'Supprimer mon compte'. L'action est irréversible." },
+  { category: "Mon Stack", q: "Qu'est-ce que le Stack Mensuel ?", a: "C'est votre sélection personnalisée de compléments, construite avec l'aide du Coach IA, livrée chaque mois avec -10% d'abonnement." },
+  { category: "Mon Stack", q: "Comment modifier ma commande mensuelle ?", a: "Depuis 'Mon Stack', vous pouvez ajouter, retirer ou modifier les quantités de chaque produit à tout moment." },
+];
+
+const QUICK_GUIDES = [
+  { num: "01", title: "Ajouter un complément", desc: "Depuis la section Compléments, ajoutez votre stack et suivez vos prises quotidiennes.", icon: FirstAidKit },
+  { num: "02", title: "Importer une analyse", desc: "Uploadez votre PDF d'analyse sanguine pour une lecture automatique par l'IA.", icon: TestTube },
+  { num: "03", title: "Utiliser le Coach IA", desc: "Posez vos questions santé, demandez des recommandations personnalisées.", icon: ChatCircleDots },
+  { num: "04", title: "Construire mon stack", desc: "Créez votre abonnement mensuel avec les produits recommandés par le Coach.", icon: Package },
+];
+
+interface HelpSectionProps {
+  onGoToCoach?: () => void;
+}
+
+const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
+  const { t } = useTranslation();
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const categories = [...new Set(FAQ_DATA.map(f => f.category))];
+  const filtered = FAQ_DATA.filter(f => {
+    const matchSearch = !search || f.q.toLowerCase().includes(search.toLowerCase()) || f.a.toLowerCase().includes(search.toLowerCase());
+    const matchCategory = !activeCategory || f.category === activeCategory;
+    return matchSearch && matchCategory;
+  });
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl space-y-8">
+      <div>
+        <h2 className="text-2xl font-light tracking-tight text-foreground mb-2">{t("help.title")}</h2>
+        <p className="text-foreground/50 text-sm">Trouvez des réponses, des guides et de l'aide</p>
       </div>
-      <div className="glass-card-premium rounded-3xl p-6 border border-white/10">
-        <h3 className="text-lg font-medium text-foreground mb-2">{t("help.contact")}</h3>
-        <p className="text-sm text-foreground/60 font-light mb-4">{t("help.contactDesc")}</p>
-        <Link to="/contact" className="text-sm text-primary hover:underline">{t("help.contactUs")}</Link>
+
+      {/* Quick Guides */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <BookOpen weight="fill" className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-medium text-foreground">Guides rapides</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {QUICK_GUIDES.map((guide, i) => (
+            <motion.div
+              key={guide.num}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.07 }}
+              className="glass-card rounded-2xl p-4 hover:border-primary/30 transition-colors group cursor-default"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <guide.icon weight="light" className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-primary/60 font-mono mb-0.5">{guide.num}</p>
+                  <p className="text-sm font-medium text-foreground mb-1">{guide.title}</p>
+                  <p className="text-xs text-foreground/50 leading-relaxed">{guide.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
-  </div>;
+
+      {/* FAQ */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <Question weight="fill" className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-medium text-foreground">Questions fréquentes</h3>
+        </div>
+
+        {/* Search */}
+        <div className="relative mb-4">
+          <SearchIcon weight="light" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Rechercher dans la FAQ..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-muted/30 border border-border/30 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        {/* Category Filters */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <button
+            onClick={() => setActiveCategory(null)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!activeCategory ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-foreground/50 hover:bg-muted/50'}`}
+          >
+            Tout
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activeCategory === cat ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-foreground/50 hover:bg-muted/50'}`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Accordion */}
+        <Accordion type="multiple" className="space-y-2">
+          {filtered.map((faq, i) => (
+            <AccordionItem key={i} value={`faq-${i}`} className="glass-card rounded-2xl border border-border/30 px-4 overflow-hidden">
+              <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline py-4">
+                <div className="flex items-center gap-2 text-left">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary/70 flex-shrink-0">{faq.category}</span>
+                  <span>{faq.q}</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-foreground/60 leading-relaxed pb-4">
+                {faq.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+          {filtered.length === 0 && (
+            <p className="text-sm text-foreground/40 text-center py-8">Aucun résultat pour "{search}"</p>
+          )}
+        </Accordion>
+      </div>
+
+      {/* Contact + Coach IA */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link to="/contact" className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-colors group">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Lifebuoy weight="light" className="w-5 h-5 text-primary" />
+            </div>
+            <h3 className="text-sm font-medium text-foreground">Nous contacter</h3>
+          </div>
+          <p className="text-xs text-foreground/50">Une question ? Notre équipe est là pour vous aider.</p>
+        </Link>
+
+        {onGoToCoach && (
+          <button onClick={onGoToCoach} className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-colors group text-left">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                <img src={vitasyncLogo} alt="" className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-medium text-foreground">Demander au Coach IA</h3>
+            </div>
+            <p className="text-xs text-foreground/50">Posez votre question directement au Coach pour une aide personnalisée.</p>
+          </button>
+        )}
+      </div>
+    </motion.div>
+  );
 };
 export default Dashboard;

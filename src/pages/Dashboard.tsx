@@ -24,6 +24,7 @@ import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
 import { BloodTestSection } from "@/components/dashboard/BloodTestSection";
 import { MobileBottomNav } from "@/components/dashboard/MobileBottomNav";
 import { DashboardTutorial } from "@/components/dashboard/DashboardTutorial";
+import { LogoutConfirmModal, LogoutFarewellOverlay } from "@/components/dashboard/LogoutConfirmModal";
 import { NotificationPanel } from "@/components/dashboard/NotificationPanel";
 import { HealthScoreWidget } from "@/components/dashboard/HealthScoreWidget";
 import { WeeklyGoalsWidget } from "@/components/dashboard/WeeklyGoalsWidget";

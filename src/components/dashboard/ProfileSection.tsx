@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise, DownloadSimple, Trash, Warning } from "@phosphor-icons/react";
+import { Camera, SpinnerGap, Check, Globe, Question, SignOut, ArrowClockwise, DownloadSimple, Trash, Warning, Lock, Eye, EyeSlash, CheckCircle, Circle } from "@phosphor-icons/react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAvatarUrl } from "@/hooks/useAvatarUrl";
@@ -10,6 +10,8 @@ import { useI18n } from "@/hooks/useTranslation";
 import { languages, type Locale } from "@/lib/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 import { HealthProfileSection } from "./HealthProfileSection";
+import { useHealthProfile } from "@/hooks/useHealthProfile";
+import { useSupplementTracking } from "@/hooks/useSupplementTracking";
 import { cn } from "@/lib/utils";
 
 interface ProfileSectionProps {

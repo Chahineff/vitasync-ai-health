@@ -189,20 +189,26 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         throw new Error('Session expirée, veuillez vous reconnecter');
       }
 
-      const response = await fetch(CHAT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-        },
-        body: JSON.stringify({
-          messages: [...messages, { role: 'user', content: userMessage }],
-          model: selectedModel.model,
-          modelVersion: selectedModel.version || '1.0',
-        }),
-      });
-
-      console.log('[VitaSync] Response status:', response.status);
+      let response: Response;
+      try {
+        console.log('[VitaSync] Sending fetch to:', CHAT_URL);
+        response = await fetch(CHAT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.data.session.access_token}`,
+          },
+          body: JSON.stringify({
+            messages: [...messages, { role: 'user', content: userMessage }],
+            model: selectedModel.model,
+            modelVersion: selectedModel.version || '1.0',
+          }),
+        });
+        console.log('[VitaSync] Response status:', response.status);
+      } catch (fetchError) {
+        console.error('[VitaSync] Fetch failed completely:', fetchError);
+        throw new Error(`Erreur réseau: ${fetchError instanceof Error ? fetchError.message : 'Connexion impossible'}`);
+      }
 
       if (!response.ok) {
         const errorText = await response.text();

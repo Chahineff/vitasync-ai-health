@@ -497,7 +497,21 @@ export const translations: Record<Locale, Record<string, string>> = {
     "mystack.emptyBox": "Votre prochaine box est vide",
     "mystack.exploreShop": "Explorez notre boutique pour constituer votre stack",
 
-    // Testimonials
+    // AI Stack Builder
+    "aiStack.title": "Ton Stack Mensuel",
+    "aiStack.product": "produit",
+    "aiStack.products": "produits",
+    "aiStack.subtotal": "Sous-total",
+    "aiStack.discount": "Remise abonnement (-15%)",
+    "aiStack.totalMonth": "Total / mois",
+    "aiStack.subscribe": "S'abonner",
+    "aiStack.perMonth": "/mois",
+    "aiStack.clearStack": "Vider le stack",
+    "aiStack.addedToCart": "Stack ajouté au panier !",
+    "aiStack.addedDesc": "produits ajoutés. Finalisez votre commande.",
+    "aiStack.errorAdd": "Erreur lors de l'ajout au panier",
+
+
     "testimonials.badge": "Témoignages",
     "testimonials.title": "Ce qu'ils en disent",
     "testimonials.subtitle": "Découvrez les retours de nos utilisateurs satisfaits.",
@@ -1157,7 +1171,21 @@ export const translations: Record<Locale, Record<string, string>> = {
     "mystack.emptyBox": "Your next box is empty",
     "mystack.exploreShop": "Explore our shop to build your stack",
 
-    // Testimonials
+    // AI Stack Builder
+    "aiStack.title": "Your Monthly Stack",
+    "aiStack.product": "product",
+    "aiStack.products": "products",
+    "aiStack.subtotal": "Subtotal",
+    "aiStack.discount": "Subscription discount (-15%)",
+    "aiStack.totalMonth": "Total / month",
+    "aiStack.subscribe": "Subscribe",
+    "aiStack.perMonth": "/mo",
+    "aiStack.clearStack": "Clear stack",
+    "aiStack.addedToCart": "Stack added to cart!",
+    "aiStack.addedDesc": "products added. Complete your order.",
+    "aiStack.errorAdd": "Error adding to cart",
+
+
     "testimonials.badge": "Testimonials",
     "testimonials.title": "What they say",
     "testimonials.subtitle": "Discover feedback from our satisfied users.",
@@ -1817,7 +1845,21 @@ export const translations: Record<Locale, Record<string, string>> = {
     "mystack.emptyBox": "Tu próxima caja está vacía",
     "mystack.exploreShop": "Explora nuestra tienda para crear tu stack",
 
-    // Testimonials
+    // AI Stack Builder
+    "aiStack.title": "Tu Stack Mensual",
+    "aiStack.product": "producto",
+    "aiStack.products": "productos",
+    "aiStack.subtotal": "Subtotal",
+    "aiStack.discount": "Descuento suscripción (-15%)",
+    "aiStack.totalMonth": "Total / mes",
+    "aiStack.subscribe": "Suscribirse",
+    "aiStack.perMonth": "/mes",
+    "aiStack.clearStack": "Vaciar el stack",
+    "aiStack.addedToCart": "¡Stack añadido al carrito!",
+    "aiStack.addedDesc": "productos añadidos. Completa tu pedido.",
+    "aiStack.errorAdd": "Error al añadir al carrito",
+
+
     "testimonials.badge": "Testimonios",
     "testimonials.title": "Lo que dicen",
     "testimonials.subtitle": "Descubre los comentarios de nuestros usuarios satisfechos.",
@@ -2455,7 +2497,21 @@ export const translations: Record<Locale, Record<string, string>> = {
     "mystack.emptyBox": "صندوقك القادم فارغ",
     "mystack.exploreShop": "استكشف متجرنا لبناء مجموعتك",
 
-    // Testimonials
+    // AI Stack Builder
+    "aiStack.title": "مجموعتك الشهرية",
+    "aiStack.product": "منتج",
+    "aiStack.products": "منتجات",
+    "aiStack.subtotal": "المجموع الفرعي",
+    "aiStack.discount": "خصم الاشتراك (-15%)",
+    "aiStack.totalMonth": "الإجمالي / شهر",
+    "aiStack.subscribe": "اشترك",
+    "aiStack.perMonth": "/شهر",
+    "aiStack.clearStack": "إفراغ المجموعة",
+    "aiStack.addedToCart": "تمت إضافة المجموعة إلى السلة!",
+    "aiStack.addedDesc": "منتجات مضافة. أكمل طلبك.",
+    "aiStack.errorAdd": "خطأ في الإضافة إلى السلة",
+
+
     "testimonials.badge": "الشهادات",
     "testimonials.title": "ماذا يقولون",
     "testimonials.subtitle": "اكتشف ملاحظات مستخدمينا الراضين.",
@@ -3092,7 +3148,21 @@ export const translations: Record<Locale, Record<string, string>> = {
     "mystack.emptyBox": "您的下一个盒子是空的",
     "mystack.exploreShop": "浏览我们的商店来构建您的套组",
 
-    // Testimonials
+    // AI Stack Builder
+    "aiStack.title": "您的月度套组",
+    "aiStack.product": "产品",
+    "aiStack.products": "产品",
+    "aiStack.subtotal": "小计",
+    "aiStack.discount": "订阅折扣 (-15%)",
+    "aiStack.totalMonth": "每月总计",
+    "aiStack.subscribe": "订阅",
+    "aiStack.perMonth": "/月",
+    "aiStack.clearStack": "清空套组",
+    "aiStack.addedToCart": "套组已加入购物车！",
+    "aiStack.addedDesc": "产品已添加。完成您的订单。",
+    "aiStack.errorAdd": "添加到购物车时出错",
+
+
     "testimonials.badge": "用户评价",
     "testimonials.title": "他们怎么说",
     "testimonials.subtitle": "发现我们满意用户的反馈。",
@@ -3729,7 +3799,21 @@ export const translations: Record<Locale, Record<string, string>> = {
     "mystack.emptyBox": "Sua próxima caixa está vazia",
     "mystack.exploreShop": "Explore nossa loja para montar seu stack",
 
-    // Testimonials
+    // AI Stack Builder
+    "aiStack.title": "Seu Stack Mensal",
+    "aiStack.product": "produto",
+    "aiStack.products": "produtos",
+    "aiStack.subtotal": "Subtotal",
+    "aiStack.discount": "Desconto assinatura (-15%)",
+    "aiStack.totalMonth": "Total / mês",
+    "aiStack.subscribe": "Assinar",
+    "aiStack.perMonth": "/mês",
+    "aiStack.clearStack": "Limpar stack",
+    "aiStack.addedToCart": "Stack adicionado ao carrinho!",
+    "aiStack.addedDesc": "produtos adicionados. Finalize seu pedido.",
+    "aiStack.errorAdd": "Erro ao adicionar ao carrinho",
+
+
     "testimonials.badge": "Depoimentos",
     "testimonials.title": "O que dizem",
     "testimonials.subtitle": "Descubra o feedback dos nossos usuários satisfeitos.",

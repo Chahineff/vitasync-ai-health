@@ -88,13 +88,13 @@ export function AIStackPanel() {
         });
       }
 
-      toast.success('Stack ajouté au panier !', {
-        description: `${items.length} produits ajoutés. Finalisez votre commande.`,
+      toast.success(t('aiStack.addedToCart'), {
+        description: `${items.length} ${t('aiStack.addedDesc')}`,
       });
       clearStack();
     } catch (e) {
       console.error('Failed to subscribe:', e);
-      toast.error('Erreur lors de l\'ajout au panier');
+      toast.error(t('aiStack.errorAdd'));
     } finally {
       setIsSubscribing(false);
     }
@@ -118,8 +118,8 @@ export function AIStackPanel() {
               <Package weight="fill" className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold">Ton Stack Mensuel</h3>
-              <p className="text-xs text-muted-foreground">{items.length} produit{items.length > 1 ? 's' : ''}</p>
+              <h3 className="text-sm font-semibold">{t('aiStack.title')}</h3>
+              <p className="text-xs text-muted-foreground">{items.length} {items.length > 1 ? t('aiStack.products') : t('aiStack.product')}</p>
             </div>
           </div>
           <button
@@ -199,15 +199,15 @@ export function AIStackPanel() {
         {/* Price breakdown */}
         <div className="space-y-1.5">
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Sous-total</span>
+            <span>{t('aiStack.subtotal')}</span>
             <span className="line-through">{totalMonthly.toFixed(2)}$</span>
           </div>
           <div className="flex justify-between text-xs text-secondary">
-            <span>Remise abonnement (-15%)</span>
+            <span>{t('aiStack.discount')}</span>
             <span>-{savings.toFixed(2)}$</span>
           </div>
           <div className="flex justify-between text-sm font-semibold pt-1 border-t border-border/30">
-            <span>Total / mois</span>
+            <span>{t('aiStack.totalMonth')}</span>
             <span className="text-primary">{discountedTotal.toFixed(2)}$</span>
           </div>
         </div>
@@ -235,7 +235,7 @@ export function AIStackPanel() {
           ) : (
             <>
               <ShoppingCart weight="fill" className="w-4 h-4" />
-              S'abonner — {discountedTotal.toFixed(2)}$/mois
+              {t('aiStack.subscribe')} — {discountedTotal.toFixed(2)}${t('aiStack.perMonth')}
               <ArrowRight weight="bold" className="w-4 h-4" />
             </>
           )}
@@ -246,7 +246,7 @@ export function AIStackPanel() {
           onClick={clearStack}
           className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors text-center py-1"
         >
-          Vider le stack
+          {t('aiStack.clearStack')}
         </button>
       </div>
     </motion.div>

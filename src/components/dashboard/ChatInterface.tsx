@@ -362,9 +362,10 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         revealIntervalRef.current = null;
       }
       setIsRevealing(false);
+      const errorMessage = error instanceof Error ? error.message : "Désolé, une erreur s'est produite. Veuillez réessayer.";
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: "Désolé, une erreur s'est produite. Veuillez réessayer." }
+        { role: 'assistant', content: errorMessage }
       ]);
     } finally {
       // isLoading is now set to false by the reveal interval when it catches up

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { List } from '@phosphor-icons/react';
+import { List, Package } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
@@ -8,6 +8,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, type AIModel, type ChatInputRef } from './chat';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { AIStackPanel } from './chat/AIStackPanel';
+import { useAIStackStore } from '@/stores/aiStackStore';
+import { parseStackCommands } from '@/lib/parse-stack-commands';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -255,6 +258,32 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       sseFinishedRef.current = true;
       const assistantMessage = fullContentRef.current;
 
+      // Process stack commands from AI response
+      const { cleanContent, commands } = parseStackCommands(assistantMessage);
+      if (commands.length > 0) {
+        const stackStore = useAIStackStore.getState();
+        for (const cmd of commands) {
+          if (cmd.type === 'add' && cmd.item) {
+            stackStore.addItem(cmd.item);
+          } else if (cmd.type === 'remove' && cmd.productId) {
+            stackStore.removeItem(cmd.productId);
+          } else if (cmd.type === 'update' && cmd.productId && cmd.quantity) {
+            stackStore.updateQuantity(cmd.productId, cmd.quantity);
+          } else if (cmd.type === 'clear') {
+            stackStore.clearStack();
+          }
+        }
+        // Update the displayed message to remove stack command tags
+        if (cleanContent !== assistantMessage) {
+          fullContentRef.current = cleanContent;
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = { role: 'assistant', content: cleanContent };
+            return newMessages;
+          });
+        }
+      }
+
       if (conversationId && assistantMessage) {
         await saveMessage(conversationId, 'assistant', assistantMessage);
         await supabase
@@ -288,6 +317,10 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     }
   };
 
+  const stackItems = useAIStackStore(s => s.items);
+  const stackIsOpen = useAIStackStore(s => s.isOpen);
+  const setStackOpen = useAIStackStore(s => s.setOpen);
+  const isMobile = useIsMobile();
   const isNewConversation = messages.length === 0;
 
   return (
@@ -305,7 +338,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative min-w-0">
-        {/* Header with Model Selector + Mobile sidebar toggle */}
+        {/* Header with Model Selector + Mobile sidebar toggle + Stack toggle */}
         <div className="px-3 md:px-4 py-3 border-b border-border/50 flex items-center justify-between gap-2">
           {/* Mobile sidebar trigger */}
           <MobileChatSidebarTrigger
@@ -319,6 +352,19 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             selectedModel={selectedModel} 
             onModelChange={handleModelChange} 
           />
+          {/* Stack toggle button */}
+          {stackItems.length > 0 && (
+            <button
+              onClick={() => setStackOpen(!stackIsOpen)}
+              className="relative p-2 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10 hover:bg-muted dark:hover:bg-white/10 transition-colors"
+              aria-label="Mon Stack"
+            >
+              <Package weight="fill" className="w-5 h-5 text-primary" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                {stackItems.length}
+              </span>
+            </button>
+          )}
         </div>
 
         {isNewConversation ? (
@@ -363,6 +409,20 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           </div>
         </div>
       </div>
+
+      {/* AI Stack Panel - Desktop: side panel, Mobile: Sheet */}
+      {!isMobile ? (
+        <AnimatePresence>
+          {stackIsOpen && stackItems.length > 0 && <AIStackPanel />}
+        </AnimatePresence>
+      ) : (
+        <Sheet open={stackIsOpen && stackItems.length > 0} onOpenChange={setStackOpen}>
+          <SheetContent side="right" className="w-[340px] p-0">
+            <SheetTitle className="sr-only">Mon Stack Mensuel</SheetTitle>
+            <AIStackPanel />
+          </SheetContent>
+        </Sheet>
+      )}
     </div>
   );
 }

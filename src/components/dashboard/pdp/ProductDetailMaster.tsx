@@ -244,9 +244,9 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
         </div>
 
         {/* ═══ Two-column layout — gallery stays sticky alongside ALL content ═══ */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
+        <section className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
           {/* LEFT — Sticky gallery */}
-          <div className="lg:sticky lg:top-[100px] lg:self-start lg:max-h-[calc(100vh-120px)]">
+          <div className="lg:sticky lg:top-4 lg:self-start lg:max-h-[calc(100vh-140px)] overflow-y-auto">
             <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} tags={product.tags} />
           </div>
 

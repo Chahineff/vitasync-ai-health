@@ -1,40 +1,56 @@
 
 
-# Fix: "Erreur réseau: Failed to fetch"
+# Plan de modifications
 
-## Root Cause
+## 1. Navbar responsive et adaptative
 
-The edge function boots successfully but **times out during the AI gateway call**. The logs confirm this: only "booted" appears, no request-level logs (like "Authenticated user:" or "System prompt length:"). This means the function crashes or times out before completing.
+**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
 
-The system prompt is still ~30-50K characters. Combined with `max_tokens: 20000`, the AI gateway either:
-- Times out trying to process such a large context
-- Exceeds the model's context window
-- Gets killed by Deno's wall-time limit (150s for edge functions)
+**Corrections** :
+- Remplacer la largeur fixe par un systeme de marges responsives progressives
+- Sur mobile (<768px) : marges de 12px de chaque cote
+- Sur tablette (768-1024px) : marges de 24px
+- Sur desktop (1024-1440px) : marges de 40px
+- Sur grand ecran (>1440px) : max-width de 1400px centre
+- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
+- La navbar gardera son design flottant capsule actuel
 
-## Fixes (2 files)
+**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
 
-### 1. `supabase/functions/ai-coach/index.ts`
+---
 
-**A. Reduce max_tokens to 8192** — 20K is excessive. Responses rarely exceed 2K tokens. 8192 gives plenty of room without overwhelming the gateway.
+## 2. Page About - En attente du PDF
 
-**B. Trim the base system prompt aggressively** (~60% reduction):
-- Remove the redundant example blocks (CORRECT/INCORRECT examples, ASCII boxes)
-- Condense the 6 playbooks into a compact bullet list (keep the rules, remove verbose explanations)
-- Remove the subscription playbook's verbose format examples (keep just the format template)
-- Remove the duplicate formatting instructions (they say the same thing 3 times)
+Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
 
-**C. Truncate conversation history to last 20 messages** — Long conversations bloat the payload. Trim older messages before sending to the gateway.
+---
 
-**D. Add a fetch timeout (60 seconds)** using `AbortController` on the gateway call so the edge function returns a proper error instead of hanging until Deno kills it.
+## 3. Page Blog - Etat vide + systeme d'administration
 
-**E. Add early logging** — Move `console.log("Request received")` to right after auth, before any async work, to confirm requests are reaching the function.
+**Etat vide** :
+- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
+- Garder le hero et le design existant
+- Supprimer les articles en dur
 
-### 2. `src/components/dashboard/ChatInterface.tsx`
+**Systeme d'administration des articles** :
+- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
+- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
+- La page Blog affichera dynamiquement les articles depuis la base de donnees
+- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
 
-**A. Trim messages sent to backend** — Only send the last 20 messages in the `body.messages` array instead of the full conversation history.
+**Fichiers modifies** :
+- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
+- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
+- Migration SQL : creation de la table `blog_posts`
 
-**B. Improve error message for network failures** — Show "Le coach est temporairement indisponible. Réessaie dans 30 secondes." instead of the raw "Failed to fetch" error.
+---
 
-## Key constraint respected
-All products remain available — the catalog format stays compact pipe-separated. The enriched product data stays. Only the instructional text (playbooks, examples, formatting rules) gets compressed.
+## Details techniques
+
+| Tache | Fichiers | Complexite |
+|-------|----------|------------|
+| Navbar responsive | `src/index.css` | Faible |
+| Blog etat vide | `src/pages/Blog.tsx` | Faible |
+| Table blog_posts + RLS | Migration SQL | Moyenne |
+| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
 

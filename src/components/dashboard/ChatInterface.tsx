@@ -210,7 +210,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
               'Authorization': `Bearer ${accessToken}`,
             },
             body: JSON.stringify({
-              messages: [...messages, { role: 'user', content: userMessage }],
+              messages: [...messages, { role: 'user', content: userMessage }].slice(-20),
               model: selectedModel.model,
               modelVersion: selectedModel.version || '1.0',
             }),
@@ -230,7 +230,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             await new Promise(r => setTimeout(r, 3000));
             return doFetch(2);
           }
-          throw new Error(`Erreur réseau: ${fetchError instanceof Error ? fetchError.message : 'Connexion impossible'}`);
+          throw new Error("Le coach est temporairement indisponible. Réessaie dans 30 secondes.");
         }
       };
 

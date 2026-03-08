@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useDailyCheckin } from "@/hooks/useDailyCheckin";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface MetricCardProps {
   icon: React.ReactNode;
@@ -84,6 +85,7 @@ function MetricCard({ icon, label, value, trend, invertTrend = false, delay = 0,
 }
 
 export function DailyCheckinWidget() {
+  const { t } = useTranslation();
   const { todayCheckin, getTrends, openCheckinModal } = useDailyCheckin();
   const trends = getTrends();
 
@@ -91,9 +93,9 @@ export function DailyCheckinWidget() {
     <Card className="glass-card-premium rounded-3xl p-6 border border-white/10">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-medium text-foreground">Mon suivi du jour</h3>
+          <h3 className="text-lg font-medium text-foreground">{t('checkinWidget.title')}</h3>
           <p className="text-sm text-muted-foreground">
-            {todayCheckin ? "Tendances sur 7 jours" : "Comment te sens-tu aujourd'hui ?"}
+            {todayCheckin ? t('checkinWidget.trends') : t('checkinWidget.howToday')}
           </p>
         </div>
         <Button 
@@ -106,9 +108,9 @@ export function DailyCheckinWidget() {
           )}
         >
           {todayCheckin ? (
-            <><PencilSimple weight="light" className="w-4 h-4" /> Modifier</>
+            <><PencilSimple weight="light" className="w-4 h-4" /> {t('checkinWidget.edit')}</>
           ) : (
-            <><Plus weight="bold" className="w-5 h-5" /> Check-in du jour</>
+            <><Plus weight="bold" className="w-5 h-5" /> {t('checkinWidget.startCheckin')}</>
           )}
         </Button>
       </div>
@@ -117,7 +119,7 @@ export function DailyCheckinWidget() {
         <div className="grid grid-cols-3 gap-4">
           <MetricCard
             icon={<Moon weight="duotone" className="w-5 h-5 text-indigo-400" />}
-            label="Sommeil"
+            label={t('checkinWidget.sleep')}
             value={todayCheckin.sleep_quality}
             trend={trends?.avgSleep}
             colorClass="text-indigo-400"
@@ -126,7 +128,7 @@ export function DailyCheckinWidget() {
           />
           <MetricCard
             icon={<Lightning weight="duotone" className="w-5 h-5 text-amber-400" />}
-            label="Énergie"
+            label={t('checkinWidget.energy')}
             value={todayCheckin.energy_level}
             trend={trends?.avgEnergy}
             colorClass="text-amber-400"
@@ -135,7 +137,7 @@ export function DailyCheckinWidget() {
           />
           <MetricCard
             icon={<Brain weight="duotone" className="w-5 h-5 text-rose-400" />}
-            label="Stress"
+            label={t('checkinWidget.stress')}
             value={todayCheckin.stress_level}
             trend={trends?.avgStress}
             invertTrend
@@ -153,20 +155,18 @@ export function DailyCheckinWidget() {
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Moon weight="duotone" className="w-8 h-8 text-primary" />
           </div>
-          <p className="text-sm text-muted-foreground mb-4">
-            Fais ton check-in quotidien pour suivre ta santé
-          </p>
+          <p className="text-sm text-muted-foreground mb-4">{t('checkinWidget.doCheckin')}</p>
           <Button onClick={openCheckinModal} className="gap-2">
-            <Plus weight="bold" className="w-4 h-4" /> Commencer
+            <Plus weight="bold" className="w-4 h-4" /> {t('checkinWidget.start')}
           </Button>
         </motion.div>
       )}
 
       {todayCheckin?.mood && (
         <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-center gap-2">
-          <span className="text-sm text-muted-foreground">Humeur :</span>
+          <span className="text-sm text-muted-foreground">{t('checkinWidget.mood')} :</span>
           <span className="text-sm font-medium text-foreground">
-            {{ great: "Super", good: "Bien", okay: "Bof", bad: "Pas top", terrible: "Difficile" }[todayCheckin.mood] || todayCheckin.mood}
+            {{ great: t('checkin.moodGreat'), good: t('checkin.moodGood'), okay: t('checkin.moodOkay'), bad: t('checkin.moodBad'), terrible: t('checkin.moodTerrible') }[todayCheckin.mood] || todayCheckin.mood}
           </span>
         </div>
       )}

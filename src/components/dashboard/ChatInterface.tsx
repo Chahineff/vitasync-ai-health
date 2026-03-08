@@ -181,22 +181,32 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
       }
 
       const session = await supabase.auth.getSession();
+      console.log('[VitaSync] Session status:', !!session.data.session, 'Token:', !!session.data.session?.access_token);
+      console.log('[VitaSync] CHAT_URL:', CHAT_URL);
+      
+      if (!session.data.session?.access_token) {
+        console.error('[VitaSync] No access token available');
+        throw new Error('Session expirée, veuillez vous reconnecter');
+      }
+
       const response = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.data.session?.access_token}`,
+          'Authorization': `Bearer ${session.data.session.access_token}`,
         },
-      body: JSON.stringify({
-        messages: [...messages, { role: 'user', content: userMessage }],
-        model: selectedModel.model,
-        modelVersion: selectedModel.version || '1.0',
-      }),
-    });
+        body: JSON.stringify({
+          messages: [...messages, { role: 'user', content: userMessage }],
+          model: selectedModel.model,
+          modelVersion: selectedModel.version || '1.0',
+        }),
+      });
+
+      console.log('[VitaSync] Response status:', response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('AI Coach error:', response.status, errorText);
+        console.error('[VitaSync] AI Coach error:', response.status, errorText);
         throw new Error(`Erreur ${response.status}: ${errorText}`);
       }
 

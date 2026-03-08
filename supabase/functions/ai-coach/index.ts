@@ -1048,7 +1048,7 @@ RÈGLES RÉFÉRENCES :
           })),
         ],
         stream: true,
-        max_tokens: 4096,
+        max_tokens: 20000,
       }),
     });
 

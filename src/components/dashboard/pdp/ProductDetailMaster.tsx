@@ -243,15 +243,15 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
           </div>
         </div>
 
-        {/* ═══ HERO — 50/50 columns ═══ */}
+        {/* ═══ Two-column layout — gallery stays sticky alongside ALL content ═══ */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-          {/* LEFT — Sticky gallery: follows scroll until end of grid */}
+          {/* LEFT — Sticky gallery */}
           <div className="lg:sticky lg:top-[100px] lg:self-start lg:max-h-[calc(100vh-120px)]">
             <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} tags={product.tags} />
           </div>
 
-          {/* RIGHT — Scrollable info (min-height ensures sticky works) */}
-          <div className="space-y-6 lg:min-h-[600px]">
+          {/* RIGHT — All scrollable content */}
+          <div className="space-y-6">
             <ProductPurchaseBox 
               product={product}
               parsedData={parsedData}
@@ -346,50 +346,50 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               enrichedData={enrichedData as any}
               productTitle={product.title}
             />
+
+            {/* ─── Below-the-fold sections (still in right column) ─── */}
+            <QuickBenefitsStrip 
+              productType={product.productType}
+              parsedData={parsedData}
+              bestForTags={enrichedData?.best_for_tags}
+              enrichedDosage={enrichedData?.suggested_use?.dosage}
+              enrichedTiming={enrichedData?.suggested_use?.timing}
+            />
+
+            <QualitySourcing 
+              parsedData={parsedData}
+              vendor={product.vendor}
+              enrichedQuality={enrichedData?.quality_info}
+            />
+
+            <SafetyCautions 
+              parsedData={parsedData}
+              enrichedSafety={enrichedData?.safety_warnings}
+            />
+
+            <ProductReviews 
+              productTitle={product.title}
+              productHandle={product.handle}
+              enrichedFaq={enrichedData?.faq as any}
+              reviewRating={(() => {
+                if (!product.reviewRating?.value) return null;
+                try {
+                  const parsed = JSON.parse(product.reviewRating.value);
+                  return parseFloat(parsed?.value ?? parsed);
+                } catch { return parseFloat(product.reviewRating.value); }
+              })()}
+              reviewCount={product.reviewCount?.value ? parseInt(product.reviewCount.value, 10) : null}
+            />
+
+            <BuildYourStack
+              products={allProducts}
+              currentProductId={product.id}
+              onProductClick={handleFlavorChange}
+            />
+
+            <PDPFooter />
           </div>
         </section>
-
-        {/* ─── Full-width below-the-fold ─── */}
-        <QuickBenefitsStrip 
-          productType={product.productType}
-          parsedData={parsedData}
-          bestForTags={enrichedData?.best_for_tags}
-          enrichedDosage={enrichedData?.suggested_use?.dosage}
-          enrichedTiming={enrichedData?.suggested_use?.timing}
-        />
-
-        <QualitySourcing 
-          parsedData={parsedData}
-          vendor={product.vendor}
-          enrichedQuality={enrichedData?.quality_info}
-        />
-
-        <SafetyCautions 
-          parsedData={parsedData}
-          enrichedSafety={enrichedData?.safety_warnings}
-        />
-
-        <ProductReviews 
-          productTitle={product.title}
-          productHandle={product.handle}
-          enrichedFaq={enrichedData?.faq as any}
-          reviewRating={(() => {
-            if (!product.reviewRating?.value) return null;
-            try {
-              const parsed = JSON.parse(product.reviewRating.value);
-              return parseFloat(parsed?.value ?? parsed);
-            } catch { return parseFloat(product.reviewRating.value); }
-          })()}
-          reviewCount={product.reviewCount?.value ? parseInt(product.reviewCount.value, 10) : null}
-        />
-
-        <BuildYourStack
-          products={allProducts}
-          currentProductId={product.id}
-          onProductClick={handleFlavorChange}
-        />
-
-        <PDPFooter />
       </motion.div>
 
       <MobileStickyCart product={product} selectedVariantIndex={selectedVariantIndex} />

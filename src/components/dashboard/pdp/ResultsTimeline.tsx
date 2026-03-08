@@ -8,19 +8,19 @@ interface ResultsTimelineProps {
 
 const defaultTimelines: Record<string, Array<{ period: string; label: string; detail: string }>> = {
   vitamin: [
-    { period: 'Semaine 1-2', label: 'Absorption', detail: 'Votre corps commence à reconstituer ses réserves.' },
-    { period: 'Semaine 3-4', label: 'Premiers effets', detail: 'Amélioration progressive de l'énergie et du bien-être.' },
-    { period: 'Mois 2-3', label: 'Résultats optimaux', detail: 'Bénéfices pleinement installés avec une prise régulière.' },
+    { period: 'Semaine 1-2', label: 'Absorption', detail: 'Votre corps commence a reconstituer ses reserves.' },
+    { period: 'Semaine 3-4', label: 'Premiers effets', detail: 'Amelioration progressive de l\'energie et du bien-etre.' },
+    { period: 'Mois 2-3', label: 'Resultats optimaux', detail: 'Benefices pleinement installes avec une prise reguliere.' },
   ],
   protein: [
-    { period: 'Semaine 1', label: 'Récupération', detail: 'Récupération musculaire améliorée après l'effort.' },
-    { period: 'Semaine 2-4', label: 'Performance', detail: 'Gains de force et d'endurance progressifs.' },
-    { period: 'Mois 2-3', label: 'Transformation', detail: 'Composition corporelle visiblement améliorée.' },
+    { period: 'Semaine 1', label: 'Recuperation', detail: 'Recuperation musculaire amelioree apres l\'effort.' },
+    { period: 'Semaine 2-4', label: 'Performance', detail: 'Gains de force et d\'endurance progressifs.' },
+    { period: 'Mois 2-3', label: 'Transformation', detail: 'Composition corporelle visiblement amelioree.' },
   ],
   default: [
-    { period: 'Semaine 1-2', label: 'Adaptation', detail: 'Votre organisme s'adapte au complément.' },
-    { period: 'Semaine 3-6', label: 'Effets visibles', detail: 'Les premiers bénéfices deviennent perceptibles.' },
-    { period: 'Mois 3+', label: 'Bénéfices durables', detail: 'Résultats consolidés avec une utilisation régulière.' },
+    { period: 'Semaine 1-2', label: 'Adaptation', detail: 'Votre organisme s\'adapte au complement.' },
+    { period: 'Semaine 3-6', label: 'Effets visibles', detail: 'Les premiers benefices deviennent perceptibles.' },
+    { period: 'Mois 3+', label: 'Benefices durables', detail: 'Resultats consolides avec une utilisation reguliere.' },
   ],
 };
 

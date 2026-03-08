@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Moon, Lightning, Brain, ArrowRight, Microphone, TrendUp, Package, TestTube, Storefront } from "@phosphor-icons/react";
+import { Moon, Lightning, Brain, ArrowRight, Microphone, TrendUp, TrendDown, Minus, Package, TestTube, Storefront, Heart, Target, BatteryCharging, Wind } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -62,6 +62,113 @@ function MetricCard({ icon, label, value, trend, colorClass, bgClass, delay = 0 
   );
 }
 
+/* ── Mock HealthScoreWidget ── */
+function MockHealthScore() {
+  const score = 78;
+  const color = "hsl(var(--primary))";
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ delay: 0.05 }}
+      className="glass-card rounded-2xl p-5 flex items-center gap-5"
+    >
+      <div className="relative flex-shrink-0">
+        <svg width="96" height="96" viewBox="0 0 96 96">
+          <circle cx="48" cy="48" r={radius} fill="none" stroke="hsl(var(--muted))" strokeWidth="6" />
+          <motion.circle
+            cx="48" cy="48" r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth="6"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            animate={{ strokeDashoffset: offset }}
+            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+            transform="rotate(-90 48 48)"
+            style={{ filter: `drop-shadow(0 0 6px ${color})` }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-2xl font-bold text-foreground">{score}</span>
+          <span className="text-[10px] text-foreground/40 uppercase tracking-wider">/ 100</span>
+        </div>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <Heart weight="fill" className="w-4 h-4" style={{ color }} />
+          <h3 className="text-sm font-medium text-foreground">Score Santé</h3>
+        </div>
+        <p className="text-lg font-semibold text-foreground mb-1">Bon</p>
+        <div className="flex items-center gap-1.5">
+          <TrendUp weight="bold" className="w-3.5 h-3.5 text-primary" />
+          <span className="text-xs text-foreground/50">+5 vs hier</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Mock WeeklyGoalsWidget ── */
+function MockWeeklyGoals() {
+  const goals = [
+    { label: "Énergie", value: 72, icon: BatteryCharging, color: "bg-amber-500", trend: "+8%" },
+    { label: "Sommeil", value: 80, icon: Moon, color: "bg-indigo-500", trend: "+12%" },
+    { label: "Anti-stress", value: 60, icon: Wind, color: "bg-emerald-500", trend: "+3%" },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ delay: 0.08 }}
+      className="glass-card rounded-2xl p-5"
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <Target weight="fill" className="w-4 h-4 text-primary" />
+        <h3 className="text-sm font-medium text-foreground">Objectifs de la semaine</h3>
+      </div>
+      <div className="space-y-3">
+        {goals.map((goal, i) => (
+          <motion.div
+            key={goal.label}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 + i * 0.1 }}
+            className="flex items-center gap-3"
+          >
+            <div className="w-8 h-8 rounded-lg bg-card/60 border border-border/30 flex items-center justify-center shrink-0">
+              <goal.icon weight="duotone" className="w-4 h-4 text-foreground/60" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium text-foreground/70">{goal.label}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-semibold text-foreground">{goal.value}%</span>
+                  <span className="text-[10px] text-primary font-medium">{goal.trend}</span>
+                </div>
+              </div>
+              <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                <motion.div
+                  className={cn("h-full rounded-full", goal.color)}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${goal.value}%` }}
+                  transition={{ duration: 0.8, delay: 0.3 + i * 0.1, ease: "easeOut" }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 export function TutorialHomeDemo() {
   return (
     <div className="space-y-6">
@@ -73,6 +180,12 @@ export function TutorialHomeDemo() {
         <p className="text-sm text-foreground/50 font-light capitalize">
           {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
+      </div>
+
+      {/* HealthScore + WeeklyGoals (new) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MockHealthScore />
+        <MockWeeklyGoals />
       </div>
 
       {/* DailyCheckinWidget replica */}

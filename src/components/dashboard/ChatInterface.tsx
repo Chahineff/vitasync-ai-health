@@ -321,6 +321,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const stackIsOpen = useAIStackStore(s => s.isOpen);
   const setStackOpen = useAIStackStore(s => s.setOpen);
   const isMobile = useIsMobile();
+  const isNewConversation = messages.length === 0;
 
   return (
     <div className="flex h-full min-h-0 bg-background/30 md:rounded-3xl overflow-hidden md:border md:border-border/50 backdrop-blur-xl">
@@ -337,7 +338,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative min-w-0">
-        {/* Header with Model Selector + Mobile sidebar toggle */}
+        {/* Header with Model Selector + Mobile sidebar toggle + Stack toggle */}
         <div className="px-3 md:px-4 py-3 border-b border-border/50 flex items-center justify-between gap-2">
           {/* Mobile sidebar trigger */}
           <MobileChatSidebarTrigger
@@ -351,6 +352,19 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             selectedModel={selectedModel} 
             onModelChange={handleModelChange} 
           />
+          {/* Stack toggle button */}
+          {stackItems.length > 0 && !isMobile && (
+            <button
+              onClick={() => setStackOpen(!stackIsOpen)}
+              className="relative p-2 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10 hover:bg-muted dark:hover:bg-white/10 transition-colors"
+              aria-label="Mon Stack"
+            >
+              <Package weight="fill" className="w-5 h-5 text-primary" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                {stackItems.length}
+              </span>
+            </button>
+          )}
         </div>
 
         {isNewConversation ? (
@@ -395,6 +409,13 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           </div>
         </div>
       </div>
+
+      {/* AI Stack Panel - Right side */}
+      {!isMobile && (
+        <AnimatePresence>
+          {stackIsOpen && stackItems.length > 0 && <AIStackPanel />}
+        </AnimatePresence>
+      )}
     </div>
   );
 }

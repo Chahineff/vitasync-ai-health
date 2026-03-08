@@ -362,13 +362,13 @@ const Dashboard = () => {
       </aside>
 
       {/* Main - with margin-left to compensate for fixed sidebar */}
-      <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
+      <main className={`flex-1 flex flex-col h-screen max-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
         
         {/* Add padding bottom on mobile for bottom nav */}
-        <div id="dashboard-scroll-container" className={`flex-1 overflow-auto overflow-x-hidden ${activeSection === 'coach' ? 'p-0 pb-0 lg:p-8 lg:pb-8' : 'p-4 lg:p-8 pb-24 lg:pb-8'}`}>
+        <div id="dashboard-scroll-container" className={`flex-1 overflow-x-hidden ${activeSection === 'coach' ? 'overflow-hidden p-0 pb-0 lg:p-4 lg:pb-4' : 'overflow-auto p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
               {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} onGoToStack={() => handleSectionChange("mystack")} onGoToAnalyses={() => handleSectionChange("analyses")} />}
-              {activeSection === "coach" && <motion.div key="coach" initial={{
+              {activeSection === "coach" && <motion.div key="coach" className="h-full" initial={{
             opacity: 0,
             scale: 0.97,
             filter: "blur(6px)"

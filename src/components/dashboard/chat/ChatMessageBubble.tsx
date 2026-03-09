@@ -15,6 +15,9 @@ import {
   ProductDetailCard, 
   ReportButton 
 } from './ChatReferenceBlocks';
+import { parseStackCommands } from '@/lib/parse-stack-commands';
+import { useAIStackStore } from '@/stores/aiStackStore';
+import { Package } from '@phosphor-icons/react';
 
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 

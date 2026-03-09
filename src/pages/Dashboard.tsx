@@ -31,7 +31,7 @@ import { WeeklyGoalsWidget } from "@/components/dashboard/WeeklyGoalsWidget";
 import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
-type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "analyses" | "settings" | "help" | "blog";
+type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "analyses" | "settings" | "help";
 
 /* ── Welcome Overlay with typewriter + gradient glow ── */
 function WelcomeOverlay() {

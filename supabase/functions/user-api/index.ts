@@ -190,9 +190,13 @@ serve(async (req) => {
         return json(data, 201);
       }
       if (method === "PUT" && resourceId) {
+        const putAllowed = ["product_name", "dosage", "time_of_day", "active", "recommended_by_ai", "shopify_product_id"];
+        const updates: Record<string, unknown> = {};
+        for (const k of putAllowed) if (k in body) updates[k] = body[k];
+        if (Object.keys(updates).length === 0) return err("No valid fields provided");
         const { data, error: e } = await admin
           .from("supplement_tracking")
-          .update(body)
+          .update(updates)
           .eq("id", resourceId)
           .eq("user_id", userId)
           .select()

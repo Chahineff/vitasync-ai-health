@@ -143,7 +143,39 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     elements.push(<span key="cursor">{streamingCursor}</span>);
   }
   
+  if (stackButton) {
+    elements.push(stackButton);
+  }
+
   return <div className="space-y-2">{elements}</div>;
+}
+
+function StackReopenButton({ commands }: { commands: ReturnType<typeof parseStackCommands>['commands'] }) {
+  const setStackOpen = useAIStackStore(s => s.setOpen);
+  const addItem = useAIStackStore(s => s.addItem);
+  
+  const handleOpen = () => {
+    const store = useAIStackStore.getState();
+    // Re-inject items from commands if stack is empty
+    if (store.items.length === 0) {
+      for (const cmd of commands) {
+        if (cmd.type === 'add' && cmd.item) {
+          store.addItem(cmd.item);
+        }
+      }
+    }
+    setStackOpen(true);
+  };
+
+  return (
+    <button
+      onClick={handleOpen}
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors text-sm text-primary font-medium"
+    >
+      <Package weight="fill" className="w-4 h-4" />
+      Voir le stack IA
+    </button>
+  );
 }
 
 function renderReference(ref: { type: string; id?: string }, keyIdx: number): React.ReactNode {

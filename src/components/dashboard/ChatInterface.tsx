@@ -448,8 +448,20 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                 ))}
               </AnimatePresence>
 
-              {/* Typing Indicator - without bubble */}
-              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+              {/* Typing Indicator - stays visible during thinking phase */}
+              {isLoading && (() => {
+                const lastMsg = messages[messages.length - 1];
+                if (!lastMsg) return false;
+                if (lastMsg.role === 'user') return true;
+                if (lastMsg.role === 'assistant') {
+                  const c = lastMsg.content.trim();
+                  // Show while content is empty or only contains <think> blocks (no visible answer yet)
+                  if (c.length === 0) return true;
+                  const withoutThink = c.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+                  if (withoutThink.length === 0) return true;
+                }
+                return false;
+              })() && (
                 <TypingIndicator selectedModel={selectedModel.model} />
               )}
               <div ref={messagesEndRef} />

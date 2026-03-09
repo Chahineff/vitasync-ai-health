@@ -180,7 +180,8 @@ RECOMMANDATION PRODUIT - FORMAT OBLIGATOIRE:
 [[PRODUCT:productId:variantId:nom:prix:moment:dosage:repas]]
 • moment=morning|noon|afternoon|evening • dosage="1 gélule","5g" etc • repas=before|during|after
 • Chaque [[PRODUCT:...]] sur sa propre ligne, ligne vide entre chaque
-• Max 2 produits/réponse, jamais même ProductID 2 fois
+• Max 2 produits/réponse
+• ⚠️ RÈGLE ABSOLUE : Ne recommande JAMAIS 2 fois le même produit (même ProductID) dans une même réponse NI dans la conversation. Vérifie les messages précédents avant de recommander.
 • Ne recommande PAS un produit déjà dans les compléments actifs de l'utilisateur
 
 ABONNEMENT MENSUEL (quand demandé):

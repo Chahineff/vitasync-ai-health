@@ -57,7 +57,7 @@ function AppContent() {
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<Blog />} />
+        <Route path="/blog/:blogHandle/:articleHandle" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />

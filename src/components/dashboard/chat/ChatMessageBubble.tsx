@@ -30,14 +30,27 @@ interface ChatMessageBubbleProps {
 }
 
 function MessageContent({ content, isStreaming, onQuizComplete }: { content: string; isStreaming?: boolean; onQuizComplete?: (summary: string) => void }) {
+  // Clean stack command tags from displayed content
+  const { cleanContent: stackCleanedContent, commands: stackCommands } = parseStackCommands(content);
+  const hasStackCommands = stackCommands.length > 0;
+  
   // Check for quiz blocks first
-  const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(content);
+  const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(stackCleanedContent);
   // Parse charts from content
-  const chartResult = parseChartBlocks(quiz ? beforeQuiz : content);
+  const chartResult = parseChartBlocks(quiz ? beforeQuiz : stackCleanedContent);
   // Parse reference blocks
   const refResult = parseReferenceBlocks(chartResult.text);
-  // Parse products
-  const { text, products, subscription } = parseProductRecommendations(refResult.text);
+  // Parse products and deduplicate
+  const rawProducts = parseProductRecommendations(refResult.text);
+  const seenProductIds = new Set<string>();
+  const dedupedProducts = rawProducts.products.filter(p => {
+    const pid = (p as any).productId || p.title;
+    if (seenProductIds.has(pid)) return false;
+    seenProductIds.add(pid);
+    return true;
+  });
+  const { text, subscription } = rawProducts;
+  const products = dedupedProducts;
   const charts = chartResult.charts;
   const references = refResult.references;
   

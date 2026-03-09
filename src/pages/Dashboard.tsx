@@ -152,10 +152,6 @@ const Dashboard = () => {
     icon: TestTube
   }];
   const generalItems = [{
-    id: "blog" as Section,
-    label: "Blog",
-    icon: BookOpen
-  }, {
     id: "settings" as Section,
     label: t("dashboard.settings"),
     icon: Gear

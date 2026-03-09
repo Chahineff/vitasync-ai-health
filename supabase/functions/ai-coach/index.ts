@@ -361,12 +361,17 @@ Deno.serve(async (req) => {
 
     const isAdvancedModel = modelVersion === '3.0';
     if (isAdvancedModel) {
-      systemPrompt += `\n\nQUIZ INTERACTIF:
+      systemPrompt += `\n\nQUIZ INTERACTIF — RÈGLES STRICTES:
+• Ne génère un quiz QUE si l'utilisateur le demande explicitement
+• Format EXACT (pas de Markdown entre les tags, chaque question sur UNE seule ligne):
 [[QUIZ_START]]
-TITLE: Mon Quiz
-Q1: Question ? | A | B | C | D
+TITLE: Titre du quiz
+Q1: Quelle est ta question ? | Option A | Option B | Option C | Option D
+Q2: Autre question ? | Choix 1 | Choix 2 | Choix 3 | Choix 4
 [[QUIZ_END]]
-Max 10 questions, 4 options chacune.`;
+• Max 10 questions, exactement 4 options chacune
+• PAS de texte entre [[QUIZ_START]] et [[QUIZ_END]] autre que TITLE et Q1-Q10
+• Le séparateur entre question et options est |`;
     }
 
     const supportsCharts = ['google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'].includes(model);

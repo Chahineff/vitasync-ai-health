@@ -58,14 +58,19 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 align-middle animate-cursor-blink" />
   ) : null;
 
-  if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0) {
+  if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0 && !hasStackCommands) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed chat-markdown">
-        <ReactMarkdown>{content}</ReactMarkdown>
+        <ReactMarkdown>{stackCleanedContent}</ReactMarkdown>
         {streamingCursor}
       </div>
     );
   }
+
+  // Stack reopen button
+  const stackButton = hasStackCommands && !isStreaming ? (
+    <StackReopenButton commands={stackCommands} />
+  ) : null;
 
   // If there's a quiz, render it
   if (quiz) {

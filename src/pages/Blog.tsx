@@ -8,32 +8,56 @@ import { motion } from "framer-motion";
 import { ArrowRight, Clock, Tag, NotePencil } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SplineBackground } from "@/components/sections/SplineBackground";
-import { supabase } from "@/integrations/supabase/client";
+import { storefrontApiRequest } from "@/lib/shopify";
 import { useQuery } from "@tanstack/react-query";
 
-interface BlogPost {
+const ARTICLES_QUERY = `
+  query GetArticles($first: Int!) {
+    articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
+      edges {
+        node {
+          id
+          title
+          handle
+          excerpt
+          publishedAt
+          image {
+            url
+            altText
+          }
+          blog {
+            title
+            handle
+          }
+          authorV2 {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+interface ShopifyArticle {
   id: string;
-  slug: string;
   title: string;
+  handle: string;
   excerpt: string | null;
-  category: string | null;
-  read_time: string | null;
-  created_at: string;
+  publishedAt: string;
+  image: { url: string; altText: string | null } | null;
+  blog: { title: string; handle: string };
+  authorV2: { name: string } | null;
 }
 
 const Blog = () => {
   const { t } = useTranslation();
 
   const { data: articles = [], isLoading } = useQuery({
-    queryKey: ["blog-posts"],
+    queryKey: ["shopify-blog-articles"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blog_posts" as any)
-        .select("id, slug, title, excerpt, category, read_time, created_at")
-        .eq("published", true)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data || []) as unknown as BlogPost[];
+      const data = await storefrontApiRequest(ARTICLES_QUERY, { first: 20 });
+      const edges = data?.data?.articles?.edges || [];
+      return edges.map((e: { node: ShopifyArticle }) => e.node) as ShopifyArticle[];
     },
   });
 
@@ -96,31 +120,38 @@ const Blog = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 {articles.map((article, index) => (
                   <ScrollReveal key={article.id} delay={index * 0.1}>
-                    <Link to={`/blog/${article.slug}`} className="block group">
+                    <Link to={`/blog/${article.blog.handle}/${article.handle}`} className="block group">
                       <GlassCard hover className="h-full">
-                        <div className={`h-48 rounded-xl bg-gradient-to-br ${gradients[index % gradients.length]} mb-6 opacity-20 group-hover:opacity-30 transition-opacity`} />
+                        {article.image ? (
+                          <div className="h-48 rounded-xl overflow-hidden mb-6">
+                            <img
+                              src={article.image.url}
+                              alt={article.image.altText || article.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                        ) : (
+                          <div className={`h-48 rounded-xl bg-gradient-to-br ${gradients[index % gradients.length]} mb-6 opacity-20 group-hover:opacity-30 transition-opacity`} />
+                        )}
                         <div className="flex items-center gap-4 mb-4">
-                          {article.category && (
-                            <span className="inline-flex items-center gap-1.5 text-xs text-primary">
-                              <Tag size={14} weight="light" />
-                              {article.category}
-                            </span>
-                          )}
-                          {article.read_time && (
-                            <span className="inline-flex items-center gap-1.5 text-xs text-foreground/50">
-                              <Clock size={14} weight="light" />
-                              {article.read_time}
+                          <span className="inline-flex items-center gap-1.5 text-xs text-primary">
+                            <Tag size={14} weight="light" />
+                            {article.blog.title}
+                          </span>
+                          {article.authorV2?.name && (
+                            <span className="text-xs text-foreground/50">
+                              {article.authorV2.name}
                             </span>
                           )}
                           <span className="text-xs text-foreground/40">
-                            {new Date(article.created_at).toLocaleDateString()}
+                            {new Date(article.publishedAt).toLocaleDateString()}
                           </span>
                         </div>
                         <h2 className="text-xl font-light tracking-tight text-foreground mb-3 group-hover:text-primary transition-colors">
                           {article.title}
                         </h2>
                         {article.excerpt && (
-                          <p className="text-sm text-foreground/50 mb-4">
+                          <p className="text-sm text-foreground/50 mb-4 line-clamp-3">
                             {article.excerpt}
                           </p>
                         )}

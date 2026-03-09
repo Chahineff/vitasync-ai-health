@@ -177,9 +177,13 @@ serve(async (req) => {
         return json(data);
       }
       if (method === "POST" && !resourceId) {
+        const postAllowed = ["product_name", "dosage", "time_of_day", "active", "recommended_by_ai", "shopify_product_id"];
+        const insert: Record<string, unknown> = { user_id: userId };
+        for (const k of postAllowed) if (k in body) insert[k] = body[k];
+        if (!insert.product_name) return err("product_name required");
         const { data, error: e } = await admin
           .from("supplement_tracking")
-          .insert({ user_id: userId, ...body })
+          .insert(insert)
           .select()
           .single();
         if (e) return err(e.message, 500);

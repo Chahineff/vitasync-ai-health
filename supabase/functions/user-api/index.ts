@@ -282,18 +282,25 @@ serve(async (req) => {
         return json(data);
       }
       if (method === "POST" && !resourceId) {
+        const checkinAllowed = ["checkin_date", "sleep_quality", "energy_level", "stress_level", "supplement_feedback", "pain_areas", "mood", "notes"];
+        const insert: Record<string, unknown> = { user_id: userId };
+        for (const k of checkinAllowed) if (k in body) insert[k] = body[k];
         const { data, error: e } = await admin
           .from("daily_checkins")
-          .insert({ user_id: userId, ...body })
+          .insert(insert)
           .select()
           .single();
         if (e) return err(e.message, 500);
         return json(data, 201);
       }
       if (method === "PUT" && resourceId) {
+        const checkinAllowed = ["checkin_date", "sleep_quality", "energy_level", "stress_level", "supplement_feedback", "pain_areas", "mood", "notes"];
+        const updates: Record<string, unknown> = {};
+        for (const k of checkinAllowed) if (k in body) updates[k] = body[k];
+        if (Object.keys(updates).length === 0) return err("No valid fields provided");
         const { data, error: e } = await admin
           .from("daily_checkins")
-          .update(body)
+          .update(updates)
           .eq("id", resourceId)
           .eq("user_id", userId)
           .select()

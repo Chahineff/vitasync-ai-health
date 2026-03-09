@@ -44,7 +44,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
   const rawProducts = parseProductRecommendations(refResult.text);
   const seenProductIds = new Set<string>();
   const dedupedProducts = rawProducts.products.filter(p => {
-    const pid = (p as any).productId || p.title;
+    const pid = p.productId;
     if (seenProductIds.has(pid)) return false;
     seenProductIds.add(pid);
     return true;

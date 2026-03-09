@@ -141,9 +141,22 @@ serve(async (req) => {
         return json(data);
       }
       if (method === "PUT") {
+        const allowed = [
+          "health_goals", "current_issues", "activity_level", "diet_type",
+          "sleep_quality", "stress_level", "supplements_experience", "allergies",
+          "medical_conditions", "age_range", "is_adult", "sleep_quality_score",
+          "energy_level", "budget_range_min", "budget_range_max",
+          "shipping_country", "sport_types", "sleep_hours", "preferred_forms",
+          "max_daily_intakes", "monthly_budget", "medications_notes",
+          "notify_supplement_reminders", "notify_analysis_ready", "notify_weekly_summary",
+          "onboarding_completed", "tutorial_completed",
+        ];
+        const updates: Record<string, unknown> = {};
+        for (const k of allowed) if (k in body) updates[k] = body[k];
+        if (Object.keys(updates).length === 0) return err("No valid fields provided");
         const { data, error: e } = await admin
           .from("user_health_profiles")
-          .update(body)
+          .update(updates)
           .eq("user_id", userId)
           .select()
           .maybeSingle();
@@ -164,18 +177,26 @@ serve(async (req) => {
         return json(data);
       }
       if (method === "POST" && !resourceId) {
+        const postAllowed = ["product_name", "dosage", "time_of_day", "active", "recommended_by_ai", "shopify_product_id"];
+        const insert: Record<string, unknown> = { user_id: userId };
+        for (const k of postAllowed) if (k in body) insert[k] = body[k];
+        if (!insert.product_name) return err("product_name required");
         const { data, error: e } = await admin
           .from("supplement_tracking")
-          .insert({ user_id: userId, ...body })
+          .insert(insert)
           .select()
           .single();
         if (e) return err(e.message, 500);
         return json(data, 201);
       }
       if (method === "PUT" && resourceId) {
+        const putAllowed = ["product_name", "dosage", "time_of_day", "active", "recommended_by_ai", "shopify_product_id"];
+        const updates: Record<string, unknown> = {};
+        for (const k of putAllowed) if (k in body) updates[k] = body[k];
+        if (Object.keys(updates).length === 0) return err("No valid fields provided");
         const { data, error: e } = await admin
           .from("supplement_tracking")
-          .update(body)
+          .update(updates)
           .eq("id", resourceId)
           .eq("user_id", userId)
           .select()
@@ -261,18 +282,25 @@ serve(async (req) => {
         return json(data);
       }
       if (method === "POST" && !resourceId) {
+        const checkinAllowed = ["checkin_date", "sleep_quality", "energy_level", "stress_level", "supplement_feedback", "pain_areas", "mood", "notes"];
+        const insert: Record<string, unknown> = { user_id: userId };
+        for (const k of checkinAllowed) if (k in body) insert[k] = body[k];
         const { data, error: e } = await admin
           .from("daily_checkins")
-          .insert({ user_id: userId, ...body })
+          .insert(insert)
           .select()
           .single();
         if (e) return err(e.message, 500);
         return json(data, 201);
       }
       if (method === "PUT" && resourceId) {
+        const checkinAllowed = ["checkin_date", "sleep_quality", "energy_level", "stress_level", "supplement_feedback", "pain_areas", "mood", "notes"];
+        const updates: Record<string, unknown> = {};
+        for (const k of checkinAllowed) if (k in body) updates[k] = body[k];
+        if (Object.keys(updates).length === 0) return err("No valid fields provided");
         const { data, error: e } = await admin
           .from("daily_checkins")
-          .update(body)
+          .update(updates)
           .eq("id", resourceId)
           .eq("user_id", userId)
           .select()

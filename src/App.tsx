@@ -13,6 +13,7 @@ import { CookieBanner } from "@/components/ui/CookieBanner";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -56,7 +57,7 @@ function AppContent() {
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<Blog />} />
+        <Route path="/blog/:blogHandle/:articleHandle" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />

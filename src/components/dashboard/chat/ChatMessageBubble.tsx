@@ -15,6 +15,9 @@ import {
   ProductDetailCard, 
   ReportButton 
 } from './ChatReferenceBlocks';
+import { parseStackCommands } from '@/lib/parse-stack-commands';
+import { useAIStackStore } from '@/stores/aiStackStore';
+import { Package } from '@phosphor-icons/react';
 
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
@@ -27,14 +30,27 @@ interface ChatMessageBubbleProps {
 }
 
 function MessageContent({ content, isStreaming, onQuizComplete }: { content: string; isStreaming?: boolean; onQuizComplete?: (summary: string) => void }) {
+  // Clean stack command tags from displayed content
+  const { cleanContent: stackCleanedContent, commands: stackCommands } = parseStackCommands(content);
+  const hasStackCommands = stackCommands.length > 0;
+  
   // Check for quiz blocks first
-  const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(content);
+  const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(stackCleanedContent);
   // Parse charts from content
-  const chartResult = parseChartBlocks(quiz ? beforeQuiz : content);
+  const chartResult = parseChartBlocks(quiz ? beforeQuiz : stackCleanedContent);
   // Parse reference blocks
   const refResult = parseReferenceBlocks(chartResult.text);
-  // Parse products
-  const { text, products, subscription } = parseProductRecommendations(refResult.text);
+  // Parse products and deduplicate
+  const rawProducts = parseProductRecommendations(refResult.text);
+  const seenProductIds = new Set<string>();
+  const dedupedProducts = rawProducts.products.filter(p => {
+    const pid = p.productId;
+    if (seenProductIds.has(pid)) return false;
+    seenProductIds.add(pid);
+    return true;
+  });
+  const { text, subscription } = rawProducts;
+  const products = dedupedProducts;
   const charts = chartResult.charts;
   const references = refResult.references;
   
@@ -42,14 +58,19 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 align-middle animate-cursor-blink" />
   ) : null;
 
-  if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0) {
+  if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0 && !hasStackCommands) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed chat-markdown">
-        <ReactMarkdown>{content}</ReactMarkdown>
+        <ReactMarkdown>{stackCleanedContent}</ReactMarkdown>
         {streamingCursor}
       </div>
     );
   }
+
+  // Stack reopen button
+  const stackButton = hasStackCommands && !isStreaming ? (
+    <StackReopenButton commands={stackCommands} />
+  ) : null;
 
   // If there's a quiz, render it
   if (quiz) {
@@ -122,7 +143,39 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
     elements.push(<span key="cursor">{streamingCursor}</span>);
   }
   
+  if (stackButton) {
+    elements.push(stackButton);
+  }
+
   return <div className="space-y-2">{elements}</div>;
+}
+
+function StackReopenButton({ commands }: { commands: ReturnType<typeof parseStackCommands>['commands'] }) {
+  const setStackOpen = useAIStackStore(s => s.setOpen);
+  const addItem = useAIStackStore(s => s.addItem);
+  
+  const handleOpen = () => {
+    const store = useAIStackStore.getState();
+    // Re-inject items from commands if stack is empty
+    if (store.items.length === 0) {
+      for (const cmd of commands) {
+        if (cmd.type === 'add' && cmd.item) {
+          store.addItem(cmd.item);
+        }
+      }
+    }
+    setStackOpen(true);
+  };
+
+  return (
+    <button
+      onClick={handleOpen}
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors text-sm text-primary font-medium"
+    >
+      <Package weight="fill" className="w-4 h-4" />
+      Voir le stack IA
+    </button>
+  );
 }
 
 function renderReference(ref: { type: string; id?: string }, keyIdx: number): React.ReactNode {

@@ -13,6 +13,7 @@ import { CookieBanner } from "@/components/ui/CookieBanner";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";

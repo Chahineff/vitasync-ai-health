@@ -141,9 +141,22 @@ serve(async (req) => {
         return json(data);
       }
       if (method === "PUT") {
+        const allowed = [
+          "health_goals", "current_issues", "activity_level", "diet_type",
+          "sleep_quality", "stress_level", "supplements_experience", "allergies",
+          "medical_conditions", "age_range", "is_adult", "sleep_quality_score",
+          "energy_level", "budget_range_min", "budget_range_max",
+          "shipping_country", "sport_types", "sleep_hours", "preferred_forms",
+          "max_daily_intakes", "monthly_budget", "medications_notes",
+          "notify_supplement_reminders", "notify_analysis_ready", "notify_weekly_summary",
+          "onboarding_completed", "tutorial_completed",
+        ];
+        const updates: Record<string, unknown> = {};
+        for (const k of allowed) if (k in body) updates[k] = body[k];
+        if (Object.keys(updates).length === 0) return err("No valid fields provided");
         const { data, error: e } = await admin
           .from("user_health_profiles")
-          .update(body)
+          .update(updates)
           .eq("user_id", userId)
           .select()
           .maybeSingle();

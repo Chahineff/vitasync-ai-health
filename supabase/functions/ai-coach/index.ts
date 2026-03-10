@@ -18,6 +18,23 @@ function getCorsHeaders(req: Request) {
   };
 }
 
+// ============================================
+// MODEL TIERING
+// ============================================
+type ModelTier = 'lite' | 'standard' | 'pro';
+
+function getModelTier(model: string): ModelTier {
+  if (model === 'google/gemini-2.5-flash-lite') return 'lite';
+  if (model === 'google/gemini-3-pro-preview') return 'pro';
+  return 'standard'; // gemini-3-flash-preview or fallback
+}
+
+const TIER_CONFIG: Record<ModelTier, { maxTokens: number; messageSlice: number; historyDays: number }> = {
+  lite:     { maxTokens: 2048,  messageSlice: 10, historyDays: 7 },
+  standard: { maxTokens: 8192,  messageSlice: 20, historyDays: 90 },
+  pro:      { maxTokens: 16384, messageSlice: 20, historyDays: 90 },
+};
+
 // Shopify config
 const SHOPIFY_STORE_DOMAIN = "vitasync2.myshopify.com";
 const SHOPIFY_API_VERSION = "2025-07";
@@ -96,11 +113,6 @@ async function fetchEnrichedProductData(supabase: any) {
   return data || [];
 }
 
-function getHistoryDays(model: string): number {
-  if (model === 'google/gemini-2.5-flash-lite') return 7;
-  return 90;
-}
-
 // deno-lint-ignore no-explicit-any
 async function fetchRecentCheckins(supabase: any, userId: string, historyDays: number = 7) {
   const startDate = new Date();
@@ -158,16 +170,19 @@ function calculateTrends(checkins: any[]) {
 }
 
 // ============================================
-// CONDENSED SYSTEM PROMPT (~60% smaller)
+// SYSTEM PROMPT — TIERED
 // ============================================
-const baseSystemPrompt = `Tu es VitaSync AI, coach santé & nutrition premium. Français obligatoire.
+function getBaseSystemPrompt(tier: ModelTier): string {
+  const maxProducts = tier === 'lite' ? 1 : 2;
 
-RÔLE: Aider les utilisateurs avec objectifs santé (énergie, sommeil, performance, nutrition), proposer compléments pertinents, construire stacks personnalisés.
+  let prompt = `Tu es VitaSync AI, coach santé & nutrition premium. Français obligatoire.
+
+RÔLE: Aider les utilisateurs avec objectifs santé (énergie, sommeil, performance, nutrition), proposer compléments pertinents${tier === 'lite' ? '.' : ', construire stacks personnalisés.'}
 
 PRINCIPES:
 • SÉCURITÉ: Jamais diagnostiquer. Bien-être uniquement. Symptômes graves → médecin.
-• STYLE: Calme, premium, 6-10 lignes max. Emojis, titres Markdown (##/###), listes à puces, **gras**.
-• CONVERSION SOFT: Valeur d'abord. Max 2 produits/réponse. "Voici 2 options" jamais "Achète maintenant".
+• STYLE: Calme, premium, ${tier === 'lite' ? '4-6' : '6-10'} lignes max. Emojis, titres Markdown (##/###), listes à puces, **gras**.
+• CONVERSION SOFT: Valeur d'abord. Max ${maxProducts} produit${maxProducts > 1 ? 's' : ''}/réponse. "Voici ${maxProducts > 1 ? '2 options' : 'une option'}" jamais "Achète maintenant".
 • Vente USA uniquement.
 
 MOTEUR DE DÉCISION (chaque message):
@@ -180,9 +195,16 @@ RECOMMANDATION PRODUIT - FORMAT OBLIGATOIRE:
 [[PRODUCT:productId:variantId:nom:prix:moment:dosage:repas]]
 • moment=morning|noon|afternoon|evening • dosage="1 gélule","5g" etc • repas=before|during|after
 • Chaque [[PRODUCT:...]] sur sa propre ligne, ligne vide entre chaque
-• Max 2 produits/réponse
+• Max ${maxProducts} produit${maxProducts > 1 ? 's' : ''}/réponse
 • ⚠️ RÈGLE ABSOLUE : Ne recommande JAMAIS 2 fois le même produit (même ProductID) dans une même réponse NI dans la conversation. Vérifie les messages précédents avant de recommander.
 • Ne recommande PAS un produit déjà dans les compléments actifs de l'utilisateur
+
+PERSONNALISATION CHECK-INS:
+• Sommeil <3 → priorise sommeil • Énergie <3 → boosters • Stress >3.5 → anti-stress`;
+
+  // LITE: No stack, no subscription format
+  if (tier !== 'lite') {
+    prompt += `
 
 ABONNEMENT MENSUEL (quand demandé):
 [[SUBSCRIPTION_START]]
@@ -197,19 +219,33 @@ STACK MENSUEL (panneau latéral):
 • Modifier: [[STACK_UPDATE:productId:quantité]]
 • Vider: [[STACK_CLEAR]]
 • TOUJOURS demander confirmation avant d'ajouter
-• Après ajout: "✅ Ajouté à ton stack !"
+• Après ajout: "✅ Ajouté à ton stack !"`;
+  }
 
-PERSONNALISATION CHECK-INS:
-• Sommeil <3 → priorise sommeil • Énergie <3 → boosters • Stress >3.5 → anti-stress`;
+  // LITE: Add restrictions notice
+  if (tier === 'lite') {
+    prompt += `
+
+⚠️ RESTRICTIONS MODE LITE:
+• Tu ne peux PAS générer de quiz interactifs ([[QUIZ_START]])
+• Tu ne peux PAS générer de graphiques ([[CHART:...]])
+• Tu ne peux PAS ajouter au stack IA ([[STACK_ADD:...]], [[STACK_REMOVE:...]], [[STACK_UPDATE:...]], [[STACK_CLEAR]])
+• Tu ne peux PAS générer de références interactives ([[HEALTH_PROFILE]], [[MY_STACK]], etc.)
+• Si l'utilisateur demande un quiz, un graphique, un stack ou une analyse sanguine, dis-lui : "Cette fonctionnalité est disponible avec **VitaSync 3 Flash** ou **VitaSync 3 Pro** 🚀. Tu peux changer de modèle en haut du chat."
+• Réponds de manière concise et directe.`;
+  }
+
+  return prompt;
+}
 
 // deno-lint-ignore no-explicit-any
-function buildSystemPrompt(userProfile: any, healthProfile: any, catalog: string, trends: any, supplements: any[], enrichedProducts: any[], checkins: any[], bloodTests: any[]): string {
-  const parts: string[] = [baseSystemPrompt];
+function buildSystemPrompt(tier: ModelTier, userProfile: any, healthProfile: any, catalog: string, trends: any, supplements: any[], enrichedProducts: any[], checkins: any[], bloodTests: any[]): string {
+  const parts: string[] = [getBaseSystemPrompt(tier)];
 
-  // Catalog
+  // Catalog — all tiers get it
   parts.push(`\n\nCATALOGUE:\n${catalog}`);
 
-  // User context
+  // User context — all tiers get full profile
   const ctx: string[] = [];
   if (userProfile?.first_name) ctx.push(`Prénom: ${userProfile.first_name}`);
   const quizDone = healthProfile?.onboarding_completed === true;
@@ -228,7 +264,7 @@ function buildSystemPrompt(userProfile: any, healthProfile: any, catalog: string
   }
   if (ctx.length) parts.push(`\nPROFIL:\n${ctx.join('\n')}`);
 
-  // Trends
+  // Trends — all tiers
   if (trends) {
     let t = `\n📊 SUIVI (${trends.count}j): Sommeil ${trends.avgSleep.toFixed(1)}/5, Énergie ${trends.avgEnergy.toFixed(1)}/5, Stress ${trends.avgStress.toFixed(1)}/5`;
     if (trends.latestMood) t += `, Humeur: ${trends.latestMood}`;
@@ -240,11 +276,11 @@ function buildSystemPrompt(userProfile: any, healthProfile: any, catalog: string
     parts.push(t);
   }
 
-  // Current supplements
+  // Current supplements — all tiers
   parts.push(`\nCOMPLÉMENTS ACTIFS:\n${formatSupplements(supplements)}`);
 
-  // Raw check-in data (compact)
-  if (checkins.length > 0) {
+  // Raw check-in data — standard & pro only (lite gets only trends above)
+  if (tier !== 'lite' && checkins.length > 0) {
     // deno-lint-ignore no-explicit-any
     const lines = checkins.slice(0, 30).map((c: any) => {
       const p: string[] = [];
@@ -257,8 +293,8 @@ function buildSystemPrompt(userProfile: any, healthProfile: any, catalog: string
     parts.push(`\nCHECK-INS BRUTS (${checkins.length}j):\n${lines.join('\n')}\n⚠️ Utilise ces vraies données pour les graphiques.`);
   }
 
-  // Blood tests
-  if (bloodTests.length > 0) {
+  // Blood tests — pro only
+  if (tier === 'pro' && bloodTests.length > 0) {
     // deno-lint-ignore no-explicit-any
     const btLines = bloodTests.map((bt: any) => {
       const defs = Array.isArray(bt.deficiencies) ? bt.deficiencies.map((d: any) => d.name || '').filter(Boolean).join(',') : '';
@@ -267,9 +303,42 @@ function buildSystemPrompt(userProfile: any, healthProfile: any, catalog: string
     parts.push(`\n🩸 ANALYSES (${bloodTests.length}):\n${btLines.join('\n')}`);
   }
 
-  // Enriched products (compact)
-  if (enrichedProducts.length > 0) {
+  // Enriched products / science — pro only
+  if (tier === 'pro' && enrichedProducts.length > 0) {
     parts.push(`\nBASE SCIENTIFIQUE (${enrichedProducts.length} fiches):\n${formatEnrichedProducts(enrichedProducts)}`);
+  }
+
+  // QUIZ — standard & pro
+  if (tier !== 'lite') {
+    parts.push(`\n\nQUIZ INTERACTIF — RÈGLES STRICTES:
+• Ne génère un quiz QUE si l'utilisateur le demande explicitement
+• Format EXACT (pas de Markdown entre les tags, chaque question sur UNE seule ligne):
+[[QUIZ_START]]
+TITLE: Titre du quiz
+Q1: Quelle est ta question ? | Option A | Option B | Option C | Option D
+Q2: Autre question ? | Choix 1 | Choix 2 | Choix 3 | Choix 4
+[[QUIZ_END]]
+• Max 10 questions, exactement 4 options chacune
+• PAS de texte entre [[QUIZ_START]] et [[QUIZ_END]] autre que TITLE et Q1-Q10
+• Le séparateur entre question et options est |`);
+  }
+
+  // CHARTS & REFERENCES — standard & pro
+  if (tier !== 'lite') {
+    parts.push(`\n\nGRAPHIQUES (format sur 1 ligne):
+[[CHART:type:{"title":"...","data":[...],"xKey":"...","yKeys":["..."]}]]
+Types: bar, line, pie. Max 2/réponse. Utilise les vraies données check-in.`);
+
+    // References — standard gets partial, pro gets all
+    if (tier === 'pro') {
+      parts.push(`\nRÉFÉRENCES INTERACTIVES:
+[[HEALTH_PROFILE]] [[MY_STACK]] [[PRODUCT_DETAIL:titre]] [[BLOOD_TEST:id]] [[REPORT:stack|health]]
+Max 3 blocs/réponse.`);
+    } else {
+      parts.push(`\nRÉFÉRENCES INTERACTIVES:
+[[HEALTH_PROFILE]] [[MY_STACK]] [[PRODUCT_DETAIL:titre]]
+Max 2 blocs/réponse. Les références [[BLOOD_TEST]] et [[REPORT]] sont réservées à VitaSync 3 Pro.`);
+    }
   }
 
   return parts.join('');
@@ -325,8 +394,13 @@ Deno.serve(async (req) => {
     }
 
     const requestedModel = (requestBody.model as string) || 'google/gemini-3-flash-preview';
-    const modelVersion = (requestBody.modelVersion as string) || '2.5';
-    const historyDays = getHistoryDays(requestedModel);
+    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'];
+    const model = ALLOWED_MODELS.includes(requestedModel) ? requestedModel : 'google/gemini-3-flash-preview';
+
+    // Determine tier
+    const tier = getModelTier(model);
+    const tierConfig = TIER_CONFIG[tier];
+    console.log(`Model: ${model}, Tier: ${tier}, maxTokens: ${tierConfig.maxTokens}, msgSlice: ${tierConfig.messageSlice}, historyDays: ${tierConfig.historyDays}`);
 
     // Validate messages
     const validation = validateMessages(requestBody.messages);
@@ -334,61 +408,59 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Truncate to last 20 messages
-    const messages = validation.data.slice(-20);
-    console.log(`Messages: ${validation.data.length} → ${messages.length} (truncated)`);
+    // Truncate messages based on tier
+    const messages = validation.data.slice(-tierConfig.messageSlice);
+    console.log(`Messages: ${validation.data.length} → ${messages.length} (tier: ${tier})`);
 
     // Fetch all data in parallel
     const serviceClient = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
 
-    const [profileRes, healthRes, checkins, catalog, supplements, enriched, bloodTests] = await Promise.all([
+    // Only fetch what the tier needs
+    const fetchPromises: Promise<unknown>[] = [
       supabaseClient.from("profiles").select("first_name, last_name").eq("user_id", userId).single(),
       supabaseClient.from("user_health_profiles").select("*").eq("user_id", userId).single(),
-      fetchRecentCheckins(supabaseClient, userId, historyDays),
+      fetchRecentCheckins(supabaseClient, userId, tierConfig.historyDays),
       fetchShopifyCatalog(),
       fetchUserSupplements(supabaseClient, userId),
-      fetchEnrichedProductData(serviceClient),
-      fetchBloodTestAnalyses(supabaseClient, userId)
-    ]);
+    ];
 
-    console.log("Data loaded. Supplements:", supplements.length, "Enriched:", enriched.length);
+    // Enriched data — pro only
+    if (tier === 'pro') {
+      fetchPromises.push(fetchEnrichedProductData(serviceClient));
+    } else {
+      fetchPromises.push(Promise.resolve([]));
+    }
+
+    // Blood tests — pro only
+    if (tier === 'pro') {
+      fetchPromises.push(fetchBloodTestAnalyses(supabaseClient, userId));
+    } else {
+      fetchPromises.push(Promise.resolve([]));
+    }
+
+    const [profileRes, healthRes, checkins, catalog, supplements, enriched, bloodTests] = await Promise.all(fetchPromises) as [
+      // deno-lint-ignore no-explicit-any
+      any, any, any[], string, any[], any[], any[]
+    ];
+
+    console.log("Data loaded. Tier:", tier, "Supplements:", supplements.length);
 
     const trends = calculateTrends(checkins);
-    let systemPrompt = buildSystemPrompt(profileRes.data, healthRes.data, catalog, trends, supplements, enriched, checkins, bloodTests);
+    const systemPrompt = buildSystemPrompt(
+      tier,
+      (profileRes as { data: unknown }).data,
+      (healthRes as { data: unknown }).data,
+      catalog as unknown as string,
+      trends,
+      supplements,
+      enriched,
+      checkins,
+      bloodTests
+    );
 
-    // Add quiz/chart capabilities for 3.0 models
-    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'];
-    const model = ALLOWED_MODELS.includes(requestedModel) ? requestedModel : 'google/gemini-3-flash-preview';
+    console.log("System prompt:", systemPrompt.length, "chars. Model:", model, "Tier:", tier);
 
-    const isAdvancedModel = modelVersion === '3.0';
-    if (isAdvancedModel) {
-      systemPrompt += `\n\nQUIZ INTERACTIF — RÈGLES STRICTES:
-• Ne génère un quiz QUE si l'utilisateur le demande explicitement
-• Format EXACT (pas de Markdown entre les tags, chaque question sur UNE seule ligne):
-[[QUIZ_START]]
-TITLE: Titre du quiz
-Q1: Quelle est ta question ? | Option A | Option B | Option C | Option D
-Q2: Autre question ? | Choix 1 | Choix 2 | Choix 3 | Choix 4
-[[QUIZ_END]]
-• Max 10 questions, exactement 4 options chacune
-• PAS de texte entre [[QUIZ_START]] et [[QUIZ_END]] autre que TITLE et Q1-Q10
-• Le séparateur entre question et options est |`;
-    }
-
-    const supportsCharts = ['google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'].includes(model);
-    if (supportsCharts) {
-      systemPrompt += `\n\nGRAPHIQUES (format sur 1 ligne):
-[[CHART:type:{"title":"...","data":[...],"xKey":"...","yKeys":["..."]}]]
-Types: bar, line, pie. Max 2/réponse. Utilise les vraies données check-in.
-
-RÉFÉRENCES INTERACTIVES:
-[[HEALTH_PROFILE]] [[MY_STACK]] [[PRODUCT_DETAIL:titre]] [[BLOOD_TEST:id]] [[REPORT:stack|health]]
-Max 3 blocs/réponse.`;
-    }
-
-    console.log("System prompt:", systemPrompt.length, "chars. Model:", model);
-
-    // Gateway call with 60s timeout
+    // Gateway call
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
@@ -404,7 +476,7 @@ Max 3 blocs/réponse.`;
           model,
           messages: [{ role: "system", content: systemPrompt }, ...messages.map(m => ({ role: m.role, content: m.content }))],
           stream: true,
-          max_tokens: 16384,
+          max_tokens: tierConfig.maxTokens,
         }),
         signal: controller.signal,
       });
@@ -433,7 +505,7 @@ Max 3 blocs/réponse.`;
       return new Response(JSON.stringify({ error: "Erreur du service IA" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    console.log("Streaming response to client");
+    console.log("Streaming response to client. Tier:", tier);
     return new Response(response.body, { headers: { ...corsHeaders, "Content-Type": "text/event-stream" } });
 
   } catch (e) {

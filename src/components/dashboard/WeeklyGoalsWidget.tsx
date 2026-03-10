@@ -47,6 +47,7 @@ export function WeeklyGoalsWidget({ embedded = false }: { embedded?: boolean }) 
     });
 
     const avg = (arr: typeof recentCheckins, key: string) => {
+      // deno-lint-ignore no-explicit-any
       const vals = arr.map(c => (c as any)[key]).filter((v: any) => v != null) as number[];
       return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
     };
@@ -76,6 +77,7 @@ export function WeeklyGoalsWidget({ embedded = false }: { embedded?: boolean }) 
         <h3 className="text-sm font-medium text-foreground">Objectifs de la semaine</h3>
       </div>
       <div className="space-y-3">
+        {/* @ts-ignore */}
         {goals.map((g: any, i: number) => {
           const Icon = g.icon;
           return (
@@ -84,20 +86,24 @@ export function WeeklyGoalsWidget({ embedded = false }: { embedded?: boolean }) 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.07 }}
-              className="glass-card rounded-2xl p-4 space-y-3"
+              className="flex items-center gap-3"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Icon weight="fill" className="w-4 h-4 text-primary" />
-                  </div>
-                  <span className="text-sm font-medium text-foreground">{g.label}</span>
-                </div>
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Icon weight="fill" className="w-4 h-4 text-primary" />
               </div>
-              
-              {/* Progress bar */}
-              <div className="space-y-1.5">
-                <div className="h-2 rounded-full bg-muted/50 overflow-hidden">
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">{g.label}</span>
+                  <div className="flex items-center gap-1">
+                    {g.pctChange > 0 && <TrendUp weight="bold" className="w-3 h-3 text-primary" />}
+                    {g.pctChange < 0 && <TrendDown weight="bold" className="w-3 h-3 text-destructive" />}
+                    {g.pctChange === 0 && <Minus weight="bold" className="w-3 h-3 text-foreground/30" />}
+                    <span className={`text-xs font-medium ${g.pctChange > 0 ? 'text-primary' : g.pctChange < 0 ? 'text-destructive' : 'text-foreground/30'}`}>
+                      {g.pctChange > 0 ? `+${g.pctChange}%` : g.pctChange < 0 ? `${g.pctChange}%` : "Stable"}
+                    </span>
+                  </div>
+                </div>
+                <div className="h-1.5 rounded-full bg-muted/50 overflow-hidden">
                   <motion.div
                     className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
                     initial={{ width: 0 }}
@@ -105,32 +111,24 @@ export function WeeklyGoalsWidget({ embedded = false }: { embedded?: boolean }) 
                     transition={{ duration: 0.8, delay: 0.3 + i * 0.1 }}
                   />
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-foreground/40">{g.thisAvg.toFixed(1)}/5</span>
-                  {g.pctChange !== 0 && (
-                    <div className="flex items-center gap-1">
-                      {g.pctChange > 0 ? (
-                        <TrendUp weight="bold" className="w-3 h-3 text-primary" />
-                      ) : (
-                        <TrendDown weight="bold" className="w-3 h-3 text-destructive" />
-                      )}
-                      <span className={`text-xs font-medium ${g.pctChange > 0 ? 'text-primary' : 'text-destructive'}`}>
-                        {g.pctChange > 0 ? "+" : ""}{g.pctChange}%
-                      </span>
-                    </div>
-                  )}
-                  {g.pctChange === 0 && (
-                    <div className="flex items-center gap-1">
-                      <Minus weight="bold" className="w-3 h-3 text-foreground/30" />
-                      <span className="text-xs text-foreground/30">Stable</span>
-                    </div>
-                  )}
-                </div>
               </div>
             </motion.div>
           );
         })}
       </div>
+    </div>
+  );
+
+  if (embedded) return content;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ delay: 0.05 }}
+      className="glass-card rounded-2xl p-5"
+    >
+      {content}
     </motion.div>
   );
 }

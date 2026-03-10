@@ -136,7 +136,7 @@ function QuizOverlay({ quiz, onClose, onComplete }: { quiz: QuizData; onClose: (
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/60 backdrop-blur-sm p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <motion.div
@@ -144,7 +144,7 @@ function QuizOverlay({ quiz, onClose, onComplete }: { quiz: QuizData; onClose: (
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.3 }}
-        className="w-[90%] max-w-2xl max-h-[75vh] overflow-y-auto rounded-3xl border border-border/50 bg-background shadow-2xl"
+        className="w-full max-w-2xl max-h-[75vh] overflow-y-auto rounded-3xl border border-border/50 bg-background shadow-2xl"
       >
         {/* Header */}
         <div className="sticky top-0 z-10 px-6 py-5 border-b border-border/50 bg-background/95 backdrop-blur-xl rounded-t-3xl flex items-center justify-between">

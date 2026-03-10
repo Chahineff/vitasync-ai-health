@@ -45,7 +45,9 @@ function useResolveImages(items: AIStackItem[]) {
 export function AIStackPanel() {
   const { items, isOpen, removeItem, updateQuantity, clearStack, setOpen } = useAIStackStore();
   const addToCart = useCartStore(s => s.addItem);
+  const getCheckoutUrl = useCartStore(s => s.getCheckoutUrl);
   const { t } = useTranslation();
+  const { user } = useAuth();
   const images = useResolveImages(items);
   const [isSubscribing, setIsSubscribing] = useState(false);
 
@@ -65,7 +67,6 @@ export function AIStackPanel() {
       const products = await fetchProducts(100);
       
       for (const item of items) {
-        // Resolve the full product from Shopify
         const match = products.find(p => {
           const pid = p.node.id.split('/').pop();
           return pid === item.productId;
@@ -88,6 +89,28 @@ export function AIStackPanel() {
           quantity: item.quantity,
           selectedOptions: variant.node.selectedOptions,
         });
+      }
+
+      // Add products to supplement_tracking for the user's stack
+      if (user) {
+        for (const item of items) {
+          await supabase.from('supplement_tracking').upsert({
+            user_id: user.id,
+            product_name: item.name,
+            shopify_product_id: item.productId,
+            recommended_by_ai: true,
+            active: true,
+            time_of_day: 'morning',
+          }, { onConflict: 'user_id,shopify_product_id', ignoreDuplicates: true });
+        }
+      }
+
+      // Redirect to Shopify checkout
+      // Small delay to ensure cart state is updated with checkoutUrl
+      await new Promise(r => setTimeout(r, 500));
+      const checkoutUrl = getCheckoutUrl();
+      if (checkoutUrl) {
+        window.open(checkoutUrl, '_blank');
       }
 
       toast.success(t('aiStack.addedToCart'), {

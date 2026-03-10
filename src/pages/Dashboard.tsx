@@ -535,10 +535,16 @@ const DashboardHome = ({
         {formatDate()}
       </motion.p>
     </motion.div>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <HealthScoreWidget />
-      <WeeklyGoalsWidget />
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      className="glass-card rounded-2xl p-5"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 items-start">
+        <HealthScoreWidget embedded />
+        <WeeklyGoalsWidget embedded />
+      </div>
+    </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.1 }}>
       <DailyCheckinWidget />
     </motion.div>

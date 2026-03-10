@@ -12,7 +12,6 @@ function computeScore(checkin: { sleep_quality: number | null; energy_level: num
   const moodMap: Record<string, number> = { great: 15, good: 12, okay: 8, bad: 4, terrible: 0 };
   if (checkin.mood && moodMap[checkin.mood] !== undefined) { score += moodMap[checkin.mood]; factors++; }
   if (factors === 0) return 0;
-  // Normalize if not all factors present
   const maxPossible = factors === 4 ? 100 : (factors === 3 ? 85 : factors === 2 ? 60 : 30);
   return Math.round((score / maxPossible) * 100);
 }
@@ -30,26 +29,22 @@ function getScoreLabel(score: number): string {
   return "Faible";
 }
 
-export function HealthScoreWidget() {
+export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) {
   const { todayCheckin, recentCheckins } = useDailyCheckin();
 
   const { score, yesterdayScore, trend } = useMemo(() => {
     if (!todayCheckin) return { score: 0, yesterdayScore: 0, trend: "none" as const };
     const s = computeScore(todayCheckin);
-    
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yDate = yesterday.toISOString().split("T")[0];
     const yCheckin = recentCheckins.find(c => c.checkin_date === yDate);
     const ys = yCheckin ? computeScore(yCheckin) : 0;
-
     const t = !yCheckin ? "none" : s > ys ? "up" : s < ys ? "down" : "equal";
     return { score: s, yesterdayScore: ys, trend: t };
   }, [todayCheckin, recentCheckins]);
 
-  if (!todayCheckin) {
-    return null; // Don't show if no check-in today
-  }
+  if (!todayCheckin) return null;
 
   const color = getScoreColor(score);
   const label = getScoreLabel(score);
@@ -57,22 +52,14 @@ export function HealthScoreWidget() {
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      className="glass-card rounded-2xl p-5 flex items-center gap-5"
-    >
-      {/* Radial ring */}
+  const content = (
+    <div className="flex items-center gap-5">
       <div className="relative flex-shrink-0">
         <svg width="96" height="96" viewBox="0 0 96 96">
           <circle cx="48" cy="48" r={radius} fill="none" stroke="hsl(var(--muted))" strokeWidth="6" />
           <motion.circle
             cx="48" cy="48" r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth="6"
-            strokeLinecap="round"
+            fill="none" stroke={color} strokeWidth="6" strokeLinecap="round"
             strokeDasharray={circumference}
             initial={{ strokeDashoffset: circumference }}
             animate={{ strokeDashoffset: offset }}
@@ -86,8 +73,6 @@ export function HealthScoreWidget() {
           <span className="text-[10px] text-foreground/40 uppercase tracking-wider">/ 100</span>
         </div>
       </div>
-
-      {/* Details */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <Heart weight="fill" className="w-4 h-4" style={{ color }} />
@@ -107,6 +92,18 @@ export function HealthScoreWidget() {
           </div>
         )}
       </div>
+    </div>
+  );
+
+  if (embedded) return content;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      className="glass-card rounded-2xl p-5"
+    >
+      {content}
     </motion.div>
   );
 }

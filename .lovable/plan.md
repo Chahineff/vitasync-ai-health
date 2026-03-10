@@ -1,47 +1,56 @@
 
 
-# Plan : Corrections Stack IA + Quiz centré + Checkout Shopify
+# Plan de modifications
 
-## 1. Bouton "S'abonner" → Checkout Shopify direct
+## 1. Navbar responsive et adaptative
 
-**Fichier : `src/components/dashboard/chat/AIStackPanel.tsx`**
+**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
 
-Le `handleSubscribe` actuel ajoute les produits au cart store mais ne redirige pas vers le checkout. Modifier pour :
-- Après avoir ajouté tous les items au cart via `addToCart()`, récupérer le `checkoutUrl` depuis `useCartStore`
-- Ouvrir le checkout Shopify avec `window.open(checkoutUrl, '_blank')`
-- Ne pas appeler `clearStack()` immédiatement (le cart sync s'en chargera au retour)
+**Corrections** :
+- Remplacer la largeur fixe par un systeme de marges responsives progressives
+- Sur mobile (<768px) : marges de 12px de chaque cote
+- Sur tablette (768-1024px) : marges de 24px
+- Sur desktop (1024-1440px) : marges de 40px
+- Sur grand ecran (>1440px) : max-width de 1400px centre
+- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
+- La navbar gardera son design flottant capsule actuel
 
-## 2. Quiz : centrer l'overlay verticalement
-
-**Fichier : `src/components/dashboard/chat/ChatQuizBlock.tsx`**
-
-L'overlay utilise déjà `flex items-center justify-center` sur le conteneur `fixed inset-0`, mais le contenu interne a `max-h-[75vh]` et `overflow-y-auto` sans centrage garanti quand le contenu est court. Ajuster :
-- Ajouter `m-auto` sur le conteneur interne du quiz
-- S'assurer que le scroll interne ne décale pas le centrage visuel (séparer le header sticky du body scrollable)
-
-## 3. Bouton Stack IA plus visible et persistant en haut à droite
-
-**Fichier : `src/components/dashboard/ChatInterface.tsx`**
-
-Le bouton stack actuel (lignes 414-426) est petit et peu visible. Modifier pour :
-- Élargir le bouton : au lieu d'un simple icône rond, afficher un bouton avec texte "Mon Stack IA" + badge compteur + fond gradient
-- Le rendre plus large (`px-4 py-2`) avec le texte visible
-- Garder la condition `stackItems.length > 0` pour ne l'afficher que quand il y a des items
-- Ajouter une animation pulse/glow quand de nouveaux items sont ajoutés
-
-## 4. Produits ajoutés au stack → aussi ajoutés au supplement tracker
-
-**Fichier : `src/components/dashboard/chat/AIStackPanel.tsx`**
-
-Quand l'utilisateur clique "S'abonner", en plus d'ajouter au panier Shopify, insérer les produits dans la table `supplement_tracking` via Supabase pour que le stack de l'utilisateur soit mis à jour côté tracking/dashboard.
+**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
 
 ---
 
-## Fichiers impactés
+## 2. Page About - En attente du PDF
 
-| Fichier | Modification |
-|---|---|
-| `AIStackPanel.tsx` | Redirect checkout Shopify + ajout supplement_tracking |
-| `ChatQuizBlock.tsx` | Centrage vertical de l'overlay |
-| `ChatInterface.tsx` | Bouton stack élargi, visible, avec texte |
+Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
+
+---
+
+## 3. Page Blog - Etat vide + systeme d'administration
+
+**Etat vide** :
+- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
+- Garder le hero et le design existant
+- Supprimer les articles en dur
+
+**Systeme d'administration des articles** :
+- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
+- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
+- La page Blog affichera dynamiquement les articles depuis la base de donnees
+- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
+
+**Fichiers modifies** :
+- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
+- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
+- Migration SQL : creation de la table `blog_posts`
+
+---
+
+## Details techniques
+
+| Tache | Fichiers | Complexite |
+|-------|----------|------------|
+| Navbar responsive | `src/index.css` | Faible |
+| Blog etat vide | `src/pages/Blog.tsx` | Faible |
+| Table blog_posts + RLS | Migration SQL | Moyenne |
+| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
 

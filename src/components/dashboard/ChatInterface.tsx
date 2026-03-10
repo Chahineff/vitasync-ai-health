@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { List, Package } from '@phosphor-icons/react';
+import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
@@ -411,18 +412,26 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             selectedModel={selectedModel} 
             onModelChange={handleModelChange} 
           />
-          {/* Stack toggle button */}
+          {/* Stack toggle button - visible & prominent */}
           {stackItems.length > 0 && (
-            <button
+            <motion.button
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               onClick={() => setStackOpen(!stackIsOpen)}
-              className="relative p-2 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10 hover:bg-muted dark:hover:bg-white/10 transition-colors"
-              aria-label="Mon Stack"
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all",
+                "bg-gradient-to-r from-primary to-secondary text-primary-foreground",
+                "hover:shadow-lg hover:shadow-primary/20",
+                stackIsOpen && "ring-2 ring-primary/30"
+              )}
+              aria-label="Mon Stack IA"
             >
-              <Package weight="fill" className="w-5 h-5 text-primary" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+              <Package weight="fill" className="w-4 h-4" />
+              <span className="hidden sm:inline">Mon Stack IA</span>
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-foreground/20 text-[11px] font-bold">
                 {stackItems.length}
               </span>
-            </button>
+            </motion.button>
           )}
         </div>
 

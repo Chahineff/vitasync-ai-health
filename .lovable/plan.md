@@ -1,56 +1,55 @@
 
 
-# Plan de modifications
+# Plan : Hiérarchie des modèles VitaSync — Bridage progressif
 
-## 1. Navbar responsive et adaptative
+## Matrice des capacités (mise à jour)
 
-**Probleme actuel** : La navbar a une largeur fixe `w-[96%] max-w-6xl` (72rem) qui ne s'adapte pas fluidement aux ecrans intermediaires.
+```text
+Fonctionnalité              │ 2.5 Flash │ 3 Flash │ 3 Pro
+────────────────────────────┼───────────┼─────────┼──────
+Catalogue produits          │ ✓ Oui     │ ✓ Oui   │ ✓ Oui
+Recommandations produits    │ 1/réponse │ 2/rép   │ 2/rép
+Stack IA (panneau latéral)  │ ✗ Non     │ ✓ Oui   │ ✓ Oui
+Quiz interactif             │ ✗ Non     │ ✓ Oui   │ ✓ Oui
+Graphiques                  │ ✗ Non     │ ✓ Oui   │ ✓ Oui
+Références interactives     │ ✗ Non     │ Partiel │ ✓ Tout
+Analyses sanguines          │ ✗ Non     │ ✗ Non   │ ✓ Oui
+Base scientifique enrichie  │ ✗ Non     │ ✗ Non   │ ✓ Oui
+Historique check-ins        │ 7 jours   │ 90 jours│ 90 j
+Max tokens réponse          │ 2 048     │ 8 192   │ 16 384
+Messages conversation       │ 10        │ 20      │ 20
+Profil santé                │ Complet   │ Complet │ Complet
+Compléments actifs          │ ✓ Oui     │ ✓ Oui   │ ✓ Oui
+```
 
-**Corrections** :
-- Remplacer la largeur fixe par un systeme de marges responsives progressives
-- Sur mobile (<768px) : marges de 12px de chaque cote
-- Sur tablette (768-1024px) : marges de 24px
-- Sur desktop (1024-1440px) : marges de 40px
-- Sur grand ecran (>1440px) : max-width de 1400px centre
-- Modifier le CSS dans `src/index.css` (classe `.nav-sticky`) pour utiliser des marges responsives via des media queries ou des classes Tailwind adaptatives
-- La navbar gardera son design flottant capsule actuel
+## Modifications
 
-**Fichiers modifies** : `src/index.css` (classe `.nav-sticky`)
+### 1. `supabase/functions/ai-coach/index.ts`
 
----
+Ajouter une fonction `getModelTier(model)` retournant `'lite' | 'standard' | 'pro'`.
 
-## 2. Page About - En attente du PDF
+**Bridage par tier dans `buildSystemPrompt`** (nouveau paramètre `tier`) :
+- **Lite** : Inclut catalogue + compléments actifs + profil complet. Exclut : analyses sanguines, base scientifique enrichie, check-ins bruts (seuls les trends agrégés). System prompt ajoute : "Max 1 produit/réponse. Tu ne peux PAS générer de quiz, graphiques, ni de commandes [[STACK_ADD]]. Si l'utilisateur demande ces fonctions, suggère VitaSync 3."
+- **Standard** : Tout sauf analyses sanguines et base scientifique enrichie. Quiz + graphiques + stack IA activés.
+- **Pro** : Tout, inchangé.
 
-Vous avez mentionne vouloir fournir un PDF avec les vraies informations VitaSync. Je mettrai a jour la page About des reception de ce document. En attendant, aucune modification sur cette page.
+**Bridage du `max_tokens`** : lite=2048, standard=8192, pro=16384.
 
----
+**Bridage des messages** : lite=`.slice(-10)`, standard/pro=`.slice(-20)`.
 
-## 3. Page Blog - Etat vide + systeme d'administration
+**Bridage du system prompt** pour lite : supprimer les sections STACK, QUIZ, GRAPHIQUES, RÉFÉRENCES du prompt. Remplacer "Max 2 produits/réponse" par "Max 1 produit/réponse".
 
-**Etat vide** :
-- Remplacer la grille d'articles fictifs par un message "Aucun article pour le moment"
-- Garder le hero et le design existant
-- Supprimer les articles en dur
+### 2. `src/components/dashboard/chat/ChatModelSelector.tsx`
 
-**Systeme d'administration des articles** :
-- Creer une table `blog_posts` dans la base de donnees avec les colonnes : `id`, `slug`, `title`, `excerpt`, `content` (Markdown), `category`, `read_time`, `published`, `author_id`, `created_at`, `updated_at`
-- Ajouter des politiques RLS pour que seul l'auteur puisse creer/modifier/supprimer, et que les articles publies soient lisibles par tous
-- La page Blog affichera dynamiquement les articles depuis la base de donnees
-- Pour gerer vos articles (creer, modifier, supprimer), vous pourrez utiliser l'interface backend de Lovable Cloud (onglet Cloud > Database > table `blog_posts`) pour inserer et editer vos articles directement
+Mettre à jour les descriptions :
+- 2.5 Flash : "Conseils rapides · Recommandations"
+- 3 Flash : "Quiz · Graphiques · Stack IA"
+- 3 Pro : "Analyse complète · Sang · Science"
 
-**Fichiers modifies** :
-- `src/pages/Blog.tsx` : affichage dynamique depuis la DB, etat vide
-- `src/lib/i18n.ts` : ajout des traductions pour l'etat vide
-- Migration SQL : creation de la table `blog_posts`
+### Fichiers impactés
 
----
-
-## Details techniques
-
-| Tache | Fichiers | Complexite |
-|-------|----------|------------|
-| Navbar responsive | `src/index.css` | Faible |
-| Blog etat vide | `src/pages/Blog.tsx` | Faible |
-| Table blog_posts + RLS | Migration SQL | Moyenne |
-| Blog dynamique | `src/pages/Blog.tsx` | Moyenne |
+| Fichier | Modification |
+|---|---|
+| `supabase/functions/ai-coach/index.ts` | Bridage données/tokens/prompt par tier |
+| `src/components/dashboard/chat/ChatModelSelector.tsx` | Descriptions mises à jour |
 

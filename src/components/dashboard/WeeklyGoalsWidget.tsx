@@ -26,7 +26,7 @@ function mapGoalToKey(goal: string): string | null {
   return null;
 }
 
-export function WeeklyGoalsWidget() {
+export function WeeklyGoalsWidget({ embedded = false }: { embedded?: boolean }) {
   const { recentCheckins } = useDailyCheckin();
   const { healthProfile } = useHealthProfile();
 
@@ -58,7 +58,6 @@ export function WeeklyGoalsWidget() {
       const thisAvg = avg(thisWeek, cfg.metric);
       const lastAvg = avg(lastWeek, cfg.metric);
       
-      // For stress, improvement is going down
       const isStress = cfg.metric === "stress_level";
       const diff = isStress ? lastAvg - thisAvg : thisAvg - lastAvg;
       const pctChange = lastAvg > 0 ? Math.round((diff / lastAvg) * 100) : 0;
@@ -70,17 +69,13 @@ export function WeeklyGoalsWidget() {
 
   if (!goals.length) return null;
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ delay: 0.05 }}
-    >
+  const content = (
+    <div>
       <div className="flex items-center gap-2 mb-3">
         <Target weight="fill" className="w-4 h-4 text-primary" />
         <h3 className="text-sm font-medium text-foreground">Objectifs de la semaine</h3>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="space-y-3">
         {goals.map((g: any, i: number) => {
           const Icon = g.icon;
           return (

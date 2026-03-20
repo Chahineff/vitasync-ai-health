@@ -602,37 +602,43 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
   });
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl space-y-8">
-      <div>
-        <h2 className="text-2xl font-light tracking-tight text-foreground mb-2">{t("help.title")}</h2>
-        <p className="text-foreground/50 text-sm">Trouvez des réponses, des guides et de l'aide</p>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl space-y-10">
+
+      {/* Hero header */}
+      <div className="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+        <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <Lifebuoy weight="duotone" className="w-7 h-7 text-primary" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground mb-1">{t("help.title")}</h2>
+            <p className="text-foreground/50 text-sm">Guides, FAQ et assistance — tout ce qu'il faut pour maîtriser VitaSync.</p>
+          </div>
+        </div>
       </div>
 
-      {/* Quick Guides */}
+      {/* Quick Guides — horizontal scroll on mobile, grid on desktop */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-5">
           <BookOpen weight="fill" className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-medium text-foreground">Guides rapides</h3>
+          <h3 className="text-base font-medium text-foreground">Premiers pas</h3>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {QUICK_GUIDES.map((guide, i) => (
             <motion.div
               key={guide.num}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07 }}
-              className="glass-card rounded-2xl p-4 hover:border-primary/30 transition-colors group cursor-default"
+              transition={{ delay: i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="glass-card rounded-2xl p-4 hover:border-primary/30 transition-all group cursor-default flex flex-col"
             >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                  <guide.icon weight="light" className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-primary/60 font-mono mb-0.5">{guide.num}</p>
-                  <p className="text-sm font-medium text-foreground mb-1">{guide.title}</p>
-                  <p className="text-xs text-foreground/50 leading-relaxed">{guide.desc}</p>
-                </div>
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/15 transition-colors">
+                <guide.icon weight="duotone" className="w-5 h-5 text-primary" />
               </div>
+              <span className="text-[10px] text-primary/50 font-mono tracking-wider uppercase mb-1">Étape {guide.num}</span>
+              <p className="text-sm font-medium text-foreground mb-1.5 leading-snug">{guide.title}</p>
+              <p className="text-xs text-foreground/45 leading-relaxed mt-auto">{guide.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -640,28 +646,28 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
 
       {/* FAQ */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-5">
           <Question weight="fill" className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-medium text-foreground">Questions fréquentes</h3>
+          <h3 className="text-base font-medium text-foreground">Questions fréquentes</h3>
         </div>
 
         {/* Search */}
         <div className="relative mb-4">
-          <SearchIcon weight="light" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+          <SearchIcon weight="light" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Rechercher dans la FAQ..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-muted/30 border border-border/30 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted/30 border border-border/30 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
           />
         </div>
 
         {/* Category Filters */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-5">
           <button
             onClick={() => setActiveCategory(null)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!activeCategory ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-foreground/50 hover:bg-muted/50'}`}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all active:scale-[0.97] ${!activeCategory ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/40 text-foreground/50 hover:bg-muted/60'}`}
           >
             Tout
           </button>
@@ -669,7 +675,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             <button
               key={cat}
               onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activeCategory === cat ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-foreground/50 hover:bg-muted/50'}`}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all active:scale-[0.97] ${activeCategory === cat ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/40 text-foreground/50 hover:bg-muted/60'}`}
             >
               {cat}
             </button>
@@ -679,10 +685,10 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
         {/* Accordion */}
         <Accordion type="multiple" className="space-y-2">
           {filtered.map((faq, i) => (
-            <AccordionItem key={i} value={`faq-${i}`} className="glass-card rounded-2xl border border-border/30 px-4 overflow-hidden">
+            <AccordionItem key={i} value={`faq-${i}`} className="glass-card rounded-2xl border border-border/30 px-5 overflow-hidden">
               <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline py-4">
-                <div className="flex items-center gap-2 text-left">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary/70 flex-shrink-0">{faq.category}</span>
+                <div className="flex items-center gap-2.5 text-left">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary/60 flex-shrink-0 uppercase tracking-wide font-semibold">{faq.category}</span>
                   <span>{faq.q}</span>
                 </div>
               </AccordionTrigger>
@@ -692,32 +698,35 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             </AccordionItem>
           ))}
           {filtered.length === 0 && (
-            <p className="text-sm text-foreground/40 text-center py-8">Aucun résultat pour "{search}"</p>
+            <div className="text-center py-12">
+              <SearchIcon weight="light" className="w-8 h-8 text-foreground/20 mx-auto mb-3" />
+              <p className="text-sm text-foreground/40">Aucun résultat pour « {search} »</p>
+            </div>
           )}
         </Accordion>
       </div>
 
       {/* Contact + Coach IA */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link to="/contact" className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-colors group">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Lifebuoy weight="light" className="w-5 h-5 text-primary" />
+        <Link to="/contact" className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-all group active:scale-[0.98]">
+          <div className="flex items-center gap-3 mb-2.5">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
+              <Lifebuoy weight="duotone" className="w-5 h-5 text-primary" />
             </div>
             <h3 className="text-sm font-medium text-foreground">Nous contacter</h3>
           </div>
-          <p className="text-xs text-foreground/50">Une question ? Notre équipe est là pour vous aider.</p>
+          <p className="text-xs text-foreground/50 leading-relaxed">Une question ? Notre équipe est là pour vous aider par email.</p>
         </Link>
 
         {onGoToCoach && (
-          <button onClick={onGoToCoach} className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-colors group text-left">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+          <button onClick={onGoToCoach} className="glass-card rounded-2xl p-5 hover:border-primary/30 transition-all group text-left active:scale-[0.98]">
+            <div className="flex items-center gap-3 mb-2.5">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center group-hover:from-primary/20 group-hover:to-secondary/20 transition-colors">
                 <img src={vitasyncLogo} alt="" className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-medium text-foreground">Demander au Coach IA</h3>
             </div>
-            <p className="text-xs text-foreground/50">Posez votre question directement au Coach pour une aide personnalisée.</p>
+            <p className="text-xs text-foreground/50 leading-relaxed">Posez votre question directement au Coach pour une aide personnalisée.</p>
           </button>
         )}
       </div>

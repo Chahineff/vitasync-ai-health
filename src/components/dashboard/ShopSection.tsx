@@ -187,11 +187,6 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
             {t('shop.title')}
             <Sparkle weight="fill" className="w-5 h-5 text-primary/60" />
           </h2>
-          {!loading && (
-            <span className="px-2.5 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium">
-              {filteredGroups.length} {t('shop.productsFound')}
-            </span>
-          )}
         </div>
 
         <div className="flex items-center gap-3">

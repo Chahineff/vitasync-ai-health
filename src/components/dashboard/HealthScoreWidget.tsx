@@ -65,7 +65,7 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
             animate={{ strokeDashoffset: offset }}
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
             transform="rotate(-90 48 48)"
-            style={{ filter: score >= 65 ? `drop-shadow(0 0 6px ${color})` : undefined }}
+            style={{ filter: score >= 65 ? `drop-shadow(0 0 8px ${color}) drop-shadow(0 0 16px ${color})` : undefined }}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">

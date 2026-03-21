@@ -3023,8 +3023,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.subtitle": "VitaSync实时分析您的需求，创建适合您生活方式的完美补充剂方案。",
     "hero.cta": "开始我的免费评估",
     "hero.secondary": "如何运作",
+    "hero.card1Title": "先进AI",
+    "hero.card1Desc": "集成 Google Gemini 和 GPT-5",
+    "hero.card1Date": "2026技术",
+    "hero.card2Title": "语音分析",
+    "hero.card2Desc": "用语音描述您的症状",
+    "hero.card2Date": "全新",
+    "hero.card3Title": "实时追踪",
+    "hero.card3Desc": "生物标志物和血液分析",
+    "hero.card3Date": "现已推出",
 
-    // Features
     "features.badge": "尖端技术",
     "features.title": "真正",
     "features.titleHighlight": "理解",

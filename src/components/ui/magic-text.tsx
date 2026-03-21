@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -12,23 +12,20 @@ export interface MagicTextProps {
 
 interface WordProps {
   children: string;
-  progress: any;
+  progress: MotionValue<number>;
   range: number[];
 }
 
 const Word: React.FC<WordProps> = ({ children, progress, range }) => {
-  const opacity = useTransform(progress, range, [0, 1]);
+  const opacity = useTransform(progress, range, [0.15, 1]);
 
   return (
-    <span className="relative mx-[0.15em] lg:mx-[0.2em] inline-block">
-      <span className="opacity-20">{children}</span>
-      <motion.span
-        style={{ opacity }}
-        className="absolute left-0 top-0 bg-gradient-to-r from-[hsl(217,100%,50%)] via-[hsl(190,100%,45%)] to-[hsl(163,100%,42%)] bg-clip-text text-transparent"
-      >
-        {children}
-      </motion.span>
-    </span>
+    <motion.span
+      className="relative mx-[0.15em] lg:mx-[0.2em] inline-block"
+      style={{ opacity }}
+    >
+      {children}
+    </motion.span>
   );
 };
 
@@ -45,7 +42,10 @@ export const MagicText: React.FC<MagicTextProps> = ({ text, className }) => {
   return (
     <p
       ref={container}
-      className={cn("flex flex-wrap text-foreground/20", className)}
+      className={cn(
+        "flex flex-wrap bg-gradient-to-r from-[hsl(217,100%,50%)] via-[hsl(190,100%,45%)] to-[hsl(163,100%,42%)] bg-clip-text text-transparent",
+        className
+      )}
     >
       {words.map((word, i) => {
         const start = i / words.length;

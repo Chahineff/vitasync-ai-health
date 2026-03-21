@@ -140,8 +140,7 @@ export function HeroSection() {
               height: "100%",
               borderRadius: "50%",
             }}
-            color1="#00f0ff"
-            color2="#0066ff"
+            colors={["#00f0ff", "#0066ff"]}
             speed={1.5}
           />
           {/* Scroll indicator inside */}

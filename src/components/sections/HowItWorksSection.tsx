@@ -305,7 +305,7 @@ export function HowItWorksSection() {
         </div>
 
         {/* Step cards */}
-        <div className="flex items-center justify-center w-full mt-16 md:mt-20">
+        <div className="flex items-center justify-center w-full mt-20 md:mt-24">
           <AnimatePresence mode="wait">
             <StepCard key={currentStepIndex} stepIndex={currentStepIndex} />
           </AnimatePresence>

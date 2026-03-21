@@ -3,6 +3,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
+import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { storefrontApiRequest } from "@/lib/shopify";
 import { useQuery } from "@tanstack/react-query";

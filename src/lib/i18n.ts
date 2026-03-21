@@ -43,8 +43,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card3Title": "Suivi en Temps Réel",
     "hero.card3Desc": "Biomarqueurs & analyses sanguines",
     "hero.card3Date": "Disponible maintenant",
+    "hero.card4Title": "Qualité Certifiée",
+    "hero.card4Desc": "Compléments testés en laboratoire",
+    "hero.card4Date": "Garanti sans risque",
 
-    "features.badge": "Technologie de pointe",
     "features.title": "Une IA qui",
     "features.titleHighlight": "comprend vraiment",
     "features.titleEnd": "votre corps",

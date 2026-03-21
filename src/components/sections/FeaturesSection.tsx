@@ -3,8 +3,7 @@ import {
   ChartLineUp, 
   FileMagnifyingGlass, 
   ShieldCheck,
-  Check,
-  ArrowRight
+  Check
 } from "@phosphor-icons/react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -57,7 +56,7 @@ function FeatureBlock({ index }: { index: number }) {
   return (
     <motion.div
       ref={ref}
-      className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-6 md:gap-8 lg:gap-0 items-stretch max-w-7xl mx-auto`}
+      className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 md:gap-10 lg:gap-12 items-stretch max-w-7xl mx-auto`}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
@@ -65,13 +64,18 @@ function FeatureBlock({ index }: { index: number }) {
     >
       {/* Text Block */}
       <motion.div 
-        className="w-full lg:w-[55%] relative z-10"
+        className="w-full lg:w-1/2 relative z-10"
         initial={{ opacity: 0, x: isReversed ? 60 : -60 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <GlowCard glowColor={accent.glowColor} className="h-full">
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="h-full"
+        >
+        <GlowCard glowColor={accent.glowColor} className="h-full transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]">
           <div className="relative p-8 md:p-10 lg:p-14">
             {/* Radial glow behind content */}
             <div
@@ -134,26 +138,16 @@ function FeatureBlock({ index }: { index: number }) {
                 ))}
               </ul>
 
-              {/* CTA link */}
-              <motion.a
-                href="/auth"
-                className="inline-flex items-center gap-2 mt-10 text-sm font-medium transition-all duration-300 group/cta"
-                style={{ color: accent.color }}
-                whileHover={{ x: 4 }}
-              >
-                {t("features.cta") || "Découvrir"}
-                <ArrowRight size={16} weight="bold" className="transition-transform group-hover/cta:translate-x-1" />
-              </motion.a>
             </div>
           </div>
         </GlowCard>
+        </motion.div>
       </motion.div>
 
       {/* Preview Block — overlapping slightly */}
       <motion.div 
         className={cn(
-          "w-full lg:w-[50%] relative",
-          isReversed ? "lg:-mr-[5%]" : "lg:-ml-[5%]"
+          "w-full lg:w-1/2 relative",
         )}
         initial={{ opacity: 0, x: isReversed ? -60 : 60 }}
         whileInView={{ opacity: 1, x: 0 }}

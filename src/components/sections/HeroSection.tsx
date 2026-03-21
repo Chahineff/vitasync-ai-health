@@ -64,7 +64,7 @@ export function HeroSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-3 md:mx-5">
+    <section ref={sectionRef} className="relative min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-4 md:mx-8 mb-4 md:mb-6">
       {/* Spline background — contained to hero only */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
         <div className="absolute inset-0 hidden md:block">

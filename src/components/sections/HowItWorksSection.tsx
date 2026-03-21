@@ -72,7 +72,8 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -40 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full max-w-7xl mx-auto px-4 md:px-8"
+      whileHover={{ scale: 1.02 }}
+      className="w-full max-w-7xl mx-auto px-4 md:px-8 cursor-default"
     >
       <GradientBorderCard accent={accent}>
         {/* Accent line at top */}

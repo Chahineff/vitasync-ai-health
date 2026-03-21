@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { PageTransition } from "@/components/PageTransition";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ProductPreviewSection } from "@/components/sections/ProductPreviewSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
@@ -10,7 +11,7 @@ import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background relative">
+    <PageTransition className="min-h-screen bg-background relative">
       <FloatingThemeToggle />
       <Navbar />
       <main>
@@ -22,7 +23,7 @@ const Index = () => {
         <FAQSection />
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 };
 

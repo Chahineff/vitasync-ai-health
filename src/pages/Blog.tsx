@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { PageTransition } from "@/components/PageTransition";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -69,7 +70,7 @@ const Blog = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageTransition className="min-h-screen bg-background">
       <SplineBackground />
       <FloatingThemeToggle />
       <Navbar />
@@ -195,7 +196,7 @@ const Blog = () => {
         </section>
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 };
 

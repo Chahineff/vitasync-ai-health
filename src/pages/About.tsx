@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
+import { PageTransition } from "@/components/PageTransition";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -51,7 +52,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageTransition className="min-h-screen bg-background">
       <SplineBackground />
       <FloatingThemeToggle />
       <Navbar />
@@ -177,7 +178,7 @@ const About = () => {
         </section>
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 };
 

@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { PageTransition } from "@/components/PageTransition";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
@@ -57,7 +58,7 @@ const BlogPost = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageTransition className="min-h-screen bg-background">
       <SplineBackground />
       <FloatingThemeToggle />
       <Navbar />
@@ -127,7 +128,7 @@ const BlogPost = () => {
         </div>
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 };
 

@@ -57,7 +57,7 @@ function FeatureBlock({ index }: { index: number }) {
   return (
     <motion.div
       ref={ref}
-      className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-6 md:gap-8 lg:gap-0 items-stretch max-w-7xl mx-auto`}
+      className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 md:gap-10 lg:gap-12 items-stretch max-w-7xl mx-auto`}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}

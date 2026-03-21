@@ -48,7 +48,7 @@ export function HeroSection() {
       iconClassName: "text-accent-foreground",
       titleClassName: "text-accent-foreground",
       className:
-        "[grid-area:stack] translate-x-16 translate-y-20 hover:translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] translate-x-24 translate-y-20 hover:translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <ShieldCheck className="size-5" />,

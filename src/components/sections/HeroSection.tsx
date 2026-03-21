@@ -57,7 +57,7 @@ export function HeroSection() {
       date: t("hero.card4Date"),
       iconClassName: "text-primary",
       titleClassName: "text-primary",
-      className: "[grid-area:stack] translate-x-[6.5rem] translate-y-[7.5rem] hover:translate-y-[5rem]",
+      className: "[grid-area:stack] translate-x-[8.5rem] translate-y-[7.5rem] hover:translate-y-[5rem]",
     },
   ];
 

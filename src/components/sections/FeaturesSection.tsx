@@ -148,8 +148,7 @@ function FeatureBlock({ index }: { index: number }) {
       {/* Preview Block — overlapping slightly */}
       <motion.div 
         className={cn(
-          "w-full lg:w-[50%] relative",
-          isReversed ? "lg:-mr-[5%]" : "lg:-ml-[5%]"
+          "w-full lg:w-1/2 relative",
         )}
         initial={{ opacity: 0, x: isReversed ? -60 : 60 }}
         whileInView={{ opacity: 1, x: 0 }}

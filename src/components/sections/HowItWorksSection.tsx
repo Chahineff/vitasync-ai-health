@@ -31,7 +31,7 @@ function GradientBorderCard({ children, accent, className }: { children: React.R
           opacity: 0.3,
         }}
       />
-      <div className="relative rounded-[22px] bg-white/90 dark:bg-card/95 backdrop-blur-xl overflow-hidden">
+      <div className="relative rounded-[22px] bg-white dark:bg-card/95 backdrop-blur-xl overflow-hidden border border-border/30 dark:border-transparent">
         {children}
       </div>
     </div>

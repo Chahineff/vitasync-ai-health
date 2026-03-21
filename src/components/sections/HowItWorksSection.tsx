@@ -31,7 +31,7 @@ function GradientBorderCard({ children, accent, className }: { children: React.R
           opacity: 0.3,
         }}
       />
-      <div className="relative rounded-[22px] bg-white/90 dark:bg-card/95 backdrop-blur-xl overflow-hidden">
+      <div className="relative rounded-[22px] bg-white dark:bg-card/95 backdrop-blur-xl overflow-hidden border border-border/30 dark:border-transparent">
         {children}
       </div>
     </div>
@@ -83,7 +83,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
 
         <div className="relative z-10 flex flex-col md:flex-row items-stretch">
           {/* Left: Large number + icon */}
-          <div className="relative flex flex-col items-center justify-center p-8 md:p-14 md:w-[300px] lg:w-[360px] border-b md:border-b-0 md:border-r border-border/30 dark:border-white/5">
+          <div className="relative flex flex-col items-center justify-center p-8 md:p-14 md:w-[300px] lg:w-[360px] border-b md:border-b-0 md:border-r border-border/40 dark:border-white/5">
             <div
               className="absolute inset-0 opacity-15 dark:opacity-20"
               style={{

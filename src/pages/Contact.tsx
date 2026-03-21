@@ -141,7 +141,7 @@ const Contact = () => {
                             id="name"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                            className="w-full px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                             placeholder={t("contact.namePlaceholder")}
                             required
                           />

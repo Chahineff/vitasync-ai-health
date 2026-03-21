@@ -181,6 +181,7 @@ function FeatureBlock({ index }: { index: number }) {
             {index === 3 && <QualityPreviewWidget />}
           </div>
         </div>
+        </GradientBorderWrapper>
       </motion.div>
     </motion.div>
   );

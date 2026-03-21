@@ -63,8 +63,7 @@ export function HeroSection() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Lamp light effect from top */}
-      <LampEffect />
+      {/* Cards side uses right-aligned layout */}
 
       <motion.div
         className="relative z-10 w-full px-4 sm:px-6 lg:px-16 py-16 md:py-24"

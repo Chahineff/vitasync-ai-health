@@ -13,7 +13,7 @@ interface DisplayCardProps {
 
 function DisplayCard({
   className,
-  icon = <Sparkles className="size-4" />,
+  icon = <Sparkles className="size-5" />,
   title = "Featured",
   description = "Discover amazing content",
   date = "Just now",
@@ -23,18 +23,18 @@ function DisplayCard({
   return (
     <div
       className={cn(
-        "relative flex flex-col gap-3 rounded-xl border border-border/40 bg-card/80 backdrop-blur-md p-4 shadow-lg transition-all duration-500 ease-out [&>*]:flex [&>*]:items-center [&>*]:gap-2",
+        "relative flex flex-col gap-3 rounded-xl border border-border/40 bg-card/80 backdrop-blur-md p-5 md:p-6 shadow-lg transition-all duration-500 ease-out min-w-[280px] md:min-w-[320px] [&>*]:flex [&>*]:items-center [&>*]:gap-2",
         className
       )}
     >
       <div>
-        <span className={cn("relative inline-flex p-1.5 rounded-md bg-muted", iconClassName)}>
+        <span className={cn("relative inline-flex p-2 rounded-lg bg-muted", iconClassName)}>
           {icon}
         </span>
-        <p className={cn("text-lg font-semibold", titleClassName)}>{title}</p>
+        <p className={cn("text-lg md:text-xl font-semibold", titleClassName)}>{title}</p>
       </div>
-      <p className="text-sm text-muted-foreground whitespace-nowrap">{description}</p>
-      <p className="text-xs text-muted-foreground/60">{date}</p>
+      <p className="text-sm md:text-base text-muted-foreground">{description}</p>
+      <p className="text-xs md:text-sm text-muted-foreground/60">{date}</p>
     </div>
   );
 }

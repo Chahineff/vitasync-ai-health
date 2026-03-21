@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import DisplayCards from "@/components/ui/display-cards";
-import { Brain, Mic, Activity, Shield } from "lucide-react";
+import { Brain, Mic, Activity, ShieldCheck } from "lucide-react";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -19,33 +19,43 @@ export function HeroSection() {
 
   const heroCards = [
     {
-      icon: <Brain className="size-4" />,
+      icon: <Brain className="size-5" />,
       title: t("hero.card1Title"),
       description: t("hero.card1Desc"),
       date: t("hero.card1Date"),
       iconClassName: "text-primary",
       titleClassName: "text-primary",
       className:
-        "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
-      icon: <Mic className="size-4" />,
+      icon: <Mic className="size-5" />,
       title: t("hero.card2Title"),
       description: t("hero.card2Desc"),
       date: t("hero.card2Date"),
       iconClassName: "text-secondary",
       titleClassName: "text-secondary",
       className:
-        "[grid-area:stack] translate-x-12 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] translate-x-10 translate-y-10 hover:-translate-y-1 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
-      icon: <Activity className="size-4" />,
+      icon: <Activity className="size-5" />,
       title: t("hero.card3Title"),
       description: t("hero.card3Desc"),
       date: t("hero.card3Date"),
       iconClassName: "text-accent-foreground",
       titleClassName: "text-accent-foreground",
-      className: "[grid-area:stack] translate-x-24 translate-y-20 hover:translate-y-10",
+      className:
+        "[grid-area:stack] translate-x-20 translate-y-20 hover:translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+    },
+    {
+      icon: <ShieldCheck className="size-5" />,
+      title: t("hero.card4Title"),
+      description: t("hero.card4Desc"),
+      date: t("hero.card4Date"),
+      iconClassName: "text-primary",
+      titleClassName: "text-primary",
+      className: "[grid-area:stack] translate-x-[7.5rem] translate-y-[7.5rem] hover:translate-y-[5rem]",
     },
   ];
 
@@ -57,7 +67,7 @@ export function HeroSection() {
       >
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
           {/* Left side — 60% — Text content */}
-          <div className="w-full lg:w-[60%] text-left">
+          <div className="w-full lg:w-[58%] text-left">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -121,9 +131,9 @@ export function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right side — 40% — Display Cards */}
+          {/* Right side — 42% — Display Cards */}
           <motion.div
-            className="w-full lg:w-[40%] flex items-center justify-center"
+            className="w-full lg:w-[42%] flex items-center justify-center min-h-[400px]"
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}

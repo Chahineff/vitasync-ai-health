@@ -204,9 +204,6 @@ export function FeaturesSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <span className="text-xs md:text-sm text-primary uppercase tracking-[0.2em] mb-3 md:mb-4 block font-medium">
-            {t("features.badge")}
-          </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
             {t("features.title")}{" "}
             <span className="gradient-text">{t("features.titleHighlight")}</span>

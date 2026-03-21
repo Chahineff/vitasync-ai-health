@@ -1,6 +1,7 @@
 import { Check, X, Star, Lightning } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { GlowCard } from "@/components/ui/spotlight-card";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
@@ -25,40 +26,13 @@ function FeatureValue({ value }: { value: boolean | string }) {
 
 function AdaptiveCard({ children, className, popular = false }: { children: React.ReactNode; className?: string; popular?: boolean }) {
   return (
-    <>
-      {/* Light mode */}
-      <div
-        className={cn(
-          "dark:hidden rounded-2xl overflow-hidden relative shine-hover",
-          "bg-white/70 backdrop-blur-xl border border-border/60",
-          popular && "border-primary/30",
-          className
-        )}
-        style={{
-          boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-        }}
-      >
-        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: popular ? "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)))" : "linear-gradient(90deg, rgba(0,240,255,0.4), rgba(0,240,255,0.1))" }} />
-        {children}
-      </div>
-      {/* Dark mode */}
-      <div
-        className={cn(
-          "hidden dark:block rounded-2xl overflow-hidden relative border shine-hover",
-          popular ? "border-primary/40" : "border-white/[0.06]",
-          className
-        )}
-        style={{
-          background: "hsl(var(--card) / 0.92)",
-          boxShadow: popular
-            ? "0 0 30px rgba(0, 240, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.03)"
-            : "0 0 20px rgba(0, 240, 255, 0.04), inset 0 1px 0 rgba(255,255,255,0.03)",
-        }}
-      >
-        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: popular ? "linear-gradient(90deg, rgba(0,240,255,0.8), rgba(0,200,255,0.3))" : "linear-gradient(90deg, rgba(0,240,255,0.3), rgba(0,240,255,0.05))" }} />
-        {children}
-      </div>
-    </>
+    <GlowCard
+      glowColor={popular ? "blue" : "cyan"}
+      className={cn("h-full overflow-hidden", className)}
+    >
+      <div className="absolute top-0 left-0 right-0 h-[2px] z-10" style={{ background: popular ? "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)))" : "linear-gradient(90deg, rgba(0,240,255,0.4), rgba(0,240,255,0.1))" }} />
+      {children}
+    </GlowCard>
   );
 }
 

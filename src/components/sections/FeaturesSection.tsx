@@ -6,7 +6,7 @@ import {
   Check,
   ArrowRight
 } from "@phosphor-icons/react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MagicText } from "@/components/ui/magic-text";
@@ -15,40 +15,17 @@ import { ChatPreviewWidget } from "./ChatPreviewWidget";
 import { TrackerPreviewWidget } from "./TrackerPreviewWidget";
 import { BiomarkerPreviewWidget } from "./BiomarkerPreviewWidget";
 import { QualityPreviewWidget } from "./QualityPreviewWidget";
+import { GlowCard } from "@/components/ui/spotlight-card";
 import { cn } from "@/lib/utils";
 
 const featureIcons = [Robot, ChartLineUp, FileMagnifyingGlass, ShieldCheck];
 
 const featureAccents = [
-  { color: "rgba(0, 240, 255, 0.8)", glow: "rgba(0, 240, 255, 0.12)", border: "rgba(0, 240, 255, 0.25)", borderLight: "rgba(0, 200, 220, 0.2)", gradient: "from-primary to-primary/60", bgGradient: "from-primary/10 via-primary/5 to-transparent" },
-  { color: "rgba(0, 215, 135, 0.8)", glow: "rgba(0, 215, 135, 0.12)", border: "rgba(0, 215, 135, 0.25)", borderLight: "rgba(0, 195, 120, 0.2)", gradient: "from-secondary to-secondary/60", bgGradient: "from-secondary/10 via-secondary/5 to-transparent" },
-  { color: "rgba(0, 200, 180, 0.8)", glow: "rgba(0, 200, 180, 0.12)", border: "rgba(0, 200, 180, 0.25)", borderLight: "rgba(0, 180, 160, 0.2)", gradient: "from-accent to-accent/60", bgGradient: "from-accent/10 via-accent/5 to-transparent" },
-  { color: "rgba(59, 130, 246, 0.8)", glow: "rgba(59, 130, 246, 0.12)", border: "rgba(59, 130, 246, 0.25)", borderLight: "rgba(59, 130, 246, 0.2)", gradient: "from-primary via-accent to-secondary", bgGradient: "from-primary/10 via-accent/5 to-secondary/10" },
+  { color: "rgba(0, 240, 255, 0.8)", glow: "rgba(0, 240, 255, 0.12)", border: "rgba(0, 240, 255, 0.25)", borderLight: "rgba(0, 200, 220, 0.2)", gradient: "from-primary to-primary/60", bgGradient: "from-primary/10 via-primary/5 to-transparent", glowColor: "cyan" as const },
+  { color: "rgba(0, 215, 135, 0.8)", glow: "rgba(0, 215, 135, 0.12)", border: "rgba(0, 215, 135, 0.25)", borderLight: "rgba(0, 195, 120, 0.2)", gradient: "from-secondary to-secondary/60", bgGradient: "from-secondary/10 via-secondary/5 to-transparent", glowColor: "green" as const },
+  { color: "rgba(0, 200, 180, 0.8)", glow: "rgba(0, 200, 180, 0.12)", border: "rgba(0, 200, 180, 0.25)", borderLight: "rgba(0, 180, 160, 0.2)", gradient: "from-accent to-accent/60", bgGradient: "from-accent/10 via-accent/5 to-transparent", glowColor: "cyan" as const },
+  { color: "rgba(59, 130, 246, 0.8)", glow: "rgba(59, 130, 246, 0.12)", border: "rgba(59, 130, 246, 0.25)", borderLight: "rgba(59, 130, 246, 0.2)", gradient: "from-primary via-accent to-secondary", bgGradient: "from-primary/10 via-accent/5 to-secondary/10", glowColor: "blue" as const },
 ];
-
-function GradientBorderCard({ children, accent, className }: { children: React.ReactNode; accent: typeof featureAccents[0]; className?: string }) {
-  return (
-    <div className={cn("relative rounded-3xl p-[2px] overflow-hidden", className)}>
-      <div
-        className="absolute inset-0 rounded-3xl animate-spin-slow"
-        style={{
-          background: `conic-gradient(from 0deg, ${accent.color}, transparent 40%, ${accent.color} 50%, transparent 90%, ${accent.color})`,
-          opacity: 0.5,
-        }}
-      />
-      <div
-        className="absolute inset-0 rounded-3xl"
-        style={{
-          background: `conic-gradient(from 180deg, ${accent.border}, transparent 30%, ${accent.border} 60%, transparent)`,
-          opacity: 0.25,
-        }}
-      />
-      <div className="relative rounded-[22px] bg-white/90 dark:bg-card/95 backdrop-blur-xl overflow-hidden">
-        {children}
-      </div>
-    </div>
-  );
-}
 
 function FeatureBlock({ index }: { index: number }) {
   const ref = useRef<HTMLDivElement>(null);

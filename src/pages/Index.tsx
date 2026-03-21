@@ -11,7 +11,7 @@ import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background relative">
+    <PageTransition className="min-h-screen bg-background relative">
       <FloatingThemeToggle />
       <Navbar />
       <main>

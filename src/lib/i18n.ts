@@ -1552,8 +1552,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.subtitle": "VitaSync analiza tus necesidades en tiempo real para crear la rutina de suplementos perfecta, adaptada a tu estilo de vida.",
     "hero.cta": "Comenzar mi evaluación gratuita",
     "hero.secondary": "Cómo funciona",
+    "hero.card1Title": "IA Avanzada",
+    "hero.card1Desc": "Google Gemini y GPT-5 integrados",
+    "hero.card1Date": "Tecnología 2026",
+    "hero.card2Title": "Análisis de Voz",
+    "hero.card2Desc": "Describe tus síntomas con la voz",
+    "hero.card2Date": "Nuevo",
+    "hero.card3Title": "Seguimiento en Tiempo Real",
+    "hero.card3Desc": "Biomarcadores y análisis de sangre",
+    "hero.card3Date": "Disponible ahora",
 
-    // Features
     "features.badge": "Tecnología de vanguardia",
     "features.title": "Una IA que",
     "features.titleHighlight": "realmente entiende",

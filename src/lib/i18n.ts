@@ -3040,8 +3040,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card3Title": "实时追踪",
     "hero.card3Desc": "生物标志物和血液分析",
     "hero.card3Date": "现已推出",
+    "hero.card4Title": "认证质量",
+    "hero.card4Desc": "实验室检测的补充剂",
+    "hero.card4Date": "零风险保证",
 
-    "features.badge": "尖端技术",
     "features.title": "真正",
     "features.titleHighlight": "理解",
     "features.titleEnd": "您身体的AI",

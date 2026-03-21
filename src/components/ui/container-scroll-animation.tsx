@@ -30,7 +30,8 @@ export const ContainerScroll = ({
   };
 
   const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
-  const translate = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const translate = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const headerTranslate = useTransform(scrollYProgress, [0, 1], [0, -10]);
 
   return (
     <div
@@ -40,7 +41,7 @@ export const ContainerScroll = ({
       <div
         className="py-10 md:py-20 w-full relative"
       >
-        <Header translate={translate} titleComponent={titleComponent} />
+        <Header translate={headerTranslate} titleComponent={titleComponent} />
         <Card translate={translate} scale={scale}>
           {children}
         </Card>
@@ -77,7 +78,7 @@ export const Card = ({
         boxShadow:
           "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
       }}
-      className="max-w-5xl mt-8 md:mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-border/30 p-2 md:p-6 bg-card rounded-[30px] shadow-2xl"
+      className="max-w-5xl mt-12 md:mt-16 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-border/30 p-2 md:p-6 bg-card rounded-[30px] shadow-2xl"
     >
       <div className="h-full w-full overflow-hidden rounded-2xl bg-background md:rounded-2xl md:p-4">
         {children}

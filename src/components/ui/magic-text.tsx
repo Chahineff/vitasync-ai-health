@@ -45,7 +45,8 @@ export const MagicText: React.FC<MagicTextProps> = ({ text, className }) => {
   return (
     <p
       ref={container}
-      className={cn("flex flex-wrap text-foreground/20", className)}
+      className={cn("flex flex-wrap bg-gradient-to-r from-[hsl(217,100%,50%)] via-[hsl(190,100%,45%)] to-[hsl(163,100%,42%)] bg-clip-text", className)}
+      style={{ WebkitTextFillColor: "transparent" }}
     >
       {words.map((word, i) => {
         const start = i / words.length;

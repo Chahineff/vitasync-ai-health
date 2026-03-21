@@ -49,10 +49,7 @@ export function HeroSection() {
         <MeshGradient
           style={{ width: "100%", height: "100%" }}
           speed={0.15}
-          color1="#00f0ff"
-          color2="#0066ff"
-          color3="#00d787"
-          color4="#001a33"
+          colors={["#00f0ff", "#0066ff", "#00d787", "#001a33"]}
         />
 
         {/* Dark overlay for text readability */}

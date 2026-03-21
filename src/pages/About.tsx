@@ -128,7 +128,7 @@ const About = () => {
         </section>
 
         {/* Values */}
-        <section className="section-padding bg-gradient-subtle">
+        <section className="section-padding bg-gradient-subtle border-y border-border/30">
           <div className="container-custom">
             <ScrollReveal>
               <div className="text-center mb-16">

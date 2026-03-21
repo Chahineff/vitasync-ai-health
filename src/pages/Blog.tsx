@@ -183,7 +183,7 @@ const Blog = () => {
                   <input
                     type="email"
                     placeholder={t("blog.emailPlaceholder")}
-                    className="flex-1 px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    className="flex-1 px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                   <button type="submit" className="btn-neumorphic text-primary-foreground">
                     {t("blog.subscribe")}

@@ -84,9 +84,9 @@ const BlogPost = () => {
           )}
 
           {article && (
-            <article>
+            <article className="glass-card border border-border/40 bg-white/50 dark:bg-transparent dark:border-white/[0.06] rounded-2xl p-6 md:p-10">
               {article.image && (
-                <div className="rounded-2xl overflow-hidden mb-8">
+                <div className="rounded-xl overflow-hidden mb-8">
                   <img
                     src={article.image.url}
                     alt={article.image.altText || article.title}
@@ -106,7 +106,12 @@ const BlogPost = () => {
               </h1>
 
               <div
-                className="prose prose-lg dark:prose-invert max-w-none leading-relaxed"
+                className="prose prose-lg dark:prose-invert max-w-none leading-relaxed
+                  prose-headings:text-foreground prose-headings:font-medium prose-headings:tracking-tight
+                  prose-p:text-foreground/70 prose-p:leading-relaxed
+                  prose-li:text-foreground/70
+                  prose-strong:text-foreground prose-strong:font-medium
+                  prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(article.contentHtml),
                 }}

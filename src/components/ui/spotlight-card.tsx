@@ -129,7 +129,7 @@ const GlowCard: React.FC<GlowCardProps> = ({
         position: 'relative',
         touchAction: 'none',
       } as React.CSSProperties}
-      className={`rounded-2xl relative shadow-[0_1rem_2rem_-1rem_black] backdrop-blur-[5px] ${className}`}
+      className={`rounded-2xl relative shadow-[0_1rem_2rem_-1rem_rgba(0,0,0,0.15)] dark:shadow-[0_1rem_2rem_-1rem_black] backdrop-blur-[5px] border border-border/40 dark:border-transparent bg-white/60 dark:bg-transparent ${className}`}
     >
       <div data-glow />
       {children}

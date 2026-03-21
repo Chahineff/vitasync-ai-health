@@ -155,7 +155,7 @@ function FeatureBlock({ index }: { index: number }) {
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
         style={{ y: imageY }}
       >
-        <div className={`relative aspect-[3/4] sm:aspect-[4/3] lg:aspect-auto lg:h-full min-h-[400px] rounded-2xl sm:rounded-3xl overflow-hidden`}>
+        <div className={`relative aspect-[3/4] sm:aspect-[4/3] lg:aspect-auto lg:h-full min-h-[400px] rounded-2xl sm:rounded-3xl overflow-hidden border border-border/30 dark:border-transparent`}>
           {/* Background gradient */}
           <div
             className="absolute inset-0 rounded-2xl sm:rounded-3xl"

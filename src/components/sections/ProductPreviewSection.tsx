@@ -54,7 +54,7 @@ export const ProductPreviewSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm rounded-lg"
+            className="absolute inset-0 flex items-center justify-center bg-background/60 dark:bg-background/60 backdrop-blur-sm rounded-lg"
           >
             <motion.button
               initial={{ scale: 0.9, opacity: 0 }}

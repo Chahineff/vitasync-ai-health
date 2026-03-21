@@ -1,6 +1,7 @@
 import { Check, X, Star, Lightning } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { GlowCard } from "@/components/ui/spotlight-card";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import {

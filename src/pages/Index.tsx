@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { PageTransition } from "@/components/PageTransition";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ProductPreviewSection } from "@/components/sections/ProductPreviewSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";

@@ -52,7 +52,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageTransition className="min-h-screen bg-background">
       <SplineBackground />
       <FloatingThemeToggle />
       <Navbar />

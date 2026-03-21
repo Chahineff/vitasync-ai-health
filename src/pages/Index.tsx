@@ -23,7 +23,7 @@ const Index = () => {
         <FAQSection />
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 };
 

@@ -65,7 +65,7 @@ function FeatureBlock({ index }: { index: number }) {
     >
       {/* Text Block */}
       <motion.div 
-        className="w-full lg:w-[55%] relative z-10"
+        className="w-full lg:w-1/2 relative z-10"
         initial={{ opacity: 0, x: isReversed ? 60 : -60 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-100px" }}

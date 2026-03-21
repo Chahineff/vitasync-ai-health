@@ -9,62 +9,62 @@
 @layer base {
   :root {
     /* Core Colors */
-    --background: 0 0% 99%;
-    --foreground: 220 20% 10%;
+    --background: 220 15% 96%;
+    --foreground: 220 25% 8%;
 
     /* Cards with Glassmorphism */
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 220 25% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 220 25% 8%;
 
-    /* Primary - Electric Blue (AI) */
-    --primary: 217 100% 50%;
+    /* Primary - Electric Blue (AI) — darker for light mode */
+    --primary: 217 100% 42%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Mint Cyan (Health) */
-    --secondary: 163 100% 42%;
+    /* Secondary - Mint Cyan (Health) — darker */
+    --secondary: 163 100% 32%;
     --secondary-foreground: 0 0% 100%;
 
     /* Muted for subtle backgrounds */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 12% 40%;
 
-    /* Accent - Gradient blend */
-    --accent: 190 100% 45%;
+    /* Accent - Gradient blend — darker */
+    --accent: 190 100% 36%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 55%;
     --destructive-foreground: 0 0% 100%;
 
     /* Alert/Notification Red */
-    --alert: 0 84% 60%;
+    --alert: 0 84% 55%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 100% 50%;
+    --border: 220 15% 86%;
+    --input: 220 15% 86%;
+    --ring: 217 100% 42%;
 
     --radius: 1rem;
 
     /* Glass Effect Variables */
     --glass-bg: 0 0% 100% / 0.7;
-    --glass-border: 0 0% 100% / 0.3;
+    --glass-border: 220 15% 80% / 0.5;
     --glass-blur: 20px;
 
     /* Glow Effects */
-    --glow-primary: 217 100% 50%;
-    --glow-secondary: 163 100% 42%;
+    --glow-primary: 217 100% 42%;
+    --glow-secondary: 163 100% 32%;
 
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 220 10% 26%;
-    --sidebar-primary: 217 100% 50%;
+    --sidebar-background: 220 15% 95%;
+    --sidebar-foreground: 220 12% 22%;
+    --sidebar-primary: 217 100% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 96%;
-    --sidebar-accent-foreground: 220 20% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 100% 50%;
+    --sidebar-accent: 220 14% 92%;
+    --sidebar-accent-foreground: 220 25% 8%;
+    --sidebar-border: 220 15% 86%;
+    --sidebar-ring: 217 100% 42%;
   }
 
   .dark {

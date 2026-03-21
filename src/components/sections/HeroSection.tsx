@@ -5,7 +5,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import DisplayCards from "@/components/ui/display-cards";
 import { Brain, Mic, Activity, ShieldCheck } from "lucide-react";
 
-function HeroLampEffect() { return null; }
+
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);

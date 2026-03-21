@@ -5,54 +5,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import DisplayCards from "@/components/ui/display-cards";
 import { Brain, Mic, Activity, ShieldCheck } from "lucide-react";
 
-function LampEffect() {
-  return (
-    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl pointer-events-none z-0">
-      {/* Main glow */}
-      <motion.div
-        initial={{ opacity: 0, width: "8rem" }}
-        animate={{ opacity: 1, width: "20rem" }}
-        transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-        className="absolute top-0 left-1/2 -translate-x-1/2 h-56 rounded-full"
-        style={{
-          background: "conic-gradient(from 90deg at 50% 0%, hsl(var(--primary) / 0), hsl(var(--primary) / 0.15) 50%, hsl(var(--primary) / 0))",
-        }}
-      />
-      {/* Top line */}
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: "12rem" }}
-        transition={{ delay: 0.3, duration: 0.6, ease: "easeInOut" }}
-        className="absolute top-0 left-1/2 -translate-x-1/2 h-px"
-        style={{
-          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), transparent)",
-        }}
-      />
-      {/* Left cone */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className="absolute top-0 left-1/2 h-56 w-56 -translate-x-[80%]"
-        style={{
-          background: "conic-gradient(from 70deg at 100% 0%, hsl(var(--primary) / 0), hsl(var(--primary) / 0.08) 30%, transparent 50%)",
-        }}
-      />
-      {/* Right cone */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className="absolute top-0 left-1/2 h-56 w-56 -translate-x-[20%]"
-        style={{
-          background: "conic-gradient(from -70deg at 0% 0%, transparent 50%, hsl(var(--primary) / 0.08) 70%, hsl(var(--primary) / 0))",
-        }}
-      />
-      {/* Blur overlay */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-56 backdrop-blur-[60px] opacity-70" />
-    </div>
-  );
-}
+function HeroLampEffect() { return null; }
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);

@@ -1,13 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { MeshGradient, PulsingBorder } from "@paper-design/shaders-react";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isActive, setIsActive] = useState(false);
   const { t } = useTranslation();
 
   const { scrollYProgress } = useScroll({
@@ -18,47 +15,11 @@ export function HeroSection() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const handleMouseEnter = () => setIsActive(true);
-    const handleMouseLeave = () => setIsActive(false);
-    container.addEventListener("mouseenter", handleMouseEnter);
-    container.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      container.removeEventListener("mouseenter", handleMouseEnter);
-      container.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
-
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Shader Background */}
-      <div ref={containerRef} className="absolute inset-0 z-0">
-        {/* SVG Filters for gooey effect */}
-        <svg className="absolute w-0 h-0">
-          <defs>
-            <filter id="gooey">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="gooey" />
-              <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-
-        <MeshGradient
-          style={{ width: "100%", height: "100%" }}
-          speed={0.15}
-          colors={["#00f0ff", "#0066ff", "#00d787", "#001a33"]}
-        />
-
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-background/50 dark:bg-background/60" />
-      </div>
-
       {/* Content Container with fade out on scroll */}
       <motion.div 
-        className="relative z-10 px-4 sm:px-6 lg:px-16 py-16 md:py-24 text-center max-w-5xl mx-auto"
+        className="relative z-10 px-4 sm:px-6 lg:px-16 py-16 md:py-24 text-center max-w-4xl mx-auto"
         style={{ opacity: contentOpacity, y: contentY }}
       >
         <motion.div
@@ -126,32 +87,24 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
 
-      {/* Pulsing Border Orb - bottom center */}
+      {/* Scroll indicator - hidden on small mobile */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 1 }}
+        className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 hidden sm:block"
       >
-        <div className="relative w-16 h-16 md:w-20 md:h-20">
-          <PulsingBorder
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "50%",
-            }}
-            colors={["#00f0ff", "#0066ff"]}
-            speed={1.5}
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-5 h-8 md:w-6 md:h-10 rounded-full border-2 border-foreground/20 flex items-start justify-center p-1.5 md:p-2"
+        >
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5], y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary"
           />
-          {/* Scroll indicator inside */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div
-              animate={{ y: [0, 6, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1 h-3 md:w-1.5 md:h-4 rounded-full bg-primary/60"
-            />
-          </div>
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   );

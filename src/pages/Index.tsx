@@ -7,15 +7,13 @@ import { FeaturesSection } from "@/components/sections/FeaturesSection";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
-import { SplineBackground } from "@/components/sections/SplineBackground";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background relative">
-      <SplineBackground steps={1000} />
       <FloatingThemeToggle />
       <Navbar />
-      <main className="relative z-10">
+      <main>
         <HeroSection />
         <ProductPreviewSection />
         <HowItWorksSection />

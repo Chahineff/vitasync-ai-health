@@ -57,7 +57,7 @@ const Contact = () => {
       <Navbar />
       <main className="relative z-10">
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-radial">
+        <section className="pt-32 pb-20">
           <div className="container-custom">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
@@ -141,7 +141,7 @@ const Contact = () => {
                             id="name"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                            className="w-full px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                             placeholder={t("contact.namePlaceholder")}
                             required
                           />
@@ -155,7 +155,7 @@ const Contact = () => {
                             id="email"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                            className="w-full px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                             placeholder={t("contact.emailPlaceholder")}
                             required
                           />
@@ -171,7 +171,7 @@ const Contact = () => {
                           id="subject"
                           value={formData.subject}
                           onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                          className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                          className="w-full px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                           placeholder={t("contact.subjectPlaceholder")}
                           required
                         />
@@ -186,7 +186,7 @@ const Contact = () => {
                           value={formData.message}
                           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                           rows={5}
-                          className="w-full px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                          className="w-full px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
                           placeholder={t("contact.messagePlaceholder")}
                           required
                         />

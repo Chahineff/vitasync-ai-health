@@ -57,7 +57,7 @@ const About = () => {
       <Navbar />
       <main className="relative z-10">
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-radial">
+        <section className="pt-32 pb-20">
           <div className="container-custom">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
@@ -128,7 +128,7 @@ const About = () => {
         </section>
 
         {/* Values */}
-        <section className="section-padding bg-gradient-subtle">
+        <section className="section-padding bg-gradient-subtle border-y border-border/30">
           <div className="container-custom">
             <ScrollReveal>
               <div className="text-center mb-16">

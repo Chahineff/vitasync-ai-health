@@ -75,7 +75,7 @@ const Blog = () => {
       <Navbar />
       <main className="relative z-10">
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-radial">
+        <section className="pt-32 pb-20">
           <div className="container-custom">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
@@ -169,7 +169,7 @@ const Blog = () => {
         </section>
 
         {/* Newsletter CTA */}
-        <section className="section-padding bg-gradient-subtle">
+        <section className="section-padding bg-gradient-subtle border-y border-border/30">
           <div className="container-custom">
             <ScrollReveal>
               <GlassCard className="max-w-3xl mx-auto text-center p-12">
@@ -183,7 +183,7 @@ const Blog = () => {
                   <input
                     type="email"
                     placeholder={t("blog.emailPlaceholder")}
-                    className="flex-1 px-6 py-4 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    className="flex-1 px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                   <button type="submit" className="btn-neumorphic text-primary-foreground">
                     {t("blog.subscribe")}

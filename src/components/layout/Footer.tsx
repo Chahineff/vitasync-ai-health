@@ -53,7 +53,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="relative z-20 bg-background border-t border-border/50 dark:border-white/[0.06] overflow-hidden">
+    <footer className="relative z-20 bg-background/80 backdrop-blur-sm overflow-hidden">
       <div className="container-custom py-16 md:py-20 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Column */}

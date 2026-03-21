@@ -224,11 +224,11 @@ export function HowItWorksSection() {
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent">
         {/* Subtle radial glow — reduced to card area only */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/4 pointer-events-none"
+          className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none"
           style={{
-            width: "min(90%, 1200px)",
-            height: "60%",
-            background: `radial-gradient(ellipse 70% 50% at 50% 50%, ${stepAccents[currentStepIndex].color}15, ${stepAccents[currentStepIndex].glow}, transparent)`,
+            width: "min(92%, 1280px)",
+            height: "55%",
+            background: `radial-gradient(ellipse 80% 60% at 50% 50%, ${stepAccents[currentStepIndex].color}12, ${stepAccents[currentStepIndex].glow}, transparent)`,
             transition: "background 0.8s ease",
           }}
         />

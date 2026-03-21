@@ -15,6 +15,7 @@ import { TrackerPreviewWidget } from "./TrackerPreviewWidget";
 import { BiomarkerPreviewWidget } from "./BiomarkerPreviewWidget";
 import { QualityPreviewWidget } from "./QualityPreviewWidget";
 import { GlowCard } from "@/components/ui/spotlight-card";
+import { GradientBorderWrapper } from "@/components/ui/GradientBorderWrapper";
 import { cn } from "@/lib/utils";
 
 const featureIcons = [Robot, ChartLineUp, FileMagnifyingGlass, ShieldCheck];

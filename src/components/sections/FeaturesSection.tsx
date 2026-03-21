@@ -71,7 +71,12 @@ function FeatureBlock({ index }: { index: number }) {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <GlowCard glowColor={accent.glowColor} className="h-full">
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="h-full"
+        >
+        <GlowCard glowColor={accent.glowColor} className="h-full transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]">
           <div className="relative p-8 md:p-10 lg:p-14">
             {/* Radial glow behind content */}
             <div

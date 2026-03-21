@@ -158,6 +158,7 @@ function FeatureBlock({ index }: { index: number }) {
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
         style={{ y: imageY }}
       >
+        <GradientBorderWrapper accentColor={accent.color} borderRadius="rounded-2xl sm:rounded-3xl" intensity="subtle">
         <div className={`relative aspect-[3/4] sm:aspect-[4/3] lg:aspect-auto lg:h-full min-h-[400px] rounded-2xl sm:rounded-3xl overflow-hidden border border-border/30 dark:border-transparent`}>
           {/* Background gradient */}
           <div

@@ -146,7 +146,7 @@ function FeatureBlock({ index }: { index: number }) {
               </motion.a>
             </div>
           </div>
-        </GradientBorderCard>
+        </GlowCard>
       </motion.div>
 
       {/* Preview Block — overlapping slightly */}

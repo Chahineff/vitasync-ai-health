@@ -25,7 +25,7 @@ function DisplayCard({
   return (
     <div
       className={cn(
-        "relative flex flex-col gap-3 rounded-2xl border border-border/40 bg-card/80 backdrop-blur-md p-6 md:p-8 shadow-lg transition-all duration-500 ease-out w-[400px] md:w-[500px] lg:w-[560px]",
+        "relative flex flex-col gap-3 rounded-2xl border border-border/40 bg-card/80 backdrop-blur-md p-6 md:p-8 shadow-lg transition-all duration-500 ease-out w-[420px] md:w-[540px] lg:w-[620px]",
         className
       )}
     >

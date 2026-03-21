@@ -41,7 +41,7 @@ export const ContainerScroll = ({
       <div
         className="py-10 md:py-20 w-full relative"
       >
-        <Header translate={translate} titleComponent={titleComponent} />
+        <Header translate={headerTranslate} titleComponent={titleComponent} />
         <Card translate={translate} scale={scale}>
           {children}
         </Card>

@@ -12,7 +12,7 @@ export const ProductPreviewSection = () => {
   const { resolvedTheme } = useTheme();
 
   return (
-    <section className="relative overflow-hidden bg-transparent -mt-8">
+    <section className="relative overflow-hidden bg-transparent mt-0">
       {/* Decorative blurs */}
       <div className="absolute top-1/4 left-1/4 w-48 md:w-96 h-48 md:h-96 bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-48 md:w-96 h-48 md:h-96 bg-secondary/5 dark:bg-secondary/10 rounded-full blur-3xl" />

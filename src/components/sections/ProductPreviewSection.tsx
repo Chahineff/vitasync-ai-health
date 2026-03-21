@@ -6,7 +6,6 @@ import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { AnimatedText } from "@/components/ui/animated-shiny-text";
 import { MagicText } from "@/components/ui/magic-text";
 import { GradientBorderWrapper } from "@/components/ui/GradientBorderWrapper";
-import { MagicText } from "@/components/ui/magic-text";
 import dashboardLight from "@/assets/dashboard-preview-light.png";
 import dashboardDark from "@/assets/dashboard-preview-dark.png";
 

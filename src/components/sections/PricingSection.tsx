@@ -209,11 +209,11 @@ export function PricingSection() {
             <span className="text-xs md:text-sm text-primary uppercase tracking-[0.3em] mb-3 md:mb-4 block">
               {t("pricing.title")}
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
               {t("pricing.subtitle").split(" ").slice(0, -1).join(" ")}{" "}
               <span className="gradient-text-reverse">{t("pricing.subtitle").split(" ").slice(-1)}</span>
             </h2>
-            <p className="text-sm md:text-lg text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
+            <p className="text-base md:text-lg lg:text-xl text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
               {t("pricing.description")}
             </p>
           </div>

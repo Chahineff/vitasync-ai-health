@@ -207,12 +207,12 @@ export function FeaturesSection() {
           <span className="text-xs md:text-sm text-primary uppercase tracking-[0.2em] mb-3 md:mb-4 block font-medium">
             {t("features.badge")}
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
             {t("features.title")}{" "}
             <span className="gradient-text">{t("features.titleHighlight")}</span>
             {" "}{t("features.titleEnd")}
           </h2>
-          <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4 md:px-0">
+          <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4 md:px-0">
             {t("features.subtitle")}
           </p>
         </motion.div>

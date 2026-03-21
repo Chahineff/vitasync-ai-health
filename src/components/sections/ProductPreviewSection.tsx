@@ -20,12 +20,12 @@ export const ProductPreviewSection = () => {
       <ContainerScroll
         titleComponent={
           <div className="mb-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-3 md:mb-4 px-2 text-foreground">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-3 md:mb-4 px-2 text-foreground">
               {t("productPreview.title")}{" "}
               <span className="gradient-text">{t("productPreview.titleHighlight")}</span>{" "}
               {t("productPreview.titleEnd")}
             </h2>
-            <p className="text-muted-foreground text-sm md:text-base lg:text-lg max-w-2xl mx-auto font-light px-4">
+            <p className="text-muted-foreground text-base md:text-lg lg:text-xl max-w-2xl mx-auto font-light px-4">
               {t("productPreview.subtitle")}
             </p>
           </div>

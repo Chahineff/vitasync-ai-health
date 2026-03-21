@@ -103,11 +103,11 @@ export function FAQSection() {
             <span className="text-sm text-primary uppercase tracking-[0.3em] mb-4 block">
               {t("faq.title")}
             </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground mb-4">
               {t("faq.sectionTitle")}{" "}
               <span className="gradient-text">{t("faq.sectionTitleHighlight")}</span>
             </h2>
-            <p className="text-lg text-foreground/50 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-foreground/50 max-w-2xl mx-auto">
               {t("faq.sectionSubtitle")}
             </p>
           </div>

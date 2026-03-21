@@ -294,7 +294,7 @@ export function HowItWorksSection() {
         />
 
         {/* Header */}
-        <div className="absolute top-16 md:top-20 left-0 right-0 text-center px-4 z-10">
+        <div className="absolute top-24 md:top-28 lg:top-32 left-0 right-0 text-center px-4 z-10">
           <span className="text-[10px] md:text-xs text-primary uppercase tracking-[0.3em] mb-4 block font-medium">
             {t("howItWorks.badge")}
           </span>

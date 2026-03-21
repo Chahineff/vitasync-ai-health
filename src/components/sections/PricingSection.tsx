@@ -213,7 +213,7 @@ export function PricingSection() {
               {t("pricing.subtitle").split(" ").slice(0, -1).join(" ")}{" "}
               <span className="gradient-text-reverse">{t("pricing.subtitle").split(" ").slice(-1)}</span>
             </h2>
-            <p className="text-sm md:text-lg text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
+            <p className="text-base md:text-lg lg:text-xl text-foreground/50 max-w-2xl mx-auto px-4 md:px-0">
               {t("pricing.description")}
             </p>
           </div>

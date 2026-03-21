@@ -32,14 +32,14 @@ export function SplineBackground({ steps = 200 }: SplineBackgroundProps) {
 
   return (
     <div ref={ref} className="fixed inset-0 z-0 pointer-events-none">
-      <motion.div className="absolute inset-0 hidden md:block" style={{ opacity: splineOpacity }}>
+      <div className="absolute inset-0 hidden md:block">
         <spline-viewer
           url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
           style={{ width: "100%", height: "100%", pointerEvents: "none" }}
         />
-      </motion.div>
+      </div>
 
-      <motion.div className="absolute inset-0 md:hidden bg-gradient-mesh" style={{ opacity: splineOpacity }} />
+      <div className="absolute inset-0 md:hidden bg-gradient-mesh" />
 
       <motion.div
         className="absolute inset-0"

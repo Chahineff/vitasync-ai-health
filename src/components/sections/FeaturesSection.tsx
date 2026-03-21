@@ -212,7 +212,7 @@ export function FeaturesSection() {
             <span className="gradient-text">{t("features.titleHighlight")}</span>
             {" "}{t("features.titleEnd")}
           </h2>
-          <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4 md:px-0">
+          <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4 md:px-0">
             {t("features.subtitle")}
           </p>
         </motion.div>

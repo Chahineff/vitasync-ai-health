@@ -25,7 +25,7 @@ export const ProductPreviewSection = () => {
               <span className="gradient-text">{t("productPreview.titleHighlight")}</span>{" "}
               {t("productPreview.titleEnd")}
             </h2>
-            <p className="text-muted-foreground text-sm md:text-base lg:text-lg max-w-2xl mx-auto font-light px-4">
+            <p className="text-muted-foreground text-base md:text-lg lg:text-xl max-w-2xl mx-auto font-light px-4">
               {t("productPreview.subtitle")}
             </p>
           </div>

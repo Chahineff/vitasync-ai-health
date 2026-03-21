@@ -107,7 +107,7 @@ export function FAQSection() {
               {t("faq.sectionTitle")}{" "}
               <span className="gradient-text">{t("faq.sectionTitleHighlight")}</span>
             </h2>
-            <p className="text-lg text-foreground/50 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-foreground/50 max-w-2xl mx-auto">
               {t("faq.sectionSubtitle")}
             </p>
           </div>

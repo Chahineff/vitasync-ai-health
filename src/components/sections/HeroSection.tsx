@@ -80,7 +80,7 @@ export function HeroSection() {
           </Link>
           <a 
             href="#how-it-works" 
-            className="btn-hero-secondary text-foreground text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-10 w-full sm:w-auto"
+            className="btn-hero-secondary text-foreground text-base md:text-lg lg:text-xl py-3.5 px-8 md:py-5 md:px-12 w-full sm:w-auto"
           >
             {t("hero.secondary")}
           </a>

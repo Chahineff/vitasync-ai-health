@@ -298,7 +298,7 @@ export function HowItWorksSection() {
           <span className="text-[10px] md:text-xs text-primary uppercase tracking-[0.3em] mb-4 block font-medium">
             {t("howItWorks.badge")}
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground">
             {t("howItWorks.title")}{" "}
             <span className="gradient-text">{t("howItWorks.titleHighlight")}</span>
           </h2>

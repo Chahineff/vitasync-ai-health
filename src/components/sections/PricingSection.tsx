@@ -109,6 +109,7 @@ export function PricingSection() {
       cta: t("pricing.plan3.cta"),
       popular: true,
       glowColor: "blue" as const,
+      accentRgba: "rgba(59, 130, 246, 0.8)",
     },
   ];
 

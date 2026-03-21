@@ -89,6 +89,7 @@ export function PricingSection() {
       cta: t("pricing.plan2.cta"),
       popular: false,
       glowColor: "green" as const,
+      accentRgba: "rgba(0, 215, 135, 0.8)",
     },
     {
       name: t("pricing.plan3.name"),

@@ -31,7 +31,7 @@ function ScrollHighlightText({ text, accentColor }: { text: string; accentColor:
   return (
     <p
       ref={containerRef}
-      className="text-sm sm:text-base md:text-lg leading-relaxed max-w-lg font-light"
+      className="text-base sm:text-lg md:text-xl leading-relaxed max-w-xl font-light"
     >
       {words.map((word, i) => {
         const wordProgress = Math.min(
@@ -82,7 +82,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -40 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full max-w-5xl mx-auto px-4 md:px-8"
+      className="w-full max-w-6xl mx-auto px-4 md:px-8"
     >
       {/* Light mode card */}
       <div
@@ -164,7 +164,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-light tracking-tight text-foreground leading-[1.15] mb-5 md:mb-8">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.15] mb-5 md:mb-8">
               {t(`howItWorks.step${stepNum}.title`)}
             </h3>
 
@@ -294,7 +294,7 @@ export function HowItWorksSection() {
         />
 
         {/* Header */}
-        <div className="absolute top-16 md:top-20 left-0 right-0 text-center px-4 z-10">
+        <div className="absolute top-24 md:top-28 lg:top-32 left-0 right-0 text-center px-4 z-10">
           <span className="text-[10px] md:text-xs text-primary uppercase tracking-[0.3em] mb-4 block font-medium">
             {t("howItWorks.badge")}
           </span>
@@ -305,7 +305,7 @@ export function HowItWorksSection() {
         </div>
 
         {/* Step cards */}
-        <div className="flex items-center justify-center w-full mt-16 md:mt-20">
+        <div className="flex items-center justify-center w-full mt-20 md:mt-24">
           <AnimatePresence mode="wait">
             <StepCard key={currentStepIndex} stepIndex={currentStepIndex} />
           </AnimatePresence>

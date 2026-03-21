@@ -72,15 +72,29 @@ export const Card = ({
   children: React.ReactNode;
 }) => {
   return (
-    <motion.div
-      style={{
-        scale,
-      }}
-      className="max-w-5xl mt-12 md:mt-16 mx-auto h-[30rem] md:h-[40rem] w-full border-2 border-border/50 dark:border-border/30 p-2 md:p-6 bg-card rounded-[30px] shadow-xl dark:shadow-2xl dark:shadow-black/40"
-    >
-      <div className="h-full w-full overflow-hidden rounded-2xl bg-background md:rounded-2xl md:p-4">
-        {children}
-      </div>
-    </motion.div>
+    <div className="relative max-w-5xl mt-12 md:mt-16 mx-auto p-[2px] rounded-[30px] overflow-hidden">
+      {/* Animated gradient border */}
+      <div
+        className="absolute inset-0 rounded-[30px] animate-spin-slow"
+        style={{
+          background: "conic-gradient(from 0deg, rgba(0,240,255,0.6), transparent 40%, rgba(59,130,246,0.6) 50%, transparent 90%, rgba(0,240,255,0.6))",
+        }}
+      />
+      <div
+        className="absolute inset-0 rounded-[30px]"
+        style={{
+          background: "conic-gradient(from 180deg, rgba(0,215,135,0.4), transparent 30%, rgba(0,240,255,0.4) 60%, transparent)",
+          opacity: 0.4,
+        }}
+      />
+      <motion.div
+        style={{ scale }}
+        className="relative h-[30rem] md:h-[40rem] w-full p-2 md:p-6 bg-card rounded-[28px] shadow-xl dark:shadow-2xl dark:shadow-black/40"
+      >
+        <div className="h-full w-full overflow-hidden rounded-2xl bg-background md:rounded-2xl md:p-4">
+          {children}
+        </div>
+      </motion.div>
+    </div>
   );
 };

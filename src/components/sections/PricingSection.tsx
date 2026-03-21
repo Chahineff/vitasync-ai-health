@@ -7,6 +7,7 @@ import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { GlowCard } from "@/components/ui/spotlight-card";
+import { GradientBorderWrapper } from "@/components/ui/GradientBorderWrapper";
 import NumberFlow from "@number-flow/react";
 import confetti from "canvas-confetti";
 import {
@@ -69,6 +70,7 @@ export function PricingSection() {
       cta: t("pricing.plan1.cta"),
       popular: false,
       glowColor: "cyan" as const,
+      accentRgba: "rgba(0, 240, 255, 0.8)",
     },
     {
       name: t("pricing.plan2.name"),
@@ -87,6 +89,7 @@ export function PricingSection() {
       cta: t("pricing.plan2.cta"),
       popular: false,
       glowColor: "green" as const,
+      accentRgba: "rgba(0, 215, 135, 0.8)",
     },
     {
       name: t("pricing.plan3.name"),
@@ -106,6 +109,7 @@ export function PricingSection() {
       cta: t("pricing.plan3.cta"),
       popular: true,
       glowColor: "blue" as const,
+      accentRgba: "rgba(59, 130, 246, 0.8)",
     },
   ];
 
@@ -180,6 +184,7 @@ export function PricingSection() {
                 </div>
               )}
 
+              <GradientBorderWrapper accentColor={plan.accentRgba} borderRadius="rounded-2xl" intensity={plan.popular ? "strong" : "medium"}>
               <GlowCard glowColor={plan.glowColor} className={cn("h-full", plan.popular && "ring-1 ring-primary/30")}>
                 <div className={cn("p-6 md:p-8 relative", plan.popular && "pt-8")}>
                   {/* Plan name */}
@@ -245,6 +250,7 @@ export function PricingSection() {
                   </p>
                 </div>
               </GlowCard>
+              </GradientBorderWrapper>
             </motion.div>
           ))}
         </div>
@@ -257,6 +263,7 @@ export function PricingSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
+          <GradientBorderWrapper accentColor="rgba(0, 240, 255, 0.8)" secondaryColor="rgba(59, 130, 246, 0.8)" borderRadius="rounded-2xl" intensity="subtle">
           <GlowCard glowColor="cyan">
             <div className="p-4 md:p-6 border-b border-border/30">
               <h3 className="text-lg md:text-xl font-light text-foreground text-center">
@@ -290,6 +297,7 @@ export function PricingSection() {
               </Table>
             </div>
           </GlowCard>
+          </GradientBorderWrapper>
         </motion.div>
 
         {/* Note */}

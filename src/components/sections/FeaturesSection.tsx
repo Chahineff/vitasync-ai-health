@@ -15,6 +15,7 @@ import { TrackerPreviewWidget } from "./TrackerPreviewWidget";
 import { BiomarkerPreviewWidget } from "./BiomarkerPreviewWidget";
 import { QualityPreviewWidget } from "./QualityPreviewWidget";
 import { GlowCard } from "@/components/ui/spotlight-card";
+import { GradientBorderWrapper } from "@/components/ui/GradientBorderWrapper";
 import { cn } from "@/lib/utils";
 
 const featureIcons = [Robot, ChartLineUp, FileMagnifyingGlass, ShieldCheck];
@@ -75,6 +76,7 @@ function FeatureBlock({ index }: { index: number }) {
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="h-full"
         >
+        <GradientBorderWrapper accentColor={accent.color} borderRadius="rounded-2xl" intensity="medium">
         <GlowCard glowColor={accent.glowColor} className="h-full transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]">
           <div className="relative p-8 md:p-10 lg:p-14">
             {/* Radial glow behind content */}
@@ -141,6 +143,7 @@ function FeatureBlock({ index }: { index: number }) {
             </div>
           </div>
         </GlowCard>
+        </GradientBorderWrapper>
         </motion.div>
       </motion.div>
 
@@ -155,6 +158,7 @@ function FeatureBlock({ index }: { index: number }) {
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
         style={{ y: imageY }}
       >
+        <GradientBorderWrapper accentColor={accent.color} borderRadius="rounded-2xl sm:rounded-3xl" intensity="subtle">
         <div className={`relative aspect-[3/4] sm:aspect-[4/3] lg:aspect-auto lg:h-full min-h-[400px] rounded-2xl sm:rounded-3xl overflow-hidden border border-border/30 dark:border-transparent`}>
           {/* Background gradient */}
           <div
@@ -177,6 +181,7 @@ function FeatureBlock({ index }: { index: number }) {
             {index === 3 && <QualityPreviewWidget />}
           </div>
         </div>
+        </GradientBorderWrapper>
       </motion.div>
     </motion.div>
   );

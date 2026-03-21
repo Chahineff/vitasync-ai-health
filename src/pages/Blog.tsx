@@ -75,7 +75,7 @@ const Blog = () => {
       <Navbar />
       <main className="relative z-10">
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-radial">
+        <section className="pt-32 pb-20">
           <div className="container-custom">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}

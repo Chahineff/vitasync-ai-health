@@ -137,7 +137,7 @@ export function HeroSection() {
 
           {/* Right side — 45% — Display Cards */}
           <motion.div
-            className="w-full lg:w-[45%] flex items-center justify-center min-h-[420px]"
+            className="w-full lg:w-[45%] flex items-center justify-end min-h-[420px] pr-0 lg:pr-4"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}

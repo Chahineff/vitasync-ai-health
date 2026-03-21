@@ -263,6 +263,7 @@ export function PricingSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
+          <GradientBorderWrapper accentColor="rgba(0, 240, 255, 0.8)" secondaryColor="rgba(59, 130, 246, 0.8)" borderRadius="rounded-2xl" intensity="subtle">
           <GlowCard glowColor="cyan">
             <div className="p-4 md:p-6 border-b border-border/30">
               <h3 className="text-lg md:text-xl font-light text-foreground text-center">
@@ -296,6 +297,7 @@ export function PricingSection() {
               </Table>
             </div>
           </GlowCard>
+          </GradientBorderWrapper>
         </motion.div>
 
         {/* Note */}

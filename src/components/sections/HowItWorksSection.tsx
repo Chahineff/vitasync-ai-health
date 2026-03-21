@@ -17,7 +17,6 @@ const stepAccents = [
 function GradientBorderCard({ children, accent, className }: { children: React.ReactNode; accent: typeof stepAccents[0]; className?: string }) {
   return (
     <div className={cn("relative rounded-3xl p-[2px] overflow-hidden", className)}>
-      {/* Animated rotating gradient border */}
       <div
         className="absolute inset-0 rounded-3xl animate-spin-slow"
         style={{
@@ -25,7 +24,6 @@ function GradientBorderCard({ children, accent, className }: { children: React.R
           opacity: 0.6,
         }}
       />
-      {/* Softer static glow underneath */}
       <div
         className="absolute inset-0 rounded-3xl"
         style={{
@@ -33,11 +31,31 @@ function GradientBorderCard({ children, accent, className }: { children: React.R
           opacity: 0.3,
         }}
       />
-      {/* Card inner */}
       <div className="relative rounded-[22px] bg-white/90 dark:bg-card/95 backdrop-blur-xl overflow-hidden">
         {children}
       </div>
     </div>
+  );
+}
+
+/** Auto-revealing text that animates word-by-word on mount (works inside sticky containers) */
+function AutoRevealText({ text, accent }: { text: string; accent: typeof stepAccents[0] }) {
+  const words = text.split(" ");
+
+  return (
+    <p className="flex flex-wrap text-lg sm:text-xl md:text-2xl leading-relaxed font-light bg-gradient-to-r from-[hsl(217,100%,50%)] via-[hsl(190,100%,45%)] to-[hsl(163,100%,42%)] bg-clip-text text-transparent">
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          className="mx-[0.15em] lg:mx-[0.2em] inline-block"
+          initial={{ opacity: 0.1 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: i * 0.06, ease: "easeOut" }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </p>
   );
 }
 
@@ -54,7 +72,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -40 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full max-w-6xl mx-auto px-4 md:px-8"
+      className="w-full max-w-7xl mx-auto px-4 md:px-8"
     >
       <GradientBorderCard accent={accent}>
         {/* Accent line at top */}
@@ -65,7 +83,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
 
         <div className="relative z-10 flex flex-col md:flex-row items-stretch">
           {/* Left: Large number + icon */}
-          <div className="relative flex flex-col items-center justify-center p-8 md:p-12 md:w-[280px] lg:w-[320px] border-b md:border-b-0 md:border-r border-border/30 dark:border-white/5">
+          <div className="relative flex flex-col items-center justify-center p-8 md:p-14 md:w-[300px] lg:w-[360px] border-b md:border-b-0 md:border-r border-border/30 dark:border-white/5">
             <div
               className="absolute inset-0 opacity-15 dark:opacity-20"
               style={{
@@ -74,22 +92,22 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
             />
 
             <span
-              className="relative text-[7rem] md:text-[9rem] lg:text-[11rem] font-extralight leading-none select-none"
+              className="relative text-[8rem] md:text-[10rem] lg:text-[12rem] font-extralight leading-none select-none"
               style={{ color: accent.color }}
             >
               {number}
             </span>
 
             <div
-              className="relative mt-4 w-14 h-14 rounded-2xl flex items-center justify-center"
+              className="relative mt-4 w-16 h-16 rounded-2xl flex items-center justify-center"
               style={{ background: `${accent.color}15`, border: `1px solid ${accent.border}` }}
             >
-              <IconComponent size={28} weight="light" style={{ color: accent.color }} />
+              <IconComponent size={32} weight="light" style={{ color: accent.color }} />
             </div>
           </div>
 
           {/* Right: Content */}
-          <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+          <div className="flex-1 p-8 md:p-14 lg:p-16 flex flex-col justify-center">
             {/* Step label */}
             <div className="flex items-center gap-3 mb-6">
               <span
@@ -101,29 +119,32 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
               <div className="h-px flex-1" style={{ background: `linear-gradient(90deg, ${accent.border}, transparent)` }} />
             </div>
 
-            {/* Title */}
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.15] mb-5 md:mb-8">
+            {/* Title — larger */}
+            <motion.h3
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground leading-[1.1] mb-6 md:mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+            >
               {t(`howItWorks.step${stepNum}.title`)}
-            </h3>
+            </motion.h3>
 
-            {/* Description with MagicText scroll reveal */}
-            <MagicText
-              text={t(`howItWorks.step${stepNum}.description`)}
-              className="text-base sm:text-lg md:text-xl leading-relaxed max-w-xl font-light"
-            />
+            {/* Description — auto-reveal animation */}
+            <AutoRevealText text={t(`howItWorks.step${stepNum}.description`)} accent={accent} />
 
             {/* Bottom accent dots */}
-            <div className="flex items-center gap-2 mt-8 md:mt-12">
+            <div className="flex items-center gap-2 mt-10 md:mt-14">
               {[0, 1, 2, 3].map((i) => (
-                <div
+                <motion.div
                   key={i}
-                  className="rounded-full transition-all duration-300"
-                  style={{
-                    width: i === stepIndex ? 24 : 6,
-                    height: 6,
+                  className="rounded-full"
+                  animate={{
+                    width: i === stepIndex ? 28 : 8,
+                    height: 8,
                     background: i === stepIndex ? accent.color : "hsl(var(--foreground) / 0.1)",
-                    borderRadius: 999,
                   }}
+                  transition={{ duration: 0.3 }}
+                  style={{ borderRadius: 999 }}
                 />
               ))}
             </div>
@@ -218,29 +239,27 @@ export function HowItWorksSection() {
       ref={sectionRef}
       id="how-it-works"
       className="relative"
-      style={{ height: `${4 * 60}vh` }}
+      style={{ height: `${4 * 80}vh` }}
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent">
-        {/* Subtle radial glow — reduced to card area only */}
+        {/* Background gradient behind cards */}
         <div
           className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none"
           style={{
-            width: "min(92%, 1280px)",
-            height: "55%",
-            background: `radial-gradient(ellipse 80% 60% at 50% 50%, ${stepAccents[currentStepIndex].color}12, ${stepAccents[currentStepIndex].glow}, transparent)`,
+            width: "min(95%, 1400px)",
+            height: "65%",
+            background: `radial-gradient(ellipse 80% 60% at 50% 50%, ${stepAccents[currentStepIndex].color}18, ${stepAccents[currentStepIndex].glow}, transparent)`,
             transition: "background 0.8s ease",
           }}
         />
 
-        {/* Header — MagicText for title, no badge */}
+        {/* Header */}
         <div className="absolute top-24 md:top-28 lg:top-32 left-0 right-0 text-center px-4 z-10">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground">
-            <MagicText
-              text={`${t("howItWorks.title")} ${t("howItWorks.titleHighlight")}`}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight justify-center"
-            />
-          </h2>
+          <MagicText
+            text={`${t("howItWorks.title")} ${t("howItWorks.titleHighlight")}`}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight justify-center"
+          />
         </div>
 
         {/* Step cards */}

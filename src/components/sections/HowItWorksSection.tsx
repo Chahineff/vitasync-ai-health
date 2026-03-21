@@ -164,7 +164,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-light tracking-tight text-foreground leading-[1.15] mb-5 md:mb-8">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.15] mb-5 md:mb-8">
               {t(`howItWorks.step${stepNum}.title`)}
             </h3>
 

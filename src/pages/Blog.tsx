@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
+import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { motion } from "framer-motion";
 import { ArrowRight, Clock, Tag, NotePencil } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";

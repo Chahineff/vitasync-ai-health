@@ -30,7 +30,8 @@ export const ContainerScroll = ({
   };
 
   const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
-  const translate = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const translate = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const headerTranslate = useTransform(scrollYProgress, [0, 1], [0, -10]);
 
   return (
     <div

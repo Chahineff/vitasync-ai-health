@@ -3,8 +3,7 @@ import {
   ChartLineUp, 
   FileMagnifyingGlass, 
   ShieldCheck,
-  Check,
-  ArrowRight
+  Check
 } from "@phosphor-icons/react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";

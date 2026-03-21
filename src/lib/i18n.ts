@@ -2288,8 +2288,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.subtitle": "يحلل VitaSync احتياجاتك في الوقت الفعلي لإنشاء روتين المكملات المثالي المصمم لنمط حياتك.",
     "hero.cta": "ابدأ تقييمي المجاني",
     "hero.secondary": "كيف يعمل",
+    "hero.card1Title": "ذكاء اصطناعي متقدم",
+    "hero.card1Desc": "Google Gemini و GPT-5 مدمجان",
+    "hero.card1Date": "تقنية 2026",
+    "hero.card2Title": "تحليل صوتي",
+    "hero.card2Desc": "صف أعراضك بالصوت",
+    "hero.card2Date": "جديد",
+    "hero.card3Title": "تتبع في الوقت الفعلي",
+    "hero.card3Desc": "المؤشرات الحيوية وتحاليل الدم",
+    "hero.card3Date": "متاح الآن",
 
-    // Features
     "features.badge": "تكنولوجيا متطورة",
     "features.title": "ذكاء اصطناعي",
     "features.titleHighlight": "يفهم حقاً",

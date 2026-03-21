@@ -139,19 +139,10 @@ function FeatureBlock({ index }: { index: number }) {
                 ))}
               </ul>
 
-              {/* CTA link */}
-              <motion.a
-                href="/auth"
-                className="inline-flex items-center gap-2 mt-10 text-sm font-medium transition-all duration-300 group/cta"
-                style={{ color: accent.color }}
-                whileHover={{ x: 4 }}
-              >
-                {t("features.cta") || "Découvrir"}
-                <ArrowRight size={16} weight="bold" className="transition-transform group-hover/cta:translate-x-1" />
-              </motion.a>
             </div>
           </div>
         </GlowCard>
+        </motion.div>
       </motion.div>
 
       {/* Preview Block — overlapping slightly */}

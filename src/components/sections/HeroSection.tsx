@@ -61,7 +61,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="text-base md:text-lg lg:text-xl xl:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-2"
+          className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-foreground/70 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed px-2"
         >
           {t("hero.subtitle")}
         </motion.p>

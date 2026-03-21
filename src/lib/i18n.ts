@@ -2303,8 +2303,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card3Title": "تتبع في الوقت الفعلي",
     "hero.card3Desc": "المؤشرات الحيوية وتحاليل الدم",
     "hero.card3Date": "متاح الآن",
+    "hero.card4Title": "جودة معتمدة",
+    "hero.card4Desc": "مكملات مختبرة في المعمل",
+    "hero.card4Date": "مضمونة بدون مخاطر",
 
-    "features.badge": "تكنولوجيا متطورة",
     "features.title": "ذكاء اصطناعي",
     "features.titleHighlight": "يفهم حقاً",
     "features.titleEnd": "جسمك",

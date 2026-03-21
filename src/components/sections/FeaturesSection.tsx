@@ -143,6 +143,7 @@ function FeatureBlock({ index }: { index: number }) {
             </div>
           </div>
         </GlowCard>
+        </GradientBorderWrapper>
         </motion.div>
       </motion.div>
 

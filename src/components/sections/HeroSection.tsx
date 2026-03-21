@@ -5,6 +5,55 @@ import { useTranslation } from "@/hooks/useTranslation";
 import DisplayCards from "@/components/ui/display-cards";
 import { Brain, Mic, Activity, ShieldCheck } from "lucide-react";
 
+function LampEffect() {
+  return (
+    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl pointer-events-none z-0">
+      {/* Main glow */}
+      <motion.div
+        initial={{ opacity: 0, width: "8rem" }}
+        animate={{ opacity: 1, width: "20rem" }}
+        transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
+        className="absolute top-0 left-1/2 -translate-x-1/2 h-56 rounded-full"
+        style={{
+          background: "conic-gradient(from 90deg at 50% 0%, hsl(var(--primary) / 0), hsl(var(--primary) / 0.15) 50%, hsl(var(--primary) / 0))",
+        }}
+      />
+      {/* Top line */}
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: "12rem" }}
+        transition={{ delay: 0.3, duration: 0.6, ease: "easeInOut" }}
+        className="absolute top-0 left-1/2 -translate-x-1/2 h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), transparent)",
+        }}
+      />
+      {/* Left cone */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+        className="absolute top-0 left-1/2 h-56 w-56 -translate-x-[80%]"
+        style={{
+          background: "conic-gradient(from 70deg at 100% 0%, hsl(var(--primary) / 0), hsl(var(--primary) / 0.08) 30%, transparent 50%)",
+        }}
+      />
+      {/* Right cone */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+        className="absolute top-0 left-1/2 h-56 w-56 -translate-x-[20%]"
+        style={{
+          background: "conic-gradient(from -70deg at 0% 0%, transparent 50%, hsl(var(--primary) / 0.08) 70%, hsl(var(--primary) / 0))",
+        }}
+      />
+      {/* Blur overlay */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-56 backdrop-blur-[60px] opacity-70" />
+    </div>
+  );
+}
+
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
@@ -26,7 +75,7 @@ export function HeroSection() {
       iconClassName: "text-primary",
       titleClassName: "text-primary",
       className:
-        "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] -translate-x-4 hover:-translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <Mic className="size-5" />,
@@ -36,7 +85,7 @@ export function HeroSection() {
       iconClassName: "text-secondary",
       titleClassName: "text-secondary",
       className:
-        "[grid-area:stack] translate-x-10 translate-y-10 hover:-translate-y-1 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] translate-x-6 translate-y-10 hover:-translate-y-1 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <Activity className="size-5" />,
@@ -46,7 +95,7 @@ export function HeroSection() {
       iconClassName: "text-accent-foreground",
       titleClassName: "text-accent-foreground",
       className:
-        "[grid-area:stack] translate-x-20 translate-y-20 hover:translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] translate-x-16 translate-y-20 hover:translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <ShieldCheck className="size-5" />,
@@ -55,19 +104,22 @@ export function HeroSection() {
       date: t("hero.card4Date"),
       iconClassName: "text-primary",
       titleClassName: "text-primary",
-      className: "[grid-area:stack] translate-x-[7.5rem] translate-y-[7.5rem] hover:translate-y-[5rem]",
+      className: "[grid-area:stack] translate-x-[6.5rem] translate-y-[7.5rem] hover:translate-y-[5rem]",
     },
   ];
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Lamp light effect from top */}
+      <LampEffect />
+
       <motion.div
         className="relative z-10 w-full px-4 sm:px-6 lg:px-16 py-16 md:py-24"
         style={{ opacity: contentOpacity, y: contentY }}
       >
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
-          {/* Left side — 60% — Text content */}
-          <div className="w-full lg:w-[58%] text-left">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-6">
+          {/* Left side — 55% — Text content */}
+          <div className="w-full lg:w-[55%] text-left">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -131,11 +183,11 @@ export function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right side — 42% — Display Cards */}
+          {/* Right side — 45% — Display Cards */}
           <motion.div
-            className="w-full lg:w-[42%] flex items-center justify-center min-h-[400px]"
-            initial={{ opacity: 0, x: 60 }}
-            animate={{ opacity: 1, x: 0 }}
+            className="w-full lg:w-[45%] flex items-center justify-center min-h-[420px]"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             <DisplayCards cards={heroCards} />

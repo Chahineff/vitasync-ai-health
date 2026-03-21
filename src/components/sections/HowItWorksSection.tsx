@@ -72,7 +72,8 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -40 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full max-w-7xl mx-auto px-4 md:px-8"
+      whileHover={{ scale: 1.02 }}
+      className="w-full max-w-7xl mx-auto px-4 md:px-8 cursor-default"
     >
       <GradientBorderCard accent={accent}>
         {/* Accent line at top */}
@@ -243,14 +244,17 @@ export function HowItWorksSection() {
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent">
-        {/* Background gradient behind cards */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none"
+        {/* Background gradient behind cards — centered, color-synced */}
+        <motion.div
+          className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none rounded-full"
+          animate={{
+            background: `radial-gradient(ellipse 70% 55% at 50% 50%, ${stepAccents[currentStepIndex].color}30, ${stepAccents[currentStepIndex].color}12, transparent 75%)`,
+          }}
+          transition={{ duration: 1, ease: "easeInOut" }}
           style={{
-            width: "min(95%, 1400px)",
-            height: "65%",
-            background: `radial-gradient(ellipse 80% 60% at 50% 50%, ${stepAccents[currentStepIndex].color}18, ${stepAccents[currentStepIndex].glow}, transparent)`,
-            transition: "background 0.8s ease",
+            width: "min(90%, 1200px)",
+            height: "60%",
+            filter: "blur(40px)",
           }}
         />
 

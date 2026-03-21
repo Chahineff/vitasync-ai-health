@@ -119,6 +119,10 @@ export default {
           "50%": { backgroundPosition: "100% 50%" },
           "100%": { backgroundPosition: "0% 50%" },
         },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -137,6 +141,7 @@ export default {
         "card-shine": "card-shine 0.6s ease-out forwards",
         "bounce-in": "bounce-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
         "breathe": "breathe 2.5s ease-in-out infinite",
+        "spin-slow": "spin-slow 4s linear infinite",
       },
       backgroundSize: {
         "200%": "200% 200%",

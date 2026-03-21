@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useTheme } from "next-themes";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { AnimatedText } from "@/components/ui/animated-shiny-text";
+import { MagicText } from "@/components/ui/magic-text";
 import dashboardLight from "@/assets/dashboard-preview-light.png";
 import dashboardDark from "@/assets/dashboard-preview-dark.png";
 
@@ -22,12 +24,17 @@ export const ProductPreviewSection = () => {
           <div className="mb-4">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-3 md:mb-4 px-2 text-foreground">
               {t("productPreview.title")}{" "}
-              <span className="gradient-text">{t("productPreview.titleHighlight")}</span>{" "}
+              <AnimatedText
+                text={t("productPreview.titleHighlight")}
+                textClassName="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight"
+                className="inline-block"
+              />{" "}
               {t("productPreview.titleEnd")}
             </h2>
-            <p className="text-muted-foreground text-base md:text-lg lg:text-xl max-w-2xl mx-auto font-light px-4">
-              {t("productPreview.subtitle")}
-            </p>
+            <MagicText
+              text={t("productPreview.subtitle")}
+              className="text-base md:text-lg lg:text-xl max-w-2xl mx-auto font-light px-4 justify-center"
+            />
           </div>
         }
       >

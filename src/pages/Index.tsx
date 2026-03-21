@@ -8,11 +8,13 @@ import { FeaturesSection } from "@/components/sections/FeaturesSection";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
+import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 
 const Index = () => {
   return (
     <PageTransition className="min-h-screen bg-background relative">
       <FloatingThemeToggle />
+      <ScrollToTopButton />
       <Navbar />
       <main>
         <HeroSection />

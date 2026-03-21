@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
+import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { motion } from "framer-motion";
 
@@ -16,6 +17,7 @@ export function LegalPageLayout({ title, subtitle, date, children }: LegalPageLa
     <div className="min-h-screen bg-background">
       <SplineBackground />
       <FloatingThemeToggle />
+      <ScrollToTopButton />
       <Navbar />
       <main className="relative z-10 pt-32 pb-20">
         <div className="container-custom max-w-4xl">

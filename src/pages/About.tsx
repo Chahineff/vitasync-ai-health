@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
+import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { motion } from "framer-motion";
 import { 
   Brain, 
@@ -55,6 +56,7 @@ const About = () => {
     <PageTransition className="min-h-screen bg-background">
       <SplineBackground />
       <FloatingThemeToggle />
+      <ScrollToTopButton />
       <Navbar />
       <main className="relative z-10">
         {/* Hero */}

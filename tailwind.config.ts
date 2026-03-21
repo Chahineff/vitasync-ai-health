@@ -123,14 +123,6 @@ export default {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
-        "meteor": {
-          "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
-          "70%": { opacity: "1" },
-          "100%": {
-            transform: "rotate(215deg) translateX(-500px)",
-            opacity: "0",
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -150,7 +142,6 @@ export default {
         "bounce-in": "bounce-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
         "breathe": "breathe 2.5s ease-in-out infinite",
         "spin-slow": "spin-slow 4s linear infinite",
-        "meteor-effect": "meteor 5s linear infinite",
       },
       backgroundSize: {
         "200%": "200% 200%",

@@ -25,12 +25,10 @@ export function SplineBackground({ steps = 200 }: SplineBackgroundProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
 
-  const [opacityInputs, opacityOutputs] = useMemo(() => generateSteps(steps, 1, 0.25), [steps]);
   const [colorInputs, colorOutputs] = useMemo(() => generateSteps(steps, 0, 6), [steps]);
 
   const colorIndex = useTransform(scrollYProgress, colorInputs, colorOutputs);
   const hueShift = useTransform(scrollYProgress, [0, 1], [0, 30]);
-  const splineOpacity = useTransform(scrollYProgress, opacityInputs, opacityOutputs);
 
   return (
     <div ref={ref} className="fixed inset-0 z-0 pointer-events-none">

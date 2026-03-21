@@ -184,6 +184,7 @@ export function PricingSection() {
                 </div>
               )}
 
+              <GradientBorderWrapper accentColor={plan.accentRgba} borderRadius="rounded-2xl" intensity={plan.popular ? "strong" : "medium"}>
               <GlowCard glowColor={plan.glowColor} className={cn("h-full", plan.popular && "ring-1 ring-primary/30")}>
                 <div className={cn("p-6 md:p-8 relative", plan.popular && "pt-8")}>
                   {/* Plan name */}

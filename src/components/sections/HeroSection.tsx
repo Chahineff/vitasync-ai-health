@@ -27,7 +27,7 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-white/10 border border-white/20 text-xs md:text-sm text-primary mb-6 md:mb-8 backdrop-blur-md shadow-lg">
+          <span className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-full bg-white/10 border border-white/20 text-sm md:text-base text-primary mb-6 md:mb-8 backdrop-blur-md shadow-lg">
             <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-secondary animate-pulse" />
             {t("hero.badge")}
           </span>

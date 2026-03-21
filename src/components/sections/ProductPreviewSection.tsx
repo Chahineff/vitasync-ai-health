@@ -21,19 +21,19 @@ export const ProductPreviewSection = () => {
 
       <ContainerScroll
         titleComponent={
-          <div className="mb-4">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-3 md:mb-4 px-2 text-foreground">
+          <div className="mb-6 max-w-4xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-light tracking-tight mb-4 md:mb-5 px-2 text-foreground">
               {t("productPreview.title")}{" "}
               <AnimatedText
                 text={t("productPreview.titleHighlight")}
-                textClassName="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight"
+                textClassName="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight"
                 className="inline-block"
               />{" "}
               {t("productPreview.titleEnd")}
             </h2>
             <MagicText
               text={t("productPreview.subtitle")}
-              className="text-base md:text-lg lg:text-xl max-w-2xl mx-auto font-light px-4 justify-center"
+              className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto font-light px-4 justify-center"
             />
           </div>
         }

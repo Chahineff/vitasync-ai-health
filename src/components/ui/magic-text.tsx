@@ -24,7 +24,7 @@ const Word: React.FC<WordProps> = ({ children, progress, range }) => {
       <span className="opacity-20">{children}</span>
       <motion.span
         style={{ opacity }}
-        className="text-foreground absolute left-0 top-0"
+        className="absolute left-0 top-0 bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent"
       >
         {children}
       </motion.span>

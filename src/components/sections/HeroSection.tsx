@@ -27,7 +27,7 @@ export function HeroSection() {
       iconClassName: "text-primary",
       titleClassName: "text-primary",
       className:
-        "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] -translate-y-8 hover:-translate-y-16 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <Mic className="size-6" />,
@@ -38,7 +38,7 @@ export function HeroSection() {
       iconClassName: "text-secondary",
       titleClassName: "text-secondary",
       className:
-        "[grid-area:stack] translate-x-6 translate-y-14 hover:-translate-y-1 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] translate-x-6 translate-y-8 hover:-translate-y-4 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <Activity className="size-6" />,
@@ -49,7 +49,7 @@ export function HeroSection() {
       iconClassName: "text-accent-foreground",
       titleClassName: "text-accent-foreground",
       className:
-        "[grid-area:stack] translate-x-12 translate-y-28 hover:translate-y-16 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] translate-x-12 translate-y-24 hover:translate-y-12 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <ShieldCheck className="size-6" />,
@@ -59,7 +59,7 @@ export function HeroSection() {
       date: t("hero.card4Date"),
       iconClassName: "text-primary",
       titleClassName: "text-primary",
-      className: "[grid-area:stack] translate-x-[4.5rem] translate-y-[10.5rem] hover:translate-y-[8rem]",
+      className: "[grid-area:stack] translate-x-[4.5rem] translate-y-[10rem] hover:translate-y-[7rem]",
     },
   ];
 

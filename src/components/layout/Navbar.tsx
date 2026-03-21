@@ -4,6 +4,7 @@ import { List, X } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
+import { cn } from "@/lib/utils";
 
 const SECTION_IDS = ["how-it-works", "features", "pricing", "faq"];
 
@@ -53,7 +54,6 @@ export function Navbar() {
           } else {
             visibleSections.delete(id);
           }
-          // Pick the section with the highest ratio
           let best: string | null = null;
           let bestRatio = 0;
           visibleSections.forEach((ratio, sectionId) => {
@@ -69,25 +69,22 @@ export function Navbar() {
 
     return () => observers.forEach((o) => o.disconnect());
   }, [location.pathname]);
+
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
       setIsMobileMenuOpen(false);
-
-      // If we're not on the home page, navigate there first
       if (location.pathname !== "/") {
         navigate("/" + href);
       } else {
-        // We're on home page, just scroll
         const element = document.querySelector(href);
         if (element) {
-          element.scrollIntoView({
-            behavior: "smooth"
-          });
+          element.scrollIntoView({ behavior: "smooth" });
         }
       }
     }
   };
+
   return <>
       <nav className={`nav-sticky ${isScrolled ? "scrolled" : ""}`}>
         <div className="px-5 md:px-8">
@@ -98,29 +95,49 @@ export function Navbar() {
               <span className="text-lg md:text-xl font-medium tracking-tight text-foreground">VitaSync</span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-5 xl:gap-7">
-              {navLinks.map(link => {
-                const sectionId = link.href.replace("#", "");
-                const isActive = activeSection === sectionId;
-                return (
-                  <a 
-                    key={link.href} 
-                    href={link.href} 
-                    onClick={e => handleAnchorClick(e, link.href)} 
-                    className="nav-link-indicator text-sm transition-colors duration-200"
-                    data-active={isActive || undefined}
-                  >
-                    {t(link.labelKey)}
-                  </a>
-                );
-              })}
-              <div className="w-px h-5 bg-border" />
+            {/* Desktop Navigation — Tubelight style */}
+            <div className="hidden lg:flex items-center">
+              <div className="flex items-center gap-1 bg-white/5 dark:bg-black/10 rounded-full px-1.5 py-1 border border-white/10 dark:border-white/5">
+                {navLinks.map(link => {
+                  const sectionId = link.href.replace("#", "");
+                  const isActive = activeSection === sectionId;
+                  return (
+                    <a 
+                      key={link.href} 
+                      href={link.href} 
+                      onClick={e => handleAnchorClick(e, link.href)} 
+                      className={cn(
+                        "relative cursor-pointer text-sm font-medium px-4 xl:px-5 py-1.5 rounded-full transition-colors duration-200",
+                        isActive ? "text-primary" : "text-current opacity-70 hover:opacity-100"
+                      )}
+                    >
+                      <span className="relative z-10">{t(link.labelKey)}</span>
+                      {isActive && (
+                        <motion.div
+                          layoutId="tubelight-nav"
+                          className="absolute inset-0 rounded-full z-0"
+                          style={{
+                            backgroundColor: "hsl(var(--primary) / 0.12)",
+                          }}
+                          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                        >
+                          {/* Tubelight glow effect */}
+                          <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary opacity-70 blur-[3px]" />
+                          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-primary opacity-30 blur-[6px]" />
+                        </motion.div>
+                      )}
+                    </a>
+                  );
+                })}
+              </div>
+              
+              <div className="w-px h-5 bg-white/10 dark:bg-white/5 mx-4" />
+              
               {pageLinks.map(link => (
                 <Link 
                   key={link.href} 
                   to={link.href} 
-                  className="text-sm text-foreground/60 hover:text-foreground transition-colors duration-200"
+                  className="text-sm text-current opacity-60 hover:opacity-100 transition-opacity duration-200 px-3"
                 >
                   {t(link.labelKey)}
                 </Link>
@@ -130,7 +147,7 @@ export function Navbar() {
             {/* Right Side - Language, CTA */}
             <div className="hidden lg:flex items-center gap-3">
               <LanguageSelector />
-              <Link to="/auth?mode=signin" className="px-4 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all">
+              <Link to="/auth?mode=signin" className="px-4 py-2 rounded-xl text-sm font-medium text-current opacity-70 hover:opacity-100 hover:bg-white/5 transition-all">
                 {t("nav.signin")}
               </Link>
               <Link to="/auth?mode=signup" className="btn-neumorphic text-primary-foreground">
@@ -139,7 +156,7 @@ export function Navbar() {
             </div>
 
             {/* Mobile Menu Button */}
-            <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-foreground/70 hover:text-foreground transition-colors" aria-label="Open menu">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-current opacity-70 hover:opacity-100 transition-colors" aria-label="Open menu">
               <List size={24} weight="light" />
             </button>
           </div>
@@ -149,24 +166,8 @@ export function Navbar() {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && <>
-            <motion.div initial={{
-          opacity: 0
-        }} animate={{
-          opacity: 1
-        }} exit={{
-          opacity: 0
-        }} className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
-            <motion.div initial={{
-          x: "100%"
-        }} animate={{
-          x: 0
-        }} exit={{
-          x: "100%"
-        }} transition={{
-          type: "spring",
-          damping: 30,
-          stiffness: 300
-        }} className="fixed top-0 right-0 h-full w-80 bg-background shadow-2xl z-50 lg:hidden">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }} className="fixed top-0 right-0 h-full w-80 bg-background shadow-2xl z-50 lg:hidden">
               <div className="flex flex-col h-full p-6">
                 <div className="flex justify-end mb-8">
                   <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-foreground/70 hover:text-foreground transition-colors" aria-label="Close menu">

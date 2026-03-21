@@ -128,7 +128,7 @@ const BlogPost = () => {
         </div>
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 };
 

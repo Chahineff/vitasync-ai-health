@@ -196,7 +196,7 @@ const Blog = () => {
         </section>
       </main>
       <Footer />
-    </div>
+    </PageTransition>
   );
 };
 

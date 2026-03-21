@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
+import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { motion } from "framer-motion";
 

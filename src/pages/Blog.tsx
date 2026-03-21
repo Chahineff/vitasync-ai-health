@@ -74,6 +74,7 @@ const Blog = () => {
     <PageTransition className="min-h-screen bg-background">
       <SplineBackground />
       <FloatingThemeToggle />
+      <ScrollToTopButton />
       <Navbar />
       <main className="relative z-10">
         {/* Hero */}

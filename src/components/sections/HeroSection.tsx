@@ -59,7 +59,7 @@ export function HeroSection() {
       date: t("hero.card4Date"),
       iconClassName: "text-primary",
       titleClassName: "text-primary",
-      className: "[grid-area:stack] translate-x-[4.5rem] translate-y-[11.5rem] hover:translate-y-[3rem] before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+      className: "[grid-area:stack] translate-x-[4.5rem] translate-y-[11.5rem] hover:-translate-y-4 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
   ];
 

@@ -71,7 +71,7 @@ function FeatureBlock({ index }: { index: number }) {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <GradientBorderCard accent={accent} className="h-full">
+        <GlowCard glowColor={accent.glowColor} className="h-full">
           <div className="relative p-8 md:p-10 lg:p-14">
             {/* Radial glow behind content */}
             <div

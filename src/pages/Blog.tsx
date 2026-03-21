@@ -169,7 +169,7 @@ const Blog = () => {
         </section>
 
         {/* Newsletter CTA */}
-        <section className="section-padding bg-gradient-subtle">
+        <section className="section-padding bg-gradient-subtle border-y border-border/30">
           <div className="container-custom">
             <ScrollReveal>
               <GlassCard className="max-w-3xl mx-auto text-center p-12">

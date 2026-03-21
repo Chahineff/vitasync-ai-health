@@ -31,7 +31,7 @@ function ScrollHighlightText({ text, accentColor }: { text: string; accentColor:
   return (
     <p
       ref={containerRef}
-      className="text-sm sm:text-base md:text-lg leading-relaxed max-w-lg font-light"
+      className="text-base sm:text-lg md:text-xl leading-relaxed max-w-xl font-light"
     >
       {words.map((word, i) => {
         const wordProgress = Math.min(

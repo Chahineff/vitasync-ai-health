@@ -804,8 +804,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card3Title": "Real-Time Tracking",
     "hero.card3Desc": "Biomarkers & blood test analysis",
     "hero.card3Date": "Available now",
+    "hero.card4Title": "Certified Quality",
+    "hero.card4Desc": "Lab-tested supplements",
+    "hero.card4Date": "Risk-free guaranteed",
 
-    "features.badge": "Cutting-edge technology",
     "features.title": "An AI that",
     "features.titleHighlight": "truly understands",
     "features.titleEnd": "your body",

@@ -250,6 +250,7 @@ export function PricingSection() {
                   </p>
                 </div>
               </GlowCard>
+              </GradientBorderWrapper>
             </motion.div>
           ))}
         </div>

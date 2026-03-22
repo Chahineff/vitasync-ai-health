@@ -41,7 +41,6 @@ export function FeaturesSection() {
     <section id="features" className="section-padding overflow-hidden bg-transparent section-parallax">
       <FeatureSteps
         features={features}
-        autoPlayInterval={6000}
         title={
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-light tracking-tight text-foreground mb-4 md:mb-5">
             {t("features.title")}{" "}

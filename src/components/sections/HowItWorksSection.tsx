@@ -121,14 +121,14 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
             </div>
 
             {/* Title — larger */}
-            <motion.h3
+            <motion.h2
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground leading-[1.1] mb-6 md:mb-10"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.15 }}
             >
               {t(`howItWorks.step${stepNum}.title`)}
-            </motion.h3>
+            </motion.h2>
 
             {/* Description — auto-reveal animation */}
             <AutoRevealText text={t(`howItWorks.step${stepNum}.description`)} accent={accent} />

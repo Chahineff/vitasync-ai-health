@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
+import { ShineBorder } from "@/components/ui/shine-border";
 
 export const ContainerScroll = ({
   titleComponent,

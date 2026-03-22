@@ -4,6 +4,7 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MagicText } from "@/components/ui/magic-text";
+import { HolographicCard } from "@/components/ui/holographic-card";
 
 const stepIcons = [ClipboardText, ChatCircle, FileArrowUp, Package];
 

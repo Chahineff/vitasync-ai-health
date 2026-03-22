@@ -73,18 +73,11 @@ export const Card = ({
 }) => {
   return (
     <div className="relative max-w-5xl mt-12 md:mt-16 mx-auto p-[2px] rounded-[30px] overflow-hidden">
-      {/* Animated gradient border */}
-      <div
-        className="absolute inset-0 rounded-[30px] animate-spin-slow"
-        style={{
-          background: "conic-gradient(from 0deg, rgba(0,240,255,0.6), transparent 40%, rgba(59,130,246,0.6) 50%, transparent 90%, rgba(0,240,255,0.6))",
-        }}
-      />
+      {/* Static gradient border */}
       <div
         className="absolute inset-0 rounded-[30px]"
         style={{
-          background: "conic-gradient(from 180deg, rgba(0,215,135,0.4), transparent 30%, rgba(0,240,255,0.4) 60%, transparent)",
-          opacity: 0.4,
+          background: "linear-gradient(135deg, rgba(0,240,255,0.5), rgba(59,130,246,0.5), rgba(0,240,255,0.5))",
         }}
       />
       <motion.div

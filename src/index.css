@@ -1184,3 +1184,10 @@
 .holographic-card:hover > div:nth-child(4) {
   opacity: 1 !important;
 }
+
+/* Display Card holographic hover */
+.display-card-holo:hover > div:nth-child(1),
+.display-card-holo:hover > div:nth-child(2),
+.display-card-holo:hover > div:nth-child(3) {
+  opacity: 1 !important;
+}

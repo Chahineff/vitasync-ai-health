@@ -4,7 +4,6 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MagicText } from "@/components/ui/magic-text";
-import { HolographicCard } from "@/components/ui/holographic-card";
 
 const stepIcons = [ClipboardText, ChatCircle, FileArrowUp, Package];
 
@@ -17,11 +16,18 @@ const stepAccents = [
 
 function GradientBorderCard({ children, accent, className }: { children: React.ReactNode; accent: typeof stepAccents[0]; className?: string }) {
   return (
-    <HolographicCard borderRadius="rounded-3xl" className={className}>
-      <div className="bg-white dark:bg-card/95 backdrop-blur-xl rounded-3xl overflow-hidden border border-border/30 dark:border-white/5">
+    <div className={cn("relative rounded-3xl p-[1.5px]", className)}>
+      <div
+        className="absolute inset-0 rounded-3xl"
+        style={{
+          background: `linear-gradient(135deg, ${accent.color}, ${accent.border}, ${accent.color})`,
+          opacity: 0.5,
+        }}
+      />
+      <div className="relative rounded-[22px] bg-white dark:bg-card/95 backdrop-blur-xl overflow-hidden border border-border/30 dark:border-transparent">
         {children}
       </div>
-    </HolographicCard>
+    </div>
   );
 }
 

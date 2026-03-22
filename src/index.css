@@ -1177,17 +1177,3 @@
   border-color: hsl(var(--border));
   margin: 0.75em 0;
 }
-
-/* Holographic Card hover effects */
-.holographic-card:hover > div:nth-child(2),
-.holographic-card:hover > div:nth-child(3),
-.holographic-card:hover > div:nth-child(4) {
-  opacity: 1 !important;
-}
-
-/* Display Card holographic hover */
-.display-card-holo:hover > div:nth-child(1),
-.display-card-holo:hover > div:nth-child(2),
-.display-card-holo:hover > div:nth-child(3) {
-  opacity: 1 !important;
-}

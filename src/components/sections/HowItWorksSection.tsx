@@ -16,12 +16,19 @@ const stepAccents = [
 
 function GradientBorderCard({ children, accent, className }: { children: React.ReactNode; accent: typeof stepAccents[0]; className?: string }) {
   return (
-    <div className={cn("relative rounded-3xl p-[1.5px]", className)}>
+    <div className={cn("relative rounded-3xl p-[2px] overflow-hidden", className)}>
+      <div
+        className="absolute inset-0 rounded-3xl animate-spin-slow"
+        style={{
+          background: `conic-gradient(from 0deg, ${accent.color}, transparent 40%, ${accent.color} 50%, transparent 90%, ${accent.color})`,
+          opacity: 0.6,
+        }}
+      />
       <div
         className="absolute inset-0 rounded-3xl"
         style={{
-          background: `linear-gradient(135deg, ${accent.color}, ${accent.border}, ${accent.color})`,
-          opacity: 0.5,
+          background: `conic-gradient(from 180deg, ${accent.border}, transparent 30%, ${accent.border} 60%, transparent)`,
+          opacity: 0.3,
         }}
       />
       <div className="relative rounded-[22px] bg-white dark:bg-card/95 backdrop-blur-xl overflow-hidden border border-border/30 dark:border-transparent">

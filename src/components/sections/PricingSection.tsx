@@ -7,7 +7,7 @@ import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { GlowCard } from "@/components/ui/spotlight-card";
-import { HolographicCard } from "@/components/ui/holographic-card";
+import { ShineBorder } from "@/components/ui/shine-border";
 import NumberFlow from "@number-flow/react";
 import confetti from "canvas-confetti";
 import {
@@ -185,7 +185,12 @@ export function PricingSection() {
               )}
 
               {plan.shineColors ? (
-                <HolographicCard borderRadius="rounded-2xl">
+                <ShineBorder
+                  borderRadius={16}
+                  borderWidth={1.5}
+                  duration={plan.popular ? 10 : 14}
+                  color={plan.shineColors}
+                >
                   <GlowCard glowColor={plan.glowColor} className={cn("h-full", plan.popular && "ring-1 ring-primary/30")}>
                     <div className={cn("p-6 md:p-8 relative", plan.popular && "pt-8")}>
                       <div className="flex items-center gap-2 mb-4">
@@ -211,7 +216,7 @@ export function PricingSection() {
                       <p className="text-[11px] text-muted-foreground/50 text-center mt-3">{plan.description}</p>
                     </div>
                   </GlowCard>
-                </HolographicCard>
+                </ShineBorder>
               ) : (
                 <GlowCard glowColor={plan.glowColor} className="h-full">
                   <div className="p-6 md:p-8 relative">

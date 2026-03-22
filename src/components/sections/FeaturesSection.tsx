@@ -38,7 +38,7 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section id="features" className="section-padding overflow-hidden bg-transparent section-parallax">
+    <section id="features" className="bg-transparent">
       <FeatureSteps
         features={features}
         title={

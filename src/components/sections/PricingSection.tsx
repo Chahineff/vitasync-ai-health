@@ -7,7 +7,7 @@ import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { GlowCard } from "@/components/ui/spotlight-card";
-import { GradientBorderWrapper } from "@/components/ui/GradientBorderWrapper";
+import { ShineBorder } from "@/components/ui/shine-border";
 import NumberFlow from "@number-flow/react";
 import confetti from "canvas-confetti";
 import {

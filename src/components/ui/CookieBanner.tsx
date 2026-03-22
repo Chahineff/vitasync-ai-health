@@ -45,7 +45,7 @@ export function CookieBanner() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="font-medium text-foreground text-sm">Cookies & Vie privée</h3>
-                  <button onClick={reject} className="text-foreground/40 hover:text-foreground/70 transition-colors -mr-1">
+                  <button onClick={reject} aria-label="Close cookie banner" className="text-foreground/40 hover:text-foreground/70 transition-colors -mr-1">
                     <X size={16} />
                   </button>
                 </div>

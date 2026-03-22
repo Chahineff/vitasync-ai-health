@@ -4,6 +4,7 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import { MagicText } from "@/components/ui/magic-text";
+import { HolographicCard } from "@/components/ui/holographic-card";
 
 const stepIcons = [ClipboardText, ChatCircle, FileArrowUp, Package];
 
@@ -16,25 +17,11 @@ const stepAccents = [
 
 function GradientBorderCard({ children, accent, className }: { children: React.ReactNode; accent: typeof stepAccents[0]; className?: string }) {
   return (
-    <div className={cn("relative rounded-3xl p-[2px] overflow-hidden", className)}>
-      <div
-        className="absolute inset-0 rounded-3xl animate-spin-slow"
-        style={{
-          background: `conic-gradient(from 0deg, ${accent.color}, transparent 40%, ${accent.color} 50%, transparent 90%, ${accent.color})`,
-          opacity: 0.6,
-        }}
-      />
-      <div
-        className="absolute inset-0 rounded-3xl"
-        style={{
-          background: `conic-gradient(from 180deg, ${accent.border}, transparent 30%, ${accent.border} 60%, transparent)`,
-          opacity: 0.3,
-        }}
-      />
-      <div className="relative rounded-[22px] bg-white dark:bg-card/95 backdrop-blur-xl overflow-hidden border border-border/30 dark:border-transparent">
+    <HolographicCard borderRadius="rounded-3xl" className={className}>
+      <div className="bg-white dark:bg-card/95 backdrop-blur-xl rounded-3xl overflow-hidden border border-border/30 dark:border-white/5">
         {children}
       </div>
-    </div>
+    </HolographicCard>
   );
 }
 

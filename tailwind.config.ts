@@ -123,6 +123,11 @@ export default {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
+        "shine": {
+          "0%": { "background-position": "0% 0%" },
+          "50%": { "background-position": "100% 100%" },
+          to: { "background-position": "0% 0%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -142,6 +147,7 @@ export default {
         "bounce-in": "bounce-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
         "breathe": "breathe 2.5s ease-in-out infinite",
         "spin-slow": "spin-slow 4s linear infinite",
+        "shine": "shine var(--shine-pulse-duration, 14s) infinite linear",
       },
       backgroundSize: {
         "200%": "200% 200%",

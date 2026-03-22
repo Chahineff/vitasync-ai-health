@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
+import { ShineBorder } from "@/components/ui/shine-border";
 
 export const ContainerScroll = ({
   titleComponent,
@@ -72,22 +73,17 @@ export const Card = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="relative max-w-5xl mt-12 md:mt-16 mx-auto p-[2px] rounded-[30px] overflow-hidden">
-      {/* Static gradient border */}
-      <div
-        className="absolute inset-0 rounded-[30px]"
-        style={{
-          background: "linear-gradient(135deg, rgba(0,240,255,0.5), rgba(59,130,246,0.5), rgba(0,240,255,0.5))",
-        }}
-      />
-      <motion.div
-        style={{ scale }}
-        className="relative h-[30rem] md:h-[40rem] w-full p-2 md:p-6 bg-card rounded-[28px] shadow-xl dark:shadow-2xl dark:shadow-black/40"
-      >
-        <div className="h-full w-full overflow-hidden rounded-2xl bg-background md:rounded-2xl md:p-4">
-          {children}
-        </div>
-      </motion.div>
+    <div className="relative max-w-5xl mt-12 md:mt-16 mx-auto">
+      <ShineBorder borderRadius={30} borderWidth={2} duration={12} color={["#00F0FF", "#3B82F6", "#00D787"]}>
+        <motion.div
+          style={{ scale }}
+          className="h-[30rem] md:h-[40rem] w-full p-2 md:p-6 bg-card rounded-[28px] shadow-xl dark:shadow-2xl dark:shadow-black/40"
+        >
+          <div className="h-full w-full overflow-hidden rounded-2xl bg-background md:rounded-2xl md:p-4">
+            {children}
+          </div>
+        </motion.div>
+      </ShineBorder>
     </div>
   );
 };

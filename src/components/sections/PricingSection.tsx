@@ -7,7 +7,7 @@ import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { GlowCard } from "@/components/ui/spotlight-card";
-import { GradientBorderWrapper } from "@/components/ui/GradientBorderWrapper";
+import { ShineBorder } from "@/components/ui/shine-border";
 import NumberFlow from "@number-flow/react";
 import confetti from "canvas-confetti";
 import {
@@ -70,7 +70,7 @@ export function PricingSection() {
       cta: t("pricing.plan1.cta"),
       popular: false,
       glowColor: "cyan" as const,
-      accentRgba: "rgba(0, 240, 255, 0.8)",
+      shineColors: null as string[] | null,
     },
     {
       name: t("pricing.plan2.name"),
@@ -89,7 +89,7 @@ export function PricingSection() {
       cta: t("pricing.plan2.cta"),
       popular: false,
       glowColor: "green" as const,
-      accentRgba: "rgba(0, 215, 135, 0.8)",
+      shineColors: ["#00D787", "#00F0FF", "#00D787"],
     },
     {
       name: t("pricing.plan3.name"),
@@ -109,7 +109,7 @@ export function PricingSection() {
       cta: t("pricing.plan3.cta"),
       popular: true,
       glowColor: "blue" as const,
-      accentRgba: "rgba(59, 130, 246, 0.8)",
+      shineColors: ["#3B82F6", "#00F0FF", "#3B82F6"],
     },
   ];
 
@@ -184,73 +184,63 @@ export function PricingSection() {
                 </div>
               )}
 
-              <GradientBorderWrapper accentColor={plan.accentRgba} borderRadius="rounded-2xl" intensity={plan.popular ? "strong" : "medium"}>
-              <GlowCard glowColor={plan.glowColor} className={cn("h-full", plan.popular && "ring-1 ring-primary/30")}>
-                <div className={cn("p-6 md:p-8 relative", plan.popular && "pt-8")}>
-                  {/* Plan name */}
-                  <div className="flex items-center gap-2 mb-4">
-                    {index === 1 && <Lightning size={18} weight="fill" className="text-primary" />}
-                    {index === 2 && <Star size={18} weight="fill" className="text-primary" />}
-                    <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                      {plan.name}
-                    </h3>
+              {plan.shineColors ? (
+                <ShineBorder
+                  borderRadius={16}
+                  borderWidth={1.5}
+                  duration={plan.popular ? 10 : 14}
+                  color={plan.shineColors}
+                >
+                  <GlowCard glowColor={plan.glowColor} className={cn("h-full", plan.popular && "ring-1 ring-primary/30")}>
+                    <div className={cn("p-6 md:p-8 relative", plan.popular && "pt-8")}>
+                      <div className="flex items-center gap-2 mb-4">
+                        {index === 1 && <Lightning size={18} weight="fill" className="text-primary" />}
+                        {index === 2 && <Star size={18} weight="fill" className="text-primary" />}
+                        <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-muted-foreground">{plan.name}</h3>
+                      </div>
+                      <div className="flex items-baseline gap-1 mb-1">
+                        <NumberFlow value={isMonthly ? plan.monthlyPrice : plan.yearlyPrice} format={{ style: "currency", currency: "EUR", minimumFractionDigits: plan.monthlyPrice === 0 ? 0 : 2 }} transformTiming={{ duration: 500, easing: "ease-out" }} willChange className="text-4xl md:text-5xl font-light text-foreground tabular-nums" />
+                        {plan.monthlyPrice > 0 && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+                      </div>
+                      <p className="text-xs text-muted-foreground/60 mb-6">{isMonthly ? t("pricing.billedMonthly") || "facturé mensuellement" : t("pricing.billedAnnually") || "facturé annuellement"}</p>
+                      <ul className="space-y-3 mb-8">
+                        {plan.features.map((feature) => (
+                          <li key={feature} className="flex items-start gap-2.5">
+                            <div className={cn("w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5", plan.popular ? "bg-primary/15 text-primary" : "bg-secondary/15 text-secondary")}><Check size={11} weight="bold" /></div>
+                            <span className="text-sm text-muted-foreground">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="h-px bg-border/50 mb-6" />
+                      <Link to="/auth?mode=signup" className={cn("w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300", plan.popular ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110" : "bg-muted hover:bg-muted/80 text-foreground border border-border/50")}>{plan.cta}</Link>
+                      <p className="text-[11px] text-muted-foreground/50 text-center mt-3">{plan.description}</p>
+                    </div>
+                  </GlowCard>
+                </ShineBorder>
+              ) : (
+                <GlowCard glowColor={plan.glowColor} className="h-full">
+                  <div className="p-6 md:p-8 relative">
+                    <div className="flex items-center gap-2 mb-4">
+                      <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-muted-foreground">{plan.name}</h3>
+                    </div>
+                    <div className="flex items-baseline gap-1 mb-1">
+                      <NumberFlow value={isMonthly ? plan.monthlyPrice : plan.yearlyPrice} format={{ style: "currency", currency: "EUR", minimumFractionDigits: 0 }} transformTiming={{ duration: 500, easing: "ease-out" }} willChange className="text-4xl md:text-5xl font-light text-foreground tabular-nums" />
+                    </div>
+                    <p className="text-xs text-muted-foreground/60 mb-6">{isMonthly ? t("pricing.billedMonthly") || "facturé mensuellement" : t("pricing.billedAnnually") || "facturé annuellement"}</p>
+                    <ul className="space-y-3 mb-8">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-2.5">
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-secondary/15 text-secondary"><Check size={11} weight="bold" /></div>
+                          <span className="text-sm text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="h-px bg-border/50 mb-6" />
+                    <Link to="/auth?mode=signup" className="w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 bg-muted hover:bg-muted/80 text-foreground border border-border/50">{plan.cta}</Link>
+                    <p className="text-[11px] text-muted-foreground/50 text-center mt-3">{plan.description}</p>
                   </div>
-
-                  {/* Price */}
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <NumberFlow
-                      value={isMonthly ? plan.monthlyPrice : plan.yearlyPrice}
-                      format={{ style: "currency", currency: "EUR", minimumFractionDigits: plan.monthlyPrice === 0 ? 0 : 2 }}
-                      transformTiming={{ duration: 500, easing: "ease-out" }}
-                      willChange
-                      className="text-4xl md:text-5xl font-light text-foreground tabular-nums"
-                    />
-                    {plan.monthlyPrice > 0 && (
-                      <span className="text-muted-foreground text-sm">{plan.period}</span>
-                    )}
-                  </div>
-
-                  <p className="text-xs text-muted-foreground/60 mb-6">
-                    {isMonthly ? t("pricing.billedMonthly") || "facturé mensuellement" : t("pricing.billedAnnually") || "facturé annuellement"}
-                  </p>
-
-                  {/* Features */}
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2.5">
-                        <div className={cn(
-                          "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
-                          plan.popular ? "bg-primary/15 text-primary" : "bg-secondary/15 text-secondary"
-                        )}>
-                          <Check size={11} weight="bold" />
-                        </div>
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Separator */}
-                  <div className="h-px bg-border/50 mb-6" />
-
-                  {/* CTA */}
-                  <Link
-                    to="/auth?mode=signup"
-                    className={cn(
-                      "w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300",
-                      plan.popular
-                        ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110"
-                        : "bg-muted hover:bg-muted/80 text-foreground border border-border/50"
-                    )}
-                  >
-                    {plan.cta}
-                  </Link>
-
-                  <p className="text-[11px] text-muted-foreground/50 text-center mt-3">
-                    {plan.description}
-                  </p>
-                </div>
-              </GlowCard>
-              </GradientBorderWrapper>
+                </GlowCard>
+              )}
             </motion.div>
           ))}
         </div>
@@ -263,7 +253,7 @@ export function PricingSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <GradientBorderWrapper accentColor="rgba(0, 240, 255, 0.8)" secondaryColor="rgba(59, 130, 246, 0.8)" borderRadius="rounded-2xl" intensity="subtle">
+          <ShineBorder borderRadius={16} borderWidth={1} duration={16} color={["#00F0FF", "#3B82F6", "#00D787"]}>
           <GlowCard glowColor="cyan">
             <div className="p-4 md:p-6 border-b border-border/30">
               <h3 className="text-lg md:text-xl font-light text-foreground text-center">
@@ -297,7 +287,7 @@ export function PricingSection() {
               </Table>
             </div>
           </GlowCard>
-          </GradientBorderWrapper>
+          </ShineBorder>
         </motion.div>
 
         {/* Note */}

@@ -8,7 +8,7 @@ export function MarqueeBanner({ text = "Your health needs VitaSync" }: MarqueeBa
   const repeats = 12;
 
   return (
-    <section className="relative overflow-hidden py-5 md:py-6 select-none">
+    <section className="relative overflow-hidden py-12 md:py-16 select-none">
       {/* Top gradient line */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-secondary" />
       {/* Bottom gradient line */}

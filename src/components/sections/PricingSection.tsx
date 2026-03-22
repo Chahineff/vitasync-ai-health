@@ -70,7 +70,7 @@ export function PricingSection() {
       cta: t("pricing.plan1.cta"),
       popular: false,
       glowColor: "cyan" as const,
-      accentRgba: "rgba(0, 240, 255, 0.8)",
+      shineColors: null as string[] | null,
     },
     {
       name: t("pricing.plan2.name"),

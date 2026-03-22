@@ -7,7 +7,7 @@ import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { GlowCard } from "@/components/ui/spotlight-card";
-import { ShineBorder } from "@/components/ui/shine-border";
+import { HolographicCard } from "@/components/ui/holographic-card";
 import NumberFlow from "@number-flow/react";
 import confetti from "canvas-confetti";
 import {

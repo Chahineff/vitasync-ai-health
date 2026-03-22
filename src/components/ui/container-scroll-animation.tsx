@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
-import { ShineBorder } from "@/components/ui/shine-border";
 
 export const ContainerScroll = ({
   titleComponent,
@@ -13,24 +12,7 @@ export const ContainerScroll = ({
   const { scrollYProgress } = useScroll({
     target: containerRef,
   });
-  const [isMobile, setIsMobile] = React.useState(false);
 
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, []);
-
-  const scaleDimensions = () => {
-    return isMobile ? [0.7, 0.9] : [0.9, 1];
-  };
-
-  const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
   const translate = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const headerTranslate = useTransform(scrollYProgress, [0, 1], [0, -10]);
 
@@ -39,11 +21,9 @@ export const ContainerScroll = ({
       className="h-[55rem] md:h-[60rem] flex items-center justify-center relative p-2 md:p-8"
       ref={containerRef}
     >
-      <div
-        className="py-10 md:py-20 w-full relative"
-      >
+      <div className="py-10 md:py-20 w-full relative">
         <Header translate={headerTranslate} titleComponent={titleComponent} />
-        <Card translate={translate} scale={scale}>
+        <Card translate={translate}>
           {children}
         </Card>
       </div>
@@ -54,9 +34,7 @@ export const ContainerScroll = ({
 export const Header = ({ translate, titleComponent }: { translate: MotionValue<number>; titleComponent: React.ReactNode }) => {
   return (
     <motion.div
-      style={{
-        translateY: translate,
-      }}
+      style={{ translateY: translate }}
       className="div max-w-5xl mx-auto text-center"
     >
       {titleComponent}
@@ -65,25 +43,18 @@ export const Header = ({ translate, titleComponent }: { translate: MotionValue<n
 };
 
 export const Card = ({
-  scale,
   children,
 }: {
-  scale: MotionValue<number>;
   translate: MotionValue<number>;
   children: React.ReactNode;
 }) => {
   return (
     <div className="relative max-w-5xl mt-12 md:mt-16 mx-auto">
-      <ShineBorder borderRadius={30} borderWidth={2} duration={12} color={["#00F0FF", "#3B82F6", "#00D787"]}>
-        <motion.div
-          style={{ scale }}
-          className="h-[30rem] md:h-[40rem] w-full p-2 md:p-6 bg-card rounded-[28px] shadow-xl dark:shadow-2xl dark:shadow-black/40"
-        >
-          <div className="h-full w-full overflow-hidden rounded-2xl bg-background md:rounded-2xl md:p-4">
-            {children}
-          </div>
-        </motion.div>
-      </ShineBorder>
+      <div className="h-[30rem] md:h-[40rem] w-full p-2 md:p-6 bg-card rounded-[28px] shadow-xl dark:shadow-2xl dark:shadow-black/40 border border-border/30">
+        <div className="h-full w-full overflow-hidden rounded-2xl bg-background md:rounded-2xl md:p-4">
+          {children}
+        </div>
+      </div>
     </div>
   );
 };

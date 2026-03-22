@@ -20,8 +20,9 @@ const Index = () => {
       <main>
         <HeroSection />
         <HowItWorksSection />
+        <MarqueeBanner text="Smart supplements, real results" />
         <ProductPreviewSection />
-        <MarqueeBanner />
+        <MarqueeBanner text="Your health needs VitaSync" />
         <FeaturesSection />
         <PricingSection />
         <FAQSection />

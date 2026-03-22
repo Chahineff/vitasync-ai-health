@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 
-export function MarqueeBanner() {
-  const text = "Your health needs VitaSync";
-  // Repeat text enough times to fill the screen
+interface MarqueeBannerProps {
+  text?: string;
+}
+
+export function MarqueeBanner({ text = "Your health needs VitaSync" }: MarqueeBannerProps) {
   const repeats = 12;
 
   return (

@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Check } from "@phosphor-icons/react";
+import { HolographicCard } from "@/components/ui/holographic-card";
 
 interface Feature {
   step: string;

@@ -136,25 +136,27 @@ export function FeatureSteps({
 
             {/* Right: Preview area */}
             <div className="w-full lg:w-3/5">
-              <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
-                <AnimatePresence mode="wait">
-                  {features.map(
-                    (feature, index) =>
-                      index === currentFeature && (
-                        <motion.div
-                          key={index}
-                          className="absolute inset-0 p-3 md:p-5"
-                          initial={{ opacity: 0, scale: 0.96 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 1.04 }}
-                          transition={{ duration: 0.4, ease: "easeInOut" }}
-                        >
-                          {feature.preview}
-                        </motion.div>
-                      )
-                  )}
-                </AnimatePresence>
-              </div>
+              <HolographicCard borderRadius="rounded-2xl">
+                <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
+                  <AnimatePresence mode="wait">
+                    {features.map(
+                      (feature, index) =>
+                        index === currentFeature && (
+                          <motion.div
+                            key={index}
+                            className="absolute inset-0 p-3 md:p-5"
+                            initial={{ opacity: 0, scale: 0.96 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 1.04 }}
+                            transition={{ duration: 0.4, ease: "easeInOut" }}
+                          >
+                            {feature.preview}
+                          </motion.div>
+                        )
+                    )}
+                  </AnimatePresence>
+                </div>
+              </HolographicCard>
             </div>
           </div>
         </div>

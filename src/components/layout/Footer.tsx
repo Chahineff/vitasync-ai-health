@@ -122,10 +122,10 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-foreground/55">
+          <p className="text-sm text-foreground/65">
             © {new Date().getFullYear()} VitaSync. {t("footer.copyright")}
           </p>
-          <p className="text-sm text-foreground/55">
+          <p className="text-sm text-foreground/65">
             {t("footer.madeWith")}
           </p>
         </div>

@@ -155,7 +155,7 @@ export function PricingSection() {
           <span className={cn("text-sm font-medium transition-colors", isMonthly ? "text-foreground" : "text-muted-foreground")}>
             {t("pricing.perMonth")?.replace("/", "") || "Mensuel"}
           </span>
-          <Switch ref={switchRef} checked={!isMonthly} onCheckedChange={handleToggle} />
+          <Switch ref={switchRef} checked={!isMonthly} onCheckedChange={handleToggle} aria-label="Toggle annual pricing" />
           <Label className={cn("text-sm font-medium transition-colors cursor-pointer", !isMonthly ? "text-foreground" : "text-muted-foreground")}>
             Annuel
             <span className="ml-1.5 text-xs font-semibold text-secondary">(-20%)</span>

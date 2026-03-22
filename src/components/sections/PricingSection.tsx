@@ -253,7 +253,6 @@ export function PricingSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <ShineBorder borderRadius={16} borderWidth={1} duration={16} color={["#00F0FF", "#3B82F6", "#00D787"]}>
           <GlowCard glowColor="cyan">
             <div className="p-4 md:p-6 border-b border-border/30">
               <h3 className="text-lg md:text-xl font-light text-foreground text-center">
@@ -287,7 +286,6 @@ export function PricingSection() {
               </Table>
             </div>
           </GlowCard>
-          </ShineBorder>
         </motion.div>
 
         {/* Note */}

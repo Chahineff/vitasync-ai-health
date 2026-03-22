@@ -25,29 +25,20 @@ export function GradientBorderWrapper({
   const gop = glowOpacity[intensity];
 
   return (
-    <div className={cn("relative p-[1.5px] overflow-hidden", borderRadius, className)}>
-      {/* Animated conic gradient border */}
-      <div
-        className={cn("absolute inset-0 animate-spin-slow", borderRadius)}
-        style={{
-          background: `conic-gradient(from 0deg, ${accentColor}, transparent 40%, ${second} 50%, transparent 90%, ${accentColor})`,
-          opacity: op,
-        }}
-      />
-      {/* Static secondary gradient */}
+    <div className={cn("relative p-[1.5px]", borderRadius, className)}>
+      {/* Static gradient border */}
       <div
         className={cn("absolute inset-0", borderRadius)}
         style={{
-          background: `conic-gradient(from 180deg, ${second}, transparent 30%, ${accentColor} 60%, transparent)`,
-          opacity: op * 0.5,
+          background: `linear-gradient(135deg, ${accentColor}, ${second}, ${accentColor})`,
+          opacity: op,
         }}
       />
-      {/* Subtle radial glow */}
+      {/* Outer glow */}
       <div
-        className={cn("absolute inset-0 pointer-events-none", borderRadius)}
+        className={cn("absolute -inset-[1px] pointer-events-none", borderRadius)}
         style={{
-          background: `radial-gradient(ellipse at 50% 0%, ${accentColor}, transparent 70%)`,
-          opacity: gop,
+          boxShadow: `0 0 15px ${accentColor.replace(/[\d.]+\)$/, `${gop})`)}`,
         }}
       />
       {/* Inner content */}

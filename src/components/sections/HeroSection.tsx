@@ -77,7 +77,7 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-background/70 dark:bg-background/60" />
       </div>
 
-      <div className="relative z-10 flex items-center min-h-screen">
+      <div className="relative z-10 flex items-center min-h-[88vh] md:min-h-[90vh]">
         <motion.div
           className="w-full px-4 sm:px-6 lg:px-12 py-16 md:py-24"
           style={{ opacity: contentOpacity, y: contentY }}

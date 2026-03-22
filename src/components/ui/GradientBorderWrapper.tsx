@@ -1,12 +1,13 @@
 import React, { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 interface GradientBorderWrapperProps {
   children: ReactNode;
-  accentColor: string;       // e.g. "rgba(0, 240, 255, 0.8)"
-  secondaryColor?: string;   // optional second color for gradient
+  accentColor: string;
+  secondaryColor?: string;
   className?: string;
-  borderRadius?: string;     // e.g. "rounded-2xl"
+  borderRadius?: string;
   intensity?: "subtle" | "medium" | "strong";
 }
 
@@ -18,11 +19,16 @@ export function GradientBorderWrapper({
   borderRadius = "rounded-2xl",
   intensity = "medium",
 }: GradientBorderWrapperProps) {
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === "light";
   const second = secondaryColor || accentColor;
+
   const opacityMap = { subtle: 0.3, medium: 0.5, strong: 0.7 };
   const glowOpacity = { subtle: 0.08, medium: 0.12, strong: 0.18 };
-  const op = opacityMap[intensity];
-  const gop = glowOpacity[intensity];
+
+  // Boost in light mode for visibility on light backgrounds
+  const op = opacityMap[intensity] * (isLight ? 1.8 : 1);
+  const gop = glowOpacity[intensity] * (isLight ? 2 : 1);
 
   return (
     <div className={cn("relative p-[1.5px]", borderRadius, className)}>
@@ -31,14 +37,14 @@ export function GradientBorderWrapper({
         className={cn("absolute inset-0", borderRadius)}
         style={{
           background: `linear-gradient(135deg, ${accentColor}, ${second}, ${accentColor})`,
-          opacity: op,
+          opacity: Math.min(op, 1),
         }}
       />
       {/* Outer glow */}
       <div
         className={cn("absolute -inset-[1px] pointer-events-none", borderRadius)}
         style={{
-          boxShadow: `0 0 15px ${accentColor.replace(/[\d.]+\)$/, `${gop})`)}`,
+          boxShadow: `0 0 15px ${accentColor.replace(/[\d.]+\)$/, `${Math.min(gop, 0.4)})`)}`,
         }}
       />
       {/* Inner content */}

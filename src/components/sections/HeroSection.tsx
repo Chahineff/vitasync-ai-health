@@ -64,8 +64,8 @@ export function HeroSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-4 md:mx-8 mb-4 md:mb-6">
-      {/* Spline background — contained to hero only */}
+    <section ref={sectionRef} className="relative min-h-screen md:min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-3 md:mx-5 mb-4 md:mb-6">
+      {/* Spline background — hidden on mobile, shown on tablet+ */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
         <div className="absolute inset-0 hidden md:block">
           <spline-viewer
@@ -73,11 +73,12 @@ export function HeroSection() {
             style={{ width: "100%", height: "100%", pointerEvents: "none" }}
           />
         </div>
-        <div className="absolute inset-0 md:hidden bg-gradient-mesh" />
+        {/* Mobile: simple gradient background, no Spline */}
+        <div className="absolute inset-0 md:hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
         <div className="absolute inset-0 bg-background/70 dark:bg-background/60" />
       </div>
 
-      <div className="relative z-10 flex items-center min-h-[88vh] md:min-h-[90vh]">
+      <div className="relative z-10 flex items-center min-h-[100svh] md:min-h-[90vh]">
         <motion.div
           className="w-full px-4 sm:px-6 lg:px-12 py-16 md:py-24"
           style={{ opacity: contentOpacity, y: contentY }}
@@ -96,7 +97,7 @@ export function HeroSection() {
                 </span>
               </motion.div>
 
-              <motion.h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-[-0.04em] text-foreground mb-4 md:mb-6 leading-[1.1] hero-text-shadow">
+              <motion.h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-[-0.04em] text-foreground mb-4 md:mb-6 leading-[1.1] hero-text-shadow">
                 {t("hero.title").split(" ").map((word, i) => (
                   <motion.span
                     key={i}
@@ -122,7 +123,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-lg md:text-xl lg:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl leading-relaxed"
+                className="text-base md:text-xl lg:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
               >
                 {t("hero.subtitle")}
               </motion.p>

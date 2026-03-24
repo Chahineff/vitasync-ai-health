@@ -54,7 +54,7 @@ export function FeatureSteps({
 
   // Shorter scroll on mobile
   const scrollHeight = isMobile
-    ? `${features.length * 60}vh`
+    ? `${features.length * 50}vh`
     : `${features.length * 80}vh`;
 
   return (
@@ -63,13 +63,32 @@ export function FeatureSteps({
       className={cn("relative", className)}
       style={{ height: scrollHeight }}
     >
-      <div className="sticky top-0 min-h-screen flex items-center py-8 md:py-12 lg:py-20 overflow-hidden">
+      <div className="sticky top-0 min-h-screen flex items-start md:items-center py-4 md:py-12 lg:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto w-full px-4 md:px-6">
           {/* Header */}
           {title && (
-            <div className="text-center mb-8 md:mb-10 lg:mb-14">
+            <div className="text-center mb-4 md:mb-10 lg:mb-14">
               {title}
               {subtitle}
+            </div>
+          )}
+
+          {/* Mobile: step indicator dots */}
+          {isMobile && (
+            <div className="flex items-center justify-center gap-2 mb-4 lg:hidden">
+              {features.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollToStep(i)}
+                  className={cn(
+                    "rounded-full transition-all duration-300",
+                    i === currentFeature
+                      ? "w-7 h-2 bg-gradient-to-r from-primary to-secondary"
+                      : "w-2 h-2 bg-foreground/20"
+                  )}
+                  aria-label={`Step ${i + 1}`}
+                />
+              ))}
             </div>
           )}
 
@@ -149,9 +168,9 @@ export function FeatureSteps({
               ))}
             </div>
 
-            {/* Right: Preview area */}
-            <div className="w-full lg:w-3/5">
-              <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
+            {/* Right: Preview area — hidden on mobile */}
+            <div className="hidden lg:block w-full lg:w-3/5">
+              <div className="relative lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
                 <AnimatePresence mode="wait">
                   {features.map(
                     (feature, index) =>

@@ -84,7 +84,7 @@ export function HeroSection() {
         >
           <div className="max-w-[90rem] mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
             {/* Left side — Text content */}
-            <div className="w-full lg:w-[50%] text-left">
+            <div className="w-full lg:w-[50%] text-center lg:text-left">
               <motion.div
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -131,7 +131,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col sm:flex-row gap-3 md:gap-4 items-start pointer-events-auto"
+                className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center lg:items-start pointer-events-auto"
               >
                 <Link
                   to="/auth?mode=signup"
@@ -150,7 +150,7 @@ export function HeroSection() {
 
             {/* Right side — 50% — Display Cards */}
             <motion.div
-              className="w-full lg:w-[50%] flex items-center justify-center min-h-[450px]"
+              className="hidden lg:flex w-full lg:w-[50%] items-center justify-center min-h-[450px]"
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}

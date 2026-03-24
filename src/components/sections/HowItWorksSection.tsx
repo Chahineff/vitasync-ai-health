@@ -84,7 +84,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
 
         <div className="relative z-10 flex flex-col md:flex-row items-stretch">
           {/* Left: Large number + icon */}
-          <div className="relative flex flex-col items-center justify-center p-8 md:p-14 md:w-[300px] lg:w-[360px] border-b md:border-b-0 md:border-r border-border/40 dark:border-white/5">
+          <div className="relative flex flex-col items-center justify-center p-5 md:p-8 lg:p-14 md:w-[300px] lg:w-[360px] border-b md:border-b-0 md:border-r border-border/40 dark:border-white/5">
             <div
               className="absolute inset-0 opacity-15 dark:opacity-20"
               style={{
@@ -93,7 +93,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
             />
 
             <span
-              className="relative text-[8rem] md:text-[10rem] lg:text-[12rem] font-extralight leading-none select-none"
+              className="relative text-[5rem] md:text-[8rem] lg:text-[12rem] font-extralight leading-none select-none"
               style={{ color: accent.color }}
             >
               {number}
@@ -108,7 +108,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
           </div>
 
           {/* Right: Content */}
-          <div className="flex-1 p-8 md:p-14 lg:p-16 flex flex-col justify-center">
+          <div className="flex-1 p-5 md:p-8 lg:p-16 flex flex-col justify-center">
             {/* Step label */}
             <div className="flex items-center gap-3 mb-6">
               <span
@@ -166,7 +166,7 @@ function ProgressIndicator({
   const { t } = useTranslation();
 
   return (
-    <div className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-3">
+    <div className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center gap-3">
       {stepAccents.map((accent, index) => (
         <button
           key={index}
@@ -259,7 +259,7 @@ export function HowItWorksSection() {
         />
 
         {/* Header */}
-        <div className="absolute top-24 md:top-28 lg:top-32 left-0 right-0 text-center px-4 z-10">
+        <div className="absolute top-16 md:top-24 lg:top-32 left-0 right-0 text-center px-4 z-10">
           <MagicText
             text={`${t("howItWorks.title")} ${t("howItWorks.titleHighlight")}`}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight justify-center"

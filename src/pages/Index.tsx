@@ -24,6 +24,7 @@ const Index = () => {
         <ProductPreviewSection />
         <MarqueeBanner text="Your health needs VitaSync" />
         <FeaturesSection />
+        <MarqueeBanner text="Your health needs VitaSync" />
         <PricingSection />
         <FAQSection />
       </main>

@@ -97,7 +97,7 @@ export function HeroSection() {
                 </span>
               </motion.div>
 
-              <motion.h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-[-0.04em] text-foreground mb-4 md:mb-6 leading-[1.1] hero-text-shadow">
+              <motion.h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-[-0.04em] text-foreground mb-4 md:mb-6 leading-[1.1] hero-text-shadow">
                 {t("hero.title").split(" ").map((word, i) => (
                   <motion.span
                     key={i}

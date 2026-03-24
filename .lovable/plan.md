@@ -1,61 +1,86 @@
 
 
-# Harmonisation visuelle de toutes les pages publiques (hors Dashboard)
+# Adaptation responsive mobile/tablette de la homepage + corrections UX
 
-## Contexte
+## Résumé
 
-Les pages publiques (About, Contact, Blog, BlogPost, Legal) utilisent des patterns visuels incohérents par rapport aux améliorations récentes de la homepage (bordures renforcées en mode clair, GlowCard, meilleur contraste). L'objectif est d'aligner toutes ces pages sur le même niveau de qualité visuelle, en mode clair comme en mode sombre.
-
-## Pages concernees
-
-- About (`src/pages/About.tsx`)
-- Contact (`src/pages/Contact.tsx`)
-- Blog (`src/pages/Blog.tsx`)
-- BlogPost (`src/pages/BlogPost.tsx`)
-- LegalPageLayout (`src/components/layout/LegalPageLayout.tsx`)
-- Footer (`src/components/layout/Footer.tsx`)
-- GlassCard (`src/components/ui/GlassCard.tsx`)
+Adapter toutes les sections récentes de la homepage pour mobile et tablette, ajouter la navigation par clic dans la section Features, corriger la séparation visuelle entre Features et Pricing avec une nouvelle banderole, et afficher un mockup iPhone/tablette pour la preview du dashboard sur petits écrans.
 
 ---
 
-## Plan d'implementation
+## Plan d'implémentation
 
-### 1. Renforcer GlassCard pour le mode clair
+### 1. Masquer les DisplayCards sur mobile et tablette dans le Hero
 
-Le composant `GlassCard` utilise la classe CSS `glass-card` qui manque de contraste en light mode. Ajouter des classes Tailwind conditionnelles pour le mode clair : bordure visible (`border border-border/50`), fond blanc semi-transparent (`bg-white/60 dark:bg-transparent`), et ombre légere.
+Les cartes à survol ne fonctionnent pas sur tactile. On les cache sous `lg:` et on centre le texte Hero sur mobile/tablette.
 
-**Fichier** : `src/components/ui/GlassCard.tsx`
+**Fichier** : `src/components/sections/HeroSection.tsx`
+- Le wrapper des DisplayCards passe de `w-full lg:w-[50%]` à `hidden lg:flex lg:w-[50%]`
+- Le texte Hero passe de `w-full lg:w-[50%]` à `w-full lg:w-[50%] text-center lg:text-left` sur mobile
+- Les boutons CTA sont centrés sur mobile (`items-center lg:items-start`)
 
-### 2. Harmoniser les pages About, Contact, Blog
+### 2. Responsive de HowItWorksSection (Votre parcours)
 
-Ces 3 pages partagent la meme structure (hero + sections). Les ajustements :
+Corriger la superposition de texte sur mobile et ajuster les tailles.
 
-- **Inputs du formulaire Contact** : remplacer `border-0` par `border border-border/50` pour que les champs soient visibles en mode clair
-- **Sections avec `bg-gradient-subtle`** : ajouter `border-y border-border/30` pour delimiter les zones en mode clair
-- **Badge/labels "uppercase tracking-widest"** : uniformiser l'opacite (`text-primary/80` en light)
-- **Hero sections** : retirer `bg-gradient-radial` (qui n'existe pas dans le CSS) et utiliser un fond transparent coherent
+**Fichier** : `src/components/sections/HowItWorksSection.tsx`
+- Réduire la taille du grand numéro sur mobile : `text-[5rem] md:text-[8rem] lg:text-[12rem]`
+- Réduire les paddings internes sur mobile : `p-5 md:p-8 lg:p-14`
+- Masquer le `ProgressIndicator` (points à droite) sur mobile (`hidden md:flex`)
+- Réduire la hauteur de scroll sur mobile (`3 * 80vh` au lieu de `4 * 80vh` sur petit écran, ou garder la même mais ajuster)
+- Le header (titre) passe à `top-16 md:top-24 lg:top-32` pour éviter la superposition avec la navbar
 
-### 3. Harmoniser BlogPost
+### 3. Ajouter une banderole entre Features et Pricing
 
-- Ajouter une `GlassCard` autour du contenu de l'article pour la separation visuelle
-- Aligner les styles prose avec ceux de `LegalPageLayout`
+Insérer un nouveau `MarqueeBanner` dans `Index.tsx` entre `FeaturesSection` et `PricingSection`.
 
-### 4. Harmoniser LegalPageLayout
+**Fichier** : `src/pages/Index.tsx`
+- Ajouter `<MarqueeBanner text="Your health needs VitaSync" />` entre Features et Pricing
+- Déplacer le deuxième MarqueeBanner actuel (entre ProductPreview et Features) pour garder un slogan différent, par ex. "Smart supplements, real results"
 
-- Ajouter une bordure et un fond subtil autour de l'article (`glass-card` ou bordure)
-- Ajouter le `FloatingThemeToggle` et harmoniser le header avec le pattern hero des autres pages (badge + animation framer-motion d'entree)
+### 4. Navigation par clic dans la section Features (FeatureSteps)
 
-### 5. Harmoniser le Footer
+Permettre de cliquer sur les numéros/étapes pour naviguer directement à cette étape au lieu de devoir scroller.
 
-- Renforcer les bordures des icones sociales en mode clair (`border-border/50`)
-- S'assurer que la section "brand column" a un contraste suffisant pour les deux modes
+**Fichier** : `src/components/ui/feature-steps.tsx`
+- Ajouter un `onClick` handler sur chaque step item du panneau gauche
+- Le clic calcule la position de scroll cible dans le `containerRef` et fait un `window.scrollTo({ behavior: 'smooth' })` vers l'étape correspondante
+- Conserver le scroll naturel en parallèle
+
+### 5. Dashboard Preview responsive : mockup iPhone sur mobile
+
+Remplacer l'image desktop par un mockup mobile lorsque l'écran est petit.
+
+**Fichier** : `src/components/sections/ProductPreviewSection.tsx`
+- Utiliser `useIsMobile()` pour détecter l'écran
+- Sur mobile : afficher l'image dans un cadre iPhone (div avec `rounded-[2.5rem] border-[8px] border-foreground/10` et ratio `aspect-[9/19.5]`)
+- Sur tablette (md) : garder le format actuel mais réduire la hauteur
+- Les images existantes restent les mêmes (l'image desktop sera objectFit "cover" dans le cadre iPhone, montrant la partie haute)
+
+**Fichier** : `src/components/ui/container-scroll-animation.tsx`
+- Adapter les hauteurs : `h-[40rem] md:h-[55rem] lg:h-[60rem]` pour le container
+- Adapter la card interne : `h-[22rem] md:h-[30rem] lg:h-[40rem]`
+
+### 6. FeatureSteps responsive
+
+**Fichier** : `src/components/ui/feature-steps.tsx`
+- Sur mobile, le layout passe en colonne (déjà `flex-col lg:flex-row`)
+- Réduire la hauteur du preview area sur mobile : `aspect-[4/3]` déjà en place
+- Réduire le `scrollHeight` sur mobile pour éviter un scroll trop long
+- Masquer les previews widgets sur mobile si trop complexes, ou garder un aspect simplifié
+
+### 7. Ajustements globaux de spacing et tailles
+
+- **MarqueeBanner** : texte plus petit sur mobile (`text-base md:text-2xl lg:text-3xl`)
+- **PricingSection** : les cards de pricing en `flex-col` sur mobile (probablement déjà fait)
+- Vérifier les paddings de toutes les sections pour cohérence mobile
 
 ---
 
-## Details techniques
+## Détails techniques
 
-- **Aucun fichier dashboard** ne sera modifie
-- Les modifications principales portent sur ~6 fichiers
-- Les classes CSS existantes dans `index.css` (`.glass-card`, `.glass-card-premium`) seront reutilisees, pas de nouveau CSS
-- La coherence sera assuree par l'utilisation systematique de `border-border/40` (light) et des variables CSS deja definies
+- ~7 fichiers modifiés, aucun fichier dashboard touché
+- Utilisation de `useIsMobile()` depuis `src/hooks/use-mobile.tsx` pour la détection
+- Les breakpoints suivent le système Tailwind existant : `sm:640px`, `md:768px`, `lg:1024px`
+- Le mockup iPhone est purement CSS (border-radius + border), pas d'image de cadre externe
 

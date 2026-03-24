@@ -50,7 +50,7 @@ export const Card = ({
 }) => {
   return (
     <div className="relative max-w-5xl mt-12 md:mt-16 mx-auto">
-      <div className="h-[30rem] md:h-[40rem] w-full p-2 md:p-6 bg-card rounded-[28px] shadow-xl dark:shadow-2xl dark:shadow-black/40 border border-border/30">
+      <div className="h-[22rem] md:h-[30rem] lg:h-[40rem] w-full p-2 md:p-6 bg-card rounded-[20px] md:rounded-[28px] shadow-xl dark:shadow-2xl dark:shadow-black/40 border border-border/30">
         <div className="h-full w-full overflow-hidden rounded-xl md:rounded-2xl bg-background md:p-4">
           {children}
         </div>

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Check } from "@phosphor-icons/react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Feature {
   step: string;
@@ -27,6 +28,7 @@ export function FeatureSteps({
 }: FeatureStepsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentFeature, setCurrentFeature] = useState(0);
+  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -42,8 +44,18 @@ export function FeatureSteps({
     setCurrentFeature(index);
   });
 
-  // Total scroll height: features.length * 80vh
-  const scrollHeight = `${features.length * 80}vh`;
+  const scrollToStep = useCallback((index: number) => {
+    if (!containerRef.current) return;
+    const sectionTop = containerRef.current.offsetTop;
+    const sectionHeight = containerRef.current.offsetHeight - window.innerHeight;
+    const targetScroll = sectionTop + (sectionHeight * index) / (features.length - 1);
+    window.scrollTo({ top: targetScroll, behavior: "smooth" });
+  }, [features.length]);
+
+  // Shorter scroll on mobile
+  const scrollHeight = isMobile
+    ? `${features.length * 60}vh`
+    : `${features.length * 80}vh`;
 
   return (
     <div
@@ -51,33 +63,37 @@ export function FeatureSteps({
       className={cn("relative", className)}
       style={{ height: scrollHeight }}
     >
-      <div className="sticky top-0 min-h-screen flex items-center py-12 md:py-20 overflow-hidden">
+      <div className="sticky top-0 min-h-screen flex items-center py-8 md:py-12 lg:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto w-full px-4 md:px-6">
           {/* Header */}
           {title && (
-            <div className="text-center mb-10 md:mb-14">
+            <div className="text-center mb-8 md:mb-10 lg:mb-14">
               {title}
               {subtitle}
             </div>
           )}
 
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-14 items-start">
             {/* Left: Steps list */}
             <div className="w-full lg:w-2/5 space-y-1">
               {features.map((feature, index) => (
-                <div key={index} className="w-full text-left">
+                <button
+                  key={index}
+                  className="w-full text-left"
+                  onClick={() => scrollToStep(index)}
+                >
                   <div
                     className={cn(
-                      "flex items-start gap-4 p-4 md:p-5 rounded-xl transition-all duration-500 group",
+                      "flex items-start gap-3 md:gap-4 p-3 md:p-5 rounded-xl transition-all duration-500 group",
                       index === currentFeature
                         ? "bg-primary/5 dark:bg-primary/10"
-                        : ""
+                        : "hover:bg-muted/50"
                     )}
                   >
                     {/* Step number / check */}
                     <div
                       className={cn(
-                        "w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-semibold transition-all duration-500 mt-0.5",
+                        "w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center flex-shrink-0 text-xs md:text-sm font-semibold transition-all duration-500 mt-0.5",
                         index < currentFeature
                           ? "bg-secondary text-secondary-foreground"
                           : index === currentFeature
@@ -96,7 +112,7 @@ export function FeatureSteps({
                     <div className="flex-1 min-w-0">
                       <p
                         className={cn(
-                          "text-sm font-semibold uppercase tracking-wider mb-1 transition-colors duration-500",
+                          "text-xs md:text-sm font-semibold uppercase tracking-wider mb-1 transition-colors duration-500",
                           index === currentFeature
                             ? "bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
                             : "text-muted-foreground"
@@ -106,7 +122,7 @@ export function FeatureSteps({
                       </p>
                       <h4
                         className={cn(
-                          "text-base md:text-lg font-medium transition-colors duration-500",
+                          "text-sm md:text-base lg:text-lg font-medium transition-colors duration-500",
                           index === currentFeature
                             ? "text-foreground"
                             : "text-muted-foreground"
@@ -121,7 +137,7 @@ export function FeatureSteps({
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.4 }}
-                            className="text-sm text-muted-foreground mt-2 leading-relaxed"
+                            className="text-xs md:text-sm text-muted-foreground mt-2 leading-relaxed"
                           >
                             {feature.content}
                           </motion.p>
@@ -129,7 +145,7 @@ export function FeatureSteps({
                       </AnimatePresence>
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
 

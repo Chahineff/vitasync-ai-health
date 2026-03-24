@@ -84,7 +84,7 @@ export function HeroSection() {
         >
           <div className="max-w-[90rem] mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
             {/* Left side — Text content */}
-            <div className="w-full lg:w-[50%] text-left">
+            <div className="w-full lg:w-[50%] text-center lg:text-left">
               <motion.div
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}

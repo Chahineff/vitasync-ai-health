@@ -259,7 +259,7 @@ export function HowItWorksSection() {
         />
 
         {/* Header */}
-        <div className="absolute top-24 md:top-28 lg:top-32 left-0 right-0 text-center px-4 z-10">
+        <div className="absolute top-16 md:top-24 lg:top-32 left-0 right-0 text-center px-4 z-10">
           <MagicText
             text={`${t("howItWorks.title")} ${t("howItWorks.titleHighlight")}`}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight justify-center"

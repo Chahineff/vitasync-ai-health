@@ -38,7 +38,7 @@ export function ShineBorder({
       )}
     >
       <div
-        className="relative z-[1] h-full w-full rounded-[calc(var(--shine-border-radius)-var(--shine-border-width))]"
+        className="relative z-[1] h-full w-full bg-background rounded-[calc(var(--shine-border-radius)-var(--shine-border-width))]"
         style={{ borderRadius: `calc(${borderRadius}px - ${borderWidth}px)` }}
       >
         {children}

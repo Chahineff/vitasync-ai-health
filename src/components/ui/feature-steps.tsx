@@ -63,7 +63,7 @@ export function FeatureSteps({
       className={cn("relative", className)}
       style={{ height: scrollHeight }}
     >
-      <div className="sticky top-0 min-h-screen flex items-center py-8 md:py-12 lg:py-20 overflow-hidden">
+      <div className="sticky top-0 min-h-screen flex items-start md:items-center py-4 md:py-12 lg:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto w-full px-4 md:px-6">
           {/* Header */}
           {title && (

@@ -54,7 +54,7 @@ export function FeatureSteps({
 
   // Shorter scroll on mobile
   const scrollHeight = isMobile
-    ? `${features.length * 60}vh`
+    ? `${features.length * 50}vh`
     : `${features.length * 80}vh`;
 
   return (

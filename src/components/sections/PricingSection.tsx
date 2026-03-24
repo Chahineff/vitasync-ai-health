@@ -187,8 +187,8 @@ export function PricingSection() {
               {plan.shineColors ? (
                 <ShineBorder
                   borderRadius={16}
-                  borderWidth={1.5}
-                  duration={plan.popular ? 10 : 14}
+                  borderWidth={1}
+                  duration={plan.popular ? 12 : 16}
                   color={plan.shineColors}
                 >
                   <GlowCard glowColor={plan.glowColor} className={cn("h-full", plan.popular && "ring-1 ring-primary/30")}>

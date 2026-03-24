@@ -131,7 +131,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col sm:flex-row gap-3 md:gap-4 items-start pointer-events-auto"
+                className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center lg:items-start pointer-events-auto"
               >
                 <Link
                   to="/auth?mode=signup"

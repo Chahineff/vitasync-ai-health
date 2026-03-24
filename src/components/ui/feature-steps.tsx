@@ -67,9 +67,28 @@ export function FeatureSteps({
         <div className="max-w-7xl mx-auto w-full px-4 md:px-6">
           {/* Header */}
           {title && (
-            <div className="text-center mb-8 md:mb-10 lg:mb-14">
+            <div className="text-center mb-4 md:mb-10 lg:mb-14">
               {title}
               {subtitle}
+            </div>
+          )}
+
+          {/* Mobile: step indicator dots */}
+          {isMobile && (
+            <div className="flex items-center justify-center gap-2 mb-4 lg:hidden">
+              {features.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollToStep(i)}
+                  className={cn(
+                    "rounded-full transition-all duration-300",
+                    i === currentFeature
+                      ? "w-7 h-2 bg-gradient-to-r from-primary to-secondary"
+                      : "w-2 h-2 bg-foreground/20"
+                  )}
+                  aria-label={`Step ${i + 1}`}
+                />
+              ))}
             </div>
           )}
 

@@ -149,9 +149,9 @@ export function FeatureSteps({
               ))}
             </div>
 
-            {/* Right: Preview area */}
-            <div className="w-full lg:w-3/5">
-              <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
+            {/* Right: Preview area — hidden on mobile */}
+            <div className="hidden lg:block w-full lg:w-3/5">
+              <div className="relative lg:aspect-auto lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
                 <AnimatePresence mode="wait">
                   {features.map(
                     (feature, index) =>

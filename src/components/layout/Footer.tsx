@@ -131,8 +131,8 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Text hover effect */}
-      <div className="relative z-10 h-32 md:h-40 flex items-center justify-center">
+      {/* Text hover effect — smaller on mobile to prevent overflow */}
+      <div className="relative z-10 h-20 md:h-32 lg:h-40 flex items-center justify-center mx-4 md:mx-0 overflow-hidden">
         <TextHoverEffect text="VITASYNC" />
       </div>
 

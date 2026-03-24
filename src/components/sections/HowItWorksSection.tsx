@@ -108,7 +108,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
           </div>
 
           {/* Right: Content */}
-          <div className="flex-1 p-8 md:p-14 lg:p-16 flex flex-col justify-center">
+          <div className="flex-1 p-5 md:p-8 lg:p-16 flex flex-col justify-center">
             {/* Step label */}
             <div className="flex items-center gap-3 mb-6">
               <span

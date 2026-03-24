@@ -93,7 +93,7 @@ function StepCard({ stepIndex }: { stepIndex: number }) {
             />
 
             <span
-              className="relative text-[8rem] md:text-[10rem] lg:text-[12rem] font-extralight leading-none select-none"
+              className="relative text-[5rem] md:text-[8rem] lg:text-[12rem] font-extralight leading-none select-none"
               style={{ color: accent.color }}
             >
               {number}

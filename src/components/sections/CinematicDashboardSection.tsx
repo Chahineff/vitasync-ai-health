@@ -245,7 +245,7 @@ export const CinematicDashboardSection = () => {
       // Initial states
       gsap.set(".cine-title", { autoAlpha: 0, y: 50, filter: "blur(16px)" });
       gsap.set(".cine-subtitle", { autoAlpha: 0, y: 30 });
-      gsap.set(".cine-card", { y: window.innerHeight + 200, autoAlpha: 1 });
+      gsap.set(".cine-card", { y: window.innerHeight + 200, xPercent: -50, yPercent: -50, autoAlpha: 1 });
       gsap.set([".cine-mockup-wrapper", ".cine-badge", ".cine-card-text-left", ".cine-card-text-right"], { autoAlpha: 0 });
       gsap.set(".cine-cta", { autoAlpha: 0, scale: 0.8, filter: "blur(20px)" });
 
@@ -270,9 +270,9 @@ export const CinematicDashboardSection = () => {
       tl
         // Phase 1: Fade title, bring card up
         .to(".cine-hero-text", { scale: 1.1, filter: "blur(16px)", opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
-        .to(".cine-card", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
+        .to(".cine-card", { y: 0, xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 2 }, 0)
         // Phase 2: Expand card
-        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", ease: "power3.inOut", duration: 1.5 })
+        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 1.5 })
         // Phase 3: Reveal mockup
         .fromTo(".cine-mockup-wrapper",
           { y: 200, z: -400, rotationX: mobile ? 0 : 40, rotationY: mobile ? 0 : -25, autoAlpha: 0, scale: 0.6 },
@@ -300,12 +300,13 @@ export const CinematicDashboardSection = () => {
           width: mobile ? "92vw" : "85vw",
           height: mobile ? "85vh" : "80vh",
           borderRadius: mobile ? "28px" : "36px",
+          xPercent: -50, yPercent: -50,
           ease: "expo.inOut",
           duration: 1.5,
         }, "pullback")
         .to(".cine-cta", { scale: 1, filter: "blur(0px)", ease: "expo.inOut", duration: 1.5 }, "pullback")
         // Final exit
-        .to(".cine-card", { y: -window.innerHeight - 300, ease: "power3.in", duration: 1.5 });
+        .to(".cine-card", { y: -window.innerHeight - 300, xPercent: -50, yPercent: -50, ease: "power3.in", duration: 1.5 });
 
     }, containerRef);
 
@@ -335,8 +336,8 @@ export const CinematicDashboardSection = () => {
       {/* Main premium card */}
       <div
         ref={mainCardRef}
-        className="cine-card premium-depth-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center overflow-hidden"
-        style={{ width: isMobile ? "90vw" : "75vw", height: isMobile ? "80vh" : "70vh", borderRadius: isMobile ? "28px" : "36px" }}
+        className="cine-card premium-depth-card absolute left-1/2 top-1/2 z-20 flex items-center justify-center overflow-hidden"
+        style={{ width: isMobile ? "90vw" : "75vw", height: isMobile ? "80vh" : "70vh", borderRadius: isMobile ? "28px" : "36px", transform: "translate(-50%, -50%)" }}
       >
         <div className="card-sheen" />
 

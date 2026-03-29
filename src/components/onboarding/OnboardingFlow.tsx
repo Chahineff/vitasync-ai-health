@@ -341,6 +341,7 @@ function AIAnalysisAnimation({ onComplete }: { onComplete: () => void }) {
 }
 
 export function OnboardingFlow() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEditMode = searchParams.get("edit") === "true";
   const { healthProfile, completeOnboarding } = useHealthProfile();

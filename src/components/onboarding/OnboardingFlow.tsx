@@ -340,8 +340,7 @@ function AIAnalysisAnimation({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-
-  const navigate = useNavigate();
+export function OnboardingFlow() {
   const [searchParams] = useSearchParams();
   const isEditMode = searchParams.get("edit") === "true";
   const { healthProfile, completeOnboarding } = useHealthProfile();

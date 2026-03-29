@@ -7,7 +7,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useTheme } from "next-themes";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Activity, Bot, Pill, Heart, TrendingUp } from "lucide-react";
+import { Activity, Bot, Pill, Heart, TrendingUp, Brain, Zap, Shield, BarChart3, Sparkles } from "lucide-react";
+import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 
 import dashboardLight from "@/assets/dashboard-preview-light.png";
 import dashboardDark from "@/assets/dashboard-preview-dark.png";
@@ -189,6 +190,26 @@ const INJECTED_STYLES = `
     position: absolute; inset: 0; width: 100%; height: 100%;
     pointer-events: none; z-index: 50; opacity: 0.03; mix-blend-mode: overlay;
   }
+
+  .cinematic-section .orbit-icon-bubble {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 24px -4px rgba(0,0,0,0.5);
+  }
+
+  @media (min-width: 768px) {
+    .cinematic-section .orbit-icon-bubble {
+      width: 52px;
+      height: 52px;
+    }
+  }
 `;
 
 export const CinematicDashboardSection = () => {
@@ -245,6 +266,7 @@ export const CinematicDashboardSection = () => {
       // Initial states
       gsap.set(".cine-title", { autoAlpha: 0, y: 50, filter: "blur(16px)" });
       gsap.set(".cine-subtitle", { autoAlpha: 0, y: 30 });
+      gsap.set(".cine-orbit-ring", { autoAlpha: 0, scale: 0.8 });
       gsap.set(".cine-card", { y: window.innerHeight + 200, xPercent: -50, yPercent: -50, autoAlpha: 1 });
       gsap.set([".cine-mockup-wrapper", ".cine-badge", ".cine-card-text-left", ".cine-card-text-right"], { autoAlpha: 0 });
       gsap.set(".cine-cta", { autoAlpha: 0, scale: 0.8, filter: "blur(20px)" });
@@ -253,7 +275,8 @@ export const CinematicDashboardSection = () => {
       const intro = gsap.timeline({ delay: 0.2 });
       intro
         .to(".cine-title", { duration: 1.4, autoAlpha: 1, y: 0, filter: "blur(0px)", ease: "expo.out" })
-        .to(".cine-subtitle", { duration: 1, autoAlpha: 1, y: 0, ease: "power3.out" }, "-=0.8");
+        .to(".cine-subtitle", { duration: 1, autoAlpha: 1, y: 0, ease: "power3.out" }, "-=0.8")
+        .to(".cine-orbit-ring", { duration: 1.2, autoAlpha: 1, scale: 1, ease: "back.out(1.4)" }, "-=0.6");
 
       // Scroll timeline
       const tl = gsap.timeline({
@@ -268,8 +291,9 @@ export const CinematicDashboardSection = () => {
       });
 
       tl
-        // Phase 1: Fade title, bring card up
+        // Phase 1: Fade title + orbits, bring card up
         .to(".cine-hero-text", { scale: 1.1, filter: "blur(16px)", opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
+        .to(".cine-orbit-ring", { scale: 1.3, opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-card", { y: 0, xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 2 }, 0)
         // Phase 2: Expand card
         .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 1.5 })
@@ -338,6 +362,60 @@ export const CinematicDashboardSection = () => {
             <rect x="1" y="1" width="18" height="26" rx="9" stroke="currentColor" strokeWidth="1.5" />
             <circle cx="10" cy="8" r="2.5" fill="currentColor" className="animate-pulse" />
           </svg>
+        </div>
+      </div>
+
+      {/* Orbiting circles around center */}
+      <div className="cine-orbit-ring absolute inset-0 z-[5] flex items-center justify-center pointer-events-none">
+        <div className="relative" style={{ width: isMobile ? "300px" : "500px", height: isMobile ? "300px" : "500px" }}>
+          {/* Inner ring */}
+          <OrbitingCircles
+            radius={isMobile ? 120 : 200}
+            duration={30}
+            speed={1}
+            iconSize={isMobile ? 40 : 52}
+          >
+            <div className="orbit-icon-bubble">
+              <Brain className="w-5 h-5 text-primary" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <Activity className="w-5 h-5 text-secondary" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <Pill className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <Heart className="w-5 h-5 text-rose-400" />
+            </div>
+          </OrbitingCircles>
+
+          {/* Outer ring (reverse) */}
+          <OrbitingCircles
+            radius={isMobile ? 180 : 300}
+            duration={40}
+            speed={1}
+            reverse
+            iconSize={isMobile ? 40 : 52}
+          >
+            <div className="orbit-icon-bubble">
+              <Zap className="w-5 h-5 text-amber-400" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <Shield className="w-5 h-5 text-blue-400" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <BarChart3 className="w-5 h-5 text-violet-400" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <Sparkles className="w-5 h-5 text-cyan-400" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <Bot className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div className="orbit-icon-bubble">
+              <TrendingUp className="w-5 h-5 text-primary" />
+            </div>
+          </OrbitingCircles>
         </div>
       </div>
 

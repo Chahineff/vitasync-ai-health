@@ -21,7 +21,7 @@ const Index = () => {
         <HeroSection />
         <HowItWorksSection />
         <MarqueeBanner text="Smart supplements, real results" />
-        <ProductPreviewSection />
+        <CinematicDashboardSection />
         <FeaturesSection />
         <MarqueeBanner text="Your health needs VitaSync" />
         <PricingSection />

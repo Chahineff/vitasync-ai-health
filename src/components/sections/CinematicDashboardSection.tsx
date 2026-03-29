@@ -350,25 +350,41 @@ export const CinematicDashboardSection = () => {
         {/* Mockup */}
         <div className="cine-mockup-wrapper relative z-20" style={{ perspective: "1200px" }}>
           <div ref={mockupRef} className="relative" style={{ transformStyle: "preserve-3d" }}>
-            {/* iPhone bezel */}
-            <div className="iphone-bezel relative rounded-[3rem] md:rounded-[3.5rem] overflow-hidden"
-              style={{ width: isMobile ? "220px" : "300px", aspectRatio: "9/19.5", padding: isMobile ? "8px" : "12px" }}>
-              {/* Notch */}
-              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 md:w-28 h-5 md:h-6 bg-black rounded-b-2xl z-30" />
-              {/* Hardware buttons */}
-              <div className="hardware-btn absolute -right-[3px] top-[25%] w-[3px] h-[40px] rounded-r-sm" />
-              <div className="hardware-btn absolute -right-[3px] top-[38%] w-[3px] h-[40px] rounded-r-sm" />
-              <div className="hardware-btn absolute -left-[3px] top-[30%] w-[3px] h-[55px] rounded-l-sm" />
-              {/* Screen */}
-              <div className="relative w-full h-full rounded-[2.2rem] md:rounded-[2.8rem] overflow-hidden bg-black">
-                <img
-                  src={dashboardSrc}
-                  alt="VitaSync Dashboard"
-                  className="w-full h-full object-cover object-left-top"
-                />
-                <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
+            {/* MacBook on desktop */}
+            {!isMobile ? (
+              <div style={{ width: "560px" }}>
+                <div className="macbook-body">
+                  <div className="macbook-screen" style={{ aspectRatio: "16/10" }}>
+                    <div className="macbook-notch" />
+                    <img
+                      src={dashboardSrc}
+                      alt="VitaSync Dashboard"
+                      className="w-full h-full object-cover object-left-top"
+                    />
+                    <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
+                  </div>
+                </div>
+                <div className="macbook-base" />
+                <div className="macbook-foot" />
               </div>
-            </div>
+            ) : (
+              /* iPhone on mobile */
+              <div className="iphone-bezel relative rounded-[3rem] overflow-hidden"
+                style={{ width: "220px", aspectRatio: "9/19.5", padding: "8px" }}>
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-b-2xl z-30" />
+                <div className="hardware-btn absolute -right-[3px] top-[25%] w-[3px] h-[40px] rounded-r-sm" />
+                <div className="hardware-btn absolute -right-[3px] top-[38%] w-[3px] h-[40px] rounded-r-sm" />
+                <div className="hardware-btn absolute -left-[3px] top-[30%] w-[3px] h-[55px] rounded-l-sm" />
+                <div className="relative w-full h-full rounded-[2.2rem] overflow-hidden bg-black">
+                  <img
+                    src={dashboardSrc}
+                    alt="VitaSync Dashboard"
+                    className="w-full h-full object-cover object-left-top"
+                  />
+                  <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
+                </div>
+              </div>
+            )}
 
             {/* Health Score Ring — floating */}
             <div className="cine-badge absolute -top-4 -right-8 md:-top-6 md:-right-14 z-40">

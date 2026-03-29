@@ -328,9 +328,17 @@ export const CinematicDashboardSection = () => {
           <span className="font-extrabold">{t("productPreview.titleHighlight")}</span>{" "}
           {t("productPreview.titleEnd")}
         </h2>
-        <p className="cine-subtitle text-muted-foreground text-lg sm:text-xl md:text-2xl lg:text-3xl max-w-3xl font-light tracking-tight leading-relaxed">
+        <p className="cine-subtitle text-xl sm:text-2xl md:text-3xl lg:text-4xl max-w-4xl font-light tracking-tight leading-relaxed bg-gradient-to-r from-[hsl(217,100%,50%)] via-[hsl(190,100%,45%)] to-[hsl(163,100%,42%)] bg-clip-text text-transparent pb-[0.15em]">
           {t("productPreview.subtitle")}
         </p>
+        {/* Scroll indicator */}
+        <div className="cine-subtitle mt-8 flex flex-col items-center gap-2 animate-bounce">
+          <span className="text-muted-foreground/50 text-xs uppercase tracking-[0.2em]">Scroll</span>
+          <svg width="20" height="28" viewBox="0 0 20 28" fill="none" className="text-muted-foreground/40">
+            <rect x="1" y="1" width="18" height="26" rx="9" stroke="currentColor" strokeWidth="1.5" />
+            <circle cx="10" cy="8" r="2.5" fill="currentColor" className="animate-pulse" />
+          </svg>
+        </div>
       </div>
 
       {/* Main premium card */}

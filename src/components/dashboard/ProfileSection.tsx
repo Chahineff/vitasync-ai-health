@@ -77,10 +77,9 @@ function NotificationPreferences() {
 interface ProfileSectionProps {
   onNavigateToHelp?: () => void;
   onSignOut?: () => void;
-  onRestartTutorial?: () => void;
 }
 
-export function ProfileSection({ onNavigateToHelp, onSignOut, onRestartTutorial }: ProfileSectionProps = {}) {
+export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionProps = {}) {
   const { user, profile, updateProfile, uploadAvatar } = useAuth();
   const { signedUrl: avatarUrl, isLoading: isLoadingAvatar } = useAvatarUrl(profile?.avatar_url);
   const { toast } = useToast();

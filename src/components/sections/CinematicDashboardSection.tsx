@@ -423,7 +423,7 @@ export const CinematicDashboardSection = () => {
       <div
         ref={mainCardRef}
         className="cine-card premium-depth-card absolute left-1/2 top-1/2 z-20 flex items-center justify-center overflow-hidden"
-        style={{ width: isMobile ? "90vw" : "75vw", height: isMobile ? "80vh" : "70vh", borderRadius: isMobile ? "28px" : "36px", transform: "translate(-50%, -50%)" }}
+        style={{ width: isMobile ? "90vw" : "75vw", height: isMobile ? "80vh" : "70vh", borderRadius: isMobile ? "28px" : "36px" }}
       >
         <div className="card-sheen" />
 

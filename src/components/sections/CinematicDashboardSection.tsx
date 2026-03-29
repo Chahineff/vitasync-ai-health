@@ -270,9 +270,9 @@ export const CinematicDashboardSection = () => {
       tl
         // Phase 1: Fade title, bring card up
         .to(".cine-hero-text", { scale: 1.1, filter: "blur(16px)", opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
-        .to(".cine-card", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
+        .to(".cine-card", { y: 0, xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 2 }, 0)
         // Phase 2: Expand card
-        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", ease: "power3.inOut", duration: 1.5 })
+        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 1.5 })
         // Phase 3: Reveal mockup
         .fromTo(".cine-mockup-wrapper",
           { y: 200, z: -400, rotationX: mobile ? 0 : 40, rotationY: mobile ? 0 : -25, autoAlpha: 0, scale: 0.6 },

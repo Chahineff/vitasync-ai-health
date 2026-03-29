@@ -559,7 +559,7 @@ export const CinematicDashboardSection = () => {
               <div className="w-2 h-2 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.4)]" />
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-white/55 text-sm font-light">Score santé en temps réel</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.healthScore')}</span>
               <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.4)]" />
             </div>
           </div>

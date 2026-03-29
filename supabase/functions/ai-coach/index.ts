@@ -1,19 +1,22 @@
 // AI Coach Edge Function - VitaSync Premium
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ALLOWED_ORIGINS = [
-  "https://vitasyncai.lovable.app",
-  "https://id-preview--7f75c63b-4202-49a9-a875-e20700f8a0c8.lovable.app",
-  "http://localhost:5173",
-  "http://localhost:8080",
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/vitasyncai\.lovable\.app$/,
+  /^https:\/\/.*\.lovable\.app$/,
+  /^https:\/\/.*\.lovableproject\.com$/,
+  /^http:\/\/localhost:(5173|8080)$/,
 ];
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get("Origin") || "";
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  const allowedOrigin = ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin))
+    ? origin
+    : "https://vitasyncai.lovable.app";
   return {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Vary": "Origin",
   };
 }

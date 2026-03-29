@@ -42,13 +42,6 @@ const iconCircle = (icon: ReactNode, bg: string) => (
 
 const questions: OnboardingQuestion[] = [
   {
-    id: "is_adult",
-    title: "As-tu 18 ans ou plus ?",
-    subtitle: "Cette information est nécessaire pour te proposer des recommandations adaptées",
-    type: "yesno",
-    required: true,
-  },
-  {
     id: "shipping_country",
     title: "Où souhaites-tu être livré ?",
     subtitle: "Pour afficher le bon catalogue et les délais de livraison",
@@ -399,7 +392,7 @@ export function OnboardingFlow() {
       setIsSubmitting(true);
       try {
         const formattedAnswers: Partial<HealthProfile> = {
-          is_adult: answers.is_adult === "yes",
+          is_adult: true,
           shipping_country: answers.shipping_country,
           health_goals: answers.health_goals || [],
           activity_level: answers.activity_level,

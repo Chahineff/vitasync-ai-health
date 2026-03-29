@@ -7,6 +7,8 @@ import { Eye, EyeSlash, SpinnerGap } from "@phosphor-icons/react";
 import { useToast } from "@/hooks/use-toast";
 import { lovable } from "@/integrations/lovable/index";
 import { SplineBackground } from "@/components/sections/SplineBackground";
+import { Checkbox } from "@/components/ui/checkbox";
+import { differenceInYears, parse } from "date-fns";
 
 const passwordRegex = {
   uppercase: /[A-Z]/,
@@ -31,7 +33,11 @@ const signUpSchema = z.object({
     .regex(passwordRegex.special, "Doit contenir au moins un caractère spécial (!@#$...)"),
   firstName: z.string().min(1, "Le prénom est requis"),
   lastName: z.string().min(1, "Le nom est requis"),
-  dateOfBirth: z.string().optional(),
+  dateOfBirth: z.string().min(1, "La date de naissance est requise").refine((val) => {
+    const dob = parse(val, "yyyy-MM-dd", new Date());
+    return differenceInYears(new Date(), dob) >= 18;
+  }, "Vous devez avoir au moins 18 ans pour créer un compte"),
+  acceptTerms: z.literal(true, { errorMap: () => ({ message: "Vous devez accepter les conditions d'utilisation" }) }),
 });
 
 const Auth = () => {
@@ -46,6 +52,7 @@ const Auth = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { signIn, signUp, user } = useAuth();
@@ -70,7 +77,7 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const result = signUpSchema.safeParse({ email, password, firstName, lastName, dateOfBirth });
+        const result = signUpSchema.safeParse({ email, password, firstName, lastName, dateOfBirth, acceptTerms });
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
           result.error.errors.forEach((err) => {
@@ -301,17 +308,42 @@ const Auth = () => {
             {isSignUp && (
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm text-foreground/70 mb-2">
-                  Date de naissance (optionnel)
+                  Date de naissance <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="date"
                   id="dateOfBirth"
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
+                  required
                   className="w-full px-4 py-3 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
+                {errors.dateOfBirth && <p className="text-sm text-destructive mt-1">{errors.dateOfBirth}</p>}
               </div>
             )}
+
+            {isSignUp && (
+              <div className="flex items-start gap-3 mt-2">
+                <Checkbox
+                  id="acceptTerms"
+                  checked={acceptTerms}
+                  onCheckedChange={(checked) => setAcceptTerms(checked === true)}
+                  className="mt-0.5"
+                />
+                <label htmlFor="acceptTerms" className="text-sm text-foreground/70 leading-snug cursor-pointer">
+                  J'accepte les{" "}
+                  <Link to="/legal/terms" target="_blank" className="text-primary hover:underline">
+                    conditions générales d'utilisation
+                  </Link>
+                  {" "}et la{" "}
+                  <Link to="/legal/privacy" target="_blank" className="text-primary hover:underline">
+                    politique de confidentialité
+                  </Link>
+                  {" "}<span className="text-destructive">*</span>
+                </label>
+              </div>
+            )}
+            {errors.acceptTerms && <p className="text-sm text-destructive mt-1">{errors.acceptTerms}</p>}
 
             <button
               type="submit"

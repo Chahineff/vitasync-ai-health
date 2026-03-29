@@ -19,9 +19,9 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
+        <CinematicDashboardSection />
         <HowItWorksSection />
         <MarqueeBanner text="Smart supplements, real results" />
-        <CinematicDashboardSection />
         <FeaturesSection />
         <MarqueeBanner text="Your health needs VitaSync" />
         <PricingSection />

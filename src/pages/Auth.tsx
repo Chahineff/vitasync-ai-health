@@ -308,17 +308,42 @@ const Auth = () => {
             {isSignUp && (
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm text-foreground/70 mb-2">
-                  Date de naissance (optionnel)
+                  Date de naissance <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="date"
                   id="dateOfBirth"
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
+                  required
                   className="w-full px-4 py-3 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
+                {errors.dateOfBirth && <p className="text-sm text-destructive mt-1">{errors.dateOfBirth}</p>}
               </div>
             )}
+
+            {isSignUp && (
+              <div className="flex items-start gap-3 mt-2">
+                <Checkbox
+                  id="acceptTerms"
+                  checked={acceptTerms}
+                  onCheckedChange={(checked) => setAcceptTerms(checked === true)}
+                  className="mt-0.5"
+                />
+                <label htmlFor="acceptTerms" className="text-sm text-foreground/70 leading-snug cursor-pointer">
+                  J'accepte les{" "}
+                  <Link to="/legal/terms" target="_blank" className="text-primary hover:underline">
+                    conditions générales d'utilisation
+                  </Link>
+                  {" "}et la{" "}
+                  <Link to="/legal/privacy" target="_blank" className="text-primary hover:underline">
+                    politique de confidentialité
+                  </Link>
+                  {" "}<span className="text-destructive">*</span>
+                </label>
+              </div>
+            )}
+            {errors.acceptTerms && <p className="text-sm text-destructive mt-1">{errors.acceptTerms}</p>}
 
             <button
               type="submit"

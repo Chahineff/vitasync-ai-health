@@ -261,6 +261,7 @@ export function OnboardingFlow() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [showMinorWarning, setShowMinorWarning] = useState(false);
+  const [showAIAnalysis, setShowAIAnalysis] = useState(false);
 
   // Pre-fill answers in edit mode
   useEffect(() => {

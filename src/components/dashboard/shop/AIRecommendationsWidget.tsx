@@ -181,7 +181,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card-premium rounded-2xl p-5 border border-border/50 dark:border-white/10 mb-6"
+      className="glass-card-premium rounded-2xl p-4 border border-border/50 dark:border-white/10 mb-4"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -241,7 +241,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                 onClick={() => onProductClick?.(product.handle)}
                 className="group cursor-pointer"
               >
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-white/5 mb-2">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-white/5 mb-2">
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}

@@ -12,7 +12,6 @@ import {
   ShopFilters, 
   ProductGroupCard, 
   Pagination,
-  AIRecommendationsWidget,
   CATEGORY_MAPPING,
   type SortOption,
   type CategoryKey

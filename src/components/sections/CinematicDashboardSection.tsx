@@ -251,7 +251,7 @@ export const CinematicDashboardSection = () => {
           <span className="font-extrabold">{t("productPreview.titleHighlight")}</span>{" "}
           {t("productPreview.titleEnd")}
         </h2>
-        <p className="cine-subtitle text-muted-foreground text-base md:text-lg lg:text-xl max-w-2xl">
+        <p className="cine-subtitle text-muted-foreground text-lg sm:text-xl md:text-2xl lg:text-3xl max-w-3xl font-light tracking-tight leading-relaxed">
           {t("productPreview.subtitle")}
         </p>
       </div>

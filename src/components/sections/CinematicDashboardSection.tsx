@@ -239,7 +239,7 @@ export const CinematicDashboardSection = () => {
   // GSAP scroll timeline
   useEffect(() => {
     const mobile = window.innerWidth < 768;
-    const scrollEnd = mobile ? 3500 : 6000;
+    const scrollEnd = mobile ? 2800 : 4500;
 
     const ctx = gsap.context(() => {
       // Initial states

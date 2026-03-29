@@ -419,9 +419,9 @@ export function OnboardingFlow() {
         }
 
         toast.success("Profil complété !", {
-          description: "Votre Coach IA est maintenant personnalisé",
+          description: "Votre Coach IA analyse votre profil...",
         });
-        navigate("/dashboard");
+        setShowAIAnalysis(true);
       } catch (error) {
         console.error("Onboarding error:", error);
         toast.error("Une erreur est survenue");

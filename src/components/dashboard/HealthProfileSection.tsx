@@ -1,23 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Target, 
-  Dumbbell, 
-  Moon, 
-  Utensils, 
-  AlertTriangle, 
-  Pill, 
-  Wallet,
-  MapPin,
-  Edit3
+  Target, Dumbbell, Moon, Utensils, AlertTriangle, Pill, Wallet, MapPin, Edit3
 } from "lucide-react";
 
 export function HealthProfileSection() {
   const navigate = useNavigate();
   const { healthProfile, loading } = useHealthProfile();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -35,100 +29,84 @@ export function HealthProfileSection() {
     return (
       <div className="glass-card rounded-2xl p-4 md:p-8 text-center">
         <h3 className="text-lg font-medium text-foreground mb-2">
-          Profil santé incomplet
+          {t('healthProfile.incomplete')}
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Complétez votre profil pour des recommandations personnalisées
+          {t('healthProfile.incompleteDesc')}
         </p>
         <Button onClick={() => navigate("/onboarding")}>
-          Compléter mon profil
+          {t('healthProfile.complete')}
         </Button>
       </div>
     );
   }
 
-  const goalLabels: Record<string, string> = {
-    sleep: "Sommeil",
-    energy: "Énergie",
-    focus: "Focus",
-    stress: "Gestion du stress",
-    sport: "Performance sport",
-    muscle: "Prise de muscle",
-    weight_loss: "Perte de poids",
-    digestion: "Digestion",
-    immunity: "Immunité",
-    skin_hair: "Peau/cheveux",
+  const goalMap: Record<string, string> = {
+    sleep: "goal.sleep", energy: "goal.energy", focus: "goal.focus",
+    stress: "goal.stress", sport: "goal.sport", muscle: "goal.muscle",
+    weight_loss: "goal.weightLoss", digestion: "goal.digestion",
+    immunity: "goal.immunity", skin_hair: "goal.skinHair",
   };
 
-  const dietLabels: Record<string, string> = {
-    omnivore: "Omnivore",
-    vegetarian: "Végétarien",
-    vegan: "Vegan",
-    halal: "Halal",
-    keto: "Keto/low-carb",
-    gluten_free: "Sans gluten",
-    lactose_free: "Sans lactose",
-    unknown: "Non défini",
+  const dietMap: Record<string, string> = {
+    omnivore: "diet.omnivore", vegetarian: "diet.vegetarian", vegan: "diet.vegan",
+    halal: "diet.halal", keto: "diet.keto", gluten_free: "diet.glutenFree",
+    lactose_free: "diet.lactoseFree", unknown: "diet.unknown",
   };
 
   const activityLabels: Record<string, string> = {
-    "0-1": "0-1x/semaine",
-    "2-3": "2-3x/semaine",
-    "4-5": "4-5x/semaine",
-    "6+": "6x+/semaine",
+    "0-1": "0-1x/week", "2-3": "2-3x/week", "4-5": "4-5x/week", "6+": "6x+/week",
   };
 
-  const budgetLabels: Record<string, string> = {
-    standard: "Standard",
-    premium: "Premium",
-    elite: "Élite",
+  const budgetMap: Record<string, string> = {
+    standard: "budget.standard", premium: "budget.premium", elite: "budget.elite",
   };
 
   const sections = [
     {
       icon: Target,
-      label: "Objectifs",
+      label: t('healthProfile.goals'),
       content: healthProfile.health_goals?.length ? (
         <div className="flex flex-wrap gap-2">
           {healthProfile.health_goals.map((goal) => (
             <Badge key={goal} variant="secondary">
-              {goalLabels[goal] || goal}
+              {goalMap[goal] ? t(goalMap[goal]) : goal}
             </Badge>
           ))}
         </div>
       ) : (
-        <span className="text-muted-foreground">Non défini</span>
+        <span className="text-muted-foreground">{t('healthProfile.notDefined')}</span>
       ),
     },
     {
       icon: MapPin,
-      label: "Pays de livraison",
-      content: healthProfile.shipping_country || "Non défini",
+      label: t('healthProfile.country'),
+      content: healthProfile.shipping_country || t('healthProfile.notDefined'),
     },
     {
       icon: Dumbbell,
-      label: "Activité physique",
+      label: t('healthProfile.activity'),
       content: healthProfile.activity_level
         ? activityLabels[healthProfile.activity_level] || healthProfile.activity_level
-        : "Non défini",
+        : t('healthProfile.notDefined'),
     },
     {
       icon: Moon,
-      label: "Sommeil",
+      label: t('healthProfile.sleep'),
       content: healthProfile.sleep_hours
-        ? `${healthProfile.sleep_hours} • Qualité: ${healthProfile.sleep_quality_score || "-"}/5`
-        : "Non défini",
+        ? `${healthProfile.sleep_hours} • ${t('healthProfile.quality')}: ${healthProfile.sleep_quality_score || "-"}/5`
+        : t('healthProfile.notDefined'),
     },
     {
       icon: Utensils,
-      label: "Régime alimentaire",
+      label: t('healthProfile.diet'),
       content: healthProfile.diet_type
-        ? dietLabels[healthProfile.diet_type] || healthProfile.diet_type
-        : "Non défini",
+        ? (dietMap[healthProfile.diet_type] ? t(dietMap[healthProfile.diet_type]) : healthProfile.diet_type)
+        : t('healthProfile.notDefined'),
     },
     {
       icon: AlertTriangle,
-      label: "Allergies",
+      label: t('healthProfile.allergies'),
       content: healthProfile.allergies?.length ? (
         <div className="flex flex-wrap gap-2">
           {healthProfile.allergies.map((allergy) => (
@@ -138,37 +116,35 @@ export function HealthProfileSection() {
           ))}
         </div>
       ) : (
-        <span className="text-muted-foreground">Aucune</span>
+        <span className="text-muted-foreground">{t('healthProfile.none')}</span>
       ),
     },
     {
       icon: Pill,
-      label: "Préférences de prise",
+      label: t('healthProfile.preferences'),
       content: healthProfile.preferred_forms?.length ? (
         <div className="flex flex-wrap gap-2">
           {healthProfile.preferred_forms.map((form) => (
-            <Badge key={form} variant="secondary">
-              {form}
-            </Badge>
+            <Badge key={form} variant="secondary">{form}</Badge>
           ))}
           {healthProfile.max_daily_intakes && (
             <Badge variant="outline">
-              {healthProfile.max_daily_intakes} prise(s)/jour max
+              {healthProfile.max_daily_intakes} {t('healthProfile.intakesMax')}
             </Badge>
           )}
         </div>
       ) : (
-        <span className="text-muted-foreground">Non défini</span>
+        <span className="text-muted-foreground">{t('healthProfile.notDefined')}</span>
       ),
     },
     {
       icon: Wallet,
-      label: "Budget mensuel",
+      label: t('healthProfile.budget'),
       content: healthProfile.monthly_budget
-        ? budgetLabels[healthProfile.monthly_budget] || healthProfile.monthly_budget
+        ? (budgetMap[healthProfile.monthly_budget] ? t(budgetMap[healthProfile.monthly_budget]) : healthProfile.monthly_budget)
         : healthProfile.budget_range_min && healthProfile.budget_range_max
-        ? `${healthProfile.budget_range_min}-${healthProfile.budget_range_max}€/mois`
-        : "Non défini",
+        ? `${healthProfile.budget_range_min}-${healthProfile.budget_range_max}€/${t('mystack.month')}`
+        : t('healthProfile.notDefined'),
     },
   ];
 
@@ -180,7 +156,7 @@ export function HealthProfileSection() {
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h2 className="text-xl font-medium text-foreground">
-          Mon Profil Santé
+          {t('healthProfile.title')}
         </h2>
         <Button
           variant="outline"
@@ -189,23 +165,18 @@ export function HealthProfileSection() {
           className="gap-2 w-full sm:w-auto"
         >
           <Edit3 className="w-4 h-4" />
-          Modifier
+          {t('healthProfile.edit')}
         </Button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         {sections.map((section, index) => (
-          <div
-            key={index}
-            className="p-4 rounded-xl bg-foreground/5 space-y-2"
-          >
+          <div key={index} className="p-4 rounded-xl bg-foreground/5 space-y-2">
             <div className="flex items-center gap-2 text-muted-foreground">
               <section.icon className="w-4 h-4" />
               <span className="text-sm font-medium">{section.label}</span>
             </div>
-            <div className="text-sm text-foreground">
-              {section.content}
-            </div>
+            <div className="text-sm text-foreground">{section.content}</div>
           </div>
         ))}
       </div>
@@ -213,7 +184,7 @@ export function HealthProfileSection() {
       {healthProfile.medications_notes && (
         <div className="mt-4 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
           <p className="text-sm text-destructive">
-            <strong>Note médicale :</strong> {healthProfile.medications_notes}
+            <strong>{t('healthProfile.medicalNote')}</strong> {healthProfile.medications_notes}
           </p>
         </div>
       )}

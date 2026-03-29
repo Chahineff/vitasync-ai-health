@@ -1,18 +1,21 @@
 import { Brain, Moon, Leaf, Lightning } from '@phosphor-icons/react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface QuickActionsProps {
   onAction: (message: string) => void;
   disabled?: boolean;
 }
 
-const actions = [
-  { label: "Analyser mon sommeil", icon: Moon, message: "Peux-tu analyser mes habitudes de sommeil et me donner des conseils pour mieux dormir ?" },
-  { label: "Conseil nutrition", icon: Leaf, message: "Quels conseils nutritionnels peux-tu me donner pour améliorer mon énergie au quotidien ?" },
-  { label: "Ma routine du jour", icon: Brain, message: "Quelle devrait être ma routine de compléments pour aujourd'hui ?" },
-  { label: "Boost énergie", icon: Lightning, message: "Comment puis-je améliorer mon niveau d'énergie naturellement ?" },
-];
-
 export const QuickActions = ({ onAction, disabled }: QuickActionsProps) => {
+  const { t } = useTranslation();
+
+  const actions = [
+    { label: t("quickActions.analyzeSleep"), icon: Moon, message: t("quickActions.analyzeSleepMsg") },
+    { label: t("quickActions.nutrition"), icon: Leaf, message: t("quickActions.nutritionMsg") },
+    { label: t("quickActions.routine"), icon: Brain, message: t("quickActions.routineMsg") },
+    { label: t("quickActions.boostEnergy"), icon: Lightning, message: t("quickActions.boostEnergyMsg") },
+  ];
+
   return (
     <div className="flex flex-wrap gap-2 mb-3">
       {actions.map((action) => (

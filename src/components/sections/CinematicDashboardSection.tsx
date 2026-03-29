@@ -431,24 +431,24 @@ export const CinematicDashboardSection = () => {
             </div>
             <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
           </div>
-          <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
-            Suivi quotidien<br />intelligent
+           <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
+            {t('cinema.trackingTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
           </h4>
           <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
-            Suivez vos suppléments, votre énergie, votre sommeil et votre humeur — tout depuis un seul dashboard.
+            {t('cinema.trackingDesc')}
           </p>
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3 group">
               <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
-              <span className="text-white/55 text-sm font-light">Rappels personnalisés</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.reminders')}</span>
             </div>
             <div className="flex items-center gap-3 group">
               <div className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.4)]" />
-              <span className="text-white/55 text-sm font-light">Historique complet</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.history')}</span>
             </div>
             <div className="flex items-center gap-3 group">
               <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.4)]" />
-              <span className="text-white/55 text-sm font-light">Tendances hebdomadaires</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.trends')}</span>
             </div>
           </div>
         </div>
@@ -504,7 +504,7 @@ export const CinematicDashboardSection = () => {
                     <span className="cine-counter text-white text-xl md:text-2xl font-bold">0</span>
                     <span className="text-white/60 text-xs">%</span>
                   </div>
-                  <span className="text-white/50 text-[10px] md:text-xs">Score Santé</span>
+                  <span className="text-white/50 text-[10px] md:text-xs">{t('cinema.healthScoreLabel')}</span>
                 </div>
               </div>
             </div>
@@ -513,7 +513,7 @@ export const CinematicDashboardSection = () => {
             <div className={`cine-badge absolute z-40 ${isMobile ? "-bottom-2 -left-10" : "-bottom-6 -left-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Bot className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
-                <span className="text-white text-xs md:text-sm font-medium">Coach IA actif</span>
+                <span className="text-white text-xs md:text-sm font-medium">{t('cinema.coachActive')}</span>
               </div>
             </div>
 
@@ -521,7 +521,7 @@ export const CinematicDashboardSection = () => {
             <div className={`cine-badge absolute z-40 ${isMobile ? "top-1/3 -left-12" : "top-1/4 -left-24"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Pill className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
-                <span className="text-white text-xs md:text-sm font-medium">Stack optimisé</span>
+                <span className="text-white text-xs md:text-sm font-medium">{t('cinema.stackOptimized')}</span>
               </div>
             </div>
 
@@ -529,7 +529,7 @@ export const CinematicDashboardSection = () => {
             <div className={`cine-badge absolute z-40 ${isMobile ? "bottom-1/4 -right-10" : "top-1/3 -right-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
-                <span className="text-white text-xs md:text-sm font-medium">+12% énergie</span>
+                <span className="text-white text-xs md:text-sm font-medium">{t('cinema.energyUp')}</span>
               </div>
             </div>
           </div>
@@ -544,22 +544,22 @@ export const CinematicDashboardSection = () => {
             </div>
           </div>
           <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
-            Coaching IA<br />& Analyses
+            {t('cinema.coachingTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
           </h4>
           <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
-            Importez vos analyses sanguines, recevez des recommandations personnalisées et optimisez votre stack.
+            {t('cinema.coachingDesc')}
           </p>
           <div className="flex flex-col gap-3 items-end">
             <div className="flex items-center gap-3">
-              <span className="text-white/55 text-sm font-light">Analyse de bilans sanguins</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.bloodAnalysis')}</span>
               <div className="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.4)]" />
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-white/55 text-sm font-light">Recommandations IA</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.aiRecommendations')}</span>
               <div className="w-2 h-2 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.4)]" />
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-white/55 text-sm font-light">Score santé en temps réel</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.healthScore')}</span>
               <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.4)]" />
             </div>
           </div>
@@ -567,12 +567,12 @@ export const CinematicDashboardSection = () => {
 
         {/* CTA overlay */}
         <div className="cine-cta absolute inset-0 z-40 flex flex-col items-center justify-center text-center px-6">
-          <span className="text-white/30 text-xs md:text-sm uppercase tracking-[0.3em] font-medium mb-6">Votre santé, amplifiée</span>
+          <span className="text-white/30 text-xs md:text-sm uppercase tracking-[0.3em] font-medium mb-6">{t('cinema.ctaTagline')}</span>
           <h3 className="text-card-silver-matte text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Prêt à optimiser<br />votre santé ?
+            {t('cinema.ctaTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
           </h3>
           <p className="text-white/50 text-base md:text-lg max-w-lg mb-10 leading-relaxed">
-            Rejoignez VitaSync et accédez à votre dashboard de santé personnalisé — suivi, coaching IA et recommandations en un seul endroit.
+            {t('cinema.ctaDesc')}
           </p>
           <button
             onClick={() => (window.location.href = "/auth")}

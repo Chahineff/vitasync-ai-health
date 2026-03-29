@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { User, PencilSimple, Target, CurrencyDollar, Warning } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ProfileSummaryCardProps {
   goals: string[];
@@ -9,21 +10,25 @@ interface ProfileSummaryCardProps {
   onEdit: () => void;
 }
 
-const goalLabels: Record<string, string> = {
-  'sommeil': '💤 Sommeil',
-  'energie': '⚡ Énergie',
-  'stress': '🧘 Stress',
-  'sport': '🏋️ Sport',
-  'prise-muscle': '💪 Muscle',
-  'immunite': '🛡️ Immunité',
-  'digestion': '🌿 Digestion',
-  'focus': '🎯 Focus',
-  'concentration': '🧠 Concentration',
-  'perte-poids': '⚖️ Poids',
+const goalKeyMap: Record<string, string> = {
+  'sommeil': 'goal.sleep',
+  'energie': 'goal.energy',
+  'stress': 'goal.stress',
+  'sport': 'goal.sport',
+  'prise-muscle': 'goal.muscle',
+  'immunite': 'goal.immunity',
+  'digestion': 'goal.digestion',
+  'focus': 'goal.focus',
+  'concentration': 'goal.focus',
+  'perte-poids': 'goal.weightLoss',
 };
 
 export function ProfileSummaryCard({ goals, allergies, budget, onEdit }: ProfileSummaryCardProps) {
-  const displayGoals = goals.slice(0, 3).map(g => goalLabels[g] || g);
+  const { t } = useTranslation();
+  const displayGoals = goals.slice(0, 3).map(g => {
+    const key = goalKeyMap[g];
+    return key ? t(key) : g;
+  });
   const hasMore = goals.length > 3;
 
   return (
@@ -37,7 +42,7 @@ export function ProfileSummaryCard({ goals, allergies, budget, onEdit }: Profile
           <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center">
             <User weight="fill" className="w-4 h-4 text-primary" />
           </div>
-          <span className="text-sm font-medium text-foreground">Mon profil santé</span>
+          <span className="text-sm font-medium text-foreground">{t('profileSummary.title')}</span>
         </div>
         <Button
           variant="ghost"
@@ -46,12 +51,11 @@ export function ProfileSummaryCard({ goals, allergies, budget, onEdit }: Profile
           className="h-8 px-2 text-foreground/60 hover:text-foreground"
         >
           <PencilSimple weight="bold" className="w-4 h-4 mr-1" />
-          Modifier
+          {t('profileSummary.edit')}
         </Button>
       </div>
 
       <div className="space-y-2">
-        {/* Goals */}
         {goals.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap">
             <Target weight="duotone" className="w-4 h-4 text-foreground/40 flex-shrink-0" />
@@ -73,20 +77,18 @@ export function ProfileSummaryCard({ goals, allergies, budget, onEdit }: Profile
           </div>
         )}
 
-        {/* Budget */}
         {budget && (
           <div className="flex items-center gap-2">
             <CurrencyDollar weight="duotone" className="w-4 h-4 text-foreground/40" />
-            <span className="text-xs text-foreground/60">Budget: {budget}/mois</span>
+            <span className="text-xs text-foreground/60">{t('profileSummary.budget')}: {budget}{t('profileSummary.perMonth')}</span>
           </div>
         )}
 
-        {/* Allergies */}
         {allergies.length > 0 && (
           <div className="flex items-center gap-2">
             <Warning weight="duotone" className="w-4 h-4 text-amber-500/80" />
             <span className="text-xs text-foreground/60">
-              Allergies: {allergies.slice(0, 2).join(', ')}{allergies.length > 2 ? '...' : ''}
+              {t('profileSummary.allergies')}: {allergies.slice(0, 2).join(', ')}{allergies.length > 2 ? '...' : ''}
             </span>
           </div>
         )}

@@ -504,7 +504,7 @@ export const CinematicDashboardSection = () => {
                     <span className="cine-counter text-white text-xl md:text-2xl font-bold">0</span>
                     <span className="text-white/60 text-xs">%</span>
                   </div>
-                  <span className="text-white/50 text-[10px] md:text-xs">Score Santé</span>
+                  <span className="text-white/50 text-[10px] md:text-xs">{t('cinema.healthScoreLabel')}</span>
                 </div>
               </div>
             </div>

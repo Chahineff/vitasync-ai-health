@@ -392,7 +392,7 @@ export function OnboardingFlow() {
       setIsSubmitting(true);
       try {
         const formattedAnswers: Partial<HealthProfile> = {
-          is_adult: answers.is_adult === "yes",
+          is_adult: true,
           shipping_country: answers.shipping_country,
           health_goals: answers.health_goals || [],
           activity_level: answers.activity_level,

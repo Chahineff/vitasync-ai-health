@@ -258,28 +258,25 @@ export const CinematicDashboardSection = () => {
   }, [isMobile]);
 
   // GSAP scroll timeline
-  useEffect(() => {
+  useLayoutEffect(() => {
     const mobile = window.innerWidth < 768;
     const scrollEnd = mobile ? 2800 : 4500;
 
     const ctx = gsap.context(() => {
-      // Initial states
       gsap.set(".cine-title", { autoAlpha: 0, y: 50, filter: "blur(16px)" });
       gsap.set(".cine-subtitle", { autoAlpha: 0, y: 30 });
       gsap.set(".cine-orbit-ring", { autoAlpha: 0, scale: 0.8 });
-      gsap.set(".cine-card", { y: window.innerHeight + 200, xPercent: -50, yPercent: -50, autoAlpha: 1 });
+      gsap.set(".cine-card", { y: window.innerHeight + 200, autoAlpha: 1 });
       gsap.set([".cine-mockup-wrapper", ".cine-badge", ".cine-card-text-left", ".cine-card-text-right"], { autoAlpha: 0 });
       gsap.set(".cine-cta", { autoAlpha: 0, scale: 0.8, filter: "blur(20px)" });
 
-      // Intro animation
       const intro = gsap.timeline({ delay: 0.2 });
       intro
         .to(".cine-title", { duration: 1.4, autoAlpha: 1, y: 0, filter: "blur(0px)", ease: "expo.out" })
         .to(".cine-subtitle", { duration: 1, autoAlpha: 1, y: 0, ease: "power3.out" }, "-=0.8")
         .to(".cine-orbit-ring", { duration: 1.2, autoAlpha: 1, scale: 1, ease: "back.out(1.4)" }, "-=0.6");
 
-      // Scroll timeline
-      const tl = gsap.timeline({
+      gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
@@ -287,51 +284,50 @@ export const CinematicDashboardSection = () => {
           pin: true,
           scrub: 1,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
         },
-      });
-
-      tl
-        // Phase 1: Fade title + orbits, bring card up
+      })
         .to(".cine-hero-text", { scale: 1.1, filter: "blur(16px)", opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-orbit-ring", { scale: 1.3, opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
-        .to(".cine-card", { y: 0, xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 2 }, 0)
-        // Phase 2: Expand card
-        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", xPercent: -50, yPercent: -50, ease: "power3.inOut", duration: 1.5 })
-        // Phase 3: Reveal mockup
-        .fromTo(".cine-mockup-wrapper",
+        .to(".cine-card", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
+        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", ease: "power3.inOut", duration: 1.5 })
+        .fromTo(
+          ".cine-mockup-wrapper",
           { y: 200, z: -400, rotationX: mobile ? 0 : 40, rotationY: mobile ? 0 : -25, autoAlpha: 0, scale: 0.6 },
-          { y: 0, z: 0, rotationX: 0, rotationY: 0, autoAlpha: 1, scale: 1, ease: "expo.out", duration: 2.5 }, "-=0.8"
+          { y: 0, z: 0, rotationX: 0, rotationY: 0, autoAlpha: 1, scale: 1, ease: "expo.out", duration: 2.5 },
+          "-=0.8"
         )
-        // Phase 4: Progress ring + counter
         .to(".progress-ring", { strokeDashoffset: 60, duration: 2, ease: "power3.inOut" }, "-=1.5")
         .to(".cine-counter", { innerHTML: 92, snap: { innerHTML: 1 }, duration: 2, ease: "expo.out" }, "-=2.0")
-        // Phase 4b: Floating badges
-        .fromTo(".cine-badge",
+        .fromTo(
+          ".cine-badge",
           { y: 80, autoAlpha: 0, scale: 0.7, rotationZ: -8 },
-          { y: 0, autoAlpha: 1, scale: 1, rotationZ: 0, ease: "back.out(1.5)", duration: 1.5, stagger: 0.15 }, "-=1.8"
+          { y: 0, autoAlpha: 1, scale: 1, rotationZ: 0, ease: "back.out(1.5)", duration: 1.5, stagger: 0.15 },
+          "-=1.8"
         )
-        // Phase 4c: Side text
         .fromTo(".cine-card-text-left", { x: -40, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power4.out", duration: 1.2 }, "-=1.2")
         .fromTo(".cine-card-text-right", { x: 40, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power4.out", duration: 1.2 }, "<")
-        // Hold
         .to({}, { duration: 2 })
-        // Phase 5: Exit — shrink mockup, show CTA
         .to([".cine-mockup-wrapper", ".cine-badge", ".cine-card-text-left", ".cine-card-text-right"], {
-          scale: 0.9, y: -30, autoAlpha: 0, ease: "power3.in", duration: 1, stagger: 0.05,
+          scale: 0.9,
+          y: -30,
+          autoAlpha: 0,
+          ease: "power3.in",
+          duration: 1,
+          stagger: 0.05,
         })
         .set(".cine-cta", { autoAlpha: 1 })
         .to(".cine-card", {
           width: mobile ? "92vw" : "85vw",
           height: mobile ? "85vh" : "80vh",
           borderRadius: mobile ? "28px" : "36px",
-          xPercent: -50, yPercent: -50,
           ease: "expo.inOut",
           duration: 1.5,
         }, "pullback")
         .to(".cine-cta", { scale: 1, filter: "blur(0px)", ease: "expo.inOut", duration: 1.5 }, "pullback")
-        // Final exit
-        .to(".cine-card", { y: -window.innerHeight - 300, xPercent: -50, yPercent: -50, ease: "power3.in", duration: 1.5 });
+        .to(".cine-card", { y: -window.innerHeight - 300, ease: "power3.in", duration: 1.5 });
 
+      ScrollTrigger.refresh();
     }, containerRef);
 
     return () => ctx.revert();

@@ -25,7 +25,7 @@ type ModelTier = 'lite' | 'standard' | 'pro';
 
 function getModelTier(model: string): ModelTier {
   if (model === 'google/gemini-2.5-flash-lite') return 'lite';
-  if (model === 'google/gemini-3-pro-preview') return 'pro';
+  if (model === 'google/gemini-3.1-pro-preview') return 'pro';
   return 'standard'; // gemini-3-flash-preview or fallback
 }
 
@@ -405,8 +405,14 @@ Deno.serve(async (req) => {
     }
 
     const requestedModel = (requestBody.model as string) || 'google/gemini-3-flash-preview';
-    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'];
-    const model = ALLOWED_MODELS.includes(requestedModel) ? requestedModel : 'google/gemini-3-flash-preview';
+    // Map deprecated model names to current ones
+    const MODEL_MIGRATION: Record<string, string> = {
+      'google/gemini-3-pro-preview': 'google/gemini-3.1-pro-preview',
+    };
+    const migratedModel = MODEL_MIGRATION[requestedModel] || requestedModel;
+    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3.1-pro-preview'];
+    const model = ALLOWED_MODELS.includes(migratedModel) ? migratedModel : 'google/gemini-3-flash-preview';
+    console.log(`Requested model: ${requestedModel}, Resolved: ${model}`);
 
     // Determine tier
     const tier = getModelTier(model);
@@ -507,6 +513,27 @@ Deno.serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Gateway error:", response.status, errorText);
+      
+      // Model deprecated or not found — try fallback
+      if (response.status === 404 || response.status === 410) {
+        console.warn(`Model ${model} unavailable (${response.status}), falling back to gemini-2.5-flash`);
+        const fallbackResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [{ role: "system", content: systemPrompt }, ...messages.map(m => ({ role: m.role, content: m.content }))],
+            stream: true,
+            max_tokens: tierConfig.maxTokens,
+          }),
+        });
+        if (fallbackResponse.ok) {
+          console.log("Fallback model succeeded");
+          return new Response(fallbackResponse.body, { headers: { ...corsHeaders, "Content-Type": "text/event-stream" } });
+        }
+        console.error("Fallback also failed:", fallbackResponse.status);
+      }
+      
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "⏳ Trop de requêtes. Réessaie dans quelques instants." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }

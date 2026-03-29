@@ -342,10 +342,27 @@ export const CinematicDashboardSection = () => {
         <div className="card-sheen" />
 
         {/* Side text left */}
-        <div className="cine-card-text-left absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[200px]">
-          <p className="text-card-silver-matte text-sm font-light leading-relaxed">
-            Suivi intelligent de vos suppléments et de votre santé au quotidien
+        <div className="cine-card-text-left absolute left-4 md:left-8 lg:left-12 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[260px]">
+          <h4 className="text-card-silver-matte text-lg font-semibold leading-tight mb-3">
+            Suivi quotidien intelligent
+          </h4>
+          <p className="text-white/40 text-sm font-light leading-relaxed mb-4">
+            Suivez vos suppléments, votre énergie, votre sommeil et votre humeur — tout depuis un seul dashboard.
           </p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="text-white/50 text-xs">Rappels personnalisés</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+              <span className="text-white/50 text-xs">Historique complet</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              <span className="text-white/50 text-xs">Tendances hebdomadaires</span>
+            </div>
+          </div>
         </div>
 
         {/* Mockup */}

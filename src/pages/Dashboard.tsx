@@ -1,6 +1,7 @@
 // Dashboard VitaSync - Premium SaaS Interface
 import { useState, useEffect, useCallback } from "react";
 import { SupplementAIInsights } from "@/components/dashboard/SupplementAIInsights";
+import { AIRecommendationsWidget } from "@/components/dashboard/shop/AIRecommendationsWidget";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";

@@ -77,7 +77,7 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const result = signUpSchema.safeParse({ email, password, firstName, lastName, dateOfBirth });
+        const result = signUpSchema.safeParse({ email, password, firstName, lastName, dateOfBirth, acceptTerms });
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
           result.error.errors.forEach((err) => {

@@ -534,16 +534,16 @@ const DashboardHome = ({
         <WeeklyGoalsWidget embedded />
       </div>
     </motion.div>
-    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.1 }}>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.08 }}>
+      <AIRecommendationsWidget onProductClick={(handle) => {
+        onGoToShop();
+      }} />
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.14 }}>
       <DailyCheckinWidget />
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.22 }}>
       <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
-    </motion.div>
-    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.28 }}>
-      <AIRecommendationsWidget onProductClick={(handle) => {
-        onGoToShop();
-      }} />
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.38 }}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

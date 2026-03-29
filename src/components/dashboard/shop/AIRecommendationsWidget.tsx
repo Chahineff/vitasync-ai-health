@@ -181,7 +181,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card-premium rounded-2xl p-5 border border-border/50 dark:border-white/10 mb-6"
+      className="glass-card-premium rounded-2xl p-4 border border-border/50 dark:border-white/10 mb-4"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">

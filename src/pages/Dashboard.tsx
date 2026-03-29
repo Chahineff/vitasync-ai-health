@@ -203,21 +203,7 @@ const Dashboard = () => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));
   }, [sidebarCollapsed]);
 
-  const handleTutorialComplete = useCallback(async () => {
-    setShowTutorial(false);
-    setWelcomePhase(true);
-    if (healthProfile) {
-      await updateHealthProfile({ tutorial_completed: true } as any);
-    }
-    setTimeout(() => setWelcomePhase(false), 3000);
-  }, [healthProfile, updateHealthProfile]);
 
-  const handleRestartTutorial = useCallback(async () => {
-    if (healthProfile) {
-      await updateHealthProfile({ tutorial_completed: false } as any);
-    }
-    setShowTutorial(true);
-  }, [healthProfile, updateHealthProfile]);
 
   // Early return: Show skeleton while loading or if no user (prevents flash of dashboard UI)
   // This comes AFTER all hooks to comply with React hooks rules

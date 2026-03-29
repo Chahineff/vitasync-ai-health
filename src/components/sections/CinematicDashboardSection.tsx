@@ -544,18 +544,18 @@ export const CinematicDashboardSection = () => {
             </div>
           </div>
           <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
-            Coaching IA<br />& Analyses
+            {t('cinema.coachingTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
           </h4>
           <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
-            Importez vos analyses sanguines, recevez des recommandations personnalisées et optimisez votre stack.
+            {t('cinema.coachingDesc')}
           </p>
           <div className="flex flex-col gap-3 items-end">
             <div className="flex items-center gap-3">
-              <span className="text-white/55 text-sm font-light">Analyse de bilans sanguins</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.bloodAnalysis')}</span>
               <div className="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.4)]" />
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-white/55 text-sm font-light">Recommandations IA</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.aiRecommendations')}</span>
               <div className="w-2 h-2 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.4)]" />
             </div>
             <div className="flex items-center gap-3">

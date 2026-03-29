@@ -241,7 +241,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                 onClick={() => onProductClick?.(product.handle)}
                 className="group cursor-pointer"
               >
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-white/5 mb-2">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-white/5 mb-2">
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}

@@ -521,7 +521,7 @@ export const CinematicDashboardSection = () => {
             <div className={`cine-badge absolute z-40 ${isMobile ? "top-1/3 -left-12" : "top-1/4 -left-24"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Pill className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
-                <span className="text-white text-xs md:text-sm font-medium">Stack optimisé</span>
+                <span className="text-white text-xs md:text-sm font-medium">{t('cinema.stackOptimized')}</span>
               </div>
             </div>
 

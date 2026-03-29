@@ -513,7 +513,7 @@ export const CinematicDashboardSection = () => {
             <div className={`cine-badge absolute z-40 ${isMobile ? "-bottom-2 -left-10" : "-bottom-6 -left-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Bot className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
-                <span className="text-white text-xs md:text-sm font-medium">Coach IA actif</span>
+                <span className="text-white text-xs md:text-sm font-medium">{t('cinema.coachActive')}</span>
               </div>
             </div>
 

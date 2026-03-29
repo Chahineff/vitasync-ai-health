@@ -567,12 +567,12 @@ export const CinematicDashboardSection = () => {
 
         {/* CTA overlay */}
         <div className="cine-cta absolute inset-0 z-40 flex flex-col items-center justify-center text-center px-6">
-          <span className="text-white/30 text-xs md:text-sm uppercase tracking-[0.3em] font-medium mb-6">Votre santé, amplifiée</span>
+          <span className="text-white/30 text-xs md:text-sm uppercase tracking-[0.3em] font-medium mb-6">{t('cinema.ctaTagline')}</span>
           <h3 className="text-card-silver-matte text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Prêt à optimiser<br />votre santé ?
+            {t('cinema.ctaTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
           </h3>
           <p className="text-white/50 text-base md:text-lg max-w-lg mb-10 leading-relaxed">
-            Rejoignez VitaSync et accédez à votre dashboard de santé personnalisé — suivi, coaching IA et recommandations en un seul endroit.
+            {t('cinema.ctaDesc')}
           </p>
           <button
             onClick={() => (window.location.href = "/auth")}

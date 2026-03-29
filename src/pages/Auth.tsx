@@ -33,7 +33,11 @@ const signUpSchema = z.object({
     .regex(passwordRegex.special, "Doit contenir au moins un caractère spécial (!@#$...)"),
   firstName: z.string().min(1, "Le prénom est requis"),
   lastName: z.string().min(1, "Le nom est requis"),
-  dateOfBirth: z.string().optional(),
+  dateOfBirth: z.string().min(1, "La date de naissance est requise").refine((val) => {
+    const dob = parse(val, "yyyy-MM-dd", new Date());
+    return differenceInYears(new Date(), dob) >= 18;
+  }, "Vous devez avoir au moins 18 ans pour créer un compte"),
+  acceptTerms: z.literal(true, { errorMap: () => ({ message: "Vous devez accepter les conditions d'utilisation" }) }),
 });
 
 const Auth = () => {

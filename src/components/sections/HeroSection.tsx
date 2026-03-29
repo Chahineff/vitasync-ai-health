@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
-import DisplayCards from "@/components/ui/display-cards";
-import { Brain, Mic, Activity, ShieldCheck } from "lucide-react";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -16,52 +14,6 @@ export function HeroSection() {
 
   const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
-
-  const heroCards = [
-    {
-      icon: <Brain className="size-6" />,
-      title: t("hero.card1Title"),
-      subtitle: t("hero.card1Sub"),
-      description: t("hero.card1Desc"),
-      date: t("hero.card1Date"),
-      iconClassName: "text-primary",
-      titleClassName: "text-primary",
-      className:
-        "[grid-area:stack] -translate-y-8 hover:-translate-y-36 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
-    },
-    {
-      icon: <Mic className="size-6" />,
-      title: t("hero.card2Title"),
-      subtitle: t("hero.card2Sub"),
-      description: t("hero.card2Desc"),
-      date: t("hero.card2Date"),
-      iconClassName: "text-secondary",
-      titleClassName: "text-secondary",
-      className:
-        "[grid-area:stack] translate-x-6 translate-y-10 hover:-translate-y-12 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
-    },
-    {
-      icon: <Activity className="size-6" />,
-      title: t("hero.card3Title"),
-      subtitle: t("hero.card3Sub"),
-      description: t("hero.card3Desc"),
-      date: t("hero.card3Date"),
-      iconClassName: "text-accent-foreground",
-      titleClassName: "text-accent-foreground",
-      className:
-        "[grid-area:stack] translate-x-12 translate-y-28 hover:-translate-y-0 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
-    },
-    {
-      icon: <ShieldCheck className="size-6" />,
-      title: t("hero.card4Title"),
-      subtitle: t("hero.card4Sub"),
-      description: t("hero.card4Desc"),
-      date: t("hero.card4Date"),
-      iconClassName: "text-primary",
-      titleClassName: "text-primary",
-      className: "[grid-area:stack] translate-x-[4.5rem] translate-y-[11.5rem] hover:-translate-y-4 before:absolute before:w-full before:outline-1 before:rounded-2xl before:outline-border before:h-full before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
-    },
-  ];
 
   return (
     <section ref={sectionRef} className="relative min-h-screen md:min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-3 md:mx-5 mb-4 md:mb-6">
@@ -83,9 +35,9 @@ export function HeroSection() {
           className="w-full px-4 sm:px-6 lg:px-12 py-16 md:py-24"
           style={{ opacity: contentOpacity, y: contentY }}
         >
-          <div className="max-w-[90rem] mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
-            {/* Left side — Text content */}
-            <div className="w-full lg:w-[50%] text-center lg:text-left">
+          <div className="max-w-[90rem] mx-auto flex flex-col items-center">
+            {/* Centered text content */}
+            <div className="w-full text-center">
               <motion.div
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -123,7 +75,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-base md:text-xl lg:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
+                className="text-base md:text-xl lg:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed"
               >
                 {t("hero.subtitle")}
               </motion.p>
@@ -132,7 +84,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center lg:items-start pointer-events-auto"
+                className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center justify-center pointer-events-auto"
               >
                 <Link
                   to="/auth?mode=signup"
@@ -148,16 +100,6 @@ export function HeroSection() {
                 </a>
               </motion.div>
             </div>
-
-            {/* Right side — 50% — Display Cards */}
-            <motion.div
-              className="hidden lg:flex w-full lg:w-[50%] items-center justify-center min-h-[450px]"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <DisplayCards cards={heroCards} />
-            </motion.div>
           </div>
         </motion.div>
 

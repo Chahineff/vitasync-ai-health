@@ -109,6 +109,82 @@ const INJECTED_STYLES = `
     stroke-linecap: round;
   }
 
+  .cinematic-section .macbook-body {
+    background: linear-gradient(180deg, #2D2D2D 0%, #1A1A1A 100%);
+    border-radius: 12px 12px 0 0;
+    padding: 10px 10px 0 10px;
+    box-shadow:
+      inset 0 0 0 1.5px #404040,
+      0 40px 80px -15px rgba(0,0,0,0.9),
+      0 15px 25px -5px rgba(0,0,0,0.7);
+  }
+
+  .cinematic-section .macbook-screen {
+    background: #000;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .cinematic-section .macbook-notch {
+    background: #1A1A1A;
+    border-radius: 0 0 8px 8px;
+    width: 25%;
+    height: 18px;
+    margin: 0 auto;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+
+  .cinematic-section .macbook-notch::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1C3A1C 0%, #0A0A0A 100%);
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: inset 0 0 2px rgba(0,255,0,0.1);
+  }
+
+  .cinematic-section .macbook-base {
+    background: linear-gradient(180deg, #3A3A3A 0%, #2A2A2A 50%, #1A1A1A 100%);
+    height: 14px;
+    border-radius: 0 0 6px 6px;
+    position: relative;
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,0.1),
+      0 4px 10px rgba(0,0,0,0.5);
+  }
+
+  .cinematic-section .macbook-base::before {
+    content: '';
+    position: absolute;
+    width: 18%;
+    height: 4px;
+    background: linear-gradient(180deg, #555 0%, #333 100%);
+    border-radius: 0 0 4px 4px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: inset 0 -1px 1px rgba(0,0,0,0.3);
+  }
+
+  .cinematic-section .macbook-foot {
+    background: linear-gradient(180deg, #1A1A1A 0%, #111 100%);
+    height: 4px;
+    border-radius: 0 0 12px 12px;
+    width: 104%;
+    margin-left: -2%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
   .cinematic-section .film-grain {
     position: absolute; inset: 0; width: 100%; height: 100%;
     pointer-events: none; z-index: 50; opacity: 0.03; mix-blend-mode: overlay;
@@ -274,28 +350,44 @@ export const CinematicDashboardSection = () => {
         {/* Mockup */}
         <div className="cine-mockup-wrapper relative z-20" style={{ perspective: "1200px" }}>
           <div ref={mockupRef} className="relative" style={{ transformStyle: "preserve-3d" }}>
-            {/* iPhone bezel */}
-            <div className="iphone-bezel relative rounded-[3rem] md:rounded-[3.5rem] overflow-hidden"
-              style={{ width: isMobile ? "220px" : "300px", aspectRatio: "9/19.5", padding: isMobile ? "8px" : "12px" }}>
-              {/* Notch */}
-              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 md:w-28 h-5 md:h-6 bg-black rounded-b-2xl z-30" />
-              {/* Hardware buttons */}
-              <div className="hardware-btn absolute -right-[3px] top-[25%] w-[3px] h-[40px] rounded-r-sm" />
-              <div className="hardware-btn absolute -right-[3px] top-[38%] w-[3px] h-[40px] rounded-r-sm" />
-              <div className="hardware-btn absolute -left-[3px] top-[30%] w-[3px] h-[55px] rounded-l-sm" />
-              {/* Screen */}
-              <div className="relative w-full h-full rounded-[2.2rem] md:rounded-[2.8rem] overflow-hidden bg-black">
-                <img
-                  src={dashboardSrc}
-                  alt="VitaSync Dashboard"
-                  className="w-full h-full object-cover object-left-top"
-                />
-                <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
+            {/* MacBook on desktop */}
+            {!isMobile ? (
+              <div style={{ width: "560px" }}>
+                <div className="macbook-body">
+                  <div className="macbook-screen" style={{ aspectRatio: "16/10" }}>
+                    <div className="macbook-notch" />
+                    <img
+                      src={dashboardSrc}
+                      alt="VitaSync Dashboard"
+                      className="w-full h-full object-cover object-left-top"
+                    />
+                    <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
+                  </div>
+                </div>
+                <div className="macbook-base" />
+                <div className="macbook-foot" />
               </div>
-            </div>
+            ) : (
+              /* iPhone on mobile */
+              <div className="iphone-bezel relative rounded-[3rem] overflow-hidden"
+                style={{ width: "220px", aspectRatio: "9/19.5", padding: "8px" }}>
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-b-2xl z-30" />
+                <div className="hardware-btn absolute -right-[3px] top-[25%] w-[3px] h-[40px] rounded-r-sm" />
+                <div className="hardware-btn absolute -right-[3px] top-[38%] w-[3px] h-[40px] rounded-r-sm" />
+                <div className="hardware-btn absolute -left-[3px] top-[30%] w-[3px] h-[55px] rounded-l-sm" />
+                <div className="relative w-full h-full rounded-[2.2rem] overflow-hidden bg-black">
+                  <img
+                    src={dashboardSrc}
+                    alt="VitaSync Dashboard"
+                    className="w-full h-full object-cover object-left-top"
+                  />
+                  <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
+                </div>
+              </div>
+            )}
 
             {/* Health Score Ring — floating */}
-            <div className="cine-badge absolute -top-4 -right-8 md:-top-6 md:-right-14 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "-top-4 -right-8" : "-top-8 -right-16"}`}>
               <div className="floating-ui-badge rounded-2xl p-3 md:p-4 flex items-center gap-2 md:gap-3">
                 <svg width="48" height="48" viewBox="0 0 90 90">
                   <circle cx="45" cy="45" r="40" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6" />
@@ -312,7 +404,7 @@ export const CinematicDashboardSection = () => {
             </div>
 
             {/* Badge: Coach IA */}
-            <div className="cine-badge absolute -bottom-2 -left-10 md:-bottom-4 md:-left-16 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "-bottom-2 -left-10" : "-bottom-6 -left-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Bot className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
                 <span className="text-white text-xs md:text-sm font-medium">Coach IA actif</span>
@@ -320,7 +412,7 @@ export const CinematicDashboardSection = () => {
             </div>
 
             {/* Badge: Stack */}
-            <div className="cine-badge absolute top-1/3 -left-12 md:-left-20 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "top-1/3 -left-12" : "top-1/4 -left-24"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Pill className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
                 <span className="text-white text-xs md:text-sm font-medium">Stack optimisé</span>
@@ -328,7 +420,7 @@ export const CinematicDashboardSection = () => {
             </div>
 
             {/* Badge: Trend */}
-            <div className="cine-badge absolute bottom-1/4 -right-10 md:-right-16 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "bottom-1/4 -right-10" : "top-1/3 -right-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
                 <span className="text-white text-xs md:text-sm font-medium">+12% énergie</span>

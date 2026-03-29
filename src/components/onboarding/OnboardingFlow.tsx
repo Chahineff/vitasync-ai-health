@@ -42,13 +42,6 @@ const iconCircle = (icon: ReactNode, bg: string) => (
 
 const questions: OnboardingQuestion[] = [
   {
-    id: "is_adult",
-    title: "As-tu 18 ans ou plus ?",
-    subtitle: "Cette information est nécessaire pour te proposer des recommandations adaptées",
-    type: "yesno",
-    required: true,
-  },
-  {
     id: "shipping_country",
     title: "Où souhaites-tu être livré ?",
     subtitle: "Pour afficher le bon catalogue et les délais de livraison",

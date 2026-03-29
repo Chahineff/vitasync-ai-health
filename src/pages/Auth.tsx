@@ -7,6 +7,8 @@ import { Eye, EyeSlash, SpinnerGap } from "@phosphor-icons/react";
 import { useToast } from "@/hooks/use-toast";
 import { lovable } from "@/integrations/lovable/index";
 import { SplineBackground } from "@/components/sections/SplineBackground";
+import { Checkbox } from "@/components/ui/checkbox";
+import { differenceInYears, parse } from "date-fns";
 
 const passwordRegex = {
   uppercase: /[A-Z]/,

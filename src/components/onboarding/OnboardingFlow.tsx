@@ -753,6 +753,11 @@ export function OnboardingFlow() {
     return null;
   };
 
+  // AI Analysis animation screen
+  if (showAIAnalysis) {
+    return <AIAnalysisAnimation onComplete={() => navigate("/dashboard")} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center relative overflow-hidden">
       {/* Progress background fill */}

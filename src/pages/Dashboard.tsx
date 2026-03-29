@@ -175,11 +175,15 @@ const Dashboard = () => {
     }
   }, [user, loading, healthProfile, healthProfileLoading, navigate]);
 
-  // Show tutorial after first load if not completed
+  // Show welcome phase for first-time users (after onboarding, tutorial_completed === false)
   useEffect(() => {
     if (!loading && !healthProfileLoading && healthProfile && healthProfile.onboarding_completed && healthProfile.tutorial_completed === false) {
-      // Delay slightly to let check-in modal appear first
-      const timer = setTimeout(() => setShowTutorial(true), 500);
+      setWelcomePhase(true);
+      // Auto-mark tutorial as completed and dismiss after 3s
+      const timer = setTimeout(async () => {
+        setWelcomePhase(false);
+        await updateHealthProfile({ tutorial_completed: true } as any);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [loading, healthProfileLoading, healthProfile]);

@@ -83,7 +83,7 @@ export function HeroSection() {
           className="w-full px-4 sm:px-6 lg:px-12 py-16 md:py-24"
           style={{ opacity: contentOpacity, y: contentY }}
         >
-          <div className="max-w-[90rem] mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
+          <div className="max-w-[90rem] mx-auto flex flex-col items-center">
             {/* Left side — Text content */}
             <div className="w-full lg:w-[50%] text-center lg:text-left">
               <motion.div

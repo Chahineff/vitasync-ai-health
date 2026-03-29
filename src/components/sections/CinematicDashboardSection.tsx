@@ -327,7 +327,7 @@ export const CinematicDashboardSection = () => {
         .to(".cine-cta", { scale: 1, filter: "blur(0px)", ease: "expo.inOut", duration: 1.5 }, "pullback")
         .to(".cine-card", { y: -window.innerHeight - 300, ease: "power3.in", duration: 1.5 });
 
-      ScrollTrigger.refresh();
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     }, containerRef);
 
     return () => ctx.revert();

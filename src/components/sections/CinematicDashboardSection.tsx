@@ -448,10 +448,27 @@ export const CinematicDashboardSection = () => {
         </div>
 
         {/* Side text right */}
-        <div className="cine-card-text-right absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[200px] text-right">
-          <p className="text-card-silver-matte text-sm font-light leading-relaxed">
-            Analyses sanguines, recommandations IA, et coaching personnalisé
+        <div className="cine-card-text-right absolute right-4 md:right-8 lg:right-12 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[260px] text-right">
+          <h4 className="text-card-silver-matte text-lg font-semibold leading-tight mb-3">
+            Coaching IA & Analyses
+          </h4>
+          <p className="text-white/40 text-sm font-light leading-relaxed mb-4">
+            Importez vos analyses sanguines, recevez des recommandations personnalisées et optimisez votre stack.
           </p>
+          <div className="flex flex-col gap-2 items-end">
+            <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs">Analyse de bilans sanguins</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs">Recommandations IA</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs">Score santé en temps réel</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            </div>
+          </div>
         </div>
 
         {/* CTA overlay */}

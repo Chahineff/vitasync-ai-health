@@ -12,7 +12,6 @@ import {
   ShopFilters, 
   ProductGroupCard, 
   Pagination,
-  AIRecommendationsWidget,
   CATEGORY_MAPPING,
   type SortOption,
   type CategoryKey
@@ -320,7 +319,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
           <ShopSkeletonGrid />
         ) : (
           <>
-            <AIRecommendationsWidget onProductClick={onProductSelect} />
+            
 
             {paginatedGroups.length === 0 ? (
               <motion.div

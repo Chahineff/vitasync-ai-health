@@ -1,6 +1,7 @@
 // Dashboard VitaSync - Premium SaaS Interface
 import { useState, useEffect, useCallback } from "react";
 import { SupplementAIInsights } from "@/components/dashboard/SupplementAIInsights";
+import { AIRecommendationsWidget } from "@/components/dashboard/shop/AIRecommendationsWidget";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,7 +24,7 @@ import { DailyCheckin } from "@/components/dashboard/DailyCheckin";
 import { DailyCheckinWidget } from "@/components/dashboard/DailyCheckinWidget";
 import { BloodTestSection } from "@/components/dashboard/BloodTestSection";
 import { MobileBottomNav } from "@/components/dashboard/MobileBottomNav";
-import { DashboardTutorial } from "@/components/dashboard/DashboardTutorial";
+
 import { LogoutConfirmModal, LogoutFarewellOverlay } from "@/components/dashboard/LogoutConfirmModal";
 import { NotificationPanel } from "@/components/dashboard/NotificationPanel";
 import { HealthScoreWidget } from "@/components/dashboard/HealthScoreWidget";
@@ -122,7 +123,7 @@ const Dashboard = () => {
   
   const [searchFocused, setSearchFocused] = useState(false);
   const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
-  const [showTutorial, setShowTutorial] = useState(false);
+  
   const [welcomePhase, setWelcomePhase] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [logoutPhase, setLogoutPhase] = useState(false);
@@ -175,11 +176,15 @@ const Dashboard = () => {
     }
   }, [user, loading, healthProfile, healthProfileLoading, navigate]);
 
-  // Show tutorial after first load if not completed
+  // Show welcome phase for first-time users (after onboarding, tutorial_completed === false)
   useEffect(() => {
     if (!loading && !healthProfileLoading && healthProfile && healthProfile.onboarding_completed && healthProfile.tutorial_completed === false) {
-      // Delay slightly to let check-in modal appear first
-      const timer = setTimeout(() => setShowTutorial(true), 500);
+      setWelcomePhase(true);
+      // Auto-mark tutorial as completed and dismiss after 3s
+      const timer = setTimeout(async () => {
+        setWelcomePhase(false);
+        await updateHealthProfile({ tutorial_completed: true } as any);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [loading, healthProfileLoading, healthProfile]);
@@ -199,21 +204,7 @@ const Dashboard = () => {
     localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));
   }, [sidebarCollapsed]);
 
-  const handleTutorialComplete = useCallback(async () => {
-    setShowTutorial(false);
-    setWelcomePhase(true);
-    if (healthProfile) {
-      await updateHealthProfile({ tutorial_completed: true } as any);
-    }
-    setTimeout(() => setWelcomePhase(false), 3000);
-  }, [healthProfile, updateHealthProfile]);
 
-  const handleRestartTutorial = useCallback(async () => {
-    if (healthProfile) {
-      await updateHealthProfile({ tutorial_completed: false } as any);
-    }
-    setShowTutorial(true);
-  }, [healthProfile, updateHealthProfile]);
 
   // Early return: Show skeleton while loading or if no user (prevents flash of dashboard UI)
   // This comes AFTER all hooks to comply with React hooks rules
@@ -278,10 +269,8 @@ const Dashboard = () => {
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex w-full">
       {/* Daily Checkin Modal */}
       <DailyCheckin />
-      {/* Dashboard Tutorial */}
-      <AnimatePresence>
-        {showTutorial && <DashboardTutorial onComplete={handleTutorialComplete} />}
-      </AnimatePresence>
+      
+
       {/* Welcome Phase Overlay */}
       <AnimatePresence>
         {welcomePhase && <WelcomeOverlay />}
@@ -454,7 +443,7 @@ const Dashboard = () => {
                   <BloodTestSection />
                 </motion.div>}
               {activeSection === "settings" && <motion.div key="settings" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
-                  <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} onRestartTutorial={handleRestartTutorial} />
+                  <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} />
                 </motion.div>}
               {activeSection === "help" && <motion.div key="help" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <HelpSection onGoToCoach={() => handleSectionChange("coach")} />
@@ -551,7 +540,12 @@ const DashboardHome = ({
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.22 }}>
       <QuickCoachWidget onStartChat={onGoToCoach} userName={userName} />
     </motion.div>
-    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.34 }}>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.28 }}>
+      <AIRecommendationsWidget onProductClick={(handle) => {
+        onGoToShop();
+      }} />
+    </motion.div>
+    <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.38 }}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SupplementTrackerEnhanced />
         <AwaitingAnalysis title="Boutique" onStartDiagnostic={onGoToShop} />

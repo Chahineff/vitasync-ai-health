@@ -444,7 +444,7 @@ const Dashboard = () => {
                   <BloodTestSection />
                 </motion.div>}
               {activeSection === "settings" && <motion.div key="settings" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
-                  <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} onRestartTutorial={handleRestartTutorial} />
+                  <ProfileSection onNavigateToHelp={() => handleSectionChange("help")} onSignOut={handleSignOut} />
                 </motion.div>}
               {activeSection === "help" && <motion.div key="help" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <HelpSection onGoToCoach={() => handleSectionChange("coach")} />

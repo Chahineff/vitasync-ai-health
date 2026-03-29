@@ -245,7 +245,7 @@ export const CinematicDashboardSection = () => {
       // Initial states
       gsap.set(".cine-title", { autoAlpha: 0, y: 50, filter: "blur(16px)" });
       gsap.set(".cine-subtitle", { autoAlpha: 0, y: 30 });
-      gsap.set(".cine-card", { y: window.innerHeight + 200, autoAlpha: 1 });
+      gsap.set(".cine-card", { y: window.innerHeight + 200, xPercent: -50, yPercent: -50, autoAlpha: 1 });
       gsap.set([".cine-mockup-wrapper", ".cine-badge", ".cine-card-text-left", ".cine-card-text-right"], { autoAlpha: 0 });
       gsap.set(".cine-cta", { autoAlpha: 0, scale: 0.8, filter: "blur(20px)" });
 

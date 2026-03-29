@@ -353,7 +353,7 @@ export const CinematicDashboardSection = () => {
           <div ref={mockupRef} className="relative" style={{ transformStyle: "preserve-3d" }}>
             {/* MacBook on desktop */}
             {!isMobile ? (
-              <div style={{ width: "560px" }}>
+              <div style={{ width: "min(780px, 65vw)" }}>
                 <div className="macbook-body">
                   <div className="macbook-screen" style={{ aspectRatio: "16/10" }}>
                     <div className="macbook-notch" />

@@ -473,15 +473,16 @@ export const CinematicDashboardSection = () => {
 
         {/* CTA overlay */}
         <div className="cine-cta absolute inset-0 z-40 flex flex-col items-center justify-center text-center px-6">
-          <h3 className="text-card-silver-matte text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Prêt à optimiser votre santé ?
+          <span className="text-white/30 text-xs md:text-sm uppercase tracking-[0.3em] font-medium mb-6">Votre santé, amplifiée</span>
+          <h3 className="text-card-silver-matte text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            Prêt à optimiser<br />votre santé ?
           </h3>
-          <p className="text-white/50 text-sm md:text-base max-w-md mb-8">
-            Rejoignez VitaSync et accédez à votre dashboard de santé personnalisé
+          <p className="text-white/50 text-base md:text-lg max-w-lg mb-10 leading-relaxed">
+            Rejoignez VitaSync et accédez à votre dashboard de santé personnalisé — suivi, coaching IA et recommandations en un seul endroit.
           </p>
           <button
             onClick={() => (window.location.href = "/auth")}
-            className="px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-medium text-sm md:text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:-translate-y-0.5"
+            className="px-10 py-4 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold text-base md:text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:-translate-y-0.5"
           >
             {t("productPreview.cta")}
           </button>

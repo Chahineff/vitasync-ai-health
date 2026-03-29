@@ -268,10 +268,8 @@ const Dashboard = () => {
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex w-full">
       {/* Daily Checkin Modal */}
       <DailyCheckin />
-      {/* Dashboard Tutorial */}
-      <AnimatePresence>
-        {showTutorial && <DashboardTutorial onComplete={handleTutorialComplete} />}
-      </AnimatePresence>
+      
+
       {/* Welcome Phase Overlay */}
       <AnimatePresence>
         {welcomePhase && <WelcomeOverlay />}

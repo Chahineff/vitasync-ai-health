@@ -128,6 +128,14 @@ export default {
           "50%": { "background-position": "100% 100%" },
           to: { "background-position": "0% 0%" },
         },
+        "orbit": {
+          "0%": {
+            transform: "rotate(calc(var(--angle) * 1deg)) translateY(calc(var(--radius) * -1)) rotate(calc(var(--angle) * -1deg))",
+          },
+          "100%": {
+            transform: "rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * -1)) rotate(calc(var(--angle) * -1deg - 360deg))",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -148,6 +156,7 @@ export default {
         "breathe": "breathe 2.5s ease-in-out infinite",
         "spin-slow": "spin-slow 4s linear infinite",
         "shine": "shine var(--shine-pulse-duration, 14s) infinite linear",
+        "orbit": "orbit calc(var(--duration, 20s)) linear infinite",
       },
       backgroundSize: {
         "200%": "200% 200%",

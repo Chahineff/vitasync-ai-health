@@ -109,6 +109,82 @@ const INJECTED_STYLES = `
     stroke-linecap: round;
   }
 
+  .cinematic-section .macbook-body {
+    background: linear-gradient(180deg, #2D2D2D 0%, #1A1A1A 100%);
+    border-radius: 12px 12px 0 0;
+    padding: 10px 10px 0 10px;
+    box-shadow:
+      inset 0 0 0 1.5px #404040,
+      0 40px 80px -15px rgba(0,0,0,0.9),
+      0 15px 25px -5px rgba(0,0,0,0.7);
+  }
+
+  .cinematic-section .macbook-screen {
+    background: #000;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .cinematic-section .macbook-notch {
+    background: #1A1A1A;
+    border-radius: 0 0 8px 8px;
+    width: 25%;
+    height: 18px;
+    margin: 0 auto;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+
+  .cinematic-section .macbook-notch::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1C3A1C 0%, #0A0A0A 100%);
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: inset 0 0 2px rgba(0,255,0,0.1);
+  }
+
+  .cinematic-section .macbook-base {
+    background: linear-gradient(180deg, #3A3A3A 0%, #2A2A2A 50%, #1A1A1A 100%);
+    height: 14px;
+    border-radius: 0 0 6px 6px;
+    position: relative;
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,0.1),
+      0 4px 10px rgba(0,0,0,0.5);
+  }
+
+  .cinematic-section .macbook-base::before {
+    content: '';
+    position: absolute;
+    width: 18%;
+    height: 4px;
+    background: linear-gradient(180deg, #555 0%, #333 100%);
+    border-radius: 0 0 4px 4px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: inset 0 -1px 1px rgba(0,0,0,0.3);
+  }
+
+  .cinematic-section .macbook-foot {
+    background: linear-gradient(180deg, #1A1A1A 0%, #111 100%);
+    height: 4px;
+    border-radius: 0 0 12px 12px;
+    width: 104%;
+    margin-left: -2%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
   .cinematic-section .film-grain {
     position: absolute; inset: 0; width: 100%; height: 100%;
     pointer-events: none; z-index: 50; opacity: 0.03; mix-blend-mode: overlay;

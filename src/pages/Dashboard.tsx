@@ -122,7 +122,7 @@ const Dashboard = () => {
   
   const [searchFocused, setSearchFocused] = useState(false);
   const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
-  const [showTutorial, setShowTutorial] = useState(false);
+  
   const [welcomePhase, setWelcomePhase] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [logoutPhase, setLogoutPhase] = useState(false);

@@ -387,7 +387,7 @@ export const CinematicDashboardSection = () => {
             )}
 
             {/* Health Score Ring — floating */}
-            <div className="cine-badge absolute -top-4 -right-8 md:-top-6 md:-right-14 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "-top-4 -right-8" : "-top-8 -right-16"}`}>
               <div className="floating-ui-badge rounded-2xl p-3 md:p-4 flex items-center gap-2 md:gap-3">
                 <svg width="48" height="48" viewBox="0 0 90 90">
                   <circle cx="45" cy="45" r="40" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6" />
@@ -404,7 +404,7 @@ export const CinematicDashboardSection = () => {
             </div>
 
             {/* Badge: Coach IA */}
-            <div className="cine-badge absolute -bottom-2 -left-10 md:-bottom-4 md:-left-16 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "-bottom-2 -left-10" : "-bottom-6 -left-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Bot className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
                 <span className="text-white text-xs md:text-sm font-medium">Coach IA actif</span>
@@ -412,7 +412,7 @@ export const CinematicDashboardSection = () => {
             </div>
 
             {/* Badge: Stack */}
-            <div className="cine-badge absolute top-1/3 -left-12 md:-left-20 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "top-1/3 -left-12" : "top-1/4 -left-24"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <Pill className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
                 <span className="text-white text-xs md:text-sm font-medium">Stack optimisé</span>
@@ -420,7 +420,7 @@ export const CinematicDashboardSection = () => {
             </div>
 
             {/* Badge: Trend */}
-            <div className="cine-badge absolute bottom-1/4 -right-10 md:-right-16 z-40">
+            <div className={`cine-badge absolute z-40 ${isMobile ? "bottom-1/4 -right-10" : "top-1/3 -right-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
                 <span className="text-white text-xs md:text-sm font-medium">+12% énergie</span>

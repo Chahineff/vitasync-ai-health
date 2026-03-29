@@ -513,6 +513,27 @@ Deno.serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Gateway error:", response.status, errorText);
+      
+      // Model deprecated or not found — try fallback
+      if (response.status === 404 || response.status === 410) {
+        console.warn(`Model ${model} unavailable (${response.status}), falling back to gemini-2.5-flash`);
+        const fallbackResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [{ role: "system", content: systemPrompt }, ...messages.map(m => ({ role: m.role, content: m.content }))],
+            stream: true,
+            max_tokens: tierConfig.maxTokens,
+          }),
+        });
+        if (fallbackResponse.ok) {
+          console.log("Fallback model succeeded");
+          return new Response(fallbackResponse.body, { headers: { ...corsHeaders, "Content-Type": "text/event-stream" } });
+        }
+        console.error("Fallback also failed:", fallbackResponse.status);
+      }
+      
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "⏳ Trop de requêtes. Réessaie dans quelques instants." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }

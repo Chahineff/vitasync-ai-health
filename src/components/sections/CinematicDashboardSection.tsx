@@ -367,13 +367,13 @@ export const CinematicDashboardSection = () => {
 
       {/* Orbiting circles around center */}
       <div className="cine-orbit-ring absolute inset-0 z-[5] flex items-center justify-center pointer-events-none">
-        <div className="relative" style={{ width: isMobile ? "300px" : "500px", height: isMobile ? "300px" : "500px" }}>
+        <div className="relative" style={{ width: isMobile ? "320px" : "700px", height: isMobile ? "320px" : "700px" }}>
           {/* Inner ring */}
           <OrbitingCircles
-            radius={isMobile ? 120 : 200}
-            duration={30}
+            radius={isMobile ? 130 : 260}
+            duration={25}
             speed={1}
-            iconSize={isMobile ? 40 : 52}
+            iconSize={isMobile ? 44 : 56}
           >
             <div className="orbit-icon-bubble">
               <Brain className="w-5 h-5 text-primary" />
@@ -391,11 +391,11 @@ export const CinematicDashboardSection = () => {
 
           {/* Outer ring (reverse) */}
           <OrbitingCircles
-            radius={isMobile ? 180 : 300}
-            duration={40}
+            radius={isMobile ? 200 : 380}
+            duration={35}
             speed={1}
             reverse
-            iconSize={isMobile ? 40 : 52}
+            iconSize={isMobile ? 44 : 56}
           >
             <div className="orbit-icon-bubble">
               <Zap className="w-5 h-5 text-amber-400" />

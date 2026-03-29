@@ -405,8 +405,14 @@ Deno.serve(async (req) => {
     }
 
     const requestedModel = (requestBody.model as string) || 'google/gemini-3-flash-preview';
-    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3-pro-preview'];
-    const model = ALLOWED_MODELS.includes(requestedModel) ? requestedModel : 'google/gemini-3-flash-preview';
+    // Map deprecated model names to current ones
+    const MODEL_MIGRATION: Record<string, string> = {
+      'google/gemini-3-pro-preview': 'google/gemini-3.1-pro-preview',
+    };
+    const migratedModel = MODEL_MIGRATION[requestedModel] || requestedModel;
+    const ALLOWED_MODELS = ['google/gemini-2.5-flash-lite', 'google/gemini-3-flash-preview', 'google/gemini-3.1-pro-preview'];
+    const model = ALLOWED_MODELS.includes(migratedModel) ? migratedModel : 'google/gemini-3-flash-preview';
+    console.log(`Requested model: ${requestedModel}, Resolved: ${model}`);
 
     // Determine tier
     const tier = getModelTier(model);

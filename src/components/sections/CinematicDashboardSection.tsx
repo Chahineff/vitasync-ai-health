@@ -300,12 +300,13 @@ export const CinematicDashboardSection = () => {
           width: mobile ? "92vw" : "85vw",
           height: mobile ? "85vh" : "80vh",
           borderRadius: mobile ? "28px" : "36px",
+          xPercent: -50, yPercent: -50,
           ease: "expo.inOut",
           duration: 1.5,
         }, "pullback")
         .to(".cine-cta", { scale: 1, filter: "blur(0px)", ease: "expo.inOut", duration: 1.5 }, "pullback")
         // Final exit
-        .to(".cine-card", { y: -window.innerHeight - 300, ease: "power3.in", duration: 1.5 });
+        .to(".cine-card", { y: -window.innerHeight - 300, xPercent: -50, yPercent: -50, ease: "power3.in", duration: 1.5 });
 
     }, containerRef);
 

@@ -536,25 +536,31 @@ export const CinematicDashboardSection = () => {
         </div>
 
         {/* Side text right */}
-        <div className="cine-card-text-right absolute right-4 md:right-8 lg:right-12 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[260px] text-right">
-          <h4 className="text-card-silver-matte text-lg font-semibold leading-tight mb-3">
-            Coaching IA & Analyses
+        <div className="cine-card-text-right absolute right-4 md:right-8 lg:right-14 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[300px] text-right">
+          <div className="mb-4 flex items-center gap-3 justify-end">
+            <div className="h-px flex-1 bg-gradient-to-l from-white/20 to-transparent" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400/20 to-violet-400/5 flex items-center justify-center border border-violet-400/20">
+              <Brain className="w-5 h-5 text-violet-400" />
+            </div>
+          </div>
+          <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
+            Coaching IA<br />& Analyses
           </h4>
-          <p className="text-white/40 text-sm font-light leading-relaxed mb-4">
+          <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
             Importez vos analyses sanguines, recevez des recommandations personnalisées et optimisez votre stack.
           </p>
-          <div className="flex flex-col gap-2 items-end">
-            <div className="flex items-center gap-2">
-              <span className="text-white/50 text-xs">Analyse de bilans sanguins</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+          <div className="flex flex-col gap-3 items-end">
+            <div className="flex items-center gap-3">
+              <span className="text-white/55 text-sm font-light">Analyse de bilans sanguins</span>
+              <div className="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.4)]" />
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-white/50 text-xs">Recommandations IA</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+            <div className="flex items-center gap-3">
+              <span className="text-white/55 text-sm font-light">Recommandations IA</span>
+              <div className="w-2 h-2 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.4)]" />
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-white/50 text-xs">Score santé en temps réel</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <div className="flex items-center gap-3">
+              <span className="text-white/55 text-sm font-light">Score santé en temps réel</span>
+              <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.4)]" />
             </div>
           </div>
         </div>

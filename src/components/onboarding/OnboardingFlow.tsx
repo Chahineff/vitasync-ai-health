@@ -250,7 +250,97 @@ function OptionCard({ selected, icon, iconBg, label, onClick, index }: {
   );
 }
 
-export function OnboardingFlow() {
+const vitasyncLogo = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
+
+/* ── AI Analysis Animation (shown after onboarding completes) ── */
+function AIAnalysisAnimation({ onComplete }: { onComplete: () => void }) {
+  const [phase, setPhase] = useState(0);
+  const steps = [
+    "Analyse de votre profil santé...",
+    "Évaluation de vos objectifs...",
+    "Identification de vos besoins nutritionnels...",
+    "Génération de recommandations personnalisées...",
+    "Votre dashboard est prêt !"
+  ];
+
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    steps.forEach((_, i) => {
+      timers.push(setTimeout(() => setPhase(i), i * 1200));
+    });
+    timers.push(setTimeout(() => onComplete(), steps.length * 1200 + 800));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Background glow */}
+      <motion.div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full"
+        style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Logo */}
+      <motion.div
+        className="relative z-10 w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/20 flex items-center justify-center mb-8"
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <img src={vitasyncLogo} alt="VitaSync" className="w-12 h-12 object-contain" />
+        {/* Spinning ring */}
+        <motion.div
+          className="absolute inset-[-4px] rounded-3xl border-2 border-primary/30 border-t-primary"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+        />
+      </motion.div>
+
+      {/* Steps */}
+      <div className="relative z-10 flex flex-col items-center gap-4 max-w-md px-6">
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={phase}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="text-lg font-light text-foreground text-center"
+          >
+            {steps[phase]}
+          </motion.p>
+        </AnimatePresence>
+
+        {/* Progress dots */}
+        <div className="flex gap-2 mt-4">
+          {steps.map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-2 h-2 rounded-full"
+              animate={{
+                backgroundColor: i <= phase ? "hsl(var(--primary))" : "hsl(var(--muted-foreground) / 0.3)",
+                scale: i === phase ? 1.3 : 1,
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          ))}
+        </div>
+
+        {/* Progress bar */}
+        <div className="w-64 h-1.5 rounded-full bg-muted/50 overflow-hidden mt-2">
+          <motion.div
+            className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+            initial={{ width: "0%" }}
+            animate={{ width: `${((phase + 1) / steps.length) * 100}%` }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEditMode = searchParams.get("edit") === "true";

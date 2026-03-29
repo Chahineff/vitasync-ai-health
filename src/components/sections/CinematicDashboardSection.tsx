@@ -342,10 +342,27 @@ export const CinematicDashboardSection = () => {
         <div className="card-sheen" />
 
         {/* Side text left */}
-        <div className="cine-card-text-left absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[200px]">
-          <p className="text-card-silver-matte text-sm font-light leading-relaxed">
-            Suivi intelligent de vos suppléments et de votre santé au quotidien
+        <div className="cine-card-text-left absolute left-4 md:left-8 lg:left-12 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[260px]">
+          <h4 className="text-card-silver-matte text-lg font-semibold leading-tight mb-3">
+            Suivi quotidien intelligent
+          </h4>
+          <p className="text-white/40 text-sm font-light leading-relaxed mb-4">
+            Suivez vos suppléments, votre énergie, votre sommeil et votre humeur — tout depuis un seul dashboard.
           </p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="text-white/50 text-xs">Rappels personnalisés</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+              <span className="text-white/50 text-xs">Historique complet</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              <span className="text-white/50 text-xs">Tendances hebdomadaires</span>
+            </div>
+          </div>
         </div>
 
         {/* Mockup */}
@@ -431,23 +448,41 @@ export const CinematicDashboardSection = () => {
         </div>
 
         {/* Side text right */}
-        <div className="cine-card-text-right absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[200px] text-right">
-          <p className="text-card-silver-matte text-sm font-light leading-relaxed">
-            Analyses sanguines, recommandations IA, et coaching personnalisé
+        <div className="cine-card-text-right absolute right-4 md:right-8 lg:right-12 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[260px] text-right">
+          <h4 className="text-card-silver-matte text-lg font-semibold leading-tight mb-3">
+            Coaching IA & Analyses
+          </h4>
+          <p className="text-white/40 text-sm font-light leading-relaxed mb-4">
+            Importez vos analyses sanguines, recevez des recommandations personnalisées et optimisez votre stack.
           </p>
+          <div className="flex flex-col gap-2 items-end">
+            <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs">Analyse de bilans sanguins</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs">Recommandations IA</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs">Score santé en temps réel</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            </div>
+          </div>
         </div>
 
         {/* CTA overlay */}
         <div className="cine-cta absolute inset-0 z-40 flex flex-col items-center justify-center text-center px-6">
-          <h3 className="text-card-silver-matte text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Prêt à optimiser votre santé ?
+          <span className="text-white/30 text-xs md:text-sm uppercase tracking-[0.3em] font-medium mb-6">Votre santé, amplifiée</span>
+          <h3 className="text-card-silver-matte text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            Prêt à optimiser<br />votre santé ?
           </h3>
-          <p className="text-white/50 text-sm md:text-base max-w-md mb-8">
-            Rejoignez VitaSync et accédez à votre dashboard de santé personnalisé
+          <p className="text-white/50 text-base md:text-lg max-w-lg mb-10 leading-relaxed">
+            Rejoignez VitaSync et accédez à votre dashboard de santé personnalisé — suivi, coaching IA et recommandations en un seul endroit.
           </p>
           <button
             onClick={() => (window.location.href = "/auth")}
-            className="px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-medium text-sm md:text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:-translate-y-0.5"
+            className="px-10 py-4 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold text-base md:text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:-translate-y-0.5"
           >
             {t("productPreview.cta")}
           </button>

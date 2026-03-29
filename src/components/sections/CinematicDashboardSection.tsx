@@ -431,24 +431,24 @@ export const CinematicDashboardSection = () => {
             </div>
             <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
           </div>
-          <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
-            Suivi quotidien<br />intelligent
+           <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
+            {t('cinema.trackingTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
           </h4>
           <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
-            Suivez vos suppléments, votre énergie, votre sommeil et votre humeur — tout depuis un seul dashboard.
+            {t('cinema.trackingDesc')}
           </p>
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3 group">
               <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
-              <span className="text-white/55 text-sm font-light">Rappels personnalisés</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.reminders')}</span>
             </div>
             <div className="flex items-center gap-3 group">
               <div className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.4)]" />
-              <span className="text-white/55 text-sm font-light">Historique complet</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.history')}</span>
             </div>
             <div className="flex items-center gap-3 group">
               <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.4)]" />
-              <span className="text-white/55 text-sm font-light">Tendances hebdomadaires</span>
+              <span className="text-white/55 text-sm font-light">{t('cinema.trends')}</span>
             </div>
           </div>
         </div>

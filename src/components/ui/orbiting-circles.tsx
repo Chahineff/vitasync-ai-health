@@ -54,6 +54,10 @@ export function OrbitingCircles({
               "--radius": `${radius}px`,
               "--angle": `${angle}`,
               "--icon-size": `${iconSize}px`,
+              left: "50%",
+              top: "50%",
+              marginLeft: `calc(var(--icon-size) / -2)`,
+              marginTop: `calc(var(--icon-size) / -2)`,
             } as React.CSSProperties}
             className={cn(
               `absolute flex size-[var(--icon-size)] transform-gpu animate-orbit items-center justify-center rounded-full`,

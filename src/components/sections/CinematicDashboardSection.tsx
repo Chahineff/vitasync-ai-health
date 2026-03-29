@@ -529,7 +529,7 @@ export const CinematicDashboardSection = () => {
             <div className={`cine-badge absolute z-40 ${isMobile ? "bottom-1/4 -right-10" : "top-1/3 -right-20"}`}>
               <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
-                <span className="text-white text-xs md:text-sm font-medium">+12% énergie</span>
+                <span className="text-white text-xs md:text-sm font-medium">{t('cinema.energyUp')}</span>
               </div>
             </div>
           </div>

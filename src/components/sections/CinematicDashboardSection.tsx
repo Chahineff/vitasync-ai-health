@@ -424,25 +424,31 @@ export const CinematicDashboardSection = () => {
         <div className="card-sheen" />
 
         {/* Side text left */}
-        <div className="cine-card-text-left absolute left-4 md:left-8 lg:left-12 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[260px]">
-          <h4 className="text-card-silver-matte text-lg font-semibold leading-tight mb-3">
-            Suivi quotidien intelligent
+        <div className="cine-card-text-left absolute left-4 md:left-8 lg:left-14 top-1/2 -translate-y-1/2 z-30 hidden lg:block max-w-[300px]">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400/20 to-emerald-400/5 flex items-center justify-center border border-emerald-400/20">
+              <Activity className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
+          </div>
+          <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
+            Suivi quotidien<br />intelligent
           </h4>
-          <p className="text-white/40 text-sm font-light leading-relaxed mb-4">
+          <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
             Suivez vos suppléments, votre énergie, votre sommeil et votre humeur — tout depuis un seul dashboard.
           </p>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span className="text-white/50 text-xs">Rappels personnalisés</span>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3 group">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
+              <span className="text-white/55 text-sm font-light">Rappels personnalisés</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-              <span className="text-white/50 text-xs">Historique complet</span>
+            <div className="flex items-center gap-3 group">
+              <div className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.4)]" />
+              <span className="text-white/55 text-sm font-light">Historique complet</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              <span className="text-white/50 text-xs">Tendances hebdomadaires</span>
+            <div className="flex items-center gap-3 group">
+              <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.4)]" />
+              <span className="text-white/55 text-sm font-light">Tendances hebdomadaires</span>
             </div>
           </div>
         </div>

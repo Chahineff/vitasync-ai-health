@@ -143,14 +143,6 @@ const Dashboard = () => {
     id: "shop" as Section,
     label: t("dashboard.shop"),
     icon: Storefront
-  }, {
-    id: "mystack" as Section,
-    label: "Mon Stack",
-    icon: Package
-  }, {
-    id: "analyses" as Section,
-    label: "Mes Analyses",
-    icon: TestTube
   }];
   const generalItems = [{
     id: "settings" as Section,

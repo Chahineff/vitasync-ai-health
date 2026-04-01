@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { House, FirstAidKit, Storefront, Gear, Package, TestTube } from '@phosphor-icons/react';
+import { House, FirstAidKit, Storefront, Gear } from '@phosphor-icons/react';
 import { useTranslation } from '@/hooks/useTranslation';
 
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "analyses" | "settings" | "help";

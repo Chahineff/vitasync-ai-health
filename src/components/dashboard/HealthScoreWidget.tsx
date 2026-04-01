@@ -199,8 +199,16 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold text-foreground">{score}</span>
-                <span className="text-[10px] text-foreground/40 uppercase tracking-wider">/ 100</span>
+                <motion.span
+                  className="text-2xl font-bold text-foreground"
+                  key={score}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+                >
+                  {score}
+                </motion.span>
+                <span className="text-[10px] text-foreground/30 uppercase tracking-wider">/ 100</span>
               </div>
             </div>
             <div className="flex-1 min-w-0">

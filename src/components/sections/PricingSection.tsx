@@ -136,7 +136,7 @@ export function PricingSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground mb-3 md:mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-3 md:mb-4">
             {t("pricing.subtitle")}
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4 md:px-0">

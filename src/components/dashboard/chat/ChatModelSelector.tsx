@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { CaretDown, Lightning, Brain, Sparkle } from '@phosphor-icons/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CaretDown, Lightning, Brain, Sparkle, SlidersHorizontal } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,

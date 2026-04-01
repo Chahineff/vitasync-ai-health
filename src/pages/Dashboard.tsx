@@ -143,14 +143,6 @@ const Dashboard = () => {
     id: "shop" as Section,
     label: t("dashboard.shop"),
     icon: Storefront
-  }, {
-    id: "mystack" as Section,
-    label: "Mon Stack",
-    icon: Package
-  }, {
-    id: "analyses" as Section,
-    label: "Mes Analyses",
-    icon: TestTube
   }];
   const generalItems = [{
     id: "settings" as Section,
@@ -370,23 +362,6 @@ const Dashboard = () => {
               </span>
             </button>
           </nav>
-        </div>
-
-        {/* App Promo Card */}
-        <div className={`px-4 mb-4 transition-opacity duration-300 ${sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:overflow-hidden' : ''}`}>
-          <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border border-white/10 rounded-xl p-4 backdrop-blur-[20px]">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                <DeviceMobile weight="light" className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-foreground">{t("dashboard.mobileApp")}</p>
-              </div>
-            </div>
-            <button disabled className="w-full mt-2 px-3 py-2 rounded-lg bg-foreground/5 text-foreground/40 text-xs font-medium cursor-not-allowed border border-white/10">
-              {t("dashboard.comingSoon")}
-            </button>
-          </Card>
         </div>
 
         {/* User Profile */}

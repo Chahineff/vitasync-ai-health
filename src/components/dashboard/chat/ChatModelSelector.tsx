@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { CaretDown, Lightning, Brain, Sparkle } from '@phosphor-icons/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CaretDown, Lightning, Brain, Sparkle, SlidersHorizontal } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -58,62 +58,92 @@ function ModelIcon({ model }: { model: AIModel }) {
 
 export function ChatModelSelector({ selectedModel, onModelChange }: ChatModelSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [advancedMode, setAdvancedMode] = useState(false);
+
+  // If not in advanced mode, show a simple toggle button
+  if (!advancedMode) {
+    return (
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => setAdvancedMode(true)}
+        className={cn(
+          "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg",
+          "text-xs text-foreground/30 hover:text-foreground/50",
+          "transition-all duration-200"
+        )}
+        title="Mode avancé — choisir le modèle IA"
+      >
+        <SlidersHorizontal weight="light" className="w-3.5 h-3.5" />
+        <span className="hidden sm:inline">Mode avancé</span>
+      </motion.button>
+    );
+  }
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={cn(
-            "flex items-center gap-2 px-3 py-2 rounded-xl",
-            "bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 hover:border-border dark:hover:border-white/20",
-            "transition-all duration-200",
-            "text-sm font-medium text-foreground/80"
-          )}
-        >
-          <ModelIcon model={selectedModel} />
-          <span className="hidden sm:inline">{selectedModel.label}</span>
-          <span className="sm:hidden">
-            {selectedModel.version === '3.0' ? '3' : '2.5'} {selectedModel.mode === 'pro' ? '🧠' : '⚡'}
-          </span>
-          <CaretDown 
-            weight="bold" 
+    <div className="flex items-center gap-1.5">
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             className={cn(
-              "w-3 h-3 transition-transform duration-200",
-              isOpen && "rotate-180"
-            )} 
-          />
-        </motion.button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent 
-        align="start" 
-        className="w-64 bg-background/95 backdrop-blur-xl border-border/50"
-      >
-        {AI_MODELS.map((model) => (
-          <DropdownMenuItem
-            key={model.model}
-            onClick={() => onModelChange(model)}
-            className={cn(
-              "flex items-center gap-3 cursor-pointer",
-              selectedModel.model === model.model && "bg-primary/10"
+              "flex items-center gap-2 px-3 py-2 rounded-xl",
+              "bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 hover:border-border dark:hover:border-white/20",
+              "transition-all duration-200",
+              "text-sm font-medium text-foreground/80"
             )}
           >
-            <ModelIcon model={model} />
-            <div className="flex-1">
-              <p className="text-sm font-medium">{model.label}</p>
-              <p className="text-xs text-foreground/50">{model.description}</p>
-            </div>
-            {selectedModel.model === model.model && (
-              <motion.div
-                layoutId="selectedModel"
-                className="w-2 h-2 rounded-full bg-primary"
-              />
-            )}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            <ModelIcon model={selectedModel} />
+            <span className="hidden sm:inline">{selectedModel.label}</span>
+            <span className="sm:hidden">
+              {selectedModel.version === '3.0' ? '3' : '2.5'} {selectedModel.mode === 'pro' ? '🧠' : '⚡'}
+            </span>
+            <CaretDown 
+              weight="bold" 
+              className={cn(
+                "w-3 h-3 transition-transform duration-200",
+                isOpen && "rotate-180"
+              )} 
+            />
+          </motion.button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent 
+          align="start" 
+          className="w-64 bg-background/95 backdrop-blur-xl border-border/50"
+        >
+          {AI_MODELS.map((model) => (
+            <DropdownMenuItem
+              key={model.model}
+              onClick={() => onModelChange(model)}
+              className={cn(
+                "flex items-center gap-3 cursor-pointer",
+                selectedModel.model === model.model && "bg-primary/10"
+              )}
+            >
+              <ModelIcon model={model} />
+              <div className="flex-1">
+                <p className="text-sm font-medium">{model.label}</p>
+                <p className="text-xs text-foreground/50">{model.description}</p>
+              </div>
+              {selectedModel.model === model.model && (
+                <motion.div
+                  layoutId="selectedModel"
+                  className="w-2 h-2 rounded-full bg-primary"
+                />
+              )}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <button
+        onClick={() => setAdvancedMode(false)}
+        className="text-foreground/30 hover:text-foreground/50 text-xs px-1"
+        title="Masquer"
+      >
+        ✕
+      </button>
+    </div>
   );
 }

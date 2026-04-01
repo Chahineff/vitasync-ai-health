@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { House, FirstAidKit, Storefront, Gear, Package, TestTube } from '@phosphor-icons/react';
+import { House, FirstAidKit, Storefront, Gear } from '@phosphor-icons/react';
 import { useTranslation } from '@/hooks/useTranslation';
 
 type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack" | "analyses" | "settings" | "help";
@@ -22,8 +22,7 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
     { id: "coach", labelKey: "dashboard.coach", icon: VitaSyncIcon },
     { id: "supplements", labelKey: "dashboard.supplements", icon: FirstAidKit },
     { id: "shop", labelKey: "dashboard.shop", icon: Storefront },
-    { id: "mystack", labelKey: "dashboard.mystack", icon: Package },
-    { id: "analyses", label: "Analyses", icon: TestTube },
+    { id: "settings", label: "Paramètres", icon: Gear },
   ];
 
   const displaySection = activeSection === "product" ? "shop" : activeSection;

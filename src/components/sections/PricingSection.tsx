@@ -192,7 +192,7 @@ export function PricingSection() {
                   color={plan.shineColors}
                 >
                   <GlowCard glowColor={plan.glowColor} className={cn("h-full", plan.popular && "ring-1 ring-primary/30")}>
-                    <div className={cn("p-6 md:p-8 relative", plan.popular && "pt-8")}>
+                    <div className={cn("p-6 md:p-8 relative bg-background rounded-2xl", plan.popular && "pt-8")}>
                       <div className="flex items-center gap-2 mb-4">
                         {index === 1 && <Lightning size={18} weight="fill" className="text-primary" />}
                         {index === 2 && <Star size={18} weight="fill" className="text-primary" />}

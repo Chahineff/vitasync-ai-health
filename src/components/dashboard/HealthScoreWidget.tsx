@@ -233,11 +233,11 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Heart weight="fill" className="w-5 h-5 text-primary" />
-            Évolution du Score Santé
+            {t("healthScore.chartTitle")}
           </DialogTitle>
         </DialogHeader>
         <p className="text-sm text-foreground/50">
-          Moyenne pondérée sur 7 jours — les jours récents comptent davantage.
+          {t("healthScore.chartDesc")}
         </p>
         <ScoreHistoryChart recentCheckins={recentCheckins} todayCheckin={todayCheckin} />
       </DialogContent>

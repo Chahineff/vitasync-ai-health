@@ -5,6 +5,7 @@ import { GuidedSuggestionCards } from '../GuidedSuggestionCards';
 import { ProfileSummaryCard } from '../ProfileSummaryCard';
 import { DisclaimerModal } from '../DisclaimerModal';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Official VitaSync PNG Logo
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";

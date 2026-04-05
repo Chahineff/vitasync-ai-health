@@ -266,7 +266,12 @@ export const CinematicDashboardSection = () => {
       gsap.set(".cine-title", { autoAlpha: 0, y: 50, filter: "blur(16px)" });
       gsap.set(".cine-subtitle", { autoAlpha: 0, y: 30 });
       gsap.set(".cine-orbit-ring", { autoAlpha: 0, scale: 0.8 });
-      gsap.set(".cine-card", { y: window.innerHeight + 200, autoAlpha: 1 });
+      gsap.set(".cine-card", {
+        y: window.innerHeight + 200,
+        autoAlpha: 1,
+        transformOrigin: "center center",
+        force3D: true,
+      });
       gsap.set([".cine-mockup-wrapper", ".cine-badge", ".cine-card-text-left", ".cine-card-text-right"], { autoAlpha: 0 });
       gsap.set(".cine-cta", { autoAlpha: 0, scale: 0.8, filter: "blur(20px)" });
 
@@ -290,7 +295,7 @@ export const CinematicDashboardSection = () => {
         .to(".cine-hero-text", { scale: 1.1, filter: "blur(16px)", opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-orbit-ring", { scale: 1.3, opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-card", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
-        .to(".cine-card", { width: "100vw", height: "100vh", borderRadius: "0px", top: "50%", left: "50%", marginTop: "calc(-100vh / 2)", marginLeft: "calc(-100vw / 2)", ease: "power3.inOut", duration: 1.5 })
+        .to(".cine-card", { width: "100vw", height: "100vh", borderRadius: "0px", ease: "power3.inOut", duration: 1.5 })
         .fromTo(
           ".cine-mockup-wrapper",
           { y: 200, z: -400, rotationX: mobile ? 0 : 40, rotationY: mobile ? 0 : -25, autoAlpha: 0, scale: 0.6 },
@@ -321,10 +326,6 @@ export const CinematicDashboardSection = () => {
           width: mobile ? "92vw" : "85vw",
           height: mobile ? "85vh" : "80vh",
           borderRadius: mobile ? "28px" : "36px",
-          top: "50%",
-          left: "50%",
-          marginTop: mobile ? "calc(-85vh / 2)" : "calc(-80vh / 2)",
-          marginLeft: mobile ? "calc(-92vw / 2)" : "calc(-85vw / 2)",
           ease: "expo.inOut",
           duration: 1.5,
         }, "pullback")

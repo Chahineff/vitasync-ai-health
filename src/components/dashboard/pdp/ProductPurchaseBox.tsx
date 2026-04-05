@@ -74,6 +74,7 @@ export function ProductPurchaseBox({
   // Estimated delivery dates
   const deliveryStart = addBusinessDays(new Date(), 3);
   const deliveryEnd = addBusinessDays(new Date(), 5);
+  const dateFnsLocale = dateFnsLocales[locale] || enUS;
   const deliveryText = `${format(deliveryStart, 'EEE d', { locale: dateFnsLocale })} - ${format(deliveryEnd, 'EEE d MMM', { locale: dateFnsLocale })}`;
 
   const handleAddToCart = async () => {

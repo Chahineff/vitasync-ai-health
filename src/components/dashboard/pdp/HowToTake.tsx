@@ -20,10 +20,9 @@ export function HowToTake({ parsedData, enrichedSuggestedUse, enrichedCoachTip }
   const dosage = hasEnriched ? enrichedSuggestedUse.dosage : (parsedData?.suggestedUse || '—');
   const timing = hasEnriched ? enrichedSuggestedUse.timing : deriveTiming(parsedData?.suggestedUse, t);
   const notes = hasEnriched ? enrichedSuggestedUse.notes : deriveNotes(parsedData?.suggestedUse, t);
-  const withFood = hasEnriched ? (enrichedSuggestedUse.with_food ? 'Take with food for better absorption' : 'Can be taken on an empty stomach') : '';
+  const withFood = hasEnriched ? (enrichedSuggestedUse.with_food ? t('pdp.withFoodYes') : t('pdp.withFoodNo')) : '';
   const coachTip = enrichedCoachTip || generateCoachTip(parsedData, t);
 
-  // Derive active time chip from timing
   const inferredTime = timing?.toLowerCase().includes('morning') || timing?.toLowerCase().includes('am') ? 'am' 
     : timing?.toLowerCase().includes('evening') || timing?.toLowerCase().includes('pm') ? 'pm'
     : timing?.toLowerCase().includes('post') ? 'post-workout' : 'anytime';
@@ -42,35 +41,36 @@ export function HowToTake({ parsedData, enrichedSuggestedUse, enrichedCoachTip }
 
       <Tabs defaultValue="daily" className="w-full">
         <TabsList className="bg-[#F1F5F9] dark:bg-muted/30 border border-[#E2E8F0] dark:border-border/30 rounded-xl p-1">
-          <TabsTrigger value="daily" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">Daily</TabsTrigger>
-          <TabsTrigger value="training" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">Training day</TabsTrigger>
-          <TabsTrigger value="rest" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">Rest day</TabsTrigger>
+          <TabsTrigger value="daily" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">{t('pdp.daily')}</TabsTrigger>
+          <TabsTrigger value="training" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">{t('pdp.trainingDay')}</TabsTrigger>
+          <TabsTrigger value="rest" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">{t('pdp.restDay')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="daily" className="mt-4 space-y-4">
-          <DosageCard dosage={dosage} timing={timing} withFood={withFood} notes={notes} />
+          <DosageCard dosage={dosage} timing={timing} withFood={withFood} notes={notes} t={t} />
         </TabsContent>
         <TabsContent value="training" className="mt-4 space-y-4">
           <DosageCard 
             dosage={dosage} 
-            timing={timing?.includes('morning') ? 'Pre or post-workout' : timing} 
+            timing={timing?.includes('morning') ? t('pdp.preOrPostWorkout') : timing} 
             withFood={withFood} 
-            notes="Optimal when taken around your training window for maximum benefit." 
+            notes={t('pdp.trainingNote')} 
+            t={t}
           />
         </TabsContent>
         <TabsContent value="rest" className="mt-4 space-y-4">
           <DosageCard 
             dosage={dosage} 
-            timing="Anytime • consistency matters" 
+            timing={t('pdp.consistencyMatters')} 
             withFood={withFood} 
-            notes="Maintain your daily dose even on rest days to keep levels stable." 
+            notes={t('pdp.restNote')} 
+            t={t}
           />
         </TabsContent>
       </Tabs>
 
-      {/* Timeline chips */}
       <div className="space-y-2">
-        <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">Preferred timing</p>
+        <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">{t('pdp.preferredTiming')}</p>
         <div className="flex gap-2">
           {timeChips.map((chip) => (
             <button
@@ -89,25 +89,19 @@ export function HowToTake({ parsedData, enrichedSuggestedUse, enrichedCoachTip }
         </div>
       </div>
 
-      {/* CTA */}
       <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-secondary text-secondary text-sm font-medium hover:bg-secondary/10 transition-colors">
         <Calendar weight="light" className="w-4 h-4" />
-        Add to my schedule
+        {t('pdp.addToSchedule')}
       </button>
 
-      {/* Coach Tip */}
       {coachTip && (
         <div className="flex items-start gap-4 p-5 rounded-2xl bg-[#F8FAFC] dark:bg-muted/20 border border-[#E2E8F0] dark:border-border/30">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
             <Lightbulb weight="fill" className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <p className="text-xs text-primary font-medium uppercase tracking-wider mb-1">
-              {t('pdp.coachTip')}
-            </p>
-            <p className="text-foreground/70 font-light text-sm leading-relaxed">
-              {coachTip}
-            </p>
+            <p className="text-xs text-primary font-medium uppercase tracking-wider mb-1">{t('pdp.coachTip')}</p>
+            <p className="text-foreground/70 font-light text-sm leading-relaxed">{coachTip}</p>
           </div>
         </div>
       )}
@@ -115,21 +109,18 @@ export function HowToTake({ parsedData, enrichedSuggestedUse, enrichedCoachTip }
   );
 }
 
-function DosageCard({ dosage, timing, withFood, notes }: { dosage: string; timing?: string; withFood?: string; notes?: string }) {
+function DosageCard({ dosage, timing, withFood, notes, t }: { dosage: string; timing?: string; withFood?: string; notes?: string; t: (key: string) => string }) {
   const items = [
-    { icon: Timer, label: 'Dosage', value: dosage, show: !!dosage && dosage !== '—' },
-    { icon: SunHorizon, label: 'Timing', value: timing, show: !!timing },
-    { icon: ForkKnife, label: 'With Food', value: withFood, show: !!withFood },
-    { icon: Drop, label: 'Notes', value: notes, show: !!notes },
+    { icon: Timer, label: t('pdp.dosageLabel'), value: dosage, show: !!dosage && dosage !== '—' },
+    { icon: SunHorizon, label: t('pdp.timingLabel'), value: timing, show: !!timing },
+    { icon: ForkKnife, label: t('pdp.withFood'), value: withFood, show: !!withFood },
+    { icon: Drop, label: t('pdp.notesLabel'), value: notes, show: !!notes },
   ].filter(item => item.show);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       {items.map((item, index) => (
-        <div
-          key={index}
-          className="flex items-start gap-3 p-4 rounded-xl bg-[#F8FAFC] dark:bg-muted/30 border border-[#E2E8F0] dark:border-border/30"
-        >
+        <div key={index} className="flex items-start gap-3 p-4 rounded-xl bg-[#F8FAFC] dark:bg-muted/30 border border-[#E2E8F0] dark:border-border/30">
           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
             <item.icon weight="light" className="w-4 h-4 text-primary" />
           </div>

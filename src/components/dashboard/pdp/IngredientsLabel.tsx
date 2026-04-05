@@ -27,42 +27,31 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
   const certifications = parsedData?.certifications || [];
   const allergens = enrichedSafety?.allergens?.length 
     ? enrichedSafety.allergens 
-    : detectAllergens(ingredients, product.description, t);
+    : detectAllergens(ingredients, product.description);
 
   const supplementFactsImage = (() => {
     const images = product.images.edges;
     if (!images.length) return null;
-    
-    // Priority 1: Keywords in alt text (most reliable when set)
     const altKeywords = ['supplement', 'facts', 'label', 'nutrition', 'ingredients'];
     const byAlt = images.find(img => {
       const alt = (img.node.altText || '').toLowerCase();
       return altKeywords.some(k => alt.includes(k));
     });
     if (byAlt) return byAlt.node;
-    
-    // Priority 2: Specific supplement facts URL patterns (not generic "generated-label")
     const specificUrlPatterns = ['supplement-facts', 'nutrition-facts', 'supp-facts'];
     const bySpecificUrl = images.find(img => {
       const url = img.node.url.toLowerCase();
       return specificUrlPatterns.some(k => url.includes(k));
     });
     if (bySpecificUrl) return bySpecificUrl.node;
-    
-    // Priority 3: Non-generated-label URLs with back/rear keywords
     const byBack = images.find(img => {
       const url = img.node.url.toLowerCase();
       const filename = url.split('/').pop() || '';
-      // Only match if the filename itself (not the path) contains these keywords
-      // and is NOT a generic "generated-label-image-N" pattern
       if (filename.includes('generated-label-image')) return false;
       return ['back', 'rear', 'facts', 'nutrition', 'label'].some(k => filename.includes(k));
     });
     if (byBack) return byBack.node;
-    
-    // Priority 4: Last image (VitaSync catalogue convention: supplement facts is the last image)
     if (images.length >= 2) return images[images.length - 1].node;
-    
     return null;
   })();
 
@@ -72,7 +61,7 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
       : ingredients.join(', ');
     navigator.clipboard.writeText(servingInfo);
     setCopied(true);
-    toast.success('Serving info copied');
+    toast.success(t('pdp.servingInfoCopied'));
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -87,26 +76,24 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
           className="flex items-center gap-1.5 text-xs text-foreground/50 hover:text-foreground/70 transition-colors"
         >
           {copied ? <Check weight="bold" className="w-3.5 h-3.5 text-green-500" /> : <Copy weight="light" className="w-3.5 h-3.5" />}
-          {copied ? 'Copied' : 'Copy serving info'}
+          {copied ? t('pdp.copied') : t('pdp.copyServingInfo')}
         </button>
       </div>
 
       <Tabs defaultValue="facts" className="w-full">
         <TabsList className="bg-[#F1F5F9] dark:bg-muted/30 border border-[#E2E8F0] dark:border-border/30 rounded-xl p-1 w-full flex">
-          <TabsTrigger value="facts" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">Supplement Facts</TabsTrigger>
-          <TabsTrigger value="ingredients" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">Ingredients</TabsTrigger>
-          <TabsTrigger value="allergens" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">Allergens</TabsTrigger>
-          <TabsTrigger value="storage" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">Storage</TabsTrigger>
+          <TabsTrigger value="facts" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">{t('pdp.supplementFactsTab')}</TabsTrigger>
+          <TabsTrigger value="ingredients" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">{t('pdp.ingredientsTab')}</TabsTrigger>
+          <TabsTrigger value="allergens" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">{t('pdp.allergensTab')}</TabsTrigger>
+          <TabsTrigger value="storage" className="flex-1 rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">{t('pdp.storageTab')}</TabsTrigger>
         </TabsList>
 
-        {/* Supplement Facts Tab */}
         <TabsContent value="facts" className="mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Facts Table */}
             {hasEnriched ? (
               <div className="rounded-xl border border-[#E2E8F0] dark:border-border/30 overflow-hidden">
                 <div className="bg-[#F8FAFC] dark:bg-muted/20 px-4 py-3 border-b border-[#E2E8F0] dark:border-border/30">
-                  <h4 className="text-sm font-semibold text-foreground">Supplement Facts</h4>
+                  <h4 className="text-sm font-semibold text-foreground">{t('pdp.supplementFactsTab')}</h4>
                 </div>
                 {enrichedIngredients.map((ing, index) => (
                   <div key={index} className={`flex items-center justify-between px-4 py-2.5 text-sm ${index % 2 === 0 ? 'bg-[#F8FAFC] dark:bg-muted/10' : 'bg-background'}`}>
@@ -133,7 +120,6 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
               </div>
             )}
 
-            {/* Supplement Facts Image */}
             <div className="relative rounded-xl overflow-hidden bg-white dark:bg-muted/10 border border-[#E2E8F0] dark:border-border/30 aspect-[3/4]">
               {supplementFactsImage ? (
                 <>
@@ -159,7 +145,6 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
           </div>
         </TabsContent>
 
-        {/* Ingredients Tab */}
         <TabsContent value="ingredients" className="mt-4">
           {hasEnriched ? (
             <div className="space-y-3">
@@ -186,7 +171,6 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
           )}
         </TabsContent>
 
-        {/* Allergens Tab */}
         <TabsContent value="allergens" className="mt-4 space-y-4">
           {allergens.length > 0 ? (
             <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-3">
@@ -201,7 +185,7 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
               </div>
             </div>
           ) : (
-            <p className="text-foreground/60 text-sm font-light p-4">No known allergens listed for this product.</p>
+            <p className="text-foreground/60 text-sm font-light p-4">{t('pdp.noAllergens')}</p>
           )}
           {certifications.length > 0 && (
             <div className="flex flex-wrap gap-2 px-4">
@@ -212,14 +196,13 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
           )}
         </TabsContent>
 
-        {/* Storage Tab */}
         <TabsContent value="storage" className="mt-4">
           <div className="p-5 rounded-xl bg-[#F8FAFC] dark:bg-muted/30 border border-[#E2E8F0] dark:border-border/30 space-y-3">
-            <h4 className="text-sm font-medium text-foreground">Storage Conditions</h4>
+            <h4 className="text-sm font-medium text-foreground">{t('pdp.storageTitle')}</h4>
             <ul className="space-y-2 text-sm text-foreground/70 font-light">
-              <li>• Store in a cool, dry place away from direct sunlight</li>
-              <li>• Keep container tightly closed</li>
-              <li>• Keep out of reach of children</li>
+              <li>• {t('pdp.storageTip1')}</li>
+              <li>• {t('pdp.storageTip2')}</li>
+              <li>• {t('pdp.storageTip3')}</li>
               {enrichedQuality?.manufacturing && (
                 <li>• {enrichedQuality.manufacturing}</li>
               )}
@@ -231,7 +214,7 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
   );
 }
 
-function detectAllergens(ingredients: string[], description: string, t: (key: string) => string): string[] {
+function detectAllergens(ingredients: string[], description: string): string[] {
   const allergens: string[] = [];
   const text = [...ingredients, description].join(' ').toLowerCase();
   const allergenKeywords = [

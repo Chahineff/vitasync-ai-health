@@ -592,10 +592,10 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
                         body: { confirm: true },
                       });
                       if (error) throw error;
-                      toast({ title: "Compte supprimé", description: "Votre compte a été supprimé." });
+                      toast({ title: t("settings.accountDeleted"), description: t("settings.accountDeletedDesc") });
                       window.location.href = "/";
                     } catch {
-                      toast({ title: "Erreur", description: "Impossible de supprimer le compte.", variant: "destructive" });
+                      toast({ title: t("common.error"), description: t("settings.deleteError"), variant: "destructive" });
                     } finally {
                       setIsDeleting(false);
                     }

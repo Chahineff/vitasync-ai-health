@@ -582,7 +582,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
                   onClick={() => setShowDeleteConfirm(false)}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-medium border border-border/50 hover:bg-muted/80 transition-colors"
                 >
-                  Annuler
+                  {t("common.cancel")}
                 </button>
                 <button
                   onClick={async () => {

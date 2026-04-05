@@ -574,7 +574,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
               <div className="flex items-start gap-3 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
                 <Warning size={20} className="text-destructive flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-destructive">
-                  Cette action est <strong>irréversible</strong>. Toutes vos données, conversations, analyses et fichiers seront définitivement supprimés.
+                  {t("settings.deleteWarning")}
                 </p>
               </div>
               <div className="flex gap-2">

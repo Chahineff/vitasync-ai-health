@@ -418,8 +418,16 @@ export const CinematicDashboardSection = () => {
       {/* Main premium card */}
       <div
         ref={mainCardRef}
-        className="cine-card premium-depth-card absolute inset-0 z-20 m-auto flex items-center justify-center overflow-hidden"
-        style={{ width: isMobile ? "90vw" : "75vw", height: isMobile ? "80vh" : "70vh", borderRadius: isMobile ? "28px" : "36px" }}
+        className="cine-card premium-depth-card absolute z-20 flex items-center justify-center overflow-hidden"
+        style={{
+          width: isMobile ? "90vw" : "75vw",
+          height: isMobile ? "80vh" : "70vh",
+          borderRadius: isMobile ? "28px" : "36px",
+          top: "50%",
+          left: "50%",
+          marginTop: isMobile ? "calc(-80vh / 2)" : "calc(-70vh / 2)",
+          marginLeft: isMobile ? "calc(-90vw / 2)" : "calc(-75vw / 2)",
+        }}
       >
         <div className="card-sheen" />
 

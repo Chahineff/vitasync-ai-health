@@ -276,11 +276,11 @@ const Auth = () => {
                 <div className="mt-2 space-y-1">
                   {(() => {
                     const checks = [
-                      { label: "8+ caractères", ok: password.length >= 8 },
-                      { label: "Majuscule", ok: passwordRegex.uppercase.test(password) },
-                      { label: "Minuscule", ok: passwordRegex.lowercase.test(password) },
-                      { label: "Chiffre", ok: passwordRegex.digit.test(password) },
-                      { label: "Caractère spécial", ok: passwordRegex.special.test(password) },
+                      { label: t("auth.8chars"), ok: password.length >= 8 },
+                      { label: t("auth.uppercase"), ok: passwordRegex.uppercase.test(password) },
+                      { label: t("auth.lowercase"), ok: passwordRegex.lowercase.test(password) },
+                      { label: t("auth.digit"), ok: passwordRegex.digit.test(password) },
+                      { label: t("auth.specialChar"), ok: passwordRegex.special.test(password) },
                     ];
                     const score = checks.filter(c => c.ok).length;
                     const barColor = score <= 2 ? "bg-red-500" : score <= 3 ? "bg-yellow-500" : score <= 4 ? "bg-blue-500" : "bg-green-500";

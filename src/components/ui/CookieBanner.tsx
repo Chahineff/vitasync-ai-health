@@ -8,6 +8,7 @@ const CONSENT_KEY = "vitasync_cookie_consent";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY);

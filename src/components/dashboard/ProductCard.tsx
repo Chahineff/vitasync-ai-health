@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ShoppingCartSimple, Star, Check, SpinnerGap } from '@phosphor-icons/react';
 import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
+import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
 
 interface ProductCardProps {
@@ -12,6 +13,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, recommendedByAI = false, onProductClick }: ProductCardProps) {
+  const { t } = useTranslation();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -42,13 +44,13 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
         selectedOptions: selectedVariant.selectedOptions || [],
       });
       setJustAdded(true);
-      toast.success('Produit ajouté au panier', {
+      toast.success(t('shop.productAdded'), {
         description: node.title,
         position: 'top-center',
       });
       setTimeout(() => setJustAdded(false), 2000);
     } catch (error) {
-      toast.error('Erreur lors de l\'ajout au panier');
+      toast.error(t('shop.addError'));
     } finally {
       setIsAdding(false);
     }
@@ -90,7 +92,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
           {recommendedByAI && (
             <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium">
               <Star weight="fill" className="w-3 h-3" />
-              Recommandé
+              {t('shop.recommended')}
             </div>
           )}
         </div>
@@ -151,19 +153,19 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
               ) : justAdded ? (
                 <>
                   <Check weight="bold" className="w-4 h-4" />
-                  Ajouté
+                  {t('shop.added')}
                 </>
               ) : (
                 <>
                   <ShoppingCartSimple weight="bold" className="w-4 h-4" />
-                  Ajouter
+                  {t('shop.addToCart')}
                 </>
               )}
             </button>
           </div>
 
           {!selectedVariant?.availableForSale && (
-            <p className="text-xs text-destructive font-light">Rupture de stock</p>
+            <p className="text-xs text-destructive font-light">{t('shop.outOfStock')}</p>
           )}
         </div>
       </motion.div>

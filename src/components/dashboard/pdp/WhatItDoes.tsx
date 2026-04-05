@@ -1,6 +1,7 @@
 import { Star, Sparkle, Heart, Brain, Lightning, Shield, Moon, Leaf, Flame, Drop, Bone, Eye } from '@phosphor-icons/react';
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { EnrichedKeyBenefit } from './types';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface WhatItDoesProps {
   description: string;
@@ -18,6 +19,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; weight?:
 };
 
 export function WhatItDoes({ description, parsedData, productType, enrichedBenefits, enrichedSummary }: WhatItDoesProps) {
+  const { t } = useTranslation();
   const hasEnriched = enrichedBenefits && enrichedBenefits.length > 0;
 
   const benefits = hasEnriched
@@ -31,7 +33,7 @@ export function WhatItDoes({ description, parsedData, productType, enrichedBenef
   return (
     <section className="py-6 space-y-6">
       <h2 className="text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
-        What It Does
+        {t('pdp.whatItDoes')}
       </h2>
 
       {summaryText && (

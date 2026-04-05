@@ -1,5 +1,6 @@
 import { ShopifyProduct } from '@/lib/shopify';
 import { CheckCircle, XCircle } from '@phosphor-icons/react';
+import { useTranslation } from '@/hooks/useTranslation';
 import { cn } from '@/lib/utils';
 
 interface ProductComparatorProps {
@@ -15,12 +16,13 @@ interface ProductComparatorProps {
 }
 
 export function ProductComparator({ currentProduct, alternatives, onProductClick }: ProductComparatorProps) {
-  // Pick up to 2 alternatives of same type
+  const { t } = useTranslation();
+
   const comparables = alternatives
     .filter(p => {
-      const t = p.node.productType?.toLowerCase() || '';
+      const tp = p.node.productType?.toLowerCase() || '';
       const ct = currentProduct.productType?.toLowerCase() || '';
-      return t === ct && p.node.title !== currentProduct.title;
+      return tp === ct && p.node.title !== currentProduct.title;
     })
     .slice(0, 2);
 
@@ -45,21 +47,24 @@ export function ProductComparator({ currentProduct, alternatives, onProductClick
     })),
   ];
 
-  const features = ['Vegan', 'Sans Gluten', 'Bio', 'Made in France'];
+  const features = [
+    { key: 'vegan', label: t('pdp.featureVegan') },
+    { key: 'gluten', label: t('pdp.featureGlutenFree') },
+    { key: 'bio', label: t('pdp.featureOrganic') },
+    { key: 'france', label: t('pdp.featureMadeInFrance') },
+  ];
 
-  const hasFeature = (product: typeof allProducts[0], feature: string) => {
+  const hasFeature = (product: typeof allProducts[0], featureKey: string) => {
     if (product.isCurrent) {
-      return currentProduct.tags.some(t => t.toLowerCase().includes(feature.toLowerCase()));
+      return currentProduct.tags.some(tg => tg.toLowerCase().includes(featureKey.toLowerCase()));
     }
-    const alt = comparables.find(p => p.node.handle === product.handle);
-    // We don't have tags for alternatives in ShopifyProduct, show dash
     return null;
   };
 
   return (
     <section className="py-6 space-y-4">
       <h2 className="text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
-        Comparer
+        {t('pdp.compare')}
       </h2>
 
       <div className="overflow-x-auto -mx-4 px-4">
@@ -71,13 +76,13 @@ export function ProductComparator({ currentProduct, alternatives, onProductClick
                 <th key={i} className="text-left py-2 px-3">
                   <div className="space-y-1">
                     {p.isCurrent ? (
-                      <span className="text-xs font-semibold text-primary uppercase tracking-wider">Ce produit</span>
+                      <span className="text-xs font-semibold text-primary uppercase tracking-wider">{t('pdp.thisProduct')}</span>
                     ) : (
                       <button
                         onClick={() => p.handle && onProductClick?.(p.handle)}
                         className="text-xs text-foreground/50 hover:text-primary transition-colors"
                       >
-                        Alternative
+                        {t('pdp.alternative')}
                       </button>
                     )}
                     <p className={cn(
@@ -93,7 +98,7 @@ export function ProductComparator({ currentProduct, alternatives, onProductClick
           </thead>
           <tbody className="divide-y divide-border/30">
             <tr>
-              <td className="py-3 pr-4 text-foreground/50 font-light">Prix</td>
+              <td className="py-3 pr-4 text-foreground/50 font-light">{t('pdp.price')}</td>
               {allProducts.map((p, i) => (
                 <td key={i} className={cn("py-3 px-3 font-semibold", p.isCurrent ? "text-primary" : "text-foreground/70")}>
                   {p.price} €
@@ -101,7 +106,7 @@ export function ProductComparator({ currentProduct, alternatives, onProductClick
               ))}
             </tr>
             <tr>
-              <td className="py-3 pr-4 text-foreground/50 font-light">Marque</td>
+              <td className="py-3 pr-4 text-foreground/50 font-light">{t('pdp.brand')}</td>
               {allProducts.map((p, i) => (
                 <td key={i} className="py-3 px-3 text-foreground/70 font-light">
                   {p.vendor?.replace(/vitasync\s*2/i, 'VitaSync') || '—'}
@@ -109,10 +114,10 @@ export function ProductComparator({ currentProduct, alternatives, onProductClick
               ))}
             </tr>
             {features.map(feature => (
-              <tr key={feature}>
-                <td className="py-3 pr-4 text-foreground/50 font-light">{feature}</td>
+              <tr key={feature.key}>
+                <td className="py-3 pr-4 text-foreground/50 font-light">{feature.label}</td>
                 {allProducts.map((p, i) => {
-                  const has = hasFeature(p, feature);
+                  const has = hasFeature(p, feature.key);
                   return (
                     <td key={i} className="py-3 px-3">
                       {has === true ? (

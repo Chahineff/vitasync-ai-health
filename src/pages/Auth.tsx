@@ -189,12 +189,10 @@ const Auth = () => {
         {/* Card */}
         <div className="glass-card p-8 rounded-2xl">
           <h1 className="text-2xl font-light tracking-tight text-foreground text-center mb-2">
-            {isSignUp ? "Créer un compte" : "Se connecter"}
+            {isSignUp ? t("auth.createAccount") : t("auth.signIn")}
           </h1>
           <p className="text-foreground/60 text-center mb-8">
-            {isSignUp
-              ? "Commencez votre parcours santé personnalisé"
-              : "Accédez à votre coach IA personnel"}
+            {isSignUp ? t("auth.signupSubtitle") : t("auth.signinSubtitle")}
           </p>
 
 

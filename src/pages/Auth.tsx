@@ -371,7 +371,7 @@ const Auth = () => {
               }}
               className="text-sm text-foreground/60 hover:text-primary transition-colors"
             >
-              {isSignUp ? "Déjà un compte ? Se connecter" : "Pas de compte ? S'inscrire"}
+              {isSignUp ? t("auth.alreadyAccount") : t("auth.noAccount")}
             </button>
           </div>
         </div>

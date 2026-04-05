@@ -178,7 +178,7 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
   if (!todayCheckin) return null;
 
   const color = getScoreColor(score);
-  const label = getScoreLabel(score);
+  const label = getScoreLabel(score, t);
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;

@@ -9,6 +9,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { Checkbox } from "@/components/ui/checkbox";
 import { differenceInYears, parse } from "date-fns";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const passwordRegex = {
   uppercase: /[A-Z]/,

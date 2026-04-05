@@ -16,6 +16,7 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ images, productTitle, recommendedByAI, tags }: ProductGalleryProps) {
+  const { t } = useTranslation();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [direction, setDirection] = useState(0);

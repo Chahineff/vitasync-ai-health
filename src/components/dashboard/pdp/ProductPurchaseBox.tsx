@@ -109,7 +109,7 @@ export function ProductPurchaseBox({
       });
       setJustAdded(true);
       toast.success(
-        effectiveMode === 'subscribe' ? 'Ajoute a votre routine' : 'Ajoute au panier',
+        effectiveMode === 'subscribe' ? t('pdp.addedToRoutine') : t('pdp.addedToCartToast'),
         { description: product.title, position: 'top-center' }
       );
       setTimeout(() => setJustAdded(false), 2000);
@@ -168,10 +168,10 @@ export function ProductPurchaseBox({
             {isInStack ? (
               <>
                 <CheckCircle weight="fill" className="w-4 h-4" />
-                Dans votre routine
+                {t('pdp.inYourRoutine')}
               </>
             ) : (
-              <span className="text-xs font-light">Pas encore dans votre routine</span>
+              <span className="text-xs font-light">{t('pdp.notInYourRoutine')}</span>
             )}
           </div>
         )}
@@ -358,11 +358,11 @@ export function ProductPurchaseBox({
         {isAdding ? (
           <SpinnerGap className="w-5 h-5 animate-spin" />
         ) : justAdded ? (
-          <><Check weight="bold" className="w-5 h-5" /> Ajoute !</>
+          <><Check weight="bold" className="w-5 h-5" /> {t('pdp.added')}</>
         ) : effectiveMode === 'subscribe' ? (
-          <><Repeat weight="bold" className="w-5 h-5" /> Demarrer ma routine</>
+          <><Repeat weight="bold" className="w-5 h-5" /> {t('pdp.startMyRoutine')}</>
         ) : (
-          <><ShoppingCartSimple weight="bold" className="w-5 h-5" /> Ajouter au panier</>
+          <><ShoppingCartSimple weight="bold" className="w-5 h-5" /> {t('pdp.addToCart')}</>
         )}
       </motion.button>
 

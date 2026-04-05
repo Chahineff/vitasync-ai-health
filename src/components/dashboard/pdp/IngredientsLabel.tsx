@@ -157,7 +157,7 @@ export function IngredientsLabel({ parsedData, product, enrichedIngredients, enr
                     )}
                   </div>
                   {ing.role && <p className="text-xs text-foreground/60 font-light">{ing.role}</p>}
-                  {ing.source && <p className="text-xs text-foreground/40 font-light mt-1">Source: {ing.source}</p>}
+                  {ing.source && <p className="text-xs text-foreground/40 font-light mt-1">{t('pdp.sourceLabel')}: {ing.source}</p>}
                 </div>
               ))}
             </div>

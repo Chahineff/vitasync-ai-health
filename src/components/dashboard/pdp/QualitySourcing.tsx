@@ -2,6 +2,7 @@ import { Factory, Flask, Leaf, Thermometer, ShieldCheck, FileText } from '@phosp
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { EnrichedQualityInfo } from './types';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface QualitySourcingProps {
   parsedData: ParsedProductData | null;
@@ -10,49 +11,51 @@ interface QualitySourcingProps {
 }
 
 export function QualitySourcing({ parsedData, vendor, enrichedQuality }: QualitySourcingProps) {
+  const { t } = useTranslation();
   const hasEnriched = !!enrichedQuality;
   const certifications = hasEnriched
     ? enrichedQuality.certifications
     : (parsedData?.certifications || []);
 
   const hasCOA = hasEnriched && enrichedQuality.testing?.toLowerCase().includes('coa');
+  const vendorName = (vendor || 'VitaSync').replace(/vitasync\s*2/i, 'VitaSync');
 
   const qualityCards = [
     {
       icon: Factory,
-      title: 'Manufacturing & Standards',
+      title: t('quality.manufacturing'),
       bullets: [
-        hasEnriched && enrichedQuality.manufacturing ? enrichedQuality.manufacturing : 'Manufactured under strict quality standards',
-        'GMP-compliant production facility',
-        `By ${(vendor || 'Trusted manufacturer').replace(/vitasync\s*2/i, 'VitaSync')}`,
+        hasEnriched && enrichedQuality.manufacturing ? enrichedQuality.manufacturing : t('quality.manufacturingBullet1'),
+        t('quality.manufacturingBullet2'),
+        t('quality.manufacturingBullet3').replace('{vendor}', vendorName),
       ],
     },
     {
       icon: Flask,
-      title: 'Testing & COA',
+      title: t('quality.testing'),
       bullets: [
-        hasEnriched && enrichedQuality.testing ? enrichedQuality.testing : 'Third-party lab tested',
-        'Verified purity and potency',
-        'Batch-level quality assurance',
+        hasEnriched && enrichedQuality.testing ? enrichedQuality.testing : t('quality.testingBullet1'),
+        t('quality.testingBullet2'),
+        t('quality.testingBullet3'),
       ],
       showCOA: true,
     },
     {
       icon: Leaf,
-      title: 'Contaminants',
+      title: t('quality.contaminants'),
       bullets: [
-        'Tested for heavy metals',
-        'No harmful contaminants detected',
-        'Meets safety thresholds',
+        t('quality.contaminantsBullet1'),
+        t('quality.contaminantsBullet2'),
+        t('quality.contaminantsBullet3'),
       ],
     },
     {
       icon: Thermometer,
-      title: 'Traceability',
+      title: t('quality.traceability'),
       bullets: [
-        'Full batch traceability',
-        'Documented supply chain',
-        'Transparent sourcing',
+        t('quality.traceabilityBullet1'),
+        t('quality.traceabilityBullet2'),
+        t('quality.traceabilityBullet3'),
       ],
     },
   ];
@@ -60,7 +63,7 @@ export function QualitySourcing({ parsedData, vendor, enrichedQuality }: Quality
   return (
     <section className="py-6 space-y-6">
       <h2 className="text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
-        Quality & Sourcing
+        {t('quality.title')}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -87,7 +90,7 @@ export function QualitySourcing({ parsedData, vendor, enrichedQuality }: Quality
                 className={`flex items-center gap-1.5 text-xs font-medium mt-2 ${hasCOA ? 'text-primary hover:text-primary/80' : 'text-foreground/30 cursor-not-allowed'}`}
               >
                 <FileText weight="light" className="w-3.5 h-3.5" />
-                {hasCOA ? 'View COA' : 'View COA — Coming soon'}
+                {hasCOA ? t('quality.viewCOA') : t('quality.viewCOAComingSoon')}
               </button>
             )}
           </div>

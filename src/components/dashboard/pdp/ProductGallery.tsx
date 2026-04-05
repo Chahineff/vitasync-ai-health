@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from '
 import { MagnifyingGlass, Star } from '@phosphor-icons/react';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ProductGalleryProps {
   images: Array<{
@@ -15,6 +16,7 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ images, productTitle, recommendedByAI, tags }: ProductGalleryProps) {
+  const { t } = useTranslation();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [direction, setDirection] = useState(0);
@@ -83,7 +85,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
                 animate={{ opacity: 1 }}
                 className="w-full h-full flex items-center justify-center text-muted-foreground/50"
               >
-                <span className="text-sm">No image</span>
+                <span className="text-sm">{t('pdp.noImage')}</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -93,7 +95,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
             {recommendedByAI && (
               <div className="px-3 py-1.5 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium flex items-center gap-1.5 shadow-lg">
                 <Star weight="fill" className="w-3.5 h-3.5" />
-                AI Pick
+                {t('pdp.aiPick')}
               </div>
             )}
             {badgeTags.map((tag) => (

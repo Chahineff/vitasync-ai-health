@@ -36,7 +36,8 @@ type Section = "home" | "coach" | "supplements" | "shop" | "product" | "mystack"
 
 /* ── Welcome Overlay with typewriter + gradient glow ── */
 function WelcomeOverlay() {
-  const text = "Bienvenue dans votre dashboard";
+  const { t } = useTranslation();
+  const text = t('dashboard.welcome');
   const [displayed, setDisplayed] = useState("");
 
   useEffect(() => {

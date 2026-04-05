@@ -548,7 +548,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
               URL.revokeObjectURL(url);
               toast({ title: "Export terminé", description: "Vos données ont été téléchargées." });
             } catch {
-              toast({ title: "Erreur", description: "Impossible d'exporter vos données.", variant: "destructive" });
+              toast({ title: t("common.error"), description: t("settings.exportError"), variant: "destructive" });
             } finally {
               setIsExporting(false);
             }
@@ -557,7 +557,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
           className="w-full px-4 py-3 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/20 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {isExporting ? <SpinnerGap size={18} className="animate-spin" /> : <DownloadSimple size={18} />}
-          {isExporting ? "Export en cours..." : "Exporter mes données (JSON)"}
+          {isExporting ? t("settings.exportInProgress") : t("settings.exportData")}
         </button>
 
         <div className="border-t border-border/50 pt-4">
@@ -567,14 +567,14 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
               className="w-full px-4 py-3 rounded-xl bg-destructive/10 text-destructive text-sm font-medium border border-destructive/20 hover:bg-destructive/20 transition-colors flex items-center justify-center gap-2"
             >
               <Trash size={18} />
-              Supprimer mon compte
+              {t("settings.deleteAccount")}
             </button>
           ) : (
             <div className="space-y-3">
               <div className="flex items-start gap-3 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
                 <Warning size={20} className="text-destructive flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-destructive">
-                  Cette action est <strong>irréversible</strong>. Toutes vos données, conversations, analyses et fichiers seront définitivement supprimés.
+                  {t("settings.deleteWarning")}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -582,7 +582,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
                   onClick={() => setShowDeleteConfirm(false)}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-medium border border-border/50 hover:bg-muted/80 transition-colors"
                 >
-                  Annuler
+                  {t("common.cancel")}
                 </button>
                 <button
                   onClick={async () => {
@@ -592,10 +592,10 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
                         body: { confirm: true },
                       });
                       if (error) throw error;
-                      toast({ title: "Compte supprimé", description: "Votre compte a été supprimé." });
+                      toast({ title: t("settings.accountDeleted"), description: t("settings.accountDeletedDesc") });
                       window.location.href = "/";
                     } catch {
-                      toast({ title: "Erreur", description: "Impossible de supprimer le compte.", variant: "destructive" });
+                      toast({ title: t("common.error"), description: t("settings.deleteError"), variant: "destructive" });
                     } finally {
                       setIsDeleting(false);
                     }
@@ -604,7 +604,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
                   className="flex-1 px-4 py-2.5 rounded-xl bg-destructive text-destructive-foreground text-sm font-medium hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isDeleting ? <SpinnerGap size={16} className="animate-spin" /> : <Trash size={16} />}
-                  {isDeleting ? "Suppression..." : "Confirmer"}
+                  {isDeleting ? t("settings.deleting") : t("common.confirm")}
                 </button>
               </div>
             </div>

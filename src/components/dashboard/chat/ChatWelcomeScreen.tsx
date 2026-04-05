@@ -5,6 +5,7 @@ import { GuidedSuggestionCards } from '../GuidedSuggestionCards';
 import { ProfileSummaryCard } from '../ProfileSummaryCard';
 import { DisclaimerModal } from '../DisclaimerModal';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Official VitaSync PNG Logo
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
@@ -22,6 +23,7 @@ interface ChatWelcomeScreenProps {
 
 export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: ChatWelcomeScreenProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 pb-32 overflow-y-auto">
@@ -106,7 +108,7 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
             >
               <ClipboardText weight="bold" className="w-6 h-6" />
               <Target weight="bold" className="w-5 h-5" />
-              <span className="text-lg">Personnaliser mon plan (60 sec)</span>
+              <span className="text-lg">{t('chat.personalizeMyPlan')}</span>
               <Sparkle weight="fill" className="w-5 h-5 opacity-70 animate-pulse" />
             </motion.button>
           )}

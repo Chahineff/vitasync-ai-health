@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendUp, TrendDown, Minus, Heart, ChartLine } from "@phosphor-icons/react";
+import { useTranslation } from "@/hooks/useTranslation";
 import { useDailyCheckin } from "@/hooks/useDailyCheckin";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Area } from "recharts";
 import {
@@ -62,14 +63,15 @@ function getScoreColor(score: number): string {
   return "hsl(0, 72%, 51%)";
 }
 
-function getScoreLabel(score: number): string {
-  if (score >= 80) return "Excellent";
-  if (score >= 65) return "Bon";
-  if (score >= 40) return "Moyen";
-  return "Faible";
+function getScoreLabel(score: number, t: (key: string) => string): string {
+  if (score >= 80) return t("healthScore.excellent");
+  if (score >= 65) return t("healthScore.good");
+  if (score >= 40) return t("healthScore.average");
+  return t("healthScore.low");
 }
 
 function ScoreHistoryChart({ recentCheckins, todayCheckin }: { recentCheckins: any[]; todayCheckin: any }) {
+  const { t } = useTranslation();
   const chartData = useMemo(() => {
     const allCheckins = [...recentCheckins];
     const todayDate = new Date().toISOString().split("T")[0];
@@ -93,7 +95,7 @@ function ScoreHistoryChart({ recentCheckins, todayCheckin }: { recentCheckins: a
   if (chartData.length < 2) {
     return (
       <div className="flex items-center justify-center h-48 text-foreground/40 text-sm">
-        Pas assez de données (min. 2 jours)
+        {t("healthScore.notEnoughData")}
       </div>
     );
   }
@@ -152,6 +154,7 @@ function ScoreHistoryChart({ recentCheckins, todayCheckin }: { recentCheckins: a
 export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) {
   const { todayCheckin, recentCheckins } = useDailyCheckin();
   const [chartOpen, setChartOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { score, yesterdayScore, trend } = useMemo(() => {
     if (!todayCheckin) return { score: 0, yesterdayScore: 0, trend: "none" as const };
@@ -175,7 +178,7 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
   if (!todayCheckin) return null;
 
   const color = getScoreColor(score);
-  const label = getScoreLabel(score);
+  const label = getScoreLabel(score, t);
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
@@ -206,7 +209,7 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Heart weight="fill" className="w-4 h-4" style={{ color }} />
-                <h3 className="text-sm font-medium text-foreground">Score Santé</h3>
+                <h3 className="text-sm font-medium text-foreground">{t("healthScore.title")}</h3>
                 <ChartLine weight="bold" className="w-3.5 h-3.5 text-foreground/30 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <p className="text-lg font-semibold text-foreground mb-1">{label}</p>
@@ -216,9 +219,9 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
                   {trend === "down" && <TrendDown weight="bold" className="w-3.5 h-3.5 text-destructive" />}
                   {trend === "equal" && <Minus weight="bold" className="w-3.5 h-3.5 text-foreground/40" />}
                   <span className="text-xs text-foreground/50">
-                    {trend === "up" && `+${score - yesterdayScore} vs hier`}
-                    {trend === "down" && `${score - yesterdayScore} vs hier`}
-                    {trend === "equal" && "Stable vs hier"}
+                    {trend === "up" && `+${score - yesterdayScore} ${t("healthScore.vsYesterday")}`}
+                    {trend === "down" && `${score - yesterdayScore} ${t("healthScore.vsYesterday")}`}
+                    {trend === "equal" && t("healthScore.stable")}
                   </span>
                 </div>
               )}
@@ -230,11 +233,11 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Heart weight="fill" className="w-5 h-5 text-primary" />
-            Évolution du Score Santé
+            {t("healthScore.chartTitle")}
           </DialogTitle>
         </DialogHeader>
         <p className="text-sm text-foreground/50">
-          Moyenne pondérée sur 7 jours — les jours récents comptent davantage.
+          {t("healthScore.chartDesc")}
         </p>
         <ScoreHistoryChart recentCheckins={recentCheckins} todayCheckin={todayCheckin} />
       </DialogContent>

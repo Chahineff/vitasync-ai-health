@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Cookie, X } from "@phosphor-icons/react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const CONSENT_KEY = "vitasync_cookie_consent";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY);
@@ -44,15 +46,15 @@ export function CookieBanner() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-medium text-foreground text-sm">Cookies & Vie privée</h3>
+                  <h3 className="font-medium text-foreground text-sm">{t("cookie.title")}</h3>
                   <button onClick={reject} aria-label="Close cookie banner" className="text-foreground/40 hover:text-foreground/70 transition-colors -mr-1">
                     <X size={16} />
                   </button>
                 </div>
                 <p className="text-xs text-foreground/60 leading-relaxed mb-3">
-                  Nous utilisons des cookies essentiels au fonctionnement du site et des cookies analytiques pour améliorer votre expérience.{" "}
+                  {t("cookie.description")}{" "}
                   <Link to="/cookies" className="text-primary hover:underline">
-                    En savoir plus
+                    {t("cookie.learnMore")}
                   </Link>
                 </p>
                 <div className="flex gap-2">
@@ -60,13 +62,13 @@ export function CookieBanner() {
                     onClick={accept}
                     className="flex-1 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors"
                   >
-                    Accepter tout
+                    {t("cookie.acceptAll")}
                   </button>
                   <button
                     onClick={reject}
                     className="flex-1 px-4 py-2 rounded-xl bg-muted text-foreground text-xs font-medium hover:bg-muted/80 transition-colors border border-border/50"
                   >
-                    Essentiels uniquement
+                    {t("cookie.essentialsOnly")}
                   </button>
                 </div>
               </div>

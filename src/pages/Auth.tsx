@@ -217,7 +217,7 @@ const Auth = () => {
                 </div>
                 <div>
                   <label htmlFor="lastName" className="block text-sm text-foreground/70 mb-2">
-                    Nom
+                    {t("auth.lastName")}
                   </label>
                   <input
                     type="text"

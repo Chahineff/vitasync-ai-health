@@ -46,7 +46,7 @@ export function ProductPurchaseBox({
   reviewCount,
   isInStack,
 }: ProductPurchaseBoxProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const navigate = useNavigate();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);

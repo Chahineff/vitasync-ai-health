@@ -132,29 +132,29 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("Invalid login")) {
             toast({
-              title: "Identifiants incorrects",
-              description: "Email ou mot de passe invalide.",
+              title: t("auth.invalidCredentials"),
+              description: t("auth.invalidCredentialsDesc"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Erreur de connexion",
+              title: t("auth.loginError"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Connexion réussie !",
-            description: "Bienvenue sur VitaSync.",
+            title: t("auth.loginSuccess"),
+            description: t("auth.loginSuccessDesc"),
           });
           navigate("/dashboard");
         }
       }
     } catch (err) {
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite.",
+        title: t("common.error"),
+        description: t("auth.unexpectedError"),
         variant: "destructive",
       });
     } finally {

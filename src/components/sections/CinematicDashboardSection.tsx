@@ -290,7 +290,7 @@ export const CinematicDashboardSection = () => {
         .to(".cine-hero-text", { scale: 1.1, filter: "blur(16px)", opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-orbit-ring", { scale: 1.3, opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-card", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
-        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", ease: "power3.inOut", duration: 1.5 })
+        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", top: "0%", left: "0%", marginTop: 0, marginLeft: 0, ease: "power3.inOut", duration: 1.5 })
         .fromTo(
           ".cine-mockup-wrapper",
           { y: 200, z: -400, rotationX: mobile ? 0 : 40, rotationY: mobile ? 0 : -25, autoAlpha: 0, scale: 0.6 },
@@ -321,6 +321,10 @@ export const CinematicDashboardSection = () => {
           width: mobile ? "92vw" : "85vw",
           height: mobile ? "85vh" : "80vh",
           borderRadius: mobile ? "28px" : "36px",
+          top: "50%",
+          left: "50%",
+          marginTop: mobile ? "calc(-85vh / 2)" : "calc(-80vh / 2)",
+          marginLeft: mobile ? "calc(-92vw / 2)" : "calc(-85vw / 2)",
           ease: "expo.inOut",
           duration: 1.5,
         }, "pullback")
@@ -418,8 +422,16 @@ export const CinematicDashboardSection = () => {
       {/* Main premium card */}
       <div
         ref={mainCardRef}
-        className="cine-card premium-depth-card absolute inset-0 z-20 m-auto flex items-center justify-center overflow-hidden"
-        style={{ width: isMobile ? "90vw" : "75vw", height: isMobile ? "80vh" : "70vh", borderRadius: isMobile ? "28px" : "36px" }}
+        className="cine-card premium-depth-card absolute z-20 flex items-center justify-center overflow-hidden"
+        style={{
+          width: isMobile ? "90vw" : "75vw",
+          height: isMobile ? "80vh" : "70vh",
+          borderRadius: isMobile ? "28px" : "36px",
+          top: "50%",
+          left: "50%",
+          marginTop: isMobile ? "calc(-80vh / 2)" : "calc(-70vh / 2)",
+          marginLeft: isMobile ? "calc(-90vw / 2)" : "calc(-75vw / 2)",
+        }}
       >
         <div className="card-sheen" />
 

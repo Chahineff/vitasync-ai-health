@@ -71,6 +71,7 @@ function getScoreLabel(score: number, t: (key: string) => string): string {
 }
 
 function ScoreHistoryChart({ recentCheckins, todayCheckin }: { recentCheckins: any[]; todayCheckin: any }) {
+  const { t } = useTranslation();
   const chartData = useMemo(() => {
     const allCheckins = [...recentCheckins];
     const todayDate = new Date().toISOString().split("T")[0];

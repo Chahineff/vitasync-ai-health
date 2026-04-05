@@ -321,6 +321,10 @@ export const CinematicDashboardSection = () => {
           width: mobile ? "92vw" : "85vw",
           height: mobile ? "85vh" : "80vh",
           borderRadius: mobile ? "28px" : "36px",
+          top: "50%",
+          left: "50%",
+          marginTop: mobile ? "calc(-85vh / 2)" : "calc(-80vh / 2)",
+          marginLeft: mobile ? "calc(-92vw / 2)" : "calc(-85vw / 2)",
           ease: "expo.inOut",
           duration: 1.5,
         }, "pullback")

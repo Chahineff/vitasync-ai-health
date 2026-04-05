@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Cookie, X } from "@phosphor-icons/react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const CONSENT_KEY = "vitasync_cookie_consent";
 

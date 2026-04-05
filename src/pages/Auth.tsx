@@ -42,6 +42,7 @@ const signUpSchema = z.object({
 });
 
 const Auth = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
   

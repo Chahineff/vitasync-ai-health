@@ -278,7 +278,7 @@ export function ProductPurchaseBox({
                 className="px-4 pb-4 space-y-3"
               >
                 <p className="text-sm text-foreground/60 font-light pl-8">
-                  Livraison gratuite, ajustable a tout moment avec l'IA.
+                  {t('pdp.subscriptionDesc')}
                 </p>
                 {sellingPlans.length > 1 && (
                   <div className="flex flex-wrap gap-2 pl-8">

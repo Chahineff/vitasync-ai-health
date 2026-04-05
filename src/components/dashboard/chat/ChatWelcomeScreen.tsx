@@ -106,7 +106,7 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
             >
               <ClipboardText weight="bold" className="w-6 h-6" />
               <Target weight="bold" className="w-5 h-5" />
-              <span className="text-lg">Personnaliser mon plan (60 sec)</span>
+              <span className="text-lg">{t('chat.personalizeMyPlan')}</span>
               <Sparkle weight="fill" className="w-5 h-5 opacity-70 animate-pulse" />
             </motion.button>
           )}

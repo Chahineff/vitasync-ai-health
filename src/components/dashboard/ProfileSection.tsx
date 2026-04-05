@@ -604,7 +604,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
                   className="flex-1 px-4 py-2.5 rounded-xl bg-destructive text-destructive-foreground text-sm font-medium hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isDeleting ? <SpinnerGap size={16} className="animate-spin" /> : <Trash size={16} />}
-                  {isDeleting ? "Suppression..." : "Confirmer"}
+                  {isDeleting ? t("settings.deleting") : t("common.confirm")}
                 </button>
               </div>
             </div>

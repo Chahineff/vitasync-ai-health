@@ -95,7 +95,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
             {recommendedByAI && (
               <div className="px-3 py-1.5 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium flex items-center gap-1.5 shadow-lg">
                 <Star weight="fill" className="w-3.5 h-3.5" />
-                AI Pick
+                {t('pdp.aiPick')}
               </div>
             )}
             {badgeTags.map((tag) => (

@@ -358,11 +358,11 @@ export function ProductPurchaseBox({
         {isAdding ? (
           <SpinnerGap className="w-5 h-5 animate-spin" />
         ) : justAdded ? (
-          <><Check weight="bold" className="w-5 h-5" /> Ajoute !</>
+          <><Check weight="bold" className="w-5 h-5" /> {t('pdp.added')}</>
         ) : effectiveMode === 'subscribe' ? (
-          <><Repeat weight="bold" className="w-5 h-5" /> Demarrer ma routine</>
+          <><Repeat weight="bold" className="w-5 h-5" /> {t('pdp.startMyRoutine')}</>
         ) : (
-          <><ShoppingCartSimple weight="bold" className="w-5 h-5" /> Ajouter au panier</>
+          <><ShoppingCartSimple weight="bold" className="w-5 h-5" /> {t('pdp.addToCart')}</>
         )}
       </motion.button>
 

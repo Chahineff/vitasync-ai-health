@@ -63,11 +63,11 @@ function getScoreColor(score: number): string {
   return "hsl(0, 72%, 51%)";
 }
 
-function getScoreLabel(score: number): string {
-  if (score >= 80) return "Excellent";
-  if (score >= 65) return "Bon";
-  if (score >= 40) return "Moyen";
-  return "Faible";
+function getScoreLabel(score: number, t: (key: string) => string): string {
+  if (score >= 80) return t("healthScore.excellent");
+  if (score >= 65) return t("healthScore.good");
+  if (score >= 40) return t("healthScore.average");
+  return t("healthScore.low");
 }
 
 function ScoreHistoryChart({ recentCheckins, todayCheckin }: { recentCheckins: any[]; todayCheckin: any }) {

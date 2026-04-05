@@ -251,7 +251,7 @@ const Auth = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm text-foreground/70 mb-2">
-                Mot de passe
+                {t("auth.password")}
               </label>
               <div className="relative">
                 <input

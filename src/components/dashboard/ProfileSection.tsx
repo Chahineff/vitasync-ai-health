@@ -548,7 +548,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
               URL.revokeObjectURL(url);
               toast({ title: "Export terminé", description: "Vos données ont été téléchargées." });
             } catch {
-              toast({ title: "Erreur", description: "Impossible d'exporter vos données.", variant: "destructive" });
+              toast({ title: t("common.error"), description: t("settings.exportError"), variant: "destructive" });
             } finally {
               setIsExporting(false);
             }

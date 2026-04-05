@@ -21,7 +21,7 @@ import { ParsedProductData } from '@/lib/shopify-parser';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useNavigate } from 'react-router-dom';
 import { addBusinessDays, format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS, es, ar, zhCN, pt } from 'date-fns/locale';
 
 interface ProductPurchaseBoxProps {
   product: ProductDetail;

@@ -260,7 +260,7 @@ export function ProductPurchaseBox({
                 </div>
                 <div>
                   <span className="font-semibold text-foreground">
-                    {selectedPlan ? `Abonnement — ${getDeliveryFrequency(selectedPlan)}` : 'Abonnement'}
+                    {selectedPlan ? `${t('pdp.subscription')} — ${getDeliveryFrequency(selectedPlan)}` : t('pdp.subscription')}
                   </span>
                   {discountPct && (
                     <Badge className="ml-2 bg-primary/10 text-primary border-primary/20 text-xs font-semibold">

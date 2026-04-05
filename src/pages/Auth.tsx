@@ -331,13 +331,13 @@ const Auth = () => {
                   className="mt-0.5"
                 />
                 <label htmlFor="acceptTerms" className="text-sm text-foreground/70 leading-snug cursor-pointer">
-                  J'accepte les{" "}
+                  {t("auth.acceptTermsLabel")}{" "}
                   <Link to="/legal/terms" target="_blank" className="text-primary hover:underline">
-                    conditions générales d'utilisation
+                    {t("auth.termsOfUse")}
                   </Link>
-                  {" "}et la{" "}
+                  {" "}{t("auth.and")}{" "}
                   <Link to="/legal/privacy" target="_blank" className="text-primary hover:underline">
-                    politique de confidentialité
+                    {t("auth.privacyPolicy")}
                   </Link>
                   {" "}<span className="text-destructive">*</span>
                 </label>

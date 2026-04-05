@@ -6247,7 +6247,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.faqDefaultQ4": "是否含有过敏原？",
     "pdp.faqDefaultA4": "请查看产品标签上的成分列表和过敏原信息。",
     "pdp.faqDefaultQ5": "最佳服用时间是什么时候？",
-    "pdp.faqDefaultA5": "请查看上方的"如何服用"部分了解具体指导。",
+    "pdp.faqDefaultA5": "请查看上方的「如何服用」部分了解具体指导。",
     "pdp.sourceLabel": "来源",
     "quality.title": "质量与溯源",
     "quality.manufacturing": "制造与标准",

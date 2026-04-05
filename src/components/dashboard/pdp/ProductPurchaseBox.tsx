@@ -168,10 +168,10 @@ export function ProductPurchaseBox({
             {isInStack ? (
               <>
                 <CheckCircle weight="fill" className="w-4 h-4" />
-                Dans votre routine
+                {t('pdp.inYourRoutine')}
               </>
             ) : (
-              <span className="text-xs font-light">Pas encore dans votre routine</span>
+              <span className="text-xs font-light">{t('pdp.notInYourRoutine')}</span>
             )}
           </div>
         )}

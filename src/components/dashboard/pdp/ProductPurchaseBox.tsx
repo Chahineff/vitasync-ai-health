@@ -316,7 +316,7 @@ export function ProductPurchaseBox({
               {effectiveMode === 'once' && <div className="w-2 h-2 rounded-full bg-foreground/60" />}
             </div>
             <span className="text-sm text-foreground/50 font-light group-hover:text-foreground/70 transition-colors">
-              Achat unique
+              {t('pdp.oneTime')}
             </span>
           </div>
           <span className="text-sm text-foreground/50 font-light">{basePrice.toFixed(2)} &euro;</span>

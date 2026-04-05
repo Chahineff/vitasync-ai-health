@@ -1,28 +1,101 @@
 
 
-# Corrections Pricing + Preview Features mobile/tablette
+## Plan : Internationalisation complète de la Boutique et des Pages Produits (PDP)
 
-## Problèmes identifiés
+### Contexte
 
-1. **Pricing cards Go AI & Premium AI** : Le `ShineBorder` crée un fond gradient animé trop visible derrière le contenu des cartes, rendant le texte difficile à lire.
-2. **Section Features ("Une IA qui comprend vraiment votre corps")** : Les widgets de preview (ChatPreviewWidget, TrackerPreviewWidget, etc.) sont masqués sur mobile et tablette (`hidden lg:block`), donc invisibles sur ces appareils.
+De nombreux composants de la boutique (shop) et des fiches produits (PDP) contiennent encore des chaînes de texte codées en dur en français ou en anglais, non reliées au système de traduction `useTranslation`. Le fichier `i18n.ts` contient déjà beaucoup de clés shop/pdp, mais plusieurs composants ne les utilisent pas.
 
-## Plan
+### Composants à modifier et chaînes concernées
 
-### 1. Réduire l'intensité du ShineBorder sur les pricing cards
+**1. `ProductCard.tsx`** — Pas de `useTranslation`, tout est en dur :
+- "Produit ajouté au panier", "Erreur lors de l'ajout au panier"
+- "Recommandé", "Ajouté", "Ajouter", "Rupture de stock"
 
-**Fichier** : `src/components/sections/PricingSection.tsx`
-- Réduire `borderWidth` de `1.5` à `1` pour les deux cartes avec ShineBorder
-- Ajouter un fond opaque explicite sur le contenu intérieur des cartes (`bg-background`) pour que le gradient shine ne transparaisse pas à travers le contenu, uniquement visible sur le bord extérieur
+**2. `ProductGroupCard.tsx`** — Le `StarRating` a "0 avis" en dur (ligne 27)
 
-**Fichier** : `src/components/ui/shine-border.tsx`
-- Ajouter `bg-background` au div enfant intérieur (`.relative.z-[1]`) pour garantir que le contenu a toujours un fond opaque et que le shine ne se voit qu'en bordure
+**3. `ProductPurchaseBox.tsx`** — Nombreuses chaînes en dur :
+- "avis", "Dans votre routine", "Pas encore dans votre routine"
+- "Abonnement", "Livraison gratuite, ajustable a tout moment avec l'IA"
+- "Achat unique", "Quantite", "Ajoute !", "Demarrer ma routine", "Ajouter au panier"
+- "Livraison estimee :", "Demander a VitaSync"
+- Format date-fns locale (actuellement `fr` uniquement)
 
-### 2. Afficher les previews Features sur mobile et tablette
+**4. `MobileStickyCart.tsx`** — Pas de `useTranslation` :
+- "Ajoute a votre routine", "Echec de l'ajout"
+- "/mois", "S'abonner", "Ajouter"
 
-**Fichier** : `src/components/ui/feature-steps.tsx`
-- Changer le wrapper preview de `hidden lg:block` à `w-full lg:w-3/5`
-- Sur mobile/tablette : afficher le preview sous les étapes en taille réduite (`aspect-[16/10]` et hauteur limitée `max-h-[250px] md:max-h-[350px]`)
-- Garder le layout côte-à-côte sur desktop (`lg:flex-row`)
-- Ajuster la hauteur du preview container : `h-[250px] md:h-[350px] lg:h-[500px]`
+**5. `CoachInsightCard.tsx`** — Pas de `useTranslation` :
+- "VitaSync Insight", "Tres compatible / Compatible / Peu compatible avec votre profil"
+- "Goal", "Training", "Budget"
+- "Demander au Coach", "Edit my context"
+- Question pré-remplie en français
+
+**6. `ProductReviews.tsx`** — Pas de `useTranslation` :
+- "Customer Reviews", "avis", "No reviews yet"
+- "Lire les avis sur Judge.me", "Ask VitaSync"
+- "Frequently Asked Questions"
+
+**7. `WhatItDoes.tsx`** — Pas de `useTranslation` :
+- "What It Does"
+
+**8. `ResultsTimeline.tsx`** — Tout en dur (pas de `useTranslation`) :
+- "À quoi s'attendre"
+- Toutes les étapes de timeline (Semaine 1-2, Absorption, etc.)
+
+**9. `ScienceSection.tsx`** — Pas de `useTranslation` :
+- "The Science", "TL;DR", "What studies suggest:", "Sources & références:"
+- "Voir moins", "Voir plus de sources"
+- Disclaimer en bas
+
+**10. `ProductComparator.tsx`** — Pas de `useTranslation` :
+- "Comparer", "Ce produit", "Alternative", "Prix", "Marque"
+- Features en dur : "Vegan", "Sans Gluten", "Bio", "Made in France"
+
+**11. `BuildYourStack.tsx`** — Pas de `useTranslation` :
+- "Recommande pour vous", "Pairs well with"
+- Toast messages en anglais
+- Reason tags en anglais
+
+**12. `HowToTake.tsx`** — Partiellement traduit, mais :
+- Tabs : "Daily", "Training day", "Rest day"
+- Labels DosageCard : "Dosage", "Timing", "With Food", "Notes"
+- "Preferred timing", "Add to my schedule"
+- Notes en anglais en dur dans les TabsContent
+
+**13. `IngredientsLabel.tsx`** — Partiellement :
+- "Copied", "Copy serving info"
+
+**14. `ProductDetailMaster.tsx`** — `reassuranceItems` en dur (ligne 50-55) :
+- "Qualite Pharmaceutique", "Vegan", "Sans Gluten", "Fabrique en France"
+
+**15. `QuickBenefitsStrip.tsx`** — Labels en anglais en dur :
+- "Goal", "Format", "Key Ingredient", "When"
+- Valeurs dérivées en anglais
+
+### Plan d'implémentation
+
+**Étape 1 — Ajouter ~80 nouvelles clés dans `src/lib/i18n.ts`** pour les 6 langues (FR, EN, ES, AR, ZH, PT), couvrant toutes les chaînes listées ci-dessus. Exemples de clés :
+- `pdp.customerReviews`, `pdp.noReviewsYet`, `pdp.readReviews`
+- `pdp.whatItDoes`, `pdp.theScience`, `pdp.whatToExpect`
+- `pdp.subscription`, `pdp.oneTimePurchase`, `pdp.quantity`
+- `pdp.freeShippingSubscription`, `pdp.askVitaSync`
+- `pdp.compare`, `pdp.thisProduct`, `pdp.alternative`
+- `pdp.inYourRoutine`, `pdp.notInYourRoutine`
+- `pdp.pairsWellWith`, `pdp.recommendedForYou`
+- `pdp.daily`, `pdp.trainingDay`, `pdp.restDay`
+- `pdp.preferredTiming`, `pdp.addToSchedule`
+- etc.
+
+**Étape 2 — Refactoriser les 15 composants** en ajoutant `useTranslation` là où absent et en remplaçant toutes les chaînes en dur par `t('key')`.
+
+**Étape 3 — Adapter le format date-fns** dans `ProductPurchaseBox.tsx` pour utiliser la locale correspondant à la langue sélectionnée (import dynamique de `fr`, `es`, `ar`, `zhCN`, `pt`, `enUS`).
+
+### Détails techniques
+
+- Le fichier `i18n.ts` sera modifié pour chaque bloc de langue (6 blocs)
+- Chaque composant PDP/shop sera modifié pour importer `useTranslation` et appeler `t()`
+- Les `reassuranceItems` et `features` de ProductComparator deviendront des fonctions qui prennent `t` en paramètre
+- Les timelines de `ResultsTimeline.tsx` utiliseront des clés i18n
+- Le format date-fns dans `ProductPurchaseBox` sera adapté via un mapping `locale → date-fns locale`
 

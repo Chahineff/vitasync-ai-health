@@ -2,6 +2,7 @@ import { Plus, Check, SpinnerGap, Sparkle } from '@phosphor-icons/react';
 import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
+import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
 import { useState, useMemo } from 'react';
 
@@ -11,7 +12,6 @@ interface BuildYourStackProps {
   onProductClick?: (handle: string) => void;
 }
 
-// Mapping productType/tags → health goals
 const goalTagMap: Record<string, string[]> = {
   energy: ['energy', 'caffeine', 'b-vitamin', 'iron', 'coq10'],
   sleep: ['sleep', 'melatonin', 'magnesium', 'ashwagandha', 'gaba'],
@@ -36,16 +36,14 @@ function productMatchesGoals(product: ShopifyProduct, goals: string[]): number {
 }
 
 export function BuildYourStack({ products, currentProductId, onProductClick }: BuildYourStackProps) {
+  const { t } = useTranslation();
   const addItem = useCartStore(state => state.addItem);
   const { healthProfile } = useHealthProfile();
 
   const crossSellProducts = useMemo(() => {
     const filtered = products.filter(p => p.node.id !== currentProductId);
     const goals = (healthProfile?.health_goals || []) as string[];
-    
     if (goals.length === 0) return filtered.slice(0, 6);
-
-    // Sort by goal relevance
     return [...filtered]
       .sort((a, b) => productMatchesGoals(b, goals) - productMatchesGoals(a, goals))
       .slice(0, 6);
@@ -67,12 +65,12 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
         quantity: 1,
         selectedOptions: variant.selectedOptions || [],
       });
-      toast.success('Bundle updated', {
-        description: `${product.node.title} added`,
+      toast.success(t('pdp.bundleUpdated'), {
+        description: `${product.node.title} ${t('pdp.productAddedDesc')}`,
         position: 'top-center',
       });
     } catch {
-      toast.error('Failed to add product');
+      toast.error(t('pdp.failedToAdd'));
     }
   };
 
@@ -85,10 +83,10 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
         if (searchText.includes(kw)) return goal;
       }
     }
-    const t = product.node.productType?.toLowerCase() || '';
-    if (t.includes('protein')) return 'Recovery';
-    if (t.includes('vitamin')) return 'Daily Health';
-    if (t.includes('mineral')) return 'Essential';
+    const tp = product.node.productType?.toLowerCase() || '';
+    if (tp.includes('protein')) return 'Recovery';
+    if (tp.includes('vitamin')) return 'Daily Health';
+    if (tp.includes('mineral')) return 'Essential';
     return 'Wellness';
   };
 
@@ -96,7 +94,7 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
     <section className="py-6 space-y-4">
       <div className="flex items-center gap-2">
         <h2 className="text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
-          {hasPersonalization ? 'Recommande pour vous' : 'Pairs well with'}
+          {hasPersonalization ? t('pdp.recommendedForYou') : t('pdp.pairsWellWithTitle')}
         </h2>
         {hasPersonalization && <Sparkle weight="fill" className="w-5 h-5 text-secondary" />}
       </div>
@@ -139,15 +137,10 @@ function CompactCrossSellCard({ product, reasonTag, onAdd, onClick }: {
           <div className="w-full h-full flex items-center justify-center text-foreground/20 text-xs">IMG</div>
         )}
       </button>
-
       <div className="p-3 space-y-2">
-        <span className="inline-block px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
-          {reasonTag}
-        </span>
+        <span className="inline-block px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">{reasonTag}</span>
         <button onClick={onClick} className="block text-left">
-          <h4 className="text-xs font-medium text-foreground line-clamp-2 leading-tight hover:text-primary transition-colors">
-            {product.node.title}
-          </h4>
+          <h4 className="text-xs font-medium text-foreground line-clamp-2 leading-tight hover:text-primary transition-colors">{product.node.title}</h4>
         </button>
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-foreground">{parseFloat(price.amount).toFixed(2)} &euro;</span>

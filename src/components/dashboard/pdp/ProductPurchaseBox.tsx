@@ -372,7 +372,7 @@ export function ProductPurchaseBox({
       {/* Ask VitaSync */}
       <button
         onClick={() => {
-          const question = `Que penses-tu de ${product.title} pour moi ? Est-ce adapte a mon profil et mes objectifs ?`;
+          const question = t('pdp.askVitaSyncQuestion').replace('{product}', product.title);
           navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
         }}
         className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"

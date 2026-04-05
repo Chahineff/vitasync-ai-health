@@ -1,5 +1,6 @@
 import { Target, Package, Flask, Clock } from '@phosphor-icons/react';
 import { ParsedProductData } from '@/lib/shopify-parser';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface QuickBenefitsStripProps {
   productType: string;
@@ -10,16 +11,18 @@ interface QuickBenefitsStripProps {
 }
 
 export function QuickBenefitsStrip({ productType, parsedData, bestForTags, enrichedDosage, enrichedTiming }: QuickBenefitsStripProps) {
+  const { t } = useTranslation();
+
   const goal = bestForTags?.[0] || deriveGoal(productType, parsedData);
   const format = deriveFormat(productType, parsedData?.productAmount);
   const keyIngredient = deriveKeyIngredient(parsedData?.ingredients);
   const bestTime = enrichedTiming || deriveBestTime(parsedData?.suggestedUse);
 
   const items = [
-    { icon: Target, label: 'Goal', value: goal },
-    { icon: Package, label: 'Format', value: format },
-    { icon: Flask, label: 'Key Ingredient', value: keyIngredient },
-    { icon: Clock, label: 'When', value: bestTime },
+    { icon: Target, label: t('pdp.goalLabel'), value: goal },
+    { icon: Package, label: t('pdp.formatLabel'), value: format },
+    { icon: Flask, label: t('pdp.keyIngredient'), value: keyIngredient },
+    { icon: Clock, label: t('pdp.whenLabel'), value: bestTime },
   ].filter(item => item.value);
 
   if (items.length === 0) return null;

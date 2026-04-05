@@ -21,7 +21,7 @@ import { ParsedProductData } from '@/lib/shopify-parser';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useNavigate } from 'react-router-dom';
 import { addBusinessDays, format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS, es, ar, zhCN, pt } from 'date-fns/locale';
 
 interface ProductPurchaseBoxProps {
   product: ProductDetail;
@@ -72,7 +72,7 @@ export function ProductPurchaseBox({
   // Estimated delivery dates
   const deliveryStart = addBusinessDays(new Date(), 3);
   const deliveryEnd = addBusinessDays(new Date(), 5);
-  const deliveryText = `${format(deliveryStart, 'EEE d', { locale: fr })} - ${format(deliveryEnd, 'EEE d MMM', { locale: fr })}`;
+  const deliveryText = `${format(deliveryStart, 'EEE d', { locale: dateFnsLocale })} - ${format(deliveryEnd, 'EEE d MMM', { locale: dateFnsLocale })}`;
 
   const handleAddToCart = async () => {
     if (!selectedVariant || isAdding) return;
@@ -151,7 +151,7 @@ export function ProductPurchaseBox({
               ))}
             </div>
             <span className="text-sm text-foreground/50 group-hover:text-foreground/70 transition-colors">
-              {reviewRating.toFixed(1)} {reviewCount ? `· ${reviewCount} avis` : ''}
+              {reviewRating.toFixed(1)} {reviewCount ? `· ${reviewCount} ${t('pdp.reviews')}` : ''}
             </span>
           </button>
         )}
@@ -260,7 +260,7 @@ export function ProductPurchaseBox({
                 </div>
                 <div>
                   <span className="font-semibold text-foreground">
-                    {selectedPlan ? `Abonnement — ${getDeliveryFrequency(selectedPlan)}` : 'Abonnement'}
+                    {selectedPlan ? `${t('pdp.subscription')} — ${getDeliveryFrequency(selectedPlan)}` : t('pdp.subscription')}
                   </span>
                   {discountPct && (
                     <Badge className="ml-2 bg-primary/10 text-primary border-primary/20 text-xs font-semibold">
@@ -278,7 +278,7 @@ export function ProductPurchaseBox({
                 className="px-4 pb-4 space-y-3"
               >
                 <p className="text-sm text-foreground/60 font-light pl-8">
-                  Livraison gratuite, ajustable a tout moment avec l'IA.
+                  {t('pdp.subscriptionDesc')}
                 </p>
                 {sellingPlans.length > 1 && (
                   <div className="flex flex-wrap gap-2 pl-8">
@@ -316,7 +316,7 @@ export function ProductPurchaseBox({
               {effectiveMode === 'once' && <div className="w-2 h-2 rounded-full bg-foreground/60" />}
             </div>
             <span className="text-sm text-foreground/50 font-light group-hover:text-foreground/70 transition-colors">
-              Achat unique
+              {t('pdp.oneTime')}
             </span>
           </div>
           <span className="text-sm text-foreground/50 font-light">{basePrice.toFixed(2)} &euro;</span>
@@ -325,7 +325,7 @@ export function ProductPurchaseBox({
 
       {/* Quantity */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-foreground/60 font-medium">Quantite</span>
+        <span className="text-sm text-foreground/60 font-medium">{t('pdp.quantity')}</span>
         <div className="flex items-center gap-3 border border-border/50 rounded-xl px-2 py-1">
           <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground">
             <Minus weight="bold" className="w-4 h-4" />
@@ -366,19 +366,19 @@ export function ProductPurchaseBox({
       {/* Estimated Delivery */}
       <div className="flex items-center gap-2 justify-center text-sm text-foreground/50 font-light">
         <Package weight="light" className="w-4 h-4" />
-        Livraison estimee : {deliveryText}
+        {t('pdp.estimatedDelivery')} {deliveryText}
       </div>
 
       {/* Ask VitaSync */}
       <button
         onClick={() => {
-          const question = `Que penses-tu de ${product.title} pour moi ? Est-ce adapte a mon profil et mes objectifs ?`;
+          const question = t('pdp.askVitaSyncQuestion').replace('{product}', product.title);
           navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
         }}
         className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
       >
         <ChatCircleDots weight="light" className="w-4 h-4" />
-        Demander a VitaSync
+        {t('pdp.askVitaSync')}
       </button>
 
       {/* Certifications */}

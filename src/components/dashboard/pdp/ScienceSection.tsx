@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BookOpen, ArrowSquareOut, Lightbulb, CaretDown } from '@phosphor-icons/react';
 import { EnrichedScienceData } from './types';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ScienceSectionProps {
   productTitle: string;
@@ -11,6 +12,7 @@ interface ScienceSectionProps {
 const INITIAL_SOURCES_COUNT = 3;
 
 export function ScienceSection({ productTitle, enrichedScience }: ScienceSectionProps) {
+  const { t } = useTranslation();
   const [showAllSources, setShowAllSources] = useState(false);
   const hasEnriched = enrichedScience && enrichedScience.study_bullets?.length > 0;
 
@@ -22,39 +24,33 @@ export function ScienceSection({ productTitle, enrichedScience }: ScienceSection
         'Clinical trials have explored dosage optimization for maximum efficacy.',
       ];
 
-  const sources = hasEnriched
-    ? enrichedScience.sources
-    : [];
+  const sources = hasEnriched ? enrichedScience.sources : [];
 
   const tldr = hasEnriched
     ? enrichedScience.tldr
-    : 'Les ingrédients actifs de ce produit ont fait l\'objet d\'études scientifiques suggérant des bienfaits potentiels pour la santé. Résultats variables selon les individus.';
+    : t('pdp.scienceDisclaimer');
 
   return (
     <section className="py-12 space-y-8">
       <div className="flex items-center gap-2">
         <BookOpen weight="light" className="w-5 h-5 text-primary" />
         <h2 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
-          The Science
+          {t('pdp.theScience')}
         </h2>
       </div>
 
-      {/* TL;DR */}
       <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10">
         <div className="flex items-start gap-3">
           <Lightbulb weight="fill" className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-primary mb-1">TL;DR</p>
-            <p className="text-foreground font-light text-sm leading-relaxed">
-              {tldr}
-            </p>
+            <p className="text-sm font-medium text-primary mb-1">{t('pdp.tldr')}</p>
+            <p className="text-foreground font-light text-sm leading-relaxed">{tldr}</p>
           </div>
         </div>
       </div>
 
-      {/* Study Bullets */}
       <div className="space-y-3">
-        <p className="text-sm text-foreground/60 font-medium">What studies suggest:</p>
+        <p className="text-sm text-foreground/60 font-medium">{t('pdp.studiesSuggest')}</p>
         <ul className="space-y-3">
           {studyBullets.map((bullet, index) => (
             <li key={index} className="flex items-start gap-3 text-sm text-foreground/70 font-light">
@@ -65,13 +61,12 @@ export function ScienceSection({ productTitle, enrichedScience }: ScienceSection
         </ul>
       </div>
 
-      {/* Sources */}
       {sources.length > 0 && (() => {
         const visibleSources = showAllSources ? sources : sources.slice(0, INITIAL_SOURCES_COUNT);
         const hasMore = sources.length > INITIAL_SOURCES_COUNT;
         return (
           <div className="space-y-3">
-            <p className="text-sm text-foreground/60 font-medium">Sources & références:</p>
+            <p className="text-sm text-foreground/60 font-medium">{t('pdp.sourcesReferences')}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {visibleSources.map((source, index) => (
                 <a
@@ -82,12 +77,8 @@ export function ScienceSection({ productTitle, enrichedScience }: ScienceSection
                   className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/30 hover:bg-muted/50 transition-colors group"
                 >
                   <ArrowSquareOut weight="light" className="w-4 h-4 text-foreground/40 group-hover:text-primary transition-colors flex-shrink-0" />
-                  <span className="text-sm text-foreground/60 font-light truncate group-hover:text-foreground transition-colors">
-                    {source.title}
-                  </span>
-                  {source.year && (
-                    <span className="text-xs text-foreground/30 flex-shrink-0">({source.year})</span>
-                  )}
+                  <span className="text-sm text-foreground/60 font-light truncate group-hover:text-foreground transition-colors">{source.title}</span>
+                  {source.year && <span className="text-xs text-foreground/30 flex-shrink-0">({source.year})</span>}
                 </a>
               ))}
             </div>
@@ -98,7 +89,7 @@ export function ScienceSection({ productTitle, enrichedScience }: ScienceSection
                 onClick={() => setShowAllSources(!showAllSources)}
                 className="gap-2 text-primary hover:text-primary/80"
               >
-                {showAllSources ? 'Voir moins' : `Voir plus de sources (${sources.length - INITIAL_SOURCES_COUNT})`}
+                {showAllSources ? t('pdp.showLess') : `${t('pdp.showMoreSources')} (${sources.length - INITIAL_SOURCES_COUNT})`}
                 <CaretDown weight="light" className={`w-4 h-4 transition-transform ${showAllSources ? 'rotate-180' : ''}`} />
               </Button>
             )}
@@ -106,10 +97,7 @@ export function ScienceSection({ productTitle, enrichedScience }: ScienceSection
         );
       })()}
 
-      <p className="text-xs text-foreground/40 font-light">
-        Ces informations sont fournies à titre éducatif uniquement. Les résultats peuvent varier.
-        Consultez un professionnel de santé pour des conseils personnalisés.
-      </p>
+      <p className="text-xs text-foreground/40 font-light">{t('pdp.scienceDisclaimer')}</p>
     </section>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
+import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -14,6 +15,7 @@ interface MobileStickyCartProps {
 }
 
 export function MobileStickyCart({ product, selectedVariantIndex, purchaseMode = 'subscribe', subscriptionPrice }: MobileStickyCartProps) {
+  const { t } = useTranslation();
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   
@@ -64,13 +66,13 @@ export function MobileStickyCart({ product, selectedVariantIndex, purchaseMode =
         } : {}),
       });
       setJustAdded(true);
-      toast.success('Ajoute a votre routine', {
+      toast.success(t('pdp.addedToRoutine'), {
         description: product.title,
         position: 'top-center',
       });
       setTimeout(() => setJustAdded(false), 2000);
     } catch {
-      toast.error('Echec de l\'ajout');
+      toast.error(t('pdp.addFailed'));
     } finally {
       setIsAdding(false);
     }
@@ -83,18 +85,16 @@ export function MobileStickyCart({ product, selectedVariantIndex, purchaseMode =
       className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-lg border-t border-border/50 lg:hidden z-40 pb-[env(safe-area-inset-bottom)]"
     >
       <div className="flex items-center gap-3 h-16 px-4 max-w-lg mx-auto">
-        {/* Product name + mode */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground truncate">{product.title}</p>
           <div className="flex items-center gap-1.5">
             <span className="text-base font-bold text-foreground">{displayPrice.toFixed(2)} &euro;</span>
             {effectiveMode === 'subscribe' && (
-              <span className="text-[10px] text-primary font-medium">/mois</span>
+              <span className="text-[10px] text-primary font-medium">{t('pdp.perMonth')}</span>
             )}
           </div>
         </div>
 
-        {/* CTA */}
         <motion.button
           onClick={handleAddToCart}
           disabled={isAdding || !selectedVariant?.availableForSale}
@@ -114,9 +114,9 @@ export function MobileStickyCart({ product, selectedVariantIndex, purchaseMode =
           ) : justAdded ? (
             <><Check weight="bold" className="w-4 h-4" /> OK</>
           ) : effectiveMode === 'subscribe' ? (
-            <><Repeat weight="bold" className="w-4 h-4" /> S'abonner</>
+            <><Repeat weight="bold" className="w-4 h-4" /> {t('pdp.subscribe')}</>
           ) : (
-            <><ShoppingCartSimple weight="bold" className="w-4 h-4" /> Ajouter</>
+            <><ShoppingCartSimple weight="bold" className="w-4 h-4" /> {t('pdp.add')}</>
           )}
         </motion.button>
       </div>

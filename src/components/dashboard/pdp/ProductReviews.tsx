@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Star, ChatCircleDots, CaretDown } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/useTranslation';
 import { cn } from '@/lib/utils';
 import { FAQItem } from './types';
 
@@ -13,6 +14,7 @@ interface ProductReviewsProps {
 }
 
 export function ProductReviews({ productTitle, productHandle, enrichedFaq, reviewRating, reviewCount }: ProductReviewsProps) {
+  const { t } = useTranslation();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const faqItems = enrichedFaq?.slice(0, 4) || [];
   const hasReviews = reviewRating != null && reviewCount != null && reviewCount > 0;
@@ -22,10 +24,9 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
   return (
     <section className="py-6 space-y-6">
       <h2 className="text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
-        Customer Reviews
+        {t('pdp.customerReviews')}
       </h2>
 
-      {/* Summary Rating */}
       <div className="flex items-center gap-6 p-5 rounded-2xl bg-white dark:bg-muted/20 border border-[#E2E8F0] dark:border-border/30">
         <div className="text-center">
           <div className="text-4xl font-bold text-foreground">{hasReviews ? rating.toFixed(1) : '—'}</div>
@@ -38,7 +39,7 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
             })}
           </div>
           <p className="text-xs text-foreground/50 mt-1">
-            {hasReviews ? `${count} avis` : 'No reviews yet'}
+            {hasReviews ? `${count} ${t('pdp.reviews')}` : t('pdp.noReviewsYet')}
           </p>
         </div>
         <div className="flex-1 space-y-1">
@@ -55,7 +56,6 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
         </div>
       </div>
 
-      {/* Placeholder review cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[1, 2, 3].map((id) => (
           <div key={id} className="p-5 rounded-2xl bg-white dark:bg-muted/10 border border-[#E2E8F0] dark:border-border/30 border-dashed space-y-3">
@@ -77,30 +77,24 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
         ))}
       </div>
 
-      {/* CTAs */}
       <div className="flex items-center gap-3 justify-center flex-wrap">
         {productHandle && (
-          <a
-            href={`https://vitasync2.myshopify.com/products/${productHandle}#judgeme_product_reviews`}  
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={`https://vitasync2.myshopify.com/products/${productHandle}#judgeme_product_reviews`} target="_blank" rel="noopener noreferrer">
             <Button variant="outline" className="gap-2">
               <Star weight="light" className="w-4 h-4" />
-              Lire les avis sur Judge.me
+              {t('pdp.readReviewsJudgme')}
             </Button>
           </a>
         )}
         <Button variant="ghost" className="gap-2 text-primary">
           <ChatCircleDots weight="light" className="w-4 h-4" />
-          Ask VitaSync
+          {t('pdp.askVitaSync')}
         </Button>
       </div>
 
-      {/* FAQ Section */}
       {faqItems.length > 0 && (
         <div className="space-y-4 pt-4">
-          <h3 className="text-lg font-semibold text-foreground">Frequently Asked Questions</h3>
+          <h3 className="text-lg font-semibold text-foreground">{t('pdp.faq')}</h3>
           <div className="space-y-2">
             {faqItems.map((faq, index) => (
               <div key={index} className="rounded-xl border border-[#E2E8F0] dark:border-border/30 overflow-hidden">
@@ -109,10 +103,7 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
                   className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
                 >
                   <span className="text-sm font-medium text-foreground pr-4">{faq.question}</span>
-                  <CaretDown
-                    weight="light"
-                    className={cn("w-4 h-4 text-foreground/50 transition-transform flex-shrink-0", openFaqIndex === index && "rotate-180")}
-                  />
+                  <CaretDown weight="light" className={cn("w-4 h-4 text-foreground/50 transition-transform flex-shrink-0", openFaqIndex === index && "rotate-180")} />
                 </button>
                 <div className={cn("grid transition-all duration-300", openFaqIndex === index ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
                   <div className="overflow-hidden">

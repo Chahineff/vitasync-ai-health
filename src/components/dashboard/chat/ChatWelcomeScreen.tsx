@@ -23,6 +23,7 @@ interface ChatWelcomeScreenProps {
 
 export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: ChatWelcomeScreenProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 pb-32 overflow-y-auto">

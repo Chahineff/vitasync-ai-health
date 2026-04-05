@@ -209,7 +209,7 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Heart weight="fill" className="w-4 h-4" style={{ color }} />
-                <h3 className="text-sm font-medium text-foreground">Score Santé</h3>
+                <h3 className="text-sm font-medium text-foreground">{t("healthScore.title")}</h3>
                 <ChartLine weight="bold" className="w-3.5 h-3.5 text-foreground/30 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <p className="text-lg font-semibold text-foreground mb-1">{label}</p>

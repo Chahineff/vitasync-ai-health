@@ -557,7 +557,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
           className="w-full px-4 py-3 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/20 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {isExporting ? <SpinnerGap size={18} className="animate-spin" /> : <DownloadSimple size={18} />}
-          {isExporting ? "Export en cours..." : "Exporter mes données (JSON)"}
+          {isExporting ? t("settings.exportInProgress") : t("settings.exportData")}
         </button>
 
         <div className="border-t border-border/50 pt-4">

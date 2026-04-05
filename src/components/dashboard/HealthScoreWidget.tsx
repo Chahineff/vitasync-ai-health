@@ -154,6 +154,7 @@ function ScoreHistoryChart({ recentCheckins, todayCheckin }: { recentCheckins: a
 export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) {
   const { todayCheckin, recentCheckins } = useDailyCheckin();
   const [chartOpen, setChartOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { score, yesterdayScore, trend } = useMemo(() => {
     if (!todayCheckin) return { score: 0, yesterdayScore: 0, trend: "none" as const };

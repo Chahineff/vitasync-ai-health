@@ -109,7 +109,7 @@ export function ProductPurchaseBox({
       });
       setJustAdded(true);
       toast.success(
-        effectiveMode === 'subscribe' ? 'Ajoute a votre routine' : 'Ajoute au panier',
+        effectiveMode === 'subscribe' ? t('pdp.addedToRoutine') : t('pdp.addedToCartToast'),
         { description: product.title, position: 'top-center' }
       );
       setTimeout(() => setJustAdded(false), 2000);

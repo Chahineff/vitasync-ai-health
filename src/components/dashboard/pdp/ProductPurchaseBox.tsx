@@ -23,6 +23,8 @@ import { useNavigate } from 'react-router-dom';
 import { addBusinessDays, format } from 'date-fns';
 import { fr, enUS, es, ar, zhCN, pt } from 'date-fns/locale';
 
+const dateFnsLocales: Record<string, typeof fr> = { fr, en: enUS, es, ar, zh: zhCN, pt };
+
 interface ProductPurchaseBoxProps {
   product: ProductDetail;
   parsedData: ParsedProductData | null;
@@ -44,7 +46,7 @@ export function ProductPurchaseBox({
   reviewCount,
   isInStack,
 }: ProductPurchaseBoxProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const navigate = useNavigate();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
@@ -72,6 +74,7 @@ export function ProductPurchaseBox({
   // Estimated delivery dates
   const deliveryStart = addBusinessDays(new Date(), 3);
   const deliveryEnd = addBusinessDays(new Date(), 5);
+  const dateFnsLocale = dateFnsLocales[locale] || enUS;
   const deliveryText = `${format(deliveryStart, 'EEE d', { locale: dateFnsLocale })} - ${format(deliveryEnd, 'EEE d MMM', { locale: dateFnsLocale })}`;
 
   const handleAddToCart = async () => {

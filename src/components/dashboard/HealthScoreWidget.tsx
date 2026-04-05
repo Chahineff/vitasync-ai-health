@@ -94,7 +94,7 @@ function ScoreHistoryChart({ recentCheckins, todayCheckin }: { recentCheckins: a
   if (chartData.length < 2) {
     return (
       <div className="flex items-center justify-center h-48 text-foreground/40 text-sm">
-        Pas assez de données (min. 2 jours)
+        {t("healthScore.notEnoughData")}
       </div>
     );
   }

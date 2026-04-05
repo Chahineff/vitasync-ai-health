@@ -96,21 +96,21 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("already registered")) {
             toast({
-              title: "Compte existant",
-              description: "Cet email est déjà utilisé. Veuillez vous connecter.",
+              title: t("auth.existingAccount"),
+              description: t("auth.emailAlreadyUsed"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Erreur d'inscription",
+              title: t("auth.signupError"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Compte créé !",
-            description: "Bienvenue sur VitaSync. Vous êtes maintenant connecté.",
+            title: t("auth.accountCreated"),
+            description: t("auth.accountCreatedDesc"),
           });
           navigate("/dashboard");
         }

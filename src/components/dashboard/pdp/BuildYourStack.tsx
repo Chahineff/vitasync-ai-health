@@ -84,10 +84,10 @@ export function BuildYourStack({ products, currentProductId, onProductClick }: B
       }
     }
     const tp = product.node.productType?.toLowerCase() || '';
-    if (tp.includes('protein')) return 'Recovery';
-    if (tp.includes('vitamin')) return 'Daily Health';
-    if (tp.includes('mineral')) return 'Essential';
-    return 'Wellness';
+    if (tp.includes('protein')) return t('pdp.goalRecovery');
+    if (tp.includes('vitamin')) return t('pdp.goalDailyHealth');
+    if (tp.includes('mineral')) return t('pdp.goalEssential');
+    return t('pdp.goalWellness');
   };
 
   return (

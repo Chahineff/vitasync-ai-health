@@ -219,9 +219,9 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
                   {trend === "down" && <TrendDown weight="bold" className="w-3.5 h-3.5 text-destructive" />}
                   {trend === "equal" && <Minus weight="bold" className="w-3.5 h-3.5 text-foreground/40" />}
                   <span className="text-xs text-foreground/50">
-                    {trend === "up" && `+${score - yesterdayScore} vs hier`}
-                    {trend === "down" && `${score - yesterdayScore} vs hier`}
-                    {trend === "equal" && "Stable vs hier"}
+                    {trend === "up" && `+${score - yesterdayScore} ${t("healthScore.vsYesterday")}`}
+                    {trend === "down" && `${score - yesterdayScore} ${t("healthScore.vsYesterday")}`}
+                    {trend === "equal" && t("healthScore.stable")}
                   </span>
                 </div>
               )}

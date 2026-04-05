@@ -366,7 +366,7 @@ export function ProductPurchaseBox({
       {/* Estimated Delivery */}
       <div className="flex items-center gap-2 justify-center text-sm text-foreground/50 font-light">
         <Package weight="light" className="w-4 h-4" />
-        Livraison estimee : {deliveryText}
+        {t('pdp.estimatedDelivery')} {deliveryText}
       </div>
 
       {/* Ask VitaSync */}

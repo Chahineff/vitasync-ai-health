@@ -378,7 +378,7 @@ export function ProductPurchaseBox({
         className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
       >
         <ChatCircleDots weight="light" className="w-4 h-4" />
-        Demander a VitaSync
+        {t('pdp.askVitaSync')}
       </button>
 
       {/* Certifications */}

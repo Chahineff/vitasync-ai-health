@@ -290,7 +290,7 @@ export const CinematicDashboardSection = () => {
         .to(".cine-hero-text", { scale: 1.1, filter: "blur(16px)", opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-orbit-ring", { scale: 1.3, opacity: 0, ease: "power2.inOut", duration: 2 }, 0)
         .to(".cine-card", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
-        .to(".cine-card", { width: "100%", height: "100%", borderRadius: "0px", top: "0%", left: "0%", marginTop: 0, marginLeft: 0, ease: "power3.inOut", duration: 1.5 })
+        .to(".cine-card", { width: "100vw", height: "100vh", borderRadius: "0px", top: "50%", left: "50%", marginTop: "calc(-100vh / 2)", marginLeft: "calc(-100vw / 2)", ease: "power3.inOut", duration: 1.5 })
         .fromTo(
           ".cine-mockup-wrapper",
           { y: 200, z: -400, rotationX: mobile ? 0 : 40, rotationY: mobile ? 0 : -25, autoAlpha: 0, scale: 0.6 },

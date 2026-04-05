@@ -225,7 +225,7 @@ const Auth = () => {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="Votre nom"
+                    placeholder={t("auth.lastNamePlaceholder")}
                   />
                   {errors.lastName && (
                     <p className="text-sm text-red-500 mt-1">{errors.lastName}</p>

@@ -2,22 +2,25 @@ import { useState } from 'react';
 import { CaretDown, Question } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { FAQItem } from './types';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ProductFAQProps {
   productTitle: string;
   enrichedFaq?: FAQItem[];
 }
 
-const defaultFaqs: FAQItem[] = [
-  { question: 'How often can I take it?', answer: 'Follow the recommended dosage on the label. Most supplements are designed for daily use.' },
-  { question: 'When will I feel results?', answer: 'Results vary by individual. Some effects may be noticed within days, while others may take 4-8 weeks of consistent use.' },
-  { question: 'Can I combine with other supplements?', answer: 'Many supplements can be safely combined, but some may interact. Consult with a healthcare provider for personalized recommendations.' },
-  { question: 'Does it contain allergens?', answer: 'Check the ingredient list and allergen information on the product label.' },
-  { question: 'Best time to take it?', answer: 'Check the "How to Take" section above for specific guidance on timing.' },
-];
-
 export function ProductFAQ({ productTitle, enrichedFaq }: ProductFAQProps) {
+  const { t } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const defaultFaqs: FAQItem[] = [
+    { question: t('pdp.faqDefaultQ1'), answer: t('pdp.faqDefaultA1') },
+    { question: t('pdp.faqDefaultQ2'), answer: t('pdp.faqDefaultA2') },
+    { question: t('pdp.faqDefaultQ3'), answer: t('pdp.faqDefaultA3') },
+    { question: t('pdp.faqDefaultQ4'), answer: t('pdp.faqDefaultA4') },
+    { question: t('pdp.faqDefaultQ5'), answer: t('pdp.faqDefaultA5') },
+  ];
+
   const faqs = enrichedFaq && enrichedFaq.length > 0 ? enrichedFaq : defaultFaqs;
 
   return (
@@ -25,7 +28,7 @@ export function ProductFAQ({ productTitle, enrichedFaq }: ProductFAQProps) {
       <div className="flex items-center gap-2 mb-2">
         <Question weight="light" className="w-5 h-5 text-primary" />
         <h2 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
-          Frequently Asked Questions
+          {t('pdp.faqTitle')}
         </h2>
       </div>
 

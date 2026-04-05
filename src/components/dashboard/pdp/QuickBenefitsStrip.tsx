@@ -13,10 +13,10 @@ interface QuickBenefitsStripProps {
 export function QuickBenefitsStrip({ productType, parsedData, bestForTags, enrichedDosage, enrichedTiming }: QuickBenefitsStripProps) {
   const { t } = useTranslation();
 
-  const goal = bestForTags?.[0] || deriveGoal(productType, parsedData);
-  const format = deriveFormat(productType, parsedData?.productAmount);
+  const goal = bestForTags?.[0] || deriveGoal(productType, parsedData, t);
+  const format = deriveFormat(productType, parsedData?.productAmount, t);
   const keyIngredient = deriveKeyIngredient(parsedData?.ingredients);
-  const bestTime = enrichedTiming || deriveBestTime(parsedData?.suggestedUse);
+  const bestTime = enrichedTiming || deriveBestTime(parsedData?.suggestedUse, t);
 
   const items = [
     { icon: Target, label: t('pdp.goalLabel'), value: goal },
@@ -44,33 +44,33 @@ export function QuickBenefitsStrip({ productType, parsedData, bestForTags, enric
   );
 }
 
-function deriveGoal(productType: string, parsedData: ParsedProductData | null): string {
+function deriveGoal(productType: string, parsedData: ParsedProductData | null, t: (key: string) => string): string {
   const type = productType?.toLowerCase() || '';
-  if (type.includes('protein')) return 'Strength';
-  if (type.includes('sleep') || type.includes('melatonin')) return 'Sleep';
-  if (type.includes('focus') || type.includes('brain')) return 'Focus';
-  if (type.includes('stress') || type.includes('relax')) return 'Stress Relief';
-  if (type.includes('energy')) return 'Energy';
-  if (type.includes('immune')) return 'Immunity';
+  if (type.includes('protein')) return t('pdp.goalStrength');
+  if (type.includes('sleep') || type.includes('melatonin')) return t('pdp.goalSleep');
+  if (type.includes('focus') || type.includes('brain')) return t('pdp.goalFocus');
+  if (type.includes('stress') || type.includes('relax')) return t('pdp.goalStressRelief');
+  if (type.includes('energy')) return t('pdp.goalEnergy');
+  if (type.includes('immune')) return t('pdp.goalImmunity');
   if (parsedData?.benefits?.length) {
     const b = parsedData.benefits[0].toLowerCase();
-    if (b.includes('muscle')) return 'Strength';
-    if (b.includes('sleep')) return 'Sleep';
-    if (b.includes('energy')) return 'Energy';
+    if (b.includes('muscle')) return t('pdp.goalStrength');
+    if (b.includes('sleep')) return t('pdp.goalSleep');
+    if (b.includes('energy')) return t('pdp.goalEnergy');
   }
-  return 'Wellness';
+  return t('pdp.goalWellness');
 }
 
-function deriveFormat(productType: string, productAmount: string | null | undefined): string {
+function deriveFormat(productType: string, productAmount: string | null | undefined, t: (key: string) => string): string {
   const amount = productAmount?.toLowerCase() || '';
   const type = productType?.toLowerCase() || '';
-  if (amount.includes('capsule') || type.includes('capsule')) return 'Capsules';
-  if (amount.includes('softgel')) return 'Softgels';
-  if (amount.includes('tablet')) return 'Tablets';
-  if (amount.includes('gumm') || type.includes('gumm')) return 'Gummies';
-  if (amount.includes('powder') || type.includes('powder')) return 'Powder';
-  if (amount.includes('liquid') || amount.includes('ml')) return 'Liquid';
-  return 'Supplement';
+  if (amount.includes('capsule') || type.includes('capsule')) return t('pdp.formatCapsules');
+  if (amount.includes('softgel')) return t('pdp.formatSoftgels');
+  if (amount.includes('tablet')) return t('pdp.formatTablets');
+  if (amount.includes('gumm') || type.includes('gumm')) return t('pdp.formatGummies');
+  if (amount.includes('powder') || type.includes('powder')) return t('pdp.formatPowder');
+  if (amount.includes('liquid') || amount.includes('ml')) return t('pdp.formatLiquid');
+  return t('pdp.formatSupplement');
 }
 
 function deriveKeyIngredient(ingredients: string[] | undefined): string {
@@ -79,13 +79,13 @@ function deriveKeyIngredient(ingredients: string[] | undefined): string {
   return key.length > 30 ? ingredients[0] : key;
 }
 
-function deriveBestTime(suggestedUse: string | undefined): string {
+function deriveBestTime(suggestedUse: string | undefined, t: (key: string) => string): string {
   if (!suggestedUse) return '';
   const use = suggestedUse.toLowerCase();
-  if (use.includes('morning') || use.includes('matin')) return 'AM';
-  if (use.includes('evening') || use.includes('soir') || use.includes('before bed')) return 'PM';
-  if (use.includes('pre-workout')) return 'Pre-workout';
-  if (use.includes('post-workout')) return 'Post-workout';
-  if (use.includes('with meal')) return 'With meal';
-  return 'Anytime';
+  if (use.includes('morning') || use.includes('matin')) return t('pdp.bestTimeAM');
+  if (use.includes('evening') || use.includes('soir') || use.includes('before bed')) return t('pdp.bestTimePM');
+  if (use.includes('pre-workout')) return t('pdp.bestTimePreWorkout');
+  if (use.includes('post-workout')) return t('pdp.bestTimePostWorkout');
+  if (use.includes('with meal')) return t('pdp.bestTimeWithMeal');
+  return t('pdp.bestTimeAnytime');
 }

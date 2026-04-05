@@ -308,7 +308,7 @@ const Auth = () => {
             {isSignUp && (
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm text-foreground/70 mb-2">
-                  Date de naissance <span className="text-destructive">*</span>
+                  {t("auth.dob")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="date"

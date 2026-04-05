@@ -353,12 +353,12 @@ const Auth = () => {
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <SpinnerGap size={20} className="animate-spin" />
-                  {isSignUp ? "Création..." : "Connexion..."}
+                  {isSignUp ? t("auth.creating") : t("auth.connecting")}
                 </span>
               ) : isSignUp ? (
-                "Créer mon compte"
+                t("auth.createMyAccount")
               ) : (
-                "Se connecter"
+                t("auth.signIn")
               )}
             </button>
           </form>

@@ -85,7 +85,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
                 animate={{ opacity: 1 }}
                 className="w-full h-full flex items-center justify-center text-muted-foreground/50"
               >
-                <span className="text-sm">No image</span>
+                <span className="text-sm">{t('pdp.noImage')}</span>
               </motion.div>
             )}
           </AnimatePresence>

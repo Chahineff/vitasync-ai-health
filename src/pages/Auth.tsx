@@ -201,7 +201,7 @@ const Auth = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm text-foreground/70 mb-2">
-                    Prénom
+                    {t("auth.firstName")}
                   </label>
                   <input
                     type="text"

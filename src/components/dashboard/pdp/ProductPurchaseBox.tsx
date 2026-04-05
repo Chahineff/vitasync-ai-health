@@ -325,7 +325,7 @@ export function ProductPurchaseBox({
 
       {/* Quantity */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-foreground/60 font-medium">Quantite</span>
+        <span className="text-sm text-foreground/60 font-medium">{t('pdp.quantity')}</span>
         <div className="flex items-center gap-3 border border-border/50 rounded-xl px-2 py-1">
           <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded-lg hover:bg-muted transition-colors text-foreground/60 hover:text-foreground">
             <Minus weight="bold" className="w-4 h-4" />

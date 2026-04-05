@@ -9,6 +9,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { Checkbox } from "@/components/ui/checkbox";
 import { differenceInYears, parse } from "date-fns";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const passwordRegex = {
   uppercase: /[A-Z]/,
@@ -41,6 +42,7 @@ const signUpSchema = z.object({
 });
 
 const Auth = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
   
@@ -94,21 +96,21 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("already registered")) {
             toast({
-              title: "Compte existant",
-              description: "Cet email est déjà utilisé. Veuillez vous connecter.",
+              title: t("auth.existingAccount"),
+              description: t("auth.emailAlreadyUsed"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Erreur d'inscription",
+              title: t("auth.signupError"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Compte créé !",
-            description: "Bienvenue sur VitaSync. Vous êtes maintenant connecté.",
+            title: t("auth.accountCreated"),
+            description: t("auth.accountCreatedDesc"),
           });
           navigate("/dashboard");
         }
@@ -130,29 +132,29 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("Invalid login")) {
             toast({
-              title: "Identifiants incorrects",
-              description: "Email ou mot de passe invalide.",
+              title: t("auth.invalidCredentials"),
+              description: t("auth.invalidCredentialsDesc"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Erreur de connexion",
+              title: t("auth.loginError"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Connexion réussie !",
-            description: "Bienvenue sur VitaSync.",
+            title: t("auth.loginSuccess"),
+            description: t("auth.loginSuccessDesc"),
           });
           navigate("/dashboard");
         }
       }
     } catch (err) {
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite.",
+        title: t("common.error"),
+        description: t("auth.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -187,12 +189,10 @@ const Auth = () => {
         {/* Card */}
         <div className="glass-card p-8 rounded-2xl">
           <h1 className="text-2xl font-light tracking-tight text-foreground text-center mb-2">
-            {isSignUp ? "Créer un compte" : "Se connecter"}
+            {isSignUp ? t("auth.createAccount") : t("auth.signIn")}
           </h1>
           <p className="text-foreground/60 text-center mb-8">
-            {isSignUp
-              ? "Commencez votre parcours santé personnalisé"
-              : "Accédez à votre coach IA personnel"}
+            {isSignUp ? t("auth.signupSubtitle") : t("auth.signinSubtitle")}
           </p>
 
 
@@ -201,7 +201,7 @@ const Auth = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm text-foreground/70 mb-2">
-                    Prénom
+                    {t("auth.firstName")}
                   </label>
                   <input
                     type="text"
@@ -209,7 +209,7 @@ const Auth = () => {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="Votre prénom"
+                    placeholder={t("auth.firstNamePlaceholder")}
                   />
                   {errors.firstName && (
                     <p className="text-sm text-red-500 mt-1">{errors.firstName}</p>
@@ -217,7 +217,7 @@ const Auth = () => {
                 </div>
                 <div>
                   <label htmlFor="lastName" className="block text-sm text-foreground/70 mb-2">
-                    Nom
+                    {t("auth.lastName")}
                   </label>
                   <input
                     type="text"
@@ -225,7 +225,7 @@ const Auth = () => {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl glass-card bg-background border-0 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="Votre nom"
+                    placeholder={t("auth.lastNamePlaceholder")}
                   />
                   {errors.lastName && (
                     <p className="text-sm text-red-500 mt-1">{errors.lastName}</p>
@@ -251,7 +251,7 @@ const Auth = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm text-foreground/70 mb-2">
-                Mot de passe
+                {t("auth.password")}
               </label>
               <div className="relative">
                 <input
@@ -276,11 +276,11 @@ const Auth = () => {
                 <div className="mt-2 space-y-1">
                   {(() => {
                     const checks = [
-                      { label: "8+ caractères", ok: password.length >= 8 },
-                      { label: "Majuscule", ok: passwordRegex.uppercase.test(password) },
-                      { label: "Minuscule", ok: passwordRegex.lowercase.test(password) },
-                      { label: "Chiffre", ok: passwordRegex.digit.test(password) },
-                      { label: "Caractère spécial", ok: passwordRegex.special.test(password) },
+                      { label: t("auth.8chars"), ok: password.length >= 8 },
+                      { label: t("auth.uppercase"), ok: passwordRegex.uppercase.test(password) },
+                      { label: t("auth.lowercase"), ok: passwordRegex.lowercase.test(password) },
+                      { label: t("auth.digit"), ok: passwordRegex.digit.test(password) },
+                      { label: t("auth.specialChar"), ok: passwordRegex.special.test(password) },
                     ];
                     const score = checks.filter(c => c.ok).length;
                     const barColor = score <= 2 ? "bg-red-500" : score <= 3 ? "bg-yellow-500" : score <= 4 ? "bg-blue-500" : "bg-green-500";
@@ -308,7 +308,7 @@ const Auth = () => {
             {isSignUp && (
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm text-foreground/70 mb-2">
-                  Date de naissance <span className="text-destructive">*</span>
+                  {t("auth.dob")} <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="date"
@@ -331,13 +331,13 @@ const Auth = () => {
                   className="mt-0.5"
                 />
                 <label htmlFor="acceptTerms" className="text-sm text-foreground/70 leading-snug cursor-pointer">
-                  J'accepte les{" "}
+                  {t("auth.acceptTermsLabel")}{" "}
                   <Link to="/legal/terms" target="_blank" className="text-primary hover:underline">
-                    conditions générales d'utilisation
+                    {t("auth.termsOfUse")}
                   </Link>
-                  {" "}et la{" "}
+                  {" "}{t("auth.and")}{" "}
                   <Link to="/legal/privacy" target="_blank" className="text-primary hover:underline">
-                    politique de confidentialité
+                    {t("auth.privacyPolicy")}
                   </Link>
                   {" "}<span className="text-destructive">*</span>
                 </label>
@@ -353,12 +353,12 @@ const Auth = () => {
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <SpinnerGap size={20} className="animate-spin" />
-                  {isSignUp ? "Création..." : "Connexion..."}
+                  {isSignUp ? t("auth.creating") : t("auth.connecting")}
                 </span>
               ) : isSignUp ? (
-                "Créer mon compte"
+                t("auth.createMyAccount")
               ) : (
-                "Se connecter"
+                t("auth.signIn")
               )}
             </button>
           </form>
@@ -371,7 +371,7 @@ const Auth = () => {
               }}
               className="text-sm text-foreground/60 hover:text-primary transition-colors"
             >
-              {isSignUp ? "Déjà un compte ? Se connecter" : "Pas de compte ? S'inscrire"}
+              {isSignUp ? t("auth.alreadyAccount") : t("auth.noAccount")}
             </button>
           </div>
         </div>

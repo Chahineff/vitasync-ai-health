@@ -567,7 +567,7 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
               className="w-full px-4 py-3 rounded-xl bg-destructive/10 text-destructive text-sm font-medium border border-destructive/20 hover:bg-destructive/20 transition-colors flex items-center justify-center gap-2"
             >
               <Trash size={18} />
-              Supprimer mon compte
+              {t("settings.deleteAccount")}
             </button>
           ) : (
             <div className="space-y-3">

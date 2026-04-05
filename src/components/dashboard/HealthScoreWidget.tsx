@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendUp, TrendDown, Minus, Heart, ChartLine } from "@phosphor-icons/react";
+import { useTranslation } from "@/hooks/useTranslation";
 import { useDailyCheckin } from "@/hooks/useDailyCheckin";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Area } from "recharts";
 import {

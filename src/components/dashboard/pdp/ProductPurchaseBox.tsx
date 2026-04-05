@@ -151,7 +151,7 @@ export function ProductPurchaseBox({
               ))}
             </div>
             <span className="text-sm text-foreground/50 group-hover:text-foreground/70 transition-colors">
-              {reviewRating.toFixed(1)} {reviewCount ? `· ${reviewCount} avis` : ''}
+              {reviewRating.toFixed(1)} {reviewCount ? `· ${reviewCount} ${t('pdp.reviews')}` : ''}
             </span>
           </button>
         )}

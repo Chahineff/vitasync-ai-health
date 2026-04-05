@@ -931,6 +931,93 @@ export const translations: Record<Locale, Record<string, string>> = {
     "budget.premium": "Premium",
     "budget.elite": "Élite",
 
+    // Shop - missing
+    "shop.recommendationsAlreadyGenerated": "Recommandations déjà générées aujourd'hui",
+
+    // Health Score Widget
+    "healthScore.title": "Score Santé",
+    "healthScore.excellent": "Excellent",
+    "healthScore.good": "Bon",
+    "healthScore.average": "Moyen",
+    "healthScore.low": "Faible",
+    "healthScore.notEnoughData": "Pas assez de données (min. 2 jours)",
+    "healthScore.vsYesterday": "vs hier",
+    "healthScore.stable": "Stable vs hier",
+    "healthScore.chartTitle": "Évolution du Score Santé",
+    "healthScore.chartDesc": "Moyenne pondérée sur 7 jours — les jours récents comptent davantage.",
+
+    // Cookie Banner
+    "cookie.title": "Cookies & Vie privée",
+    "cookie.description": "Nous utilisons des cookies essentiels au fonctionnement du site et des cookies analytiques pour améliorer votre expérience.",
+    "cookie.learnMore": "En savoir plus",
+    "cookie.acceptAll": "Accepter tout",
+    "cookie.essentialsOnly": "Essentiels uniquement",
+
+    // Auth messages
+    "auth.signupError": "Erreur d'inscription",
+    "auth.accountCreated": "Compte créé !",
+    "auth.accountCreatedDesc": "Bienvenue sur VitaSync. Vous êtes maintenant connecté.",
+    "auth.invalidCredentials": "Identifiants incorrects",
+    "auth.invalidCredentialsDesc": "Email ou mot de passe invalide.",
+    "auth.loginError": "Erreur de connexion",
+    "auth.loginSuccess": "Connexion réussie !",
+    "auth.loginSuccessDesc": "Bienvenue sur VitaSync.",
+    "auth.unexpectedError": "Une erreur inattendue s'est produite.",
+
+    // Welcome overlay
+    "dashboard.welcome": "Bienvenue dans votre dashboard",
+
+    // Chat Welcome Screen
+    "chat.personalizeMyPlan": "Personnaliser mon plan (60 sec)",
+
+    // Profile Section - Data management
+    "settings.exportInProgress": "Export en cours...",
+    "settings.exportData": "Exporter mes données (JSON)",
+    "settings.deleteAccount": "Supprimer mon compte",
+    "settings.deleteWarning": "Cette action est irréversible. Toutes vos données, conversations, analyses et fichiers seront définitivement supprimés.",
+    "settings.deleting": "Suppression...",
+    "settings.accountDeleted": "Compte supprimé",
+    "settings.accountDeletedDesc": "Votre compte a été supprimé.",
+    "settings.deleteError": "Impossible de supprimer le compte.",
+    "settings.exportError": "Impossible d'exporter vos données.",
+
+    // Dashboard FAQ
+    "help.faq1Q": "Comment ajouter un complément à mon suivi ?",
+    "help.faq1A": "Rendez-vous dans la section 'Compléments', cliquez sur '+ Ajouter un complément', puis renseignez le nom, le dosage et le moment de prise.",
+    "help.faq2Q": "Puis-je suivre des compléments non vendus sur VitaSync ?",
+    "help.faq2A": "Oui ! Vous pouvez ajouter manuellement n'importe quel complément, même s'il ne fait pas partie de notre boutique.",
+    "help.faq3Q": "Comment importer une analyse sanguine ?",
+    "help.faq3A": "Allez dans 'Mes Analyses', cliquez sur 'Importer une analyse', puis uploadez votre PDF. Notre IA analysera les résultats en quelques secondes.",
+    "help.faq4Q": "Mes données médicales sont-elles sécurisées ?",
+    "help.faq4A": "Absolument. Vos données sont chiffrées, stockées sur des serveurs sécurisés, et accessibles uniquement par vous. Nous respectons le RGPD.",
+    "help.faq5Q": "Le Coach IA peut-il remplacer un médecin ?",
+    "help.faq5A": "Non. Le Coach IA fournit des conseils de bien-être basés sur vos données, mais ne pose jamais de diagnostic. Consultez un professionnel pour tout problème de santé.",
+    "help.faq6Q": "Comment le Coach IA personnalise-t-il ses conseils ?",
+    "help.faq6A": "Il utilise votre profil santé, vos check-ins quotidiens, vos analyses sanguines et votre stack actuel pour des recommandations sur mesure.",
+    "help.faq7Q": "Comment modifier mon profil santé ?",
+    "help.faq7A": "Allez dans Paramètres, puis cliquez sur 'Modifier' dans la section Profil Santé pour relancer le questionnaire.",
+    "help.faq8Q": "Comment supprimer mon compte ?",
+    "help.faq8A": "Dans Paramètres, descendez jusqu'à 'Vos données personnelles' puis cliquez sur 'Supprimer mon compte'. L'action est irréversible.",
+    "help.faq9Q": "Qu'est-ce que le Stack Mensuel ?",
+    "help.faq9A": "C'est votre sélection personnalisée de compléments, construite avec l'aide du Coach IA, livrée chaque mois avec -10% d'abonnement.",
+    "help.faq10Q": "Comment modifier ma commande mensuelle ?",
+    "help.faq10A": "Depuis 'Mon Stack', vous pouvez ajouter, retirer ou modifier les quantités de chaque produit à tout moment.",
+    "help.catSupplements": "Compléments",
+    "help.catAnalyses": "Analyses",
+    "help.catCoach": "Coach IA",
+    "help.catAccount": "Compte",
+    "help.catStack": "Mon Stack",
+
+    // Quick guides
+    "help.guide1Title": "Ajouter un complément",
+    "help.guide1Desc": "Depuis la section Compléments, ajoutez votre stack et suivez vos prises quotidiennes.",
+    "help.guide2Title": "Importer une analyse",
+    "help.guide2Desc": "Uploadez votre PDF d'analyse sanguine pour une lecture automatique par l'IA.",
+    "help.guide3Title": "Utiliser le Coach IA",
+    "help.guide3Desc": "Posez vos questions santé, demandez des recommandations personnalisées.",
+    "help.guide4Title": "Construire mon stack",
+    "help.guide4Desc": "Créez votre abonnement mensuel avec les produits recommandés par le Coach.",
+
   },
   en: {
     // Navigation

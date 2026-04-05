@@ -23,6 +23,8 @@ import { useNavigate } from 'react-router-dom';
 import { addBusinessDays, format } from 'date-fns';
 import { fr, enUS, es, ar, zhCN, pt } from 'date-fns/locale';
 
+const dateFnsLocales: Record<string, Locale> = { fr, en: enUS, es, ar, zh: zhCN, pt };
+
 interface ProductPurchaseBoxProps {
   product: ProductDetail;
   parsedData: ParsedProductData | null;

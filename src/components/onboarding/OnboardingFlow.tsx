@@ -348,11 +348,9 @@ export function OnboardingFlow() {
       if (healthProfile.shipping_country) prefilled.shipping_country = healthProfile.shipping_country;
       if (healthProfile.health_goals?.length) prefilled.health_goals = healthProfile.health_goals;
       if (healthProfile.sport_types?.length) {
-        const { allSports } = require("./SportSelector");
-        prefilled.selected_sports = healthProfile.sport_types.map((id: string) => {
-          const found = allSports.find((s: any) => s.id === id);
-          return { id, label: found?.label || id, emoji: found?.emoji || "🎯", frequency: 2 };
-        });
+        prefilled.selected_sports = healthProfile.sport_types.map((id: string) => ({
+          id, label: id, emoji: "🎯", frequency: 2,
+        }));
       }
       if (healthProfile.sleep_hours) prefilled.sleep_hours = healthProfile.sleep_hours;
       if (healthProfile.sleep_quality_score) prefilled.sleep_quality_score = healthProfile.sleep_quality_score;

@@ -113,7 +113,7 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Cela influence les compléments recommandés",
     type: "single",
     options: [
-      { value: "omnivore", label: "Omnivore", icon: <CookingPot weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
+      { value: "omnivore", label: "Classique (je mange de tout)", icon: <CookingPot weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
       { value: "vegetarian", label: "Végétarien", icon: <Leaf weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
       { value: "vegan", label: "Vegan", icon: <Plant weight="duotone" className="w-5 h-5 text-emerald-400" />, iconBg: "bg-emerald-500/15 border border-emerald-500/20" },
       { value: "halal", label: "Halal", icon: <Moon weight="duotone" className="w-5 h-5 text-cyan-400" />, iconBg: "bg-cyan-500/15 border border-cyan-500/20" },

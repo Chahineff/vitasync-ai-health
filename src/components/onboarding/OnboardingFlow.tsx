@@ -46,8 +46,8 @@ const iconCircle = (icon: ReactNode, bg: string) => (
 const questions: OnboardingQuestion[] = [
   {
     id: "shipping_country",
-    title: "Où souhaites-tu être livré ?",
-    subtitle: "Pour afficher le bon catalogue et les délais de livraison",
+    title: "Où souhaites-tu recevoir tes compléments ?",
+    subtitle: "Nous livrons dans le monde entier. Sélectionne ton pays pour adapter le catalogue et les frais de livraison.",
     type: "country",
     required: true,
   },

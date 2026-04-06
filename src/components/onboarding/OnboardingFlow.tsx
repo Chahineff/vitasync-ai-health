@@ -756,7 +756,7 @@ export function OnboardingFlow() {
             <div key={slider.id} className="p-4 rounded-xl bg-card/30 border border-border/50">
               <SliderQuestion
                 label={slider.label}
-                value={answers[slider.id] || 3}
+                value={answers[slider.id] ?? 50}
                 onChange={(v) => handleSliderChange(slider.id, v)}
                 labels={{ left: slider.leftLabel, right: slider.rightLabel }}
                 invertColors={slider.id === "stress_level"}

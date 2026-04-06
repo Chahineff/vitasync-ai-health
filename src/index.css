@@ -227,7 +227,7 @@
     position: absolute;
     inset: 0;
     border-radius: 24px;
-    padding: 1px;
+    padding: 1.5px;
     background: linear-gradient(
       var(--sidebar-border-angle, 0deg),
       hsl(var(--primary) / 0.5),

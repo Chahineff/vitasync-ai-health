@@ -2854,6 +2854,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "Aviso de salud",
     "footer.shipping": "Envío y Devoluciones",
     "footer.copyright": "Todos los derechos reservados.",
+
+    // Legal
+    "legal.effectiveDate": "Fecha de vigencia",
     "footer.madeWith": "Hecho con ❤️ para tu salud",
 
     // About

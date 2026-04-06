@@ -209,63 +209,17 @@
     border-right: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  /* Floating Sidebar with Rounded Corners + Aurora Gradient Border */
+  /* Floating Sidebar with Rounded Corners */
   .glass-sidebar-floating {
     position: relative;
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: none;
+    border: 1px solid hsl(var(--border));
     border-radius: 24px;
     box-shadow: 
       0 8px 32px rgba(0, 0, 0, 0.08),
       0 2px 8px rgba(0, 0, 0, 0.04);
-  }
-
-  .glass-sidebar-floating::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 24px;
-    padding: 1.5px;
-    background: linear-gradient(
-      160deg,
-      hsl(var(--primary) / 0.6),
-      hsl(var(--secondary) / 0.4),
-      hsl(160 50% 50% / 0.3),
-      hsl(var(--primary) / 0.15),
-      hsl(var(--secondary) / 0.5),
-      hsl(var(--primary) / 0.6)
-    );
-    background-size: 300% 300%;
-    animation: sidebar-aurora 8s ease-in-out infinite;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .glass-sidebar-floating::after {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border-radius: 28px;
-    background: linear-gradient(
-      160deg,
-      hsl(var(--primary) / 0.15),
-      hsl(var(--secondary) / 0.1),
-      hsl(160 50% 50% / 0.08),
-      hsl(var(--primary) / 0.05),
-      hsl(var(--secondary) / 0.12),
-      hsl(var(--primary) / 0.15)
-    );
-    background-size: 300% 300%;
-    animation: sidebar-aurora 8s ease-in-out infinite;
-    filter: blur(12px);
-    pointer-events: none;
-    z-index: -1;
   }
 
   @keyframes sidebar-aurora {
@@ -320,38 +274,10 @@
 
   .dark .glass-sidebar-floating {
     background: rgba(20, 24, 35, 0.9);
+    border: 1px solid hsl(var(--border));
     box-shadow: 
       0 8px 32px rgba(0, 0, 0, 0.4),
       0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .dark .glass-sidebar-floating::before {
-    background: linear-gradient(
-      160deg,
-      hsl(var(--primary) / 0.7),
-      hsl(var(--secondary) / 0.5),
-      hsl(160 50% 50% / 0.35),
-      hsl(var(--primary) / 0.2),
-      hsl(var(--secondary) / 0.6),
-      hsl(var(--primary) / 0.7)
-    );
-    background-size: 300% 300%;
-    animation: sidebar-aurora 8s ease-in-out infinite;
-  }
-
-  .dark .glass-sidebar-floating::after {
-    background: linear-gradient(
-      160deg,
-      hsl(var(--primary) / 0.2),
-      hsl(var(--secondary) / 0.15),
-      hsl(160 50% 50% / 0.1),
-      hsl(var(--primary) / 0.08),
-      hsl(var(--secondary) / 0.18),
-      hsl(var(--primary) / 0.2)
-    );
-    background-size: 300% 300%;
-    animation: sidebar-aurora 8s ease-in-out infinite;
-    filter: blur(16px);
   }
 
   .glass-card-strong {

@@ -449,7 +449,7 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
   );
 }
 
-
+export function OnboardingFlow() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEditMode = searchParams.get("edit") === "true";

@@ -430,8 +430,6 @@ export const CinematicDashboardSection = () => {
           borderRadius: isMobile ? "28px" : "36px",
           top: "50%",
           left: "50%",
-          marginTop: isMobile ? "calc(-80vh / 2)" : "calc(-70vh / 2)",
-          marginLeft: isMobile ? "calc(-90vw / 2)" : "calc(-75vw / 2)",
         }}
       >
         <div className="card-sheen" />

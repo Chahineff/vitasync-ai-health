@@ -24,7 +24,7 @@ import {
   MoonStars, Egg, Fish, Nut,
 } from "@phosphor-icons/react";
 
-type QuestionType = "yesno" | "country" | "multi" | "single" | "single-bonus" | "slider-single" | "dual-slider" | "multi-doses" | "budget" | "optional-text";
+type QuestionType = "yesno" | "country" | "multi" | "single" | "single-bonus" | "slider-single" | "dual-slider" | "multi-doses" | "budget" | "optional-text" | "sport-builder";
 
 interface OnboardingQuestion {
   id: string;

@@ -654,7 +654,16 @@ export function OnboardingFlow() {
       );
     }
 
-    // Single with bonus field
+    // Sport builder
+    if (q.type === "sport-builder") {
+      return (
+        <SportSelector
+          selectedSports={answers.selected_sports || []}
+          onChange={(sports) => setAnswers({ ...answers, selected_sports: sports })}
+        />
+      );
+    }
+
     if (q.type === "single-bonus") {
       return (
         <div className="space-y-6">

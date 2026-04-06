@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { CountrySelect, Country } from "./CountrySelect";
+import { SportSelector, SelectedSport, allSports } from "./SportSelector";
 import { SliderQuestion } from "./SliderQuestion";
 import { BudgetSlider } from "./BudgetSlider";
 import { cn } from "@/lib/utils";
@@ -23,7 +24,7 @@ import {
   MoonStars, Egg, Fish, Nut,
 } from "@phosphor-icons/react";
 
-type QuestionType = "yesno" | "country" | "multi" | "single" | "single-bonus" | "slider-single" | "dual-slider" | "multi-doses" | "budget" | "optional-text";
+type QuestionType = "yesno" | "country" | "multi" | "single" | "single-bonus" | "slider-single" | "dual-slider" | "multi-doses" | "budget" | "optional-text" | "sport-builder";
 
 interface OnboardingQuestion {
   id: string;
@@ -74,27 +75,10 @@ const questions: OnboardingQuestion[] = [
   },
   {
     id: "activity_level",
-    title: "À quelle fréquence fais-tu du sport ?",
-    subtitle: "Cela nous aide à adapter tes recommandations",
-    type: "single-bonus",
-    options: [
-      { value: "0-1", label: "0-1x/semaine", icon: <PersonSimpleWalk weight="duotone" className="w-5 h-5 text-slate-400" />, iconBg: "bg-slate-500/15 border border-slate-500/20" },
-      { value: "2-3", label: "2-3x/semaine", icon: <PersonSimpleRun weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
-      { value: "4-5", label: "4-5x/semaine", icon: <Barbell weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
-      { value: "6+", label: "6x+/semaine", icon: <Flame weight="duotone" className="w-5 h-5 text-red-400" />, iconBg: "bg-red-500/15 border border-red-500/20" },
-    ],
-    bonusField: {
-      id: "sport_types",
-      label: "Quel type de sport ?",
-      options: [
-        { value: "muscu", label: "Musculation" },
-        { value: "cardio", label: "Cardio" },
-        { value: "team", label: "Sports co" },
-        { value: "endurance", label: "Endurance" },
-        { value: "mix", label: "Mix" },
-      ],
-    },
-    required: true,
+    title: "Quels sports pratiques-tu ?",
+    subtitle: "Ajoute chaque sport et précise ta fréquence hebdomadaire",
+    type: "sport-builder",
+    required: false,
   },
   {
     id: "sleep",
@@ -363,8 +347,12 @@ export function OnboardingFlow() {
       if (healthProfile.is_adult !== null) prefilled.is_adult = healthProfile.is_adult ? "yes" : "no";
       if (healthProfile.shipping_country) prefilled.shipping_country = healthProfile.shipping_country;
       if (healthProfile.health_goals?.length) prefilled.health_goals = healthProfile.health_goals;
-      if (healthProfile.activity_level) prefilled.activity_level = healthProfile.activity_level;
-      if (healthProfile.sport_types?.length) prefilled.sport_types = healthProfile.sport_types;
+      if (healthProfile.sport_types?.length) {
+        prefilled.selected_sports = healthProfile.sport_types.map((id: string) => {
+          const found = allSports.find((s) => s.id === id);
+          return { id, label: found?.label || id, emoji: found?.emoji || "🎯", frequency: 2 };
+        });
+      }
       if (healthProfile.sleep_hours) prefilled.sleep_hours = healthProfile.sleep_hours;
       if (healthProfile.sleep_quality_score) prefilled.sleep_quality_score = healthProfile.sleep_quality_score;
       if (healthProfile.energy_level) prefilled.energy_level = healthProfile.energy_level;
@@ -474,6 +462,7 @@ export function OnboardingFlow() {
       return Array.isArray(arr) && arr.length > 0;
     }
     if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") return !!answers[q.id];
+    if (q.type === "sport-builder") return true; // optional
     if (q.type === "dual-slider") return q.sliders?.every((s) => answers[s.id] !== undefined) ?? false;
     if (q.type === "budget") return !!answers.monthly_budget || !!answers.budget_range;
     return true;
@@ -485,12 +474,18 @@ export function OnboardingFlow() {
     } else {
       setIsSubmitting(true);
       try {
+        // Derive activity_level and sport_types from sport builder
+        const sportData: SelectedSport[] = answers.selected_sports || [];
+        const totalWeekly = sportData.reduce((sum: number, s: SelectedSport) => sum + s.frequency, 0);
+        const derivedActivityLevel = totalWeekly === 0 ? "0-1" : totalWeekly <= 3 ? "2-3" : totalWeekly <= 5 ? "4-5" : "6+";
+        const derivedSportTypes = sportData.map((s: SelectedSport) => s.id);
+
         const formattedAnswers: Partial<HealthProfile> = {
           is_adult: true,
           shipping_country: answers.shipping_country,
           health_goals: answers.health_goals || [],
-          activity_level: answers.activity_level,
-          sport_types: answers.sport_types || [],
+          activity_level: derivedActivityLevel,
+          sport_types: derivedSportTypes,
           sleep_hours: answers.sleep_hours,
           sleep_quality_score: answers.sleep_quality_score,
           energy_level: answers.energy_level,
@@ -663,7 +658,16 @@ export function OnboardingFlow() {
       );
     }
 
-    // Single with bonus field
+    // Sport builder
+    if (q.type === "sport-builder") {
+      return (
+        <SportSelector
+          selectedSports={answers.selected_sports || []}
+          onChange={(sports) => setAnswers({ ...answers, selected_sports: sports })}
+        />
+      );
+    }
+
     if (q.type === "single-bonus") {
       return (
         <div className="space-y-6">

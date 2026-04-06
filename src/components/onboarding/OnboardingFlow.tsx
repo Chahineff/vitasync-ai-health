@@ -463,7 +463,7 @@ export function OnboardingFlow() {
     }
     if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") return !!answers[q.id];
     if (q.type === "sport-builder") return true; // optional
-    if (q.type === "dual-slider") return q.sliders?.every((s) => answers[s.id] !== undefined) ?? false;
+    if (q.type === "dual-slider") return true; // defaults are pre-set
     if (q.type === "budget") return !!answers.monthly_budget || !!answers.budget_range;
     return true;
   };

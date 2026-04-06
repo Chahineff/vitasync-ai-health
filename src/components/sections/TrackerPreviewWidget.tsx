@@ -1,20 +1,21 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Check, Sun, Moon, Coffee } from "@phosphor-icons/react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Supplement {
   name: string;
   dosage: string;
-  time: string;
+  timeKey: string;
   icon: "sun" | "coffee" | "moon";
   taken: boolean;
 }
 
-const initialSupplements: Supplement[] = [
-  { name: "Vitamine D3", dosage: "2000 UI", time: "Matin", icon: "sun", taken: false },
-  { name: "Magnésium", dosage: "300mg", time: "Matin", icon: "coffee", taken: false },
-  { name: "Oméga-3", dosage: "1000mg", time: "Midi", icon: "sun", taken: false },
-  { name: "Zinc", dosage: "15mg", time: "Soir", icon: "moon", taken: false },
+const makeSupplements = (t: (k: string) => string): Supplement[] => [
+  { name: "Vitamine D3", dosage: "2000 UI", timeKey: "preview.tracker.morning", icon: "sun", taken: false },
+  { name: "Magnésium", dosage: "300mg", timeKey: "preview.tracker.morning", icon: "coffee", taken: false },
+  { name: "Oméga-3", dosage: "1000mg", timeKey: "preview.tracker.noon", icon: "sun", taken: false },
+  { name: "Zinc", dosage: "15mg", timeKey: "preview.tracker.evening", icon: "moon", taken: false },
 ];
 
 const TimeIcon = ({ icon }: { icon: string }) => {
@@ -25,14 +26,15 @@ const TimeIcon = ({ icon }: { icon: string }) => {
 };
 
 export function TrackerPreviewWidget() {
-  const [supplements, setSupplements] = useState(initialSupplements);
+  const { t } = useTranslation();
+  const initial = makeSupplements(t);
+  const [supplements, setSupplements] = useState(initial);
   const [step, setStep] = useState(0);
 
-  // Animate checking off supplements one by one
   useEffect(() => {
     if (step >= supplements.length) {
       const timer = setTimeout(() => {
-        setSupplements(initialSupplements);
+        setSupplements(makeSupplements(t));
         setStep(0);
       }, 3000);
       return () => clearTimeout(timer);
@@ -53,7 +55,6 @@ export function TrackerPreviewWidget() {
 
   return (
     <div className="w-full h-full flex flex-col gap-1.5 sm:gap-2.5 p-0.5 sm:p-1">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -61,13 +62,12 @@ export function TrackerPreviewWidget() {
       >
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-medium uppercase tracking-widest text-foreground/50">
-            Aujourd'hui
+            {t("preview.tracker.today")}
           </span>
           <span className="text-xs font-semibold text-primary">
             {takenCount}/{supplements.length}
           </span>
         </div>
-        {/* Progress bar */}
         <div className="relative h-1.5 bg-muted/60 rounded-full overflow-hidden">
           <motion.div
             className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-primary/70 rounded-full"
@@ -77,7 +77,6 @@ export function TrackerPreviewWidget() {
         </div>
       </motion.div>
 
-      {/* Supplement list */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -93,48 +92,34 @@ export function TrackerPreviewWidget() {
               transition={{ delay: 0.3 + i * 0.1 }}
               className="px-2 py-1.5 sm:px-3 sm:py-2.5 flex items-center gap-2"
             >
-              {/* Checkbox */}
               <motion.div
                 className={`w-4 h-4 sm:w-5 sm:h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
-                  sup.taken
-                    ? "bg-primary border-primary"
-                    : "border-foreground/20 bg-transparent"
+                  sup.taken ? "bg-primary border-primary" : "border-foreground/20 bg-transparent"
                 }`}
                 animate={sup.taken ? { scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.3 }}
               >
                 {sup.taken && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                  >
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 25 }}>
                     <Check weight="bold" className="w-3 h-3 text-primary-foreground" />
                   </motion.div>
                 )}
               </motion.div>
-
-              {/* Info */}
               <div className="flex-1 min-w-0">
-                <div className={`text-[10px] sm:text-xs font-medium transition-all duration-300 ${
-                  sup.taken ? "text-foreground/40 line-through" : "text-foreground"
-                }`}>
+                <div className={`text-[10px] sm:text-xs font-medium transition-all duration-300 ${sup.taken ? "text-foreground/40 line-through" : "text-foreground"}`}>
                   {sup.name}
                 </div>
                 <div className="text-[9px] sm:text-[10px] text-foreground/40">{sup.dosage}</div>
               </div>
-
-              {/* Time badge */}
               <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted/50">
                 <TimeIcon icon={sup.icon} />
-                <span className="text-[9px] text-foreground/40">{sup.time}</span>
+                <span className="text-[9px] text-foreground/40">{t(sup.timeKey)}</span>
               </div>
             </motion.div>
           ))}
         </div>
       </motion.div>
 
-      {/* Streak badge */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: takenCount === supplements.length ? 1 : 0.5, scale: takenCount === supplements.length ? 1 : 0.95 }}
@@ -143,7 +128,7 @@ export function TrackerPreviewWidget() {
       >
         <span className="text-sm">🔥</span>
         <span className="text-[10px] font-medium text-foreground/60">
-          Série de 12 jours
+          {t("preview.tracker.streak")}
         </span>
       </motion.div>
     </div>

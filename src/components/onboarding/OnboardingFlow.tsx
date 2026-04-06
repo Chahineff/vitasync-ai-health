@@ -470,12 +470,18 @@ export function OnboardingFlow() {
     } else {
       setIsSubmitting(true);
       try {
+        // Derive activity_level and sport_types from sport builder
+        const sportData: SelectedSport[] = answers.selected_sports || [];
+        const totalWeekly = sportData.reduce((sum: number, s: SelectedSport) => sum + s.frequency, 0);
+        const derivedActivityLevel = totalWeekly === 0 ? "0-1" : totalWeekly <= 3 ? "2-3" : totalWeekly <= 5 ? "4-5" : "6+";
+        const derivedSportTypes = sportData.map((s: SelectedSport) => s.id);
+
         const formattedAnswers: Partial<HealthProfile> = {
           is_adult: true,
           shipping_country: answers.shipping_country,
           health_goals: answers.health_goals || [],
-          activity_level: answers.activity_level,
-          sport_types: answers.sport_types || [],
+          activity_level: derivedActivityLevel,
+          sport_types: derivedSportTypes,
           sleep_hours: answers.sleep_hours,
           sleep_quality_score: answers.sleep_quality_score,
           energy_level: answers.energy_level,

@@ -66,6 +66,7 @@ export function HeroSection() {
                   animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                   transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="gradient-text-hero inline-block"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
                 >
                   {t("hero.titleHighlight")}
                 </motion.span>

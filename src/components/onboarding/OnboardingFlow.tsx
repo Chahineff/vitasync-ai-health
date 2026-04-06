@@ -463,7 +463,7 @@ export function OnboardingFlow() {
     }
     if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") return !!answers[q.id];
     if (q.type === "sport-builder") return true; // optional
-    if (q.type === "dual-slider") return q.sliders?.every((s) => answers[s.id] !== undefined) ?? false;
+    if (q.type === "dual-slider") return true; // defaults are pre-set
     if (q.type === "budget") return !!answers.monthly_budget || !!answers.budget_range;
     return true;
   };
@@ -488,8 +488,8 @@ export function OnboardingFlow() {
           sport_types: derivedSportTypes,
           sleep_hours: answers.sleep_hours,
           sleep_quality_score: answers.sleep_quality_score,
-          energy_level: answers.energy_level,
-          stress_level: answers.stress_level === 1 ? "low" : answers.stress_level === 2 ? "moderate" : answers.stress_level === 3 ? "moderate" : answers.stress_level === 4 ? "high" : answers.stress_level === 5 ? "very_high" : null,
+          energy_level: answers.energy_level ?? 50,
+          stress_level: (answers.stress_level ?? 50) <= 20 ? "low" : (answers.stress_level ?? 50) <= 50 ? "moderate" : (answers.stress_level ?? 50) <= 75 ? "high" : "very_high",
           diet_type: answers.diet_type,
           allergies: answers.allergies || [],
           preferred_forms: answers.preferred_forms || [],
@@ -738,7 +738,7 @@ export function OnboardingFlow() {
             <div key={slider.id} className="p-4 rounded-xl bg-card/30 border border-border/50">
               <SliderQuestion
                 label={slider.label}
-                value={answers[slider.id] || 3}
+                value={answers[slider.id] ?? 50}
                 onChange={(v) => handleSliderChange(slider.id, v)}
                 labels={{ left: slider.leftLabel, right: slider.rightLabel }}
               />
@@ -756,7 +756,7 @@ export function OnboardingFlow() {
             <div key={slider.id} className="p-4 rounded-xl bg-card/30 border border-border/50">
               <SliderQuestion
                 label={slider.label}
-                value={answers[slider.id] || 3}
+                value={answers[slider.id] ?? 50}
                 onChange={(v) => handleSliderChange(slider.id, v)}
                 labels={{ left: slider.leftLabel, right: slider.rightLabel }}
                 invertColors={slider.id === "stress_level"}

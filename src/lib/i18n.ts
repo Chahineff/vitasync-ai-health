@@ -5411,6 +5411,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "健康免责声明",
     "footer.shipping": "配送与退货",
     "footer.copyright": "版权所有。",
+
+    // Legal
+    "legal.effectiveDate": "生效日期",
     "footer.madeWith": "用❤️为您的健康打造",
 
     // About

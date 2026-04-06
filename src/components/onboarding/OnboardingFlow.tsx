@@ -130,14 +130,15 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Important pour éviter les mauvaises recommandations",
     type: "multi",
     options: [
+      { value: "none", label: "Aucune allergie", icon: <CheckCircle weight="duotone" className="w-5 h-5 text-emerald-400" />, iconBg: "bg-emerald-500/15 border border-emerald-500/20" },
       { value: "lactose", label: "Lactose", icon: <DropIcon weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
       { value: "gluten", label: "Gluten", icon: <GrainsSlash weight="duotone" className="w-5 h-5 text-amber-400" />, iconBg: "bg-amber-500/15 border border-amber-500/20" },
       { value: "egg", label: "Œuf", icon: <Egg weight="duotone" className="w-5 h-5 text-yellow-400" />, iconBg: "bg-yellow-500/15 border border-yellow-500/20" },
       { value: "soy", label: "Soja", icon: <Plant weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
       { value: "fish", label: "Poisson", icon: <Fish weight="duotone" className="w-5 h-5 text-cyan-400" />, iconBg: "bg-cyan-500/15 border border-cyan-500/20" },
       { value: "nuts", label: "Fruits à coque", icon: <Nut weight="duotone" className="w-5 h-5 text-amber-600" />, iconBg: "bg-amber-600/15 border border-amber-600/20" },
-      { value: "none", label: "Aucune", icon: <CheckCircle weight="duotone" className="w-5 h-5 text-green-400" />, iconBg: "bg-green-500/15 border border-green-500/20" },
-      { value: "prefer_not_say", label: "Je préfère ne pas répondre", icon: <Lock weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
+      { value: "shellfish", label: "Crustacés", icon: <Fish weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
+      { value: "other", label: "Autre", icon: <DotsThree weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
     ],
     required: false,
   },
@@ -615,26 +616,66 @@ export function OnboardingFlow() {
 
     // Multi-select
     if (q.type === "multi") {
+      const selectedValues: string[] = answers[q.id] || [];
+      const isNoneSelected = selectedValues.includes("none");
+      const isOtherSelected = selectedValues.includes("other");
+      
       return (
         <div className="space-y-4">
           {q.maxSelections && (
             <p className="text-xs text-muted-foreground text-center bg-muted/30 px-3 py-2 rounded-full inline-flex mx-auto">
-              {(answers[q.id] || []).length}/{q.maxSelections} sélectionnés
+              {selectedValues.length}/{q.maxSelections} sélectionnés
             </p>
           )}
-          <div className="grid grid-cols-2 gap-3">
-            {q.options?.map((opt, index) => (
+          
+          {/* "Aucune" option highlighted at top if present */}
+          {q.options?.find(o => o.value === "none") && (
+            <div className="mb-1">
               <OptionCard
-                key={opt.value}
-                selected={isOptionSelected(opt.value)}
-                icon={opt.icon}
-                iconBg={opt.iconBg}
-                label={opt.label}
-                onClick={() => handleSelect(opt.value)}
-                index={index}
+                key="none"
+                selected={isNoneSelected}
+                icon={q.options.find(o => o.value === "none")!.icon}
+                iconBg={q.options.find(o => o.value === "none")!.iconBg}
+                label={q.options.find(o => o.value === "none")!.label}
+                onClick={() => handleSelect("none")}
+                index={0}
               />
-            ))}
-          </div>
+            </div>
+          )}
+          
+          {!isNoneSelected && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                {q.options?.filter(o => o.value !== "none").map((opt, index) => (
+                  <OptionCard
+                    key={opt.value}
+                    selected={isOptionSelected(opt.value)}
+                    icon={opt.icon}
+                    iconBg={opt.iconBg}
+                    label={opt.label}
+                    onClick={() => handleSelect(opt.value)}
+                    index={index}
+                  />
+                ))}
+              </div>
+              
+              {/* "Autre" text input */}
+              {isOtherSelected && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Précise ton allergie ou intolérance…"
+                    value={answers.other_allergy_text || ""}
+                    onChange={(e) => setAnswers({ ...answers, other_allergy_text: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </motion.div>
+              )}
+            </>
+          )}
         </div>
       );
     }

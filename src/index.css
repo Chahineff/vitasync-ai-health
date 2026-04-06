@@ -235,41 +235,53 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-  }
-
-  .dashboard-aurora-bg::before,
-  .dashboard-aurora-bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    filter: blur(120px);
-    animation: dashboard-aurora-drift 14s ease-in-out infinite;
+    overflow: hidden;
   }
 
   .dashboard-aurora-bg::before {
-    background: radial-gradient(ellipse 90% 70% at 25% 25%, hsl(var(--primary) / 0.18), transparent 70%);
-    animation-delay: 0s;
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, hsl(var(--secondary) / 0.25), transparent 60%);
+    filter: blur(80px);
+    animation: aurora-float-1 16s ease-in-out infinite;
   }
 
   .dashboard-aurora-bg::after {
-    background: radial-gradient(ellipse 80% 90% at 75% 75%, hsl(var(--secondary) / 0.15), transparent 70%);
-    animation-delay: -7s;
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -30%;
+    width: 160%;
+    height: 160%;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, hsl(var(--primary) / 0.15), transparent 60%);
+    filter: blur(100px);
+    animation: aurora-float-2 20s ease-in-out infinite;
   }
 
   .dark .dashboard-aurora-bg::before {
-    background: radial-gradient(ellipse 90% 70% at 25% 25%, hsl(var(--primary) / 0.12), transparent 70%);
+    background: radial-gradient(circle at center, hsl(var(--secondary) / 0.18), transparent 60%);
   }
 
   .dark .dashboard-aurora-bg::after {
-    background: radial-gradient(ellipse 80% 90% at 75% 75%, hsl(var(--secondary) / 0.10), transparent 70%);
+    background: radial-gradient(circle at center, hsl(var(--primary) / 0.10), transparent 60%);
   }
 
-  @keyframes dashboard-aurora-drift {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(5%, -8%) scale(1.05); }
-    50% { transform: translate(-3%, 6%) scale(0.95); }
-    75% { transform: translate(-6%, -4%) scale(1.02); }
+  @keyframes aurora-float-1 {
+    0%, 100% { transform: translate(0%, 0%) scale(1); }
+    33% { transform: translate(10%, -15%) scale(1.1); }
+    66% { transform: translate(-8%, 10%) scale(0.95); }
+  }
+
+  @keyframes aurora-float-2 {
+    0%, 100% { transform: translate(0%, 0%) scale(1); }
+    33% { transform: translate(-12%, 8%) scale(1.05); }
+    66% { transform: translate(6%, -12%) scale(1.1); }
   }
 
   .dark .glass-sidebar-floating {

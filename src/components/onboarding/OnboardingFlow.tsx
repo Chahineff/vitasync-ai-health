@@ -616,26 +616,66 @@ export function OnboardingFlow() {
 
     // Multi-select
     if (q.type === "multi") {
+      const selectedValues: string[] = answers[q.id] || [];
+      const isNoneSelected = selectedValues.includes("none");
+      const isOtherSelected = selectedValues.includes("other");
+      
       return (
         <div className="space-y-4">
           {q.maxSelections && (
             <p className="text-xs text-muted-foreground text-center bg-muted/30 px-3 py-2 rounded-full inline-flex mx-auto">
-              {(answers[q.id] || []).length}/{q.maxSelections} sélectionnés
+              {selectedValues.length}/{q.maxSelections} sélectionnés
             </p>
           )}
-          <div className="grid grid-cols-2 gap-3">
-            {q.options?.map((opt, index) => (
+          
+          {/* "Aucune" option highlighted at top if present */}
+          {q.options?.find(o => o.value === "none") && (
+            <div className="mb-1">
               <OptionCard
-                key={opt.value}
-                selected={isOptionSelected(opt.value)}
-                icon={opt.icon}
-                iconBg={opt.iconBg}
-                label={opt.label}
-                onClick={() => handleSelect(opt.value)}
-                index={index}
+                key="none"
+                selected={isNoneSelected}
+                icon={q.options.find(o => o.value === "none")!.icon}
+                iconBg={q.options.find(o => o.value === "none")!.iconBg}
+                label={q.options.find(o => o.value === "none")!.label}
+                onClick={() => handleSelect("none")}
+                index={0}
               />
-            ))}
-          </div>
+            </div>
+          )}
+          
+          {!isNoneSelected && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                {q.options?.filter(o => o.value !== "none").map((opt, index) => (
+                  <OptionCard
+                    key={opt.value}
+                    selected={isOptionSelected(opt.value)}
+                    icon={opt.icon}
+                    iconBg={opt.iconBg}
+                    label={opt.label}
+                    onClick={() => handleSelect(opt.value)}
+                    index={index}
+                  />
+                ))}
+              </div>
+              
+              {/* "Autre" text input */}
+              {isOtherSelected && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Précise ton allergie ou intolérance…"
+                    value={answers.other_allergy_text || ""}
+                    onChange={(e) => setAnswers({ ...answers, other_allergy_text: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </motion.div>
+              )}
+            </>
+          )}
         </div>
       );
     }

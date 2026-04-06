@@ -274,38 +274,10 @@
 
   .dark .glass-sidebar-floating {
     background: rgba(20, 24, 35, 0.9);
+    border: 1px solid hsl(var(--border));
     box-shadow: 
       0 8px 32px rgba(0, 0, 0, 0.4),
       0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .dark .glass-sidebar-floating::before {
-    background: linear-gradient(
-      160deg,
-      hsl(var(--primary) / 0.7),
-      hsl(var(--secondary) / 0.5),
-      hsl(160 50% 50% / 0.35),
-      hsl(var(--primary) / 0.2),
-      hsl(var(--secondary) / 0.6),
-      hsl(var(--primary) / 0.7)
-    );
-    background-size: 300% 300%;
-    animation: sidebar-aurora 8s ease-in-out infinite;
-  }
-
-  .dark .glass-sidebar-floating::after {
-    background: linear-gradient(
-      160deg,
-      hsl(var(--primary) / 0.2),
-      hsl(var(--secondary) / 0.15),
-      hsl(160 50% 50% / 0.1),
-      hsl(var(--primary) / 0.08),
-      hsl(var(--secondary) / 0.18),
-      hsl(var(--primary) / 0.2)
-    );
-    background-size: 300% 300%;
-    animation: sidebar-aurora 8s ease-in-out infinite;
-    filter: blur(16px);
   }
 
   .glass-card-strong {

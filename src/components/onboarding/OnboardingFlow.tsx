@@ -10,6 +10,9 @@ import { CountrySelect, Country } from "./CountrySelect";
 import { SliderQuestion } from "./SliderQuestion";
 import { BudgetSlider } from "./BudgetSlider";
 import { cn } from "@/lib/utils";
+import { ProgressRing } from "./ProgressRing";
+import { ProgressParticles } from "./ProgressParticles";
+import { StepTimeline } from "./StepTimeline";
 import {
   Moon, Lightning, Crosshair, Leaf, Barbell,
   PersonSimpleRun, ShieldCheck, Sparkle, DotsThree,
@@ -849,23 +852,34 @@ export function OnboardingFlow() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center relative overflow-hidden">
-      {/* Progress background fill */}
-      <motion.div
-        className="absolute bottom-0 left-0 right-0 pointer-events-none bg-gradient-to-t from-emerald-500/15 via-teal-500/10 to-primary/5"
-        initial={{ height: "0%" }}
-        animate={{ height: `${progress}%` }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      />
+    <div
+      className="min-h-screen flex items-center justify-center relative overflow-hidden transition-all duration-1000"
+      style={{
+        background: `linear-gradient(135deg, 
+          hsl(var(--background)) ${Math.max(0, 100 - progress * 1.5)}%, 
+          hsl(var(--primary) / ${0.05 + progress * 0.002}) ${50}%, 
+          hsl(160 50% 40% / ${progress * 0.0015}) 100%)`
+      }}
+    >
+      {/* Reactive particles */}
+      <ProgressParticles progress={progress} />
 
-      {/* Decorative floating orbs */}
+      {/* Progress ring (desktop top-right) */}
+      <ProgressRing progress={progress} currentStep={currentStep} totalSteps={questions.length} />
+
+      {/* Step timeline (desktop left) */}
+      <StepTimeline currentStep={currentStep} totalSteps={questions.length} />
+
+      {/* Decorative floating orbs - intensity scales with progress */}
       <motion.div
-        className="absolute top-1/4 -left-32 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"
+        className="absolute top-1/4 -left-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
+        style={{ background: `hsl(var(--primary) / ${0.05 + progress * 0.002})` }}
         animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-1/4 -right-32 w-64 h-64 bg-secondary/10 rounded-full blur-3xl pointer-events-none"
+        className="absolute bottom-1/4 -right-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
+        style={{ background: `hsl(var(--secondary) / ${0.05 + progress * 0.002})` }}
         animate={{ y: [0, -25, 0], x: [0, -10, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />

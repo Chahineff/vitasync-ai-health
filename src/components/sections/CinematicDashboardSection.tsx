@@ -267,6 +267,8 @@ export const CinematicDashboardSection = () => {
       gsap.set(".cine-subtitle", { autoAlpha: 0, y: 30 });
       gsap.set(".cine-orbit-ring", { autoAlpha: 0, scale: 0.8 });
       gsap.set(".cine-card", {
+        xPercent: -50,
+        yPercent: -50,
         y: window.innerHeight + 200,
         autoAlpha: 1,
         transformOrigin: "center center",

@@ -328,6 +328,128 @@ function AIAnalysisAnimation({ onComplete }: { onComplete: () => void }) {
   );
 }
 
+/* ── Coach Intro Screen (shown after AI analysis) ── */
+function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any>; onContinue: () => void }) {
+  const [visible, setVisible] = useState(false);
+  const [typedLines, setTypedLines] = useState(0);
+
+  const goals = (answers.health_goals || []) as string[];
+  const sports = (answers.selected_sports || []) as { label: string; emoji: string; frequency: number }[];
+  
+  const goalLabels: Record<string, string> = {
+    sleep: "Sommeil", energy: "Énergie", focus: "Focus", stress: "Stress",
+    sport: "Performance sportive", muscle: "Prise de muscle", weight_loss: "Perte de poids",
+    immunity: "Immunité", skin: "Peau / Cheveux", digestion: "Digestion", longevity: "Longévité",
+  };
+
+  const recommendations = [
+    goals.includes("energy") && "Un complexe vitamine B pour soutenir ton énergie quotidienne",
+    goals.includes("sleep") && "Du magnésium bisglycinate pour améliorer la qualité de ton sommeil",
+    goals.includes("sport") || goals.includes("muscle") ? "De la créatine monohydrate pour optimiser tes performances" : null,
+    goals.includes("stress") && "De l'ashwagandha pour réguler ton niveau de stress",
+    goals.includes("immunity") && "De la vitamine D3 + K2 pour renforcer ton immunité",
+    goals.includes("focus") && "Un complexe oméga-3 DHA pour soutenir ta concentration",
+    "Une multivitamine adaptée à ton profil",
+  ].filter(Boolean);
+
+  useEffect(() => {
+    setTimeout(() => setVisible(true), 300);
+    const lineTimers = recommendations.map((_, i) =>
+      setTimeout(() => setTypedLines(i + 1), 800 + i * 600)
+    );
+    return () => lineTimers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center relative overflow-hidden px-6">
+      {/* Background glow */}
+      <motion.div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
+        style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%)" }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 20 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 max-w-lg w-full space-y-8"
+      >
+        {/* Coach avatar + message */}
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <img src={vitasyncLogo} alt="Coach IA" className="w-8 h-8 object-contain" />
+          </div>
+          <div className="space-y-3 flex-1">
+            <p className="text-lg font-medium text-foreground">
+              J'ai analysé ton profil ! 🎯
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {goals.length > 0 && (
+                <>Tes objectifs : <span className="text-foreground font-medium">{goals.map(g => goalLabels[g] || g).join(", ")}</span>. </>
+              )}
+              {sports.length > 0 && (
+                <>Tu pratiques {sports.map(s => `${s.emoji} ${s.label}`).join(", ")}. </>
+              )}
+              Voici ce que je te recommande pour commencer :
+            </p>
+          </div>
+        </div>
+
+        {/* Recommendations list */}
+        <div className="space-y-2.5 pl-2">
+          {recommendations.slice(0, typedLines).map((rec, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4 }}
+              className="flex items-start gap-3 p-3 rounded-xl bg-card/60 border border-border/50 backdrop-blur-sm"
+            >
+              <span className="text-primary mt-0.5">
+                <Sparkle weight="duotone" className="w-4 h-4" />
+              </span>
+              <span className="text-sm text-foreground">{rec}</span>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Subtext */}
+        {typedLines >= recommendations.length && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-sm text-muted-foreground text-center"
+          >
+            Tu pourras affiner tes recommandations avec le Coach IA dans ton dashboard.
+          </motion.p>
+        )}
+
+        {/* CTA Button */}
+        {typedLines >= recommendations.length && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex justify-center pt-2"
+          >
+            <Button
+              onClick={onContinue}
+              size="lg"
+              className="rounded-xl gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20 px-8"
+            >
+              Accéder au dashboard
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </motion.div>
+        )}
+      </motion.div>
+    </div>
+  );
+}
+
 export function OnboardingFlow() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -340,6 +462,7 @@ export function OnboardingFlow() {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [showMinorWarning, setShowMinorWarning] = useState(false);
   const [showAIAnalysis, setShowAIAnalysis] = useState(false);
+  const [showCoachIntro, setShowCoachIntro] = useState(false);
 
   // Pre-fill answers in edit mode
   useEffect(() => {
@@ -892,8 +1015,13 @@ export function OnboardingFlow() {
   };
 
   // AI Analysis animation screen
-  if (showAIAnalysis) {
-    return <AIAnalysisAnimation onComplete={() => navigate("/dashboard")} />;
+  if (showAIAnalysis && !showCoachIntro) {
+    return <AIAnalysisAnimation onComplete={() => setShowCoachIntro(true)} />;
+  }
+
+  // Coach intro screen after analysis
+  if (showCoachIntro) {
+    return <CoachIntroScreen answers={answers} onContinue={() => navigate("/dashboard")} />;
   }
 
   return (

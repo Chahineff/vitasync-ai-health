@@ -1,101 +1,39 @@
 
 
-## Plan : Internationalisation complète de la Boutique et des Pages Produits (PDP)
+# Refonte de l'indicateur de progression de l'onboarding
 
-### Contexte
+## Probleme actuel
+La progression est indiquee par un simple fond vert/bleu qui monte depuis le bas de l'ecran (`from-emerald-500/15`). C'est subtil et peu engageant visuellement.
 
-De nombreux composants de la boutique (shop) et des fiches produits (PDP) contiennent encore des chaînes de texte codées en dur en français ou en anglais, non reliées au système de traduction `useTranslation`. Le fichier `i18n.ts` contient déjà beaucoup de clés shop/pdp, mais plusieurs composants ne les utilisent pas.
+## Nouvelle approche : "DNA Helix Progress"
 
-### Composants à modifier et chaînes concernées
+Remplacer le fond uni par un systeme de progression visuel multi-couche, premium et immersif :
 
-**1. `ProductCard.tsx`** — Pas de `useTranslation`, tout est en dur :
-- "Produit ajouté au panier", "Erreur lors de l'ajout au panier"
-- "Recommandé", "Ajouté", "Ajouter", "Rupture de stock"
+### 1. Barre de progression circulaire (coin superieur droit)
+Un anneau SVG anime qui se remplit au fur et a mesure des etapes, avec le numero de l'etape au centre. Gradient anime de primary vers secondary.
 
-**2. `ProductGroupCard.tsx`** — Le `StarRating` a "0 avis" en dur (ligne 27)
+### 2. Particules flottantes reactives
+Des petites particules lumineuses (dots) qui apparaissent progressivement a chaque etape completee. Elles flottent doucement en arriere-plan avec un mouvement organique. Plus on avance, plus il y en a (densité proportionnelle à la progression).
 
-**3. `ProductPurchaseBox.tsx`** — Nombreuses chaînes en dur :
-- "avis", "Dans votre routine", "Pas encore dans votre routine"
-- "Abonnement", "Livraison gratuite, ajustable a tout moment avec l'IA"
-- "Achat unique", "Quantite", "Ajoute !", "Demarrer ma routine", "Ajouter au panier"
-- "Livraison estimee :", "Demander a VitaSync"
-- Format date-fns locale (actuellement `fr` uniquement)
+### 3. Ligne de progression verticale laterale (gauche)
+Une ligne fine verticale style "timeline" avec des noeuds (dots) pour chaque question. Le noeud actif pulse, les noeuds completes sont remplis avec un check, les futurs sont vides. Visible uniquement sur desktop.
 
-**4. `MobileStickyCart.tsx`** — Pas de `useTranslation` :
-- "Ajoute a votre routine", "Echec de l'ajout"
-- "/mois", "S'abonner", "Ajouter"
+### 4. Fond dynamique avec gradient qui evolue
+Au lieu d'un simple remplissage vert, le fond change de teinte progressivement : debut = bleu sombre (primary), milieu = teal, fin = vert emeraude, avec un effet de particules/orbes qui s'intensifie.
 
-**5. `CoachInsightCard.tsx`** — Pas de `useTranslation` :
-- "VitaSync Insight", "Tres compatible / Compatible / Peu compatible avec votre profil"
-- "Goal", "Training", "Budget"
-- "Demander au Coach", "Edit my context"
-- Question pré-remplie en français
+### 5. Micro-animations de transition
+A chaque changement d'etape, une onde circulaire (ripple) part du bouton "Continuer" et traverse l'ecran.
 
-**6. `ProductReviews.tsx`** — Pas de `useTranslation` :
-- "Customer Reviews", "avis", "No reviews yet"
-- "Lire les avis sur Judge.me", "Ask VitaSync"
-- "Frequently Asked Questions"
+## Fichiers modifies
 
-**7. `WhatItDoes.tsx`** — Pas de `useTranslation` :
-- "What It Does"
+- **`src/components/onboarding/OnboardingFlow.tsx`** : Remplacer le div de progression de fond (lignes 854-859), ajouter l'anneau SVG, la timeline laterale, et les particules
+- **`src/components/onboarding/ProgressRing.tsx`** (nouveau) : Composant anneau SVG anime
+- **`src/components/onboarding/ProgressParticles.tsx`** (nouveau) : Systeme de particules flottantes reactif
+- **`src/components/onboarding/StepTimeline.tsx`** (nouveau) : Timeline verticale desktop
 
-**8. `ResultsTimeline.tsx`** — Tout en dur (pas de `useTranslation`) :
-- "À quoi s'attendre"
-- Toutes les étapes de timeline (Semaine 1-2, Absorption, etc.)
-
-**9. `ScienceSection.tsx`** — Pas de `useTranslation` :
-- "The Science", "TL;DR", "What studies suggest:", "Sources & références:"
-- "Voir moins", "Voir plus de sources"
-- Disclaimer en bas
-
-**10. `ProductComparator.tsx`** — Pas de `useTranslation` :
-- "Comparer", "Ce produit", "Alternative", "Prix", "Marque"
-- Features en dur : "Vegan", "Sans Gluten", "Bio", "Made in France"
-
-**11. `BuildYourStack.tsx`** — Pas de `useTranslation` :
-- "Recommande pour vous", "Pairs well with"
-- Toast messages en anglais
-- Reason tags en anglais
-
-**12. `HowToTake.tsx`** — Partiellement traduit, mais :
-- Tabs : "Daily", "Training day", "Rest day"
-- Labels DosageCard : "Dosage", "Timing", "With Food", "Notes"
-- "Preferred timing", "Add to my schedule"
-- Notes en anglais en dur dans les TabsContent
-
-**13. `IngredientsLabel.tsx`** — Partiellement :
-- "Copied", "Copy serving info"
-
-**14. `ProductDetailMaster.tsx`** — `reassuranceItems` en dur (ligne 50-55) :
-- "Qualite Pharmaceutique", "Vegan", "Sans Gluten", "Fabrique en France"
-
-**15. `QuickBenefitsStrip.tsx`** — Labels en anglais en dur :
-- "Goal", "Format", "Key Ingredient", "When"
-- Valeurs dérivées en anglais
-
-### Plan d'implémentation
-
-**Étape 1 — Ajouter ~80 nouvelles clés dans `src/lib/i18n.ts`** pour les 6 langues (FR, EN, ES, AR, ZH, PT), couvrant toutes les chaînes listées ci-dessus. Exemples de clés :
-- `pdp.customerReviews`, `pdp.noReviewsYet`, `pdp.readReviews`
-- `pdp.whatItDoes`, `pdp.theScience`, `pdp.whatToExpect`
-- `pdp.subscription`, `pdp.oneTimePurchase`, `pdp.quantity`
-- `pdp.freeShippingSubscription`, `pdp.askVitaSync`
-- `pdp.compare`, `pdp.thisProduct`, `pdp.alternative`
-- `pdp.inYourRoutine`, `pdp.notInYourRoutine`
-- `pdp.pairsWellWith`, `pdp.recommendedForYou`
-- `pdp.daily`, `pdp.trainingDay`, `pdp.restDay`
-- `pdp.preferredTiming`, `pdp.addToSchedule`
-- etc.
-
-**Étape 2 — Refactoriser les 15 composants** en ajoutant `useTranslation` là où absent et en remplaçant toutes les chaînes en dur par `t('key')`.
-
-**Étape 3 — Adapter le format date-fns** dans `ProductPurchaseBox.tsx` pour utiliser la locale correspondant à la langue sélectionnée (import dynamique de `fr`, `es`, `ar`, `zhCN`, `pt`, `enUS`).
-
-### Détails techniques
-
-- Le fichier `i18n.ts` sera modifié pour chaque bloc de langue (6 blocs)
-- Chaque composant PDP/shop sera modifié pour importer `useTranslation` et appeler `t()`
-- Les `reassuranceItems` et `features` de ProductComparator deviendront des fonctions qui prennent `t` en paramètre
-- Les timelines de `ResultsTimeline.tsx` utiliseront des clés i18n
-- Le format date-fns dans `ProductPurchaseBox` sera adapté via un mapping `locale → date-fns locale`
+## Aspect technique
+- Animations via Framer Motion (deja installe)
+- SVG pour l'anneau circulaire (pas de librairie supplementaire)
+- Particules generees via un simple map avec positions aleatoires et animations CSS
+- Responsive : timeline laterale masquee sur mobile, anneau visible partout
 

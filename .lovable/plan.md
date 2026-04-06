@@ -1,39 +1,31 @@
 
 
-# Refonte de l'indicateur de progression de l'onboarding
+# Refonte de la question "Où souhaites-tu être livré ?"
 
-## Probleme actuel
-La progression est indiquee par un simple fond vert/bleu qui monte depuis le bas de l'ecran (`from-emerald-500/15`). C'est subtil et peu engageant visuellement.
+## Changements prevus
 
-## Nouvelle approche : "DNA Helix Progress"
+### 1. Titre et sous-titre plus explicites
+- Titre : "Où souhaites-tu recevoir tes compléments ?" (au lieu de "Où souhaites-tu être livré ?")
+- Sous-titre : "Nous livrons dans le monde entier. Sélectionne ton pays pour voir les délais et frais de livraison."
 
-Remplacer le fond uni par un systeme de progression visuel multi-couche, premium et immersif :
+### 2. Liste exhaustive des 196 pays avec drapeaux emoji
+Remplacer la liste actuelle de 23 pays par les ~196 pays du monde, organisés par regions :
+- **Amerique du Nord** (US, CA, MX) en premier
+- **Europe** (~45 pays)
+- **Asie** (~50 pays)
+- **Amerique du Sud** (~15 pays)
+- **Afrique** (~55 pays)
+- **Oceanie** (~15 pays)
+- **Moyen-Orient** (~15 pays)
 
-### 1. Barre de progression circulaire (coin superieur droit)
-Un anneau SVG anime qui se remplit au fur et a mesure des etapes, avec le numero de l'etape au centre. Gradient anime de primary vers secondary.
+Chaque pays aura son **drapeau emoji** (ex: 🇺🇸 🇫🇷 🇩🇪) affiche a cote du nom dans le bouton de selection.
 
-### 2. Particules flottantes reactives
-Des petites particules lumineuses (dots) qui apparaissent progressivement a chaque etape completee. Elles flottent doucement en arriere-plan avec un mouvement organique. Plus on avance, plus il y en a (densité proportionnelle à la progression).
+### 3. Fichier modifie
+- **`src/components/onboarding/CountrySelect.tsx`** : Remplacer le tableau `countries` par la liste complete des 196 pays avec drapeaux emoji. Ajouter un champ `flag` a l'interface Country. Afficher le drapeau dans chaque bouton. Reorganiser les regions (US first, puis EU, puis les autres continents).
+- **`src/components/onboarding/OnboardingFlow.tsx`** : Mettre a jour le titre et sous-titre de la question `shipping_country`.
 
-### 3. Ligne de progression verticale laterale (gauche)
-Une ligne fine verticale style "timeline" avec des noeuds (dots) pour chaque question. Le noeud actif pulse, les noeuds completes sont remplis avec un check, les futurs sont vides. Visible uniquement sur desktop.
-
-### 4. Fond dynamique avec gradient qui evolue
-Au lieu d'un simple remplissage vert, le fond change de teinte progressivement : debut = bleu sombre (primary), milieu = teal, fin = vert emeraude, avec un effet de particules/orbes qui s'intensifie.
-
-### 5. Micro-animations de transition
-A chaque changement d'etape, une onde circulaire (ripple) part du bouton "Continuer" et traverse l'ecran.
-
-## Fichiers modifies
-
-- **`src/components/onboarding/OnboardingFlow.tsx`** : Remplacer le div de progression de fond (lignes 854-859), ajouter l'anneau SVG, la timeline laterale, et les particules
-- **`src/components/onboarding/ProgressRing.tsx`** (nouveau) : Composant anneau SVG anime
-- **`src/components/onboarding/ProgressParticles.tsx`** (nouveau) : Systeme de particules flottantes reactif
-- **`src/components/onboarding/StepTimeline.tsx`** (nouveau) : Timeline verticale desktop
-
-## Aspect technique
-- Animations via Framer Motion (deja installe)
-- SVG pour l'anneau circulaire (pas de librairie supplementaire)
-- Particules generees via un simple map avec positions aleatoires et animations CSS
-- Responsive : timeline laterale masquee sur mobile, anneau visible partout
+### Detail technique
+- Les drapeaux seront des emoji Unicode natifs (ex: `🇺🇸`) - pas besoin de librairie externe
+- L'ordre des regions sera : North America > Europe > Asia > South America > Africa > Oceania > Middle East
+- La barre de recherche existante reste en place pour filtrer parmi les 196 pays
 

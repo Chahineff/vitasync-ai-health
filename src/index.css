@@ -275,6 +275,31 @@
     75% { background-position: 0% 100%; }
   }
 
+  /* Dashboard ambient aurora background */
+  .dashboard-aurora-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 30%, hsl(var(--primary) / 0.6), transparent 70%),
+      radial-gradient(ellipse 60% 80% at 80% 70%, hsl(var(--secondary) / 0.5), transparent 70%),
+      radial-gradient(ellipse 70% 50% at 50% 50%, hsl(190 100% 45% / 0.4), transparent 70%);
+    background-size: 200% 200%;
+    animation: dashboard-aurora 12s ease-in-out infinite;
+  }
+
+  .dark .dashboard-aurora-bg {
+    opacity: 0.08;
+  }
+
+  @keyframes dashboard-aurora {
+    0%, 100% { background-position: 0% 50%; }
+    25% { background-position: 50% 0%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 50% 100%; }
+
   .dark .glass-sidebar-floating {
     background: rgba(20, 24, 35, 0.9);
     box-shadow: 

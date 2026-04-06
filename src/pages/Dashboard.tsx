@@ -267,7 +267,9 @@ const Dashboard = () => {
   }
   if (!user) return null;
   const userName = profile?.first_name || user?.email?.split("@")[0] || "User";
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 flex w-full">
+  return <div className="min-h-screen bg-background flex w-full relative overflow-hidden">
+      {/* Aurora ambient background */}
+      <div className="dashboard-aurora-bg" />
       {/* Daily Checkin Modal */}
       <DailyCheckin />
       

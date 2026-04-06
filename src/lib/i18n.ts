@@ -118,7 +118,29 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.feature4.detail3": "Formulations biodisponibles de haute absorption",
     "features.feature4.detail4": "QR code de traçabilité sur chaque produit",
 
-    // Pricing Section - Details
+    // Preview Widgets
+    "preview.tracker.today": "Aujourd'hui",
+    "preview.tracker.morning": "Matin",
+    "preview.tracker.noon": "Midi",
+    "preview.tracker.evening": "Soir",
+    "preview.tracker.streak": "Série de 12 jours",
+    "preview.biomarker.dropHere": "Glissez votre PDF ici",
+    "preview.biomarker.dropFile": "Déposez le fichier...",
+    "preview.biomarker.extracting": "Extraction des biomarqueurs...",
+    "preview.biomarker.detected": "5 biomarqueurs détectés",
+    "preview.biomarker.low": "3 bas",
+    "preview.biomarker.ok": "2 ok",
+    "preview.quality.certificate": "Certificat qualité",
+    "preview.quality.purity": "Pureté testée",
+    "preview.quality.gmp": "Certifié GMP",
+    "preview.quality.verified": "Vérifié",
+    "preview.quality.natural": "Ingrédients naturels",
+    "preview.quality.naturalDetail": "Sans OGM, sans gluten",
+    "preview.quality.traceability": "Traçabilité",
+    "preview.quality.traceabilityDetail": "Origine → Livraison",
+    "preview.quality.complete": "Complet",
+    "preview.quality.verifiedBadge": "Qualité vérifiée ✓",
+
     "pricing.description": "Commencez gratuitement, passez à Go AI pour débuter, ou choisissez Premium AI pour l'expérience complète.",
     "pricing.plan1.name": "Gratuit",
     "pricing.plan1.description": "Découvrez le potentiel de l'IA santé",
@@ -215,6 +237,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "Disclaimer santé",
     "footer.shipping": "Livraison & Retours",
     "footer.copyright": "Tous droits réservés.",
+
+    // Legal
+    "legal.effectiveDate": "Date d'entrée en vigueur",
     "footer.madeWith": "Fait avec ❤️ pour votre santé",
 
     // About Page
@@ -1406,7 +1431,29 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.feature4.detail3": "Highly absorbable bioavailable formulations",
     "features.feature4.detail4": "QR code traceability on each product",
 
-    // Pricing Section - Details
+    // Preview Widgets
+    "preview.tracker.today": "Today",
+    "preview.tracker.morning": "Morning",
+    "preview.tracker.noon": "Noon",
+    "preview.tracker.evening": "Evening",
+    "preview.tracker.streak": "12-day streak",
+    "preview.biomarker.dropHere": "Drop your PDF here",
+    "preview.biomarker.dropFile": "Drop the file...",
+    "preview.biomarker.extracting": "Extracting biomarkers...",
+    "preview.biomarker.detected": "5 biomarkers detected",
+    "preview.biomarker.low": "3 low",
+    "preview.biomarker.ok": "2 ok",
+    "preview.quality.certificate": "Quality certificate",
+    "preview.quality.purity": "Purity tested",
+    "preview.quality.gmp": "GMP certified",
+    "preview.quality.verified": "Verified",
+    "preview.quality.natural": "Natural ingredients",
+    "preview.quality.naturalDetail": "Non-GMO, gluten-free",
+    "preview.quality.traceability": "Traceability",
+    "preview.quality.traceabilityDetail": "Origin → Delivery",
+    "preview.quality.complete": "Complete",
+    "preview.quality.verifiedBadge": "Quality verified ✓",
+
     "pricing.description": "Start for free, upgrade to Go AI to get started, or choose Premium AI for the full experience.",
     "pricing.plan1.name": "Free",
     "pricing.plan1.description": "Discover the potential of AI health",
@@ -1503,6 +1550,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "Health Disclaimer",
     "footer.shipping": "Shipping & Returns",
     "footer.copyright": "All rights reserved.",
+
+    // Legal
+    "legal.effectiveDate": "Effective date",
     "footer.madeWith": "Made with ❤️ for your health",
 
     // About Page
@@ -2685,7 +2735,29 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.feature4.detail3": "Formulaciones biodisponibles de alta absorción",
     "features.feature4.detail4": "Código QR de trazabilidad en cada producto",
 
-    // Pricing Details
+    // Preview Widgets
+    "preview.tracker.today": "Hoy",
+    "preview.tracker.morning": "Mañana",
+    "preview.tracker.noon": "Mediodía",
+    "preview.tracker.evening": "Noche",
+    "preview.tracker.streak": "Racha de 12 días",
+    "preview.biomarker.dropHere": "Arrastra tu PDF aquí",
+    "preview.biomarker.dropFile": "Suelta el archivo...",
+    "preview.biomarker.extracting": "Extrayendo biomarcadores...",
+    "preview.biomarker.detected": "5 biomarcadores detectados",
+    "preview.biomarker.low": "3 bajos",
+    "preview.biomarker.ok": "2 ok",
+    "preview.quality.certificate": "Certificado de calidad",
+    "preview.quality.purity": "Pureza probada",
+    "preview.quality.gmp": "Certificado GMP",
+    "preview.quality.verified": "Verificado",
+    "preview.quality.natural": "Ingredientes naturales",
+    "preview.quality.naturalDetail": "Sin OGM, sin gluten",
+    "preview.quality.traceability": "Trazabilidad",
+    "preview.quality.traceabilityDetail": "Origen → Entrega",
+    "preview.quality.complete": "Completo",
+    "preview.quality.verifiedBadge": "Calidad verificada ✓",
+
     "pricing.description": "Comienza gratis, pasa a Go AI para empezar, o elige Premium AI para la experiencia completa.",
     "pricing.plan1.name": "Gratis",
     "pricing.plan1.description": "Descubre el potencial de la salud IA",
@@ -2782,6 +2854,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "Aviso de salud",
     "footer.shipping": "Envío y Devoluciones",
     "footer.copyright": "Todos los derechos reservados.",
+
+    // Legal
+    "legal.effectiveDate": "Fecha de vigencia",
     "footer.madeWith": "Hecho con ❤️ para tu salud",
 
     // About
@@ -3939,7 +4014,29 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.feature4.detail3": "تركيبات حيوية متاحة عالية الامتصاص",
     "features.feature4.detail4": "رمز QR للتتبع على كل منتج",
 
-    // Pricing Details
+    // Preview Widgets
+    "preview.tracker.today": "اليوم",
+    "preview.tracker.morning": "صباحاً",
+    "preview.tracker.noon": "ظهراً",
+    "preview.tracker.evening": "مساءً",
+    "preview.tracker.streak": "سلسلة 12 يوماً",
+    "preview.biomarker.dropHere": "اسحب ملف PDF هنا",
+    "preview.biomarker.dropFile": "أفلت الملف...",
+    "preview.biomarker.extracting": "استخراج المؤشرات الحيوية...",
+    "preview.biomarker.detected": "تم اكتشاف 5 مؤشرات حيوية",
+    "preview.biomarker.low": "3 منخفضة",
+    "preview.biomarker.ok": "2 طبيعية",
+    "preview.quality.certificate": "شهادة الجودة",
+    "preview.quality.purity": "نقاء مُختبر",
+    "preview.quality.gmp": "معتمد GMP",
+    "preview.quality.verified": "تم التحقق",
+    "preview.quality.natural": "مكونات طبيعية",
+    "preview.quality.naturalDetail": "بدون كائنات معدلة وراثياً",
+    "preview.quality.traceability": "التتبع",
+    "preview.quality.traceabilityDetail": "المصدر ← التسليم",
+    "preview.quality.complete": "مكتمل",
+    "preview.quality.verifiedBadge": "✓ جودة موثقة",
+
     "pricing.description": "ابدأ مجاناً، ترقّ إلى Go AI للبدء، أو اختر Premium AI للتجربة الكاملة.",
     "pricing.plan1.name": "مجاني",
     "pricing.plan1.description": "اكتشف إمكانات الصحة بالذكاء الاصطناعي",
@@ -4036,6 +4133,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "إخلاء مسؤولية صحي",
     "footer.shipping": "الشحن والإرجاع",
     "footer.copyright": "جميع الحقوق محفوظة.",
+
+    // Legal
+    "legal.effectiveDate": "تاريخ السريان",
     "footer.madeWith": "صنع بـ ❤️ لصحتك",
 
     // About
@@ -5192,7 +5292,29 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.feature4.detail3": "高吸收率生物可利用配方",
     "features.feature4.detail4": "每个产品上的QR码追溯",
 
-    // Pricing Details
+    // Preview Widgets
+    "preview.tracker.today": "今天",
+    "preview.tracker.morning": "早上",
+    "preview.tracker.noon": "中午",
+    "preview.tracker.evening": "晚上",
+    "preview.tracker.streak": "连续12天",
+    "preview.biomarker.dropHere": "将PDF拖到这里",
+    "preview.biomarker.dropFile": "放下文件...",
+    "preview.biomarker.extracting": "正在提取生物标志物...",
+    "preview.biomarker.detected": "检测到5个生物标志物",
+    "preview.biomarker.low": "3个偏低",
+    "preview.biomarker.ok": "2个正常",
+    "preview.quality.certificate": "质量证书",
+    "preview.quality.purity": "纯度检测",
+    "preview.quality.gmp": "GMP认证",
+    "preview.quality.verified": "已验证",
+    "preview.quality.natural": "天然成分",
+    "preview.quality.naturalDetail": "无转基因，无麸质",
+    "preview.quality.traceability": "可追溯性",
+    "preview.quality.traceabilityDetail": "产地 → 配送",
+    "preview.quality.complete": "完整",
+    "preview.quality.verifiedBadge": "质量已验证 ✓",
+
     "pricing.description": "免费开始，升级到Go AI入门，或选择Premium AI获得完整体验。",
     "pricing.plan1.name": "免费",
     "pricing.plan1.description": "探索AI健康的潜力",
@@ -5289,6 +5411,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "健康免责声明",
     "footer.shipping": "配送与退货",
     "footer.copyright": "版权所有。",
+
+    // Legal
+    "legal.effectiveDate": "生效日期",
     "footer.madeWith": "用❤️为您的健康打造",
 
     // About
@@ -6445,7 +6570,29 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.feature4.detail3": "Formulações biodisponíveis de alta absorção",
     "features.feature4.detail4": "Código QR de rastreabilidade em cada produto",
 
-    // Pricing Details
+    // Preview Widgets
+    "preview.tracker.today": "Hoje",
+    "preview.tracker.morning": "Manhã",
+    "preview.tracker.noon": "Meio-dia",
+    "preview.tracker.evening": "Noite",
+    "preview.tracker.streak": "Sequência de 12 dias",
+    "preview.biomarker.dropHere": "Arraste seu PDF aqui",
+    "preview.biomarker.dropFile": "Solte o arquivo...",
+    "preview.biomarker.extracting": "Extraindo biomarcadores...",
+    "preview.biomarker.detected": "5 biomarcadores detectados",
+    "preview.biomarker.low": "3 baixos",
+    "preview.biomarker.ok": "2 ok",
+    "preview.quality.certificate": "Certificado de qualidade",
+    "preview.quality.purity": "Pureza testada",
+    "preview.quality.gmp": "Certificado GMP",
+    "preview.quality.verified": "Verificado",
+    "preview.quality.natural": "Ingredientes naturais",
+    "preview.quality.naturalDetail": "Sem OGM, sem glúten",
+    "preview.quality.traceability": "Rastreabilidade",
+    "preview.quality.traceabilityDetail": "Origem → Entrega",
+    "preview.quality.complete": "Completo",
+    "preview.quality.verifiedBadge": "Qualidade verificada ✓",
+
     "pricing.description": "Comece grátis, atualize para Go AI para começar, ou escolha Premium AI para a experiência completa.",
     "pricing.plan1.name": "Grátis",
     "pricing.plan1.description": "Descubra o potencial da saúde com IA",
@@ -6542,6 +6689,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "Aviso de saúde",
     "footer.shipping": "Envio e Devoluções",
     "footer.copyright": "Todos os direitos reservados.",
+
+    // Legal
+    "legal.effectiveDate": "Data de vigência",
     "footer.madeWith": "Feito com ❤️ para sua saúde",
 
     // About

@@ -209,17 +209,49 @@
     border-right: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  /* Floating Sidebar with Rounded Corners */
+  /* Floating Sidebar with Animated Border */
   .glass-sidebar-floating {
     position: relative;
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid hsl(var(--border));
+    border: none;
     border-radius: 24px;
     box-shadow: 
       0 8px 32px rgba(0, 0, 0, 0.08),
       0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .glass-sidebar-floating::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 1px;
+    background: linear-gradient(
+      var(--sidebar-border-angle, 0deg),
+      hsl(var(--primary) / 0.5),
+      hsl(var(--secondary) / 0.3),
+      hsl(var(--primary) / 0.1),
+      hsl(var(--secondary) / 0.5)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+    animation: sidebar-border-spin 10s linear infinite;
+  }
+
+  @keyframes sidebar-border-spin {
+    to { --sidebar-border-angle: 360deg; }
+  }
+
+  @property --sidebar-border-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
   }
 
   @keyframes sidebar-aurora {

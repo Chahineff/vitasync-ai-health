@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { CountrySelect, Country } from "./CountrySelect";
+import { SportSelector, SelectedSport } from "./SportSelector";
 import { SliderQuestion } from "./SliderQuestion";
 import { BudgetSlider } from "./BudgetSlider";
 import { cn } from "@/lib/utils";

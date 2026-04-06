@@ -852,8 +852,13 @@ export function OnboardingFlow() {
   };
 
   // AI Analysis animation screen
-  if (showAIAnalysis) {
-    return <AIAnalysisAnimation onComplete={() => navigate("/dashboard")} />;
+  if (showAIAnalysis && !showCoachIntro) {
+    return <AIAnalysisAnimation onComplete={() => setShowCoachIntro(true)} />;
+  }
+
+  // Coach intro screen after analysis
+  if (showCoachIntro) {
+    return <CoachIntroScreen answers={answers} onContinue={() => navigate("/dashboard")} />;
   }
 
   return (

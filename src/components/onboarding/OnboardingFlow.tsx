@@ -75,27 +75,10 @@ const questions: OnboardingQuestion[] = [
   },
   {
     id: "activity_level",
-    title: "À quelle fréquence fais-tu du sport ?",
-    subtitle: "Cela nous aide à adapter tes recommandations",
-    type: "single-bonus",
-    options: [
-      { value: "0-1", label: "0-1x/semaine", icon: <PersonSimpleWalk weight="duotone" className="w-5 h-5 text-slate-400" />, iconBg: "bg-slate-500/15 border border-slate-500/20" },
-      { value: "2-3", label: "2-3x/semaine", icon: <PersonSimpleRun weight="duotone" className="w-5 h-5 text-blue-400" />, iconBg: "bg-blue-500/15 border border-blue-500/20" },
-      { value: "4-5", label: "4-5x/semaine", icon: <Barbell weight="duotone" className="w-5 h-5 text-orange-400" />, iconBg: "bg-orange-500/15 border border-orange-500/20" },
-      { value: "6+", label: "6x+/semaine", icon: <Flame weight="duotone" className="w-5 h-5 text-red-400" />, iconBg: "bg-red-500/15 border border-red-500/20" },
-    ],
-    bonusField: {
-      id: "sport_types",
-      label: "Quel type de sport ?",
-      options: [
-        { value: "muscu", label: "Musculation" },
-        { value: "cardio", label: "Cardio" },
-        { value: "team", label: "Sports co" },
-        { value: "endurance", label: "Endurance" },
-        { value: "mix", label: "Mix" },
-      ],
-    },
-    required: true,
+    title: "Quels sports pratiques-tu ?",
+    subtitle: "Ajoute chaque sport et précise ta fréquence hebdomadaire",
+    type: "sport-builder",
+    required: false,
   },
   {
     id: "sleep",

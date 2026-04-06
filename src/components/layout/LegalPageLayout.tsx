@@ -4,6 +4,7 @@ import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface LegalPageLayoutProps {
   title: string;
@@ -13,6 +14,7 @@ interface LegalPageLayoutProps {
 }
 
 export function LegalPageLayout({ title, subtitle, date, children }: LegalPageLayoutProps) {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-background">
       <SplineBackground />
@@ -35,7 +37,7 @@ export function LegalPageLayout({ title, subtitle, date, children }: LegalPageLa
             )}
             {date && (
               <p className="text-foreground/40 text-sm mt-3">
-                Date d'entrée en vigueur : {date} | Version 2.0
+                {t("legal.effectiveDate")} : {date} | Version 2.0
               </p>
             )}
           </motion.header>

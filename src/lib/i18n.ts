@@ -1550,6 +1550,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "Health Disclaimer",
     "footer.shipping": "Shipping & Returns",
     "footer.copyright": "All rights reserved.",
+
+    // Legal
+    "legal.effectiveDate": "Effective date",
     "footer.madeWith": "Made with ❤️ for your health",
 
     // About Page

@@ -10,6 +10,9 @@ import { CountrySelect, Country } from "./CountrySelect";
 import { SliderQuestion } from "./SliderQuestion";
 import { BudgetSlider } from "./BudgetSlider";
 import { cn } from "@/lib/utils";
+import { ProgressRing } from "./ProgressRing";
+import { ProgressParticles } from "./ProgressParticles";
+import { StepTimeline } from "./StepTimeline";
 import {
   Moon, Lightning, Crosshair, Leaf, Barbell,
   PersonSimpleRun, ShieldCheck, Sparkle, DotsThree,

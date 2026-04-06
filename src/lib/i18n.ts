@@ -4133,6 +4133,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.disclaimer": "إخلاء مسؤولية صحي",
     "footer.shipping": "الشحن والإرجاع",
     "footer.copyright": "جميع الحقوق محفوظة.",
+
+    // Legal
+    "legal.effectiveDate": "تاريخ السريان",
     "footer.madeWith": "صنع بـ ❤️ لصحتك",
 
     // About

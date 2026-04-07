@@ -514,9 +514,28 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
                   <p className="text-xs text-muted-foreground line-clamp-1">{reco.reason}</p>
                 </div>
                 {reco.product?.price && (
-                  <span className="text-sm font-semibold text-foreground flex-shrink-0">
-                    {parseFloat(reco.product.price).toFixed(2)} {reco.product.currency}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                    <span className="text-sm font-semibold text-foreground">
+                      {parseFloat(reco.product.price).toFixed(2)} {reco.product.currency}
+                    </span>
+                    {reco.product?.variantId && (
+                      <Button
+                        size="sm"
+                        variant={addedToCart.has(reco.handle) ? "outline" : "default"}
+                        className="h-7 px-2 text-xs rounded-lg gap-1"
+                        disabled={addingToCart === reco.handle || addedToCart.has(reco.handle)}
+                        onClick={(e) => { e.stopPropagation(); handleAddToCart(reco); }}
+                      >
+                        {addingToCart === reco.handle ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : addedToCart.has(reco.handle) ? (
+                          <><Check className="w-3 h-3" /> {t("onboarding.coachAdded")}</>
+                        ) : (
+                          <><ShoppingCart className="w-3 h-3" /> {t("onboarding.coachAddToCart")}</>
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 )}
               </motion.div>
             ))}

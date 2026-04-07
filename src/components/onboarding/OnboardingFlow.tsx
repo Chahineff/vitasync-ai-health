@@ -1058,12 +1058,13 @@ export function OnboardingFlow() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center relative overflow-hidden transition-all duration-1000"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden"
       style={{
-        background: `linear-gradient(135deg, 
-          hsl(var(--background)) ${Math.max(0, 100 - progress * 1.5)}%, 
-          hsl(var(--primary) / ${0.05 + progress * 0.002}) ${50}%, 
-          hsl(160 50% 40% / ${progress * 0.0015}) 100%)`
+        background: `linear-gradient(to top left, 
+          hsl(160 50% 30% / ${0.08 + progress * 0.008}) 0%, 
+          hsl(var(--primary) / ${0.06 + progress * 0.006}) 35%, 
+          hsl(var(--background)) ${Math.max(40, 95 - progress * 0.7)}%)`,
+        transition: 'background 1.8s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       {/* Reactive particles */}

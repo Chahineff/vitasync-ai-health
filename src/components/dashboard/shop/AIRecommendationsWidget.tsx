@@ -226,7 +226,29 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
 
       {/* Content */}
       <AnimatePresence mode="wait">
-        {loading ? (
+        {!hasRequested && !loading ? (
+          <motion.div
+            key="idle"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-8 gap-4"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center">
+              <Sparkle weight="light" className="w-7 h-7 text-primary" />
+            </div>
+            <p className="text-sm text-foreground/60 text-center max-w-[240px]">
+              {t('shop.aiIdleDescription') || "Découvrez les compléments adaptés à votre profil"}
+            </p>
+            <button
+              onClick={handleRequestRecommendations}
+              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
+            >
+              <Sparkle weight="fill" className="w-4 h-4" />
+              {t('shop.requestRecommendations') || "Analyser mon profil"}
+            </button>
+          </motion.div>
+        ) : loading ? (
           <motion.div
             key="loading"
             initial={{ opacity: 0 }}
@@ -258,7 +280,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                 onClick={() => onProductClick?.(product.handle)}
                 className="group cursor-pointer"
               >
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-white/5 mb-2">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted/50 dark:bg-white/5 mb-2">
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
@@ -270,7 +292,6 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                       <ShoppingCartSimple weight="light" className="w-8 h-8 text-foreground/20" />
                     </div>
                   )}
-                  {/* AI Badge */}
                   <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded-full bg-primary/90 text-primary-foreground text-[10px] font-medium flex items-center gap-1">
                     <Sparkle weight="fill" className="w-2.5 h-2.5" />
                     AI
@@ -288,7 +309,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                     disabled={addingToCart === product.handle}
                     className={`p-1.5 rounded-lg transition-all ${
                       addedProducts.has(product.handle)
-                        ? 'bg-green-500/20 text-green-500'
+                        ? 'bg-emerald-500/20 text-emerald-500'
                         : 'bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground'
                     }`}
                   >

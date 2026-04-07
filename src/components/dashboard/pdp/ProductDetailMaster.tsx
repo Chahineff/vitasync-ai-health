@@ -243,7 +243,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
             </button>
             <div className="flex items-center gap-3">
               <motion.button
-                onClick={() => { toggleWishlist(); toast.success(isWishlisted ? 'Retire des favoris' : 'Ajoute aux favoris'); }}
+                onClick={() => { toggleWishlist(); toast.success(isWishlisted ? t('pdp.wishlistRemoved') : t('pdp.wishlistAdded')); }}
                 whileTap={{ scale: 0.85 }}
                 className="p-2 rounded-xl hover:bg-muted transition-colors"
               >

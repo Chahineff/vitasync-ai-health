@@ -391,6 +391,42 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
     fetchRecommendations();
   }, []);
 
+  const handleAddToCart = async (reco: typeof aiRecommendations[0]) => {
+    if (!reco.product?.variantId) return;
+    setAddingToCart(reco.handle);
+    try {
+      const minimalProduct: ShopifyProduct = {
+        node: {
+          id: reco.handle,
+          title: reco.product.title,
+          description: "",
+          handle: reco.handle,
+          productType: "",
+          vendor: "",
+          priceRange: { minVariantPrice: { amount: reco.product.price, currencyCode: reco.product.currency } },
+          images: { edges: reco.product.imageUrl ? [{ node: { url: reco.product.imageUrl, altText: reco.product.title } }] : [] },
+          variants: { edges: [{ node: { id: reco.product.variantId, title: "Default", price: { amount: reco.product.price, currencyCode: reco.product.currency }, availableForSale: true, selectedOptions: [] } }] },
+          options: [],
+          sellingPlanGroups: { edges: [] },
+        },
+      };
+      await addItem({
+        product: minimalProduct,
+        variantId: reco.product.variantId,
+        variantTitle: "Default",
+        price: { amount: reco.product.price, currencyCode: reco.product.currency },
+        quantity: 1,
+        selectedOptions: [],
+      });
+      setAddedToCart(prev => new Set(prev).add(reco.handle));
+      toast.success(t("onboarding.coachAddedToCart"));
+    } catch (err) {
+      console.error("Add to cart error:", err);
+    } finally {
+      setAddingToCart(null);
+    }
+  };
+
   const allDone = !loading && (typedLines >= aiRecommendations.length || error);
 
   return (

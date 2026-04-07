@@ -30,17 +30,28 @@ const CACHE_KEY = 'vitasync_ai_recommendations';
 export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (handle: string) => void }) {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const [addedProducts, setAddedProducts] = useState<Set<string>>(new Set());
+  const [hasRequested, setHasRequested] = useState(false);
   const addItem = useCartStore(state => state.addItem);
   const hasInitialized = useRef(false);
 
+  // Only load from cache on mount — never auto-fetch
   useEffect(() => {
-    if (!user || hasInitialized.current) return;
-    hasInitialized.current = true;
-    loadRecommendations();
+    if (!user) return;
+    try {
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        const cached: CachedRecommendations = JSON.parse(cachedData);
+        const today = new Date().toISOString().split('T')[0];
+        if (cached.date === today && cached.userId === user.id && cached.products.length > 0) {
+          setRecommendations(cached.products);
+          setHasRequested(true);
+        }
+      }
+    } catch {}
   }, [user]);
 
   const isCacheValid = (cached: CachedRecommendations): boolean => {
@@ -116,8 +127,12 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
     }
   };
 
+  const handleRequestRecommendations = () => {
+    setHasRequested(true);
+    fetchAIRecommendations();
+  };
+
   const handleRefresh = () => {
-    // Check if cache is still valid (1 per day limit)
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
       try {
@@ -128,7 +143,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
           });
           return;
         }
-      } catch { /* ignore parse error, allow refresh */ }
+      } catch {}
     }
     hasInitialized.current = false;
     fetchAIRecommendations();
@@ -197,19 +212,43 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
             <p className="text-xs text-foreground/50">{t('shop.aiRecommendationsDesc')}</p>
           </div>
         </div>
-        <button
-          onClick={handleRefresh}
-          disabled={loading}
-          className="p-2 rounded-lg bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 transition-all disabled:opacity-50"
-          title={t('shop.refreshRecommendations')}
-        >
-          <ArrowClockwise className={`w-4 h-4 text-foreground/60 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        {hasRequested && (
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="p-2 rounded-lg bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 transition-all disabled:opacity-50"
+            title={t('shop.refreshRecommendations')}
+          >
+            <ArrowClockwise className={`w-4 h-4 text-foreground/60 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        )}
       </div>
 
       {/* Content */}
       <AnimatePresence mode="wait">
-        {loading ? (
+        {!hasRequested && !loading ? (
+          <motion.div
+            key="idle"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-8 gap-4"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center">
+              <Sparkle weight="light" className="w-7 h-7 text-primary" />
+            </div>
+            <p className="text-sm text-foreground/60 text-center max-w-[240px]">
+              {t('shop.aiIdleDescription') || "Découvrez les compléments adaptés à votre profil"}
+            </p>
+            <button
+              onClick={handleRequestRecommendations}
+              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
+            >
+              <Sparkle weight="fill" className="w-4 h-4" />
+              {t('shop.requestRecommendations') || "Analyser mon profil"}
+            </button>
+          </motion.div>
+        ) : loading ? (
           <motion.div
             key="loading"
             initial={{ opacity: 0 }}
@@ -241,7 +280,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                 onClick={() => onProductClick?.(product.handle)}
                 className="group cursor-pointer"
               >
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-white/5 mb-2">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted/50 dark:bg-white/5 mb-2">
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
@@ -253,7 +292,6 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                       <ShoppingCartSimple weight="light" className="w-8 h-8 text-foreground/20" />
                     </div>
                   )}
-                  {/* AI Badge */}
                   <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded-full bg-primary/90 text-primary-foreground text-[10px] font-medium flex items-center gap-1">
                     <Sparkle weight="fill" className="w-2.5 h-2.5" />
                     AI
@@ -271,7 +309,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                     disabled={addingToCart === product.handle}
                     className={`p-1.5 rounded-lg transition-all ${
                       addedProducts.has(product.handle)
-                        ? 'bg-green-500/20 text-green-500'
+                        ? 'bg-emerald-500/20 text-emerald-500'
                         : 'bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground'
                     }`}
                   >

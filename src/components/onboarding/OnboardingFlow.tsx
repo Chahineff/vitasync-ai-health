@@ -751,20 +751,52 @@ export function OnboardingFlow() {
             </p>
           )}
           
-          {/* "Aucune" option highlighted at top if present */}
-          {q.options?.find(o => o.value === "none") && (
-            <div className="mb-1">
-              <OptionCard
-                key="none"
-                selected={isNoneSelected}
-                icon={q.options.find(o => o.value === "none")!.icon}
-                iconBg={q.options.find(o => o.value === "none")!.iconBg}
-                label={q.options.find(o => o.value === "none")!.label}
-                onClick={() => handleSelect("none")}
-                index={0}
-              />
-            </div>
-          )}
+          {/* "Aucune" option highlighted at top — full width, prominent */}
+          {q.options?.find(o => o.value === "none") && (() => {
+            const noneOpt = q.options!.find(o => o.value === "none")!;
+            return (
+              <div className="mb-3">
+                <motion.button
+                  onClick={() => handleSelect("none")}
+                  initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  className={cn(
+                    "group relative w-full p-5 rounded-2xl border-2 text-left transition-all duration-300",
+                    "backdrop-blur-sm shadow-sm hover:shadow-lg",
+                    isNoneSelected
+                      ? "border-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-500/15"
+                      : "border-border/60 bg-card/30 hover:border-emerald-500/40 hover:bg-card/50"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    {noneOpt.icon && (
+                      <motion.div
+                        animate={isNoneSelected ? { scale: [1, 1.15, 1], rotate: [0, 8, 0] } : {}}
+                        transition={{ duration: 0.4, type: "spring" }}
+                        className={cn("w-11 h-11 rounded-xl flex items-center justify-center transition-shadow duration-300", noneOpt.iconBg, isNoneSelected && "shadow-lg")}
+                      >
+                        {noneOpt.icon}
+                      </motion.div>
+                    )}
+                    <span className="text-base font-semibold text-foreground">{noneOpt.label}</span>
+                  </div>
+                  {isNoneSelected && (
+                    <motion.div
+                      initial={{ scale: 0, rotate: -90 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 20 }}
+                      className="absolute top-3 right-3 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center"
+                    >
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    </motion.div>
+                  )}
+                </motion.button>
+              </div>
+            );
+          })()}
           
           {!isNoneSelected && (
             <>

@@ -331,7 +331,10 @@ function AIAnalysisAnimation({ onComplete }: { onComplete: () => void }) {
 /* ── Coach Intro Screen (shown after AI analysis) ── */
 function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any>; onContinue: () => void }) {
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [aiRecommendations, setAiRecommendations] = useState<Array<{ handle: string; reason: string; product?: { title: string; price: string; currency: string; imageUrl: string; variantId: string } }>>([]);
   const [typedLines, setTypedLines] = useState(0);
+  const [error, setError] = useState(false);
 
   const goals = (answers.health_goals || []) as string[];
   const sports = (answers.selected_sports || []) as { label: string; emoji: string; frequency: number }[];
@@ -342,23 +345,46 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
     immunity: "Immunité", skin: "Peau / Cheveux", digestion: "Digestion", longevity: "Longévité",
   };
 
-  const recommendations = [
-    goals.includes("energy") && "Un complexe vitamine B pour soutenir ton énergie quotidienne",
-    goals.includes("sleep") && "Du magnésium bisglycinate pour améliorer la qualité de ton sommeil",
-    goals.includes("sport") || goals.includes("muscle") ? "De la créatine monohydrate pour optimiser tes performances" : null,
-    goals.includes("stress") && "De l'ashwagandha pour réguler ton niveau de stress",
-    goals.includes("immunity") && "De la vitamine D3 + K2 pour renforcer ton immunité",
-    goals.includes("focus") && "Un complexe oméga-3 DHA pour soutenir ta concentration",
-    "Une multivitamine adaptée à ton profil",
-  ].filter(Boolean);
-
+  // Call AI edge function on mount
   useEffect(() => {
     setTimeout(() => setVisible(true), 300);
-    const lineTimers = recommendations.map((_, i) =>
-      setTimeout(() => setTypedLines(i + 1), 800 + i * 600)
-    );
-    return () => lineTimers.forEach(clearTimeout);
+    
+    const fetchRecommendations = async () => {
+      try {
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        
+        const response = await fetch(`${supabaseUrl}/functions/v1/onboarding-recommendations`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${anonKey}`,
+          },
+          body: JSON.stringify({ answers }),
+        });
+
+        if (!response.ok) throw new Error("AI error");
+        
+        const data = await response.json();
+        const recos = data.recommendations || [];
+        setAiRecommendations(recos);
+        setLoading(false);
+
+        // Animate lines appearing
+        recos.forEach((_: any, i: number) => {
+          setTimeout(() => setTypedLines(i + 1), 400 + i * 500);
+        });
+      } catch (err) {
+        console.error("Onboarding recommendations error:", err);
+        setError(true);
+        setLoading(false);
+      }
+    };
+
+    fetchRecommendations();
   }, []);
+
+  const allDone = !loading && (typedLines >= aiRecommendations.length || error);
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center relative overflow-hidden px-6">
@@ -379,11 +405,11 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
         {/* Coach avatar + message */}
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/20 flex items-center justify-center flex-shrink-0">
-            <img src={vitasyncLogo} alt="Coach IA" className="w-8 h-8 object-contain" />
+            <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="Coach IA" className="w-8 h-8 object-contain" />
           </div>
           <div className="space-y-3 flex-1">
             <p className="text-lg font-medium text-foreground">
-              J'ai analysé ton profil ! 🎯
+              {loading ? "J'analyse ton profil... 🔍" : "J'ai analysé ton profil ! 🎯"}
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {goals.length > 0 && (
@@ -392,43 +418,95 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
               {sports.length > 0 && (
                 <>Tu pratiques {sports.map(s => `${s.emoji} ${s.label}`).join(", ")}. </>
               )}
-              Voici ce que je te recommande pour commencer :
+              {loading
+                ? "Je sélectionne les compléments les plus adaptés..."
+                : "Voici ce que je te recommande pour commencer :"}
             </p>
           </div>
         </div>
 
-        {/* Recommendations list */}
-        <div className="space-y-2.5 pl-2">
-          {recommendations.slice(0, typedLines).map((rec, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4 }}
-              className="flex items-start gap-3 p-3 rounded-xl bg-card/60 border border-border/50 backdrop-blur-sm"
-            >
-              <span className="text-primary mt-0.5">
-                <Sparkle weight="duotone" className="w-4 h-4" />
-              </span>
-              <span className="text-sm text-foreground">{rec}</span>
-            </motion.div>
-          ))}
-        </div>
+        {/* Loading state */}
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-8 gap-3"
+          >
+            <div className="relative">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center animate-pulse">
+                <Sparkle weight="fill" className="w-7 h-7 text-primary" />
+              </div>
+              <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping" />
+            </div>
+            <p className="text-sm text-muted-foreground">Analyse IA en cours...</p>
+          </motion.div>
+        )}
+
+        {/* AI Recommendations — real products */}
+        {!loading && aiRecommendations.length > 0 && (
+          <div className="space-y-3 pl-2">
+            {aiRecommendations.slice(0, typedLines).map((reco, i) => (
+              <motion.div
+                key={reco.handle}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4 }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-card/60 border border-border/50 backdrop-blur-sm"
+              >
+                {reco.product?.imageUrl ? (
+                  <img
+                    src={reco.product.imageUrl}
+                    alt={reco.product?.title || reco.handle}
+                    className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-muted/50"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Sparkle weight="duotone" className="w-5 h-5 text-primary" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {reco.product?.title || reco.handle}
+                  </p>
+                  <p className="text-xs text-muted-foreground line-clamp-1">{reco.reason}</p>
+                </div>
+                {reco.product?.price && (
+                  <span className="text-sm font-semibold text-foreground flex-shrink-0">
+                    {parseFloat(reco.product.price).toFixed(2)} {reco.product.currency}
+                  </span>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {/* Error fallback */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-4"
+          >
+            <p className="text-sm text-muted-foreground">
+              Tu retrouveras des recommandations personnalisées dans ton dashboard.
+            </p>
+          </motion.div>
+        )}
 
         {/* Subtext */}
-        {typedLines >= recommendations.length && (
+        {allDone && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-sm text-muted-foreground text-center"
           >
-            Tu pourras affiner tes recommandations avec le Coach IA dans ton dashboard.
+            Tu pourras affiner ces recommandations directement dans ton dashboard.
           </motion.p>
         )}
 
         {/* CTA Button */}
-        {typedLines >= recommendations.length && (
+        {allDone && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

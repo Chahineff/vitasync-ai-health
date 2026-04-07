@@ -74,7 +74,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
   const product = currentProduct?.product || null;
   const parsedData = currentProduct?.parsedData || null;
 
-  const { enrichedData } = useEnrichedProductData(product?.title || null);
+  const { enrichedData: rawEnrichedData } = useEnrichedProductData(product?.title || null);
+  const { translatedData: enrichedData } = useTranslatedEnrichedData(rawEnrichedData, product?.title || null);
   const { isWishlisted, toggleWishlist } = useWishlist(product?.handle || null);
 
   // Check if product is in user's supplement stack

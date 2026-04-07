@@ -88,7 +88,14 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
             </Button>
           </a>
         )}
-        <Button variant="ghost" className="gap-2 text-primary">
+        <Button
+          variant="ghost"
+          className="gap-2 text-primary"
+          onClick={() => {
+            const question = t('pdp.askVitaSyncQuestion').replace('{product}', productTitle);
+            navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
+          }}
+        >
           <ChatCircleDots weight="light" className="w-4 h-4" />
           {t('pdp.askVitaSync')}
         </Button>

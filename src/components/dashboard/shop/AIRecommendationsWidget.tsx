@@ -127,8 +127,12 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
     }
   };
 
+  const handleRequestRecommendations = () => {
+    setHasRequested(true);
+    fetchAIRecommendations();
+  };
+
   const handleRefresh = () => {
-    // Check if cache is still valid (1 per day limit)
     const cachedData = localStorage.getItem(CACHE_KEY);
     if (cachedData) {
       try {
@@ -139,7 +143,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
           });
           return;
         }
-      } catch { /* ignore parse error, allow refresh */ }
+      } catch {}
     }
     hasInitialized.current = false;
     fetchAIRecommendations();

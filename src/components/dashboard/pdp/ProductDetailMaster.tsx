@@ -293,7 +293,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
         {/* HERO — 50/50 columns */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-          <div className="lg:sticky lg:top-[100px] lg:self-start lg:max-h-[calc(100vh-120px)]">
+          <div className="lg:sticky lg:top-[72px] lg:self-start" style={{ maxHeight: 'calc(100vh - 90px)' }}>
             <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} tags={product.tags} />
           </div>
 

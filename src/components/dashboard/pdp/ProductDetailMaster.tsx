@@ -47,11 +47,11 @@ interface CachedProduct {
   parsedData: ParsedProductData | null;
 }
 
-const reassuranceItems = [
-  { icon: ShieldCheck, label: 'Qualite Pharmaceutique' },
-  { icon: Leaf, label: 'Vegan' },
-  { icon: Flask, label: 'Sans Gluten' },
-  { icon: Flag, label: 'Fabrique en France' },
+const reassuranceKeys = [
+  { icon: ShieldCheck, key: 'pdp.reassuranceQuality' },
+  { icon: Leaf, key: 'pdp.reassuranceVegan' },
+  { icon: Flask, key: 'pdp.reassuranceGlutenFree' },
+  { icon: Flag, key: 'pdp.reassuranceMadeInFrance' },
 ];
 
 export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMasterProps>(function ProductDetailMaster({ 

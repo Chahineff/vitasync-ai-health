@@ -96,7 +96,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
         hasAutoTriggered.current = true;
         localStorage.setItem(key, 'true');
         // Auto-send an initial prompt to get product recommendations
-        const autoPrompt = "Analyse mon profil santé et recommande-moi les compléments alimentaires les plus adaptés à mes objectifs avec les produits de la boutique VitaSync.";
+        const autoPrompt = "Salut ! Je viens de terminer mon onboarding. En tant que mon coach IA personnel, analyse mon profil santé complet et recommande-moi directement les compléments alimentaires les plus adaptés à mes objectifs. Montre-moi les produits avec leurs images et détails pour que je puisse les ajouter à mon panier.";
         handleSubmit(autoPrompt);
       }
     }

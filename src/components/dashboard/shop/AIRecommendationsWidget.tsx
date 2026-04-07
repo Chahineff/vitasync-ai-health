@@ -38,7 +38,7 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
   const addItem = useCartStore(state => state.addItem);
   const hasInitialized = useRef(false);
 
-  // Only load from cache on mount — never auto-fetch
+  // Load from cache on mount, or auto-fetch if onboarding just completed
   useEffect(() => {
     if (!user) return;
     try {
@@ -49,9 +49,18 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
         if (cached.date === today && cached.userId === user.id && cached.products.length > 0) {
           setRecommendations(cached.products);
           setHasRequested(true);
+          return;
         }
       }
     } catch {}
+
+    // Auto-trigger recommendations if onboarding was just completed (initial_reco flag exists)
+    const recoKey = `vitasync_initial_reco_${user.id}`;
+    if (localStorage.getItem(recoKey) && !hasInitialized.current) {
+      hasInitialized.current = true;
+      setHasRequested(true);
+      fetchAIRecommendations();
+    }
   }, [user]);
 
   const isCacheValid = (cached: CachedRecommendations): boolean => {

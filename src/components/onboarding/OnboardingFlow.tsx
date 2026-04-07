@@ -335,14 +335,15 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
   const [aiRecommendations, setAiRecommendations] = useState<Array<{ handle: string; reason: string; product?: { title: string; price: string; currency: string; imageUrl: string; variantId: string } }>>([]);
   const [typedLines, setTypedLines] = useState(0);
   const [error, setError] = useState(false);
+  const { t } = useTranslation();
 
   const goals = (answers.health_goals || []) as string[];
   const sports = (answers.selected_sports || []) as { label: string; emoji: string; frequency: number }[];
   
   const goalLabels: Record<string, string> = {
-    sleep: "Sommeil", energy: "Énergie", focus: "Focus", stress: "Stress",
-    sport: "Performance sportive", muscle: "Prise de muscle", weight_loss: "Perte de poids",
-    immunity: "Immunité", skin: "Peau / Cheveux", digestion: "Digestion", longevity: "Longévité",
+    sleep: t("onboarding.goalSleep"), energy: t("onboarding.goalEnergy"), focus: t("onboarding.goalFocus"), stress: t("onboarding.goalStress"),
+    sport: t("onboarding.goalSportPerf"), muscle: t("onboarding.goalMuscle"), weight_loss: t("onboarding.goalWeightLoss"),
+    immunity: t("onboarding.goalImmunity"), skin: t("onboarding.goalSkinHair"), digestion: t("onboarding.goalDigestion"), longevity: "Longévité",
   };
 
   // Call AI edge function on mount
@@ -409,18 +410,18 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
           </div>
           <div className="space-y-3 flex-1">
             <p className="text-lg font-medium text-foreground">
-              {loading ? "J'analyse ton profil... 🔍" : "J'ai analysé ton profil ! 🎯"}
+              {loading ? t("onboarding.coachAnalyzing") : t("onboarding.coachAnalyzed")}
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {goals.length > 0 && (
-                <>Tes objectifs : <span className="text-foreground font-medium">{goals.map(g => goalLabels[g] || g).join(", ")}</span>. </>
+                <>{t("onboarding.coachYourGoals")} <span className="text-foreground font-medium">{goals.map(g => goalLabels[g] || g).join(", ")}</span>. </>
               )}
               {sports.length > 0 && (
-                <>Tu pratiques {sports.map(s => `${s.emoji} ${s.label}`).join(", ")}. </>
+                <>{t("onboarding.coachYouPractice")} {sports.map(s => `${s.emoji} ${s.label}`).join(", ")}. </>
               )}
               {loading
-                ? "Je sélectionne les compléments les plus adaptés..."
-                : "Voici ce que je te recommande pour commencer :"}
+                ? t("onboarding.coachSelectingSupplements")
+                : t("onboarding.coachRecommendation")}
             </p>
           </div>
         </div>
@@ -438,7 +439,7 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
               </div>
               <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping" />
             </div>
-            <p className="text-sm text-muted-foreground">Analyse IA en cours...</p>
+            <p className="text-sm text-muted-foreground">{t("onboarding.coachAiAnalysis")}</p>
           </motion.div>
         )}
 
@@ -488,7 +489,7 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
             className="text-center py-4"
           >
             <p className="text-sm text-muted-foreground">
-              Tu retrouveras des recommandations personnalisées dans ton dashboard.
+              {t("onboarding.coachErrorFallback")}
             </p>
           </motion.div>
         )}
@@ -501,7 +502,7 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
             transition={{ delay: 0.3 }}
             className="text-sm text-muted-foreground text-center"
           >
-            Tu pourras affiner ces recommandations directement dans ton dashboard.
+            {t("onboarding.coachRefineSubtext")}
           </motion.p>
         )}
 
@@ -518,7 +519,7 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
               size="lg"
               className="rounded-xl gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20 px-8"
             >
-              Accéder au dashboard
+              {t("onboarding.coachGoToDashboard")}
               <ChevronRight className="w-4 h-4" />
             </Button>
           </motion.div>

@@ -212,14 +212,16 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
             <p className="text-xs text-foreground/50">{t('shop.aiRecommendationsDesc')}</p>
           </div>
         </div>
-        <button
-          onClick={handleRefresh}
-          disabled={loading}
-          className="p-2 rounded-lg bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 transition-all disabled:opacity-50"
-          title={t('shop.refreshRecommendations')}
-        >
-          <ArrowClockwise className={`w-4 h-4 text-foreground/60 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        {hasRequested && (
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="p-2 rounded-lg bg-muted/50 dark:bg-white/5 hover:bg-muted dark:hover:bg-white/10 border border-border/50 dark:border-white/10 transition-all disabled:opacity-50"
+            title={t('shop.refreshRecommendations')}
+          >
+            <ArrowClockwise className={`w-4 h-4 text-foreground/60 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        )}
       </div>
 
       {/* Content */}

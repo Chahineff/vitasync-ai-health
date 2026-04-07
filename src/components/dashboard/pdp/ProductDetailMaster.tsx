@@ -9,6 +9,7 @@ import { CartDrawer } from '../CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnrichedProductData } from '@/hooks/useEnrichedProductData';
+import { useTranslatedEnrichedData } from '@/hooks/useTranslatedEnrichedData';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';

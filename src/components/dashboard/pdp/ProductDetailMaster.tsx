@@ -439,17 +439,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
           />
         </div>
 
-        <ProductComparator
-          currentProduct={{
-            title: product.title,
-            price: parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2),
-            productType: product.productType,
-            vendor: product.vendor,
-            tags: product.tags,
-          }}
-          alternatives={allProducts}
-          onProductClick={handleFlavorChange}
-        />
+
+
 
         <BuildYourStack
           products={allProducts}

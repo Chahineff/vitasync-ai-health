@@ -309,10 +309,10 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
             {/* Reassurance Strip */}
             <div className="flex items-center justify-between gap-3 py-4 border-t border-b border-border/30">
-              {reassuranceItems.map((item, i) => (
+              {reassuranceKeys.map((item, i) => (
                 <div key={i} className="flex flex-col items-center gap-1.5 text-center flex-1">
                   <item.icon weight="light" className="w-5 h-5 text-foreground/40" />
-                  <span className="text-[12px] text-foreground/50 font-light leading-tight">{item.label}</span>
+                  <span className="text-[12px] text-foreground/50 font-light leading-tight">{t(item.key)}</span>
                 </div>
               ))}
             </div>

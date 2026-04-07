@@ -322,7 +322,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="what-it-does" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    What It Does
+                    {t('pdp.accordionWhatItDoes')}
                     <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
                   </span>
                 </AccordionTrigger>

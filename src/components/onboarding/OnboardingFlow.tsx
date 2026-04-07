@@ -1058,12 +1058,13 @@ export function OnboardingFlow() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center relative overflow-hidden transition-all duration-1000"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden"
       style={{
-        background: `linear-gradient(135deg, 
-          hsl(var(--background)) ${Math.max(0, 100 - progress * 1.5)}%, 
-          hsl(var(--primary) / ${0.05 + progress * 0.002}) ${50}%, 
-          hsl(160 50% 40% / ${progress * 0.0015}) 100%)`
+        background: `linear-gradient(to top left, 
+          hsl(160 50% 30% / ${0.08 + progress * 0.008}) 0%, 
+          hsl(var(--primary) / ${0.06 + progress * 0.006}) 35%, 
+          hsl(var(--background)) ${Math.max(40, 95 - progress * 0.7)}%)`,
+        transition: 'background 1.8s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       {/* Reactive particles */}
@@ -1078,13 +1079,13 @@ export function OnboardingFlow() {
       {/* Decorative floating orbs - intensity scales with progress */}
       <motion.div
         className="absolute top-1/4 -left-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-        style={{ background: `hsl(var(--primary) / ${0.05 + progress * 0.002})` }}
+        style={{ background: `hsl(var(--primary) / ${0.08 + progress * 0.005})`, transition: 'background 1.8s ease' }}
         animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         className="absolute bottom-1/4 -right-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-        style={{ background: `hsl(var(--secondary) / ${0.05 + progress * 0.002})` }}
+        style={{ background: `hsl(var(--secondary) / ${0.08 + progress * 0.005})`, transition: 'background 1.8s ease' }}
         animate={{ y: [0, -25, 0], x: [0, -10, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />

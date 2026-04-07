@@ -338,7 +338,10 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
   const [aiRecommendations, setAiRecommendations] = useState<Array<{ handle: string; reason: string; product?: { title: string; price: string; currency: string; imageUrl: string; variantId: string } }>>([]);
   const [typedLines, setTypedLines] = useState(0);
   const [error, setError] = useState(false);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
+  const [addedToCart, setAddedToCart] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
+  const addItem = useCartStore(state => state.addItem);
 
   const goals = (answers.health_goals || []) as string[];
   const sports = (answers.selected_sports || []) as { label: string; emoji: string; frequency: number }[];

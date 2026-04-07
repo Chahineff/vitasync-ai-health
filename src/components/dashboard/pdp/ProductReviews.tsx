@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Star, ChatCircleDots, CaretDown } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { FAQItem } from './types';
 

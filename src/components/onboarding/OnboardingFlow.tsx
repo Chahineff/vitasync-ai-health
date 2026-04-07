@@ -1,4 +1,5 @@
 import { useState, useEffect, ReactNode } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useHealthProfile, HealthProfile } from "@/hooks/useHealthProfile";

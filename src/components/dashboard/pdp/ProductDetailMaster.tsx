@@ -47,11 +47,11 @@ interface CachedProduct {
   parsedData: ParsedProductData | null;
 }
 
-const reassuranceItems = [
-  { icon: ShieldCheck, label: 'Qualite Pharmaceutique' },
-  { icon: Leaf, label: 'Vegan' },
-  { icon: Flask, label: 'Sans Gluten' },
-  { icon: Flag, label: 'Fabrique en France' },
+const reassuranceKeys = [
+  { icon: ShieldCheck, key: 'pdp.reassuranceQuality' },
+  { icon: Leaf, key: 'pdp.reassuranceVegan' },
+  { icon: Flask, key: 'pdp.reassuranceGlutenFree' },
+  { icon: Flag, key: 'pdp.reassuranceMadeInFrance' },
 ];
 
 export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMasterProps>(function ProductDetailMaster({ 
@@ -243,7 +243,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
             </button>
             <div className="flex items-center gap-3">
               <motion.button
-                onClick={() => { toggleWishlist(); toast.success(isWishlisted ? 'Retire des favoris' : 'Ajoute aux favoris'); }}
+                onClick={() => { toggleWishlist(); toast.success(isWishlisted ? t('pdp.wishlistRemoved') : t('pdp.wishlistAdded')); }}
                 whileTap={{ scale: 0.85 }}
                 className="p-2 rounded-xl hover:bg-muted transition-colors"
               >
@@ -271,7 +271,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink className="cursor-pointer text-foreground/40 hover:text-foreground/60 text-xs" onClick={onBack}>
-                Boutique
+                {t('pdp.breadcrumbShop')}
               </BreadcrumbLink>
             </BreadcrumbItem>
             {product.productType && (
@@ -309,10 +309,10 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
             {/* Reassurance Strip */}
             <div className="flex items-center justify-between gap-3 py-4 border-t border-b border-border/30">
-              {reassuranceItems.map((item, i) => (
+              {reassuranceKeys.map((item, i) => (
                 <div key={i} className="flex flex-col items-center gap-1.5 text-center flex-1">
                   <item.icon weight="light" className="w-5 h-5 text-foreground/40" />
-                  <span className="text-[12px] text-foreground/50 font-light leading-tight">{item.label}</span>
+                  <span className="text-[12px] text-foreground/50 font-light leading-tight">{t(item.key)}</span>
                 </div>
               ))}
             </div>
@@ -322,7 +322,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="what-it-does" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    What It Does
+                    {t('pdp.accordionWhatItDoes')}
                     <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
                   </span>
                 </AccordionTrigger>
@@ -341,7 +341,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="results-timeline" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    A quoi s'attendre
+                    {t('pdp.accordionExpect')}
                     <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
                   </span>
                 </AccordionTrigger>
@@ -369,7 +369,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="ingredients" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    Ingredients & Label
+                    {t('pdp.accordionIngredients')}
                     <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
                   </span>
                 </AccordionTrigger>
@@ -387,7 +387,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="science" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    The Science
+                    {t('pdp.accordionScience')}
                     <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
                   </span>
                 </AccordionTrigger>

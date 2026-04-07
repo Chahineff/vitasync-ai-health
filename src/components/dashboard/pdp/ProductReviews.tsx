@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Star, ChatCircleDots, CaretDown } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { FAQItem } from './types';
 
@@ -15,6 +16,7 @@ interface ProductReviewsProps {
 
 export function ProductReviews({ productTitle, productHandle, enrichedFaq, reviewRating, reviewCount }: ProductReviewsProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const faqItems = enrichedFaq?.slice(0, 4) || [];
   const hasReviews = reviewRating != null && reviewCount != null && reviewCount > 0;
@@ -86,7 +88,14 @@ export function ProductReviews({ productTitle, productHandle, enrichedFaq, revie
             </Button>
           </a>
         )}
-        <Button variant="ghost" className="gap-2 text-primary">
+        <Button
+          variant="ghost"
+          className="gap-2 text-primary"
+          onClick={() => {
+            const question = t('pdp.askVitaSyncQuestion').replace('{product}', productTitle);
+            navigate('/dashboard', { state: { activeTab: 'coach', prefillMessage: question } });
+          }}
+        >
           <ChatCircleDots weight="light" className="w-4 h-4" />
           {t('pdp.askVitaSync')}
         </Button>

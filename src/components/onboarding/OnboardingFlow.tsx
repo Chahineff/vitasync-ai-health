@@ -1085,7 +1085,7 @@ export function OnboardingFlow() {
       />
       <motion.div
         className="absolute bottom-1/4 -right-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-        style={{ background: `hsl(var(--secondary) / ${0.05 + progress * 0.002})` }}
+        style={{ background: `hsl(var(--secondary) / ${0.08 + progress * 0.005})`, transition: 'background 1.8s ease' }}
         animate={{ y: [0, -25, 0], x: [0, -10, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />

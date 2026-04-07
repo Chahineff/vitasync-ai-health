@@ -30,17 +30,28 @@ const CACHE_KEY = 'vitasync_ai_recommendations';
 export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (handle: string) => void }) {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const [addedProducts, setAddedProducts] = useState<Set<string>>(new Set());
+  const [hasRequested, setHasRequested] = useState(false);
   const addItem = useCartStore(state => state.addItem);
   const hasInitialized = useRef(false);
 
+  // Only load from cache on mount — never auto-fetch
   useEffect(() => {
-    if (!user || hasInitialized.current) return;
-    hasInitialized.current = true;
-    loadRecommendations();
+    if (!user) return;
+    try {
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        const cached: CachedRecommendations = JSON.parse(cachedData);
+        const today = new Date().toISOString().split('T')[0];
+        if (cached.date === today && cached.userId === user.id && cached.products.length > 0) {
+          setRecommendations(cached.products);
+          setHasRequested(true);
+        }
+      }
+    } catch {}
   }, [user]);
 
   const isCacheValid = (cached: CachedRecommendations): boolean => {

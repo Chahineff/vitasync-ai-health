@@ -16,6 +16,7 @@ interface ProductReviewsProps {
 
 export function ProductReviews({ productTitle, productHandle, enrichedFaq, reviewRating, reviewCount }: ProductReviewsProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const faqItems = enrichedFaq?.slice(0, 4) || [];
   const hasReviews = reviewRating != null && reviewCount != null && reviewCount > 0;

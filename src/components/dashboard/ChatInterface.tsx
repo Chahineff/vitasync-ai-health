@@ -58,6 +58,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [hasCalledFirstMessage, setHasCalledFirstMessage] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const hasAutoTriggered = useRef(false);
   const [selectedModel, setSelectedModel] = useState<AIModel>(getSavedModel);
 
   const handleModelChange = (model: AIModel) => {

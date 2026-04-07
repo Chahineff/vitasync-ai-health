@@ -271,7 +271,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink className="cursor-pointer text-foreground/40 hover:text-foreground/60 text-xs" onClick={onBack}>
-                Boutique
+                {t('pdp.breadcrumbShop')}
               </BreadcrumbLink>
             </BreadcrumbItem>
             {product.productType && (

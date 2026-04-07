@@ -79,6 +79,29 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
     }
   }, [user]);
 
+  // Auto-trigger initial AI recommendation after onboarding (first visit, no conversations)
+  useEffect(() => {
+    if (
+      !hasAutoTriggered.current &&
+      user &&
+      healthProfile?.onboarding_completed &&
+      conversations !== null &&
+      conversations.length === 0 &&
+      messages.length === 0 &&
+      !isLoading
+    ) {
+      // Check localStorage to prevent re-triggering on subsequent coach visits
+      const key = `vitasync_initial_reco_${user.id}`;
+      if (!localStorage.getItem(key)) {
+        hasAutoTriggered.current = true;
+        localStorage.setItem(key, 'true');
+        // Auto-send an initial prompt to get product recommendations
+        const autoPrompt = "Analyse mon profil santé et recommande-moi les compléments alimentaires les plus adaptés à mes objectifs avec les produits de la boutique VitaSync.";
+        handleSubmit(autoPrompt);
+      }
+    }
+  }, [user, healthProfile, conversations, messages.length, isLoading]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);

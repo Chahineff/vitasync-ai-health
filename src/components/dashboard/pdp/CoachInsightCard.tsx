@@ -110,7 +110,10 @@ export function CoachInsightCard({ enrichedData, productTitle, onAskCoach }: Coa
               {t('pdp.askCoachBtn')}
               <ArrowRight weight="bold" className="w-3.5 h-3.5" />
             </button>
-            <button className="flex items-center gap-1.5 text-xs text-foreground/40 hover:text-foreground/60 transition-colors">
+            <button
+              onClick={() => navigate('/dashboard', { state: { activeTab: 'profile' } })}
+              className="flex items-center gap-1.5 text-xs text-foreground/40 hover:text-foreground/60 transition-colors"
+            >
               <PencilSimple weight="light" className="w-3.5 h-3.5" />
               {t('pdp.editMyContext')}
             </button>

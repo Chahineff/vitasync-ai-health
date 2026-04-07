@@ -1079,7 +1079,7 @@ export function OnboardingFlow() {
       {/* Decorative floating orbs - intensity scales with progress */}
       <motion.div
         className="absolute top-1/4 -left-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-        style={{ background: `hsl(var(--primary) / ${0.05 + progress * 0.002})` }}
+        style={{ background: `hsl(var(--primary) / ${0.08 + progress * 0.005})`, transition: 'background 1.8s ease' }}
         animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />

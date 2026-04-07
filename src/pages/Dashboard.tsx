@@ -181,9 +181,10 @@ const Dashboard = () => {
   useEffect(() => {
     if (!loading && !healthProfileLoading && healthProfile && healthProfile.onboarding_completed && healthProfile.tutorial_completed === false) {
       setWelcomePhase(true);
-      // Auto-mark tutorial as completed and dismiss after 3s
+      // Auto-mark tutorial as completed and redirect to coach after 3s
       const timer = setTimeout(async () => {
         setWelcomePhase(false);
+        setActiveSection("coach");
         await updateHealthProfile({ tutorial_completed: true } as any);
       }, 3000);
       return () => clearTimeout(timer);

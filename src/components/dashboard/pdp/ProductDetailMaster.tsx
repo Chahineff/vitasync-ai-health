@@ -9,6 +9,7 @@ import { CartDrawer } from '../CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnrichedProductData } from '@/hooks/useEnrichedProductData';
+import { useTranslatedEnrichedData } from '@/hooks/useTranslatedEnrichedData';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -73,7 +74,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
   const product = currentProduct?.product || null;
   const parsedData = currentProduct?.parsedData || null;
 
-  const { enrichedData } = useEnrichedProductData(product?.title || null);
+  const { enrichedData: rawEnrichedData } = useEnrichedProductData(product?.title || null);
+  const { translatedData: enrichedData } = useTranslatedEnrichedData(rawEnrichedData, product?.title || null);
   const { isWishlisted, toggleWishlist } = useWishlist(product?.handle || null);
 
   // Check if product is in user's supplement stack

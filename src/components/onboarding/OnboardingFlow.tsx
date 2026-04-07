@@ -5,8 +5,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useHealthProfile, HealthProfile } from "@/hooks/useHealthProfile";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle, ShoppingCart, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useCartStore } from "@/stores/cartStore";
+import type { ShopifyProduct } from "@/lib/shopify";
 import { CountrySelect, Country } from "./CountrySelect";
 import { SportSelector, SelectedSport, allSports } from "./SportSelector";
 import { SliderQuestion } from "./SliderQuestion";
@@ -336,7 +338,10 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
   const [aiRecommendations, setAiRecommendations] = useState<Array<{ handle: string; reason: string; product?: { title: string; price: string; currency: string; imageUrl: string; variantId: string } }>>([]);
   const [typedLines, setTypedLines] = useState(0);
   const [error, setError] = useState(false);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
+  const [addedToCart, setAddedToCart] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
+  const addItem = useCartStore(state => state.addItem);
 
   const goals = (answers.health_goals || []) as string[];
   const sports = (answers.selected_sports || []) as { label: string; emoji: string; frequency: number }[];
@@ -385,6 +390,42 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
 
     fetchRecommendations();
   }, []);
+
+  const handleAddToCart = async (reco: typeof aiRecommendations[0]) => {
+    if (!reco.product?.variantId) return;
+    setAddingToCart(reco.handle);
+    try {
+      const minimalProduct: ShopifyProduct = {
+        node: {
+          id: reco.handle,
+          title: reco.product.title,
+          description: "",
+          handle: reco.handle,
+          productType: "",
+          vendor: "",
+          priceRange: { minVariantPrice: { amount: reco.product.price, currencyCode: reco.product.currency } },
+          images: { edges: reco.product.imageUrl ? [{ node: { url: reco.product.imageUrl, altText: reco.product.title } }] : [] },
+          variants: { edges: [{ node: { id: reco.product.variantId, title: "Default", price: { amount: reco.product.price, currencyCode: reco.product.currency }, availableForSale: true, selectedOptions: [] } }] },
+          options: [],
+          sellingPlanGroups: { edges: [] },
+        },
+      };
+      await addItem({
+        product: minimalProduct,
+        variantId: reco.product.variantId,
+        variantTitle: "Default",
+        price: { amount: reco.product.price, currencyCode: reco.product.currency },
+        quantity: 1,
+        selectedOptions: [],
+      });
+      setAddedToCart(prev => new Set(prev).add(reco.handle));
+      toast.success(t("onboarding.coachAddedToCart"));
+    } catch (err) {
+      console.error("Add to cart error:", err);
+    } finally {
+      setAddingToCart(null);
+    }
+  };
 
   const allDone = !loading && (typedLines >= aiRecommendations.length || error);
 
@@ -473,9 +514,28 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
                   <p className="text-xs text-muted-foreground line-clamp-1">{reco.reason}</p>
                 </div>
                 {reco.product?.price && (
-                  <span className="text-sm font-semibold text-foreground flex-shrink-0">
-                    {parseFloat(reco.product.price).toFixed(2)} {reco.product.currency}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                    <span className="text-sm font-semibold text-foreground">
+                      {parseFloat(reco.product.price).toFixed(2)} {reco.product.currency}
+                    </span>
+                    {reco.product?.variantId && (
+                      <Button
+                        size="sm"
+                        variant={addedToCart.has(reco.handle) ? "outline" : "default"}
+                        className="h-7 px-2 text-xs rounded-lg gap-1"
+                        disabled={addingToCart === reco.handle || addedToCart.has(reco.handle)}
+                        onClick={(e) => { e.stopPropagation(); handleAddToCart(reco); }}
+                      >
+                        {addingToCart === reco.handle ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : addedToCart.has(reco.handle) ? (
+                          <><Check className="w-3 h-3" /> {t("onboarding.coachAdded")}</>
+                        ) : (
+                          <><ShoppingCart className="w-3 h-3" /> {t("onboarding.coachAddToCart")}</>
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 )}
               </motion.div>
             ))}

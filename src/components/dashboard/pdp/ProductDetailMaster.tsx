@@ -449,6 +449,13 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
         />
 
         <PDPFooter />
+
+        {/* FDA Disclaimer */}
+        <div className="max-w-[1200px] mx-auto px-4 lg:px-6 py-8">
+          <p style={{ fontSize: 12, fontStyle: "italic", color: "#718096", lineHeight: 1.6 }}>
+            * These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.
+          </p>
+        </div>
       </motion.div>
 
       <MobileStickyCart product={product} selectedVariantIndex={selectedVariantIndex} />

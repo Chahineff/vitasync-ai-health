@@ -120,13 +120,32 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-foreground/65">
-            © {new Date().getFullYear()} VitaSync. {t("footer.copyright")}
+        {/* FDA Disclaimer */}
+        <div className="mt-12 pt-6 border-t" style={{ borderColor: "#E2E8F0" }}>
+          <p style={{ fontSize: 12, fontStyle: "italic", color: "#718096", lineHeight: 1.6 }}>
+            * These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.
           </p>
-          <p className="text-sm text-foreground/65">
-            {t("footer.madeWith")}
+        </div>
+
+        {/* Legal links row */}
+        <div className="mt-6 pt-6 border-t" style={{ borderColor: "#E2E8F0" }}>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
+            {[
+              { label: "Privacy Policy", href: "/privacy-policy" },
+              { label: "Terms of Service", href: "/terms-of-service" },
+              { label: "Refund Policy", href: "/refund-policy" },
+              { label: "Shipping Policy", href: "/shipping-policy" },
+            ].map((link, i, arr) => (
+              <span key={link.href} className="flex items-center gap-4">
+                <Link to={link.href} style={{ fontSize: 12, color: "#718096" }} className="hover:underline">
+                  {link.label}
+                </Link>
+                {i < arr.length - 1 && <span style={{ color: "#718096", fontSize: 12 }}>|</span>}
+              </span>
+            ))}
+          </div>
+          <p className="text-center" style={{ fontSize: 12, color: "#718096" }}>
+            © 2026 VitaSync. All rights reserved. Ships to the US only via Supliful.
           </p>
         </div>
       </div>

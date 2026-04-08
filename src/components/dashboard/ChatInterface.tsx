@@ -34,7 +34,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
 // Default model
-const DEFAULT_MODEL = AI_MODELS.find(m => m.model === 'google/gemini-3-flash-preview') || AI_MODELS[2];
+const DEFAULT_MODEL = AI_MODELS.find(m => m.model === 'google/gemini-2.5-flash') || AI_MODELS[1];
 
 // Persist model selection in localStorage
 function getSavedModel(): AIModel {

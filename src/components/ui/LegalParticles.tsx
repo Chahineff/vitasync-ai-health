@@ -36,15 +36,15 @@ export function LegalParticles() {
     resize();
     window.addEventListener("resize", resize);
 
-    const baseCount = 60;
+    const baseCount = 120;
     for (let i = 0; i < baseCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.3 + 0.05,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 2.5 + 1,
+        opacity: Math.random() * 0.4 + 0.15,
         color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
@@ -60,7 +60,7 @@ export function LegalParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const scrollFactor = scrollRef.current;
-      const intensity = 0.3 + scrollFactor * 2.5;
+      const intensity = 0.6 + scrollFactor * 1.5;
 
       particles.forEach((p) => {
         p.x += p.vx * intensity;
@@ -71,26 +71,23 @@ export function LegalParticles() {
         if (p.y < 0) p.y = canvas.height;
         if (p.y > canvas.height) p.y = 0;
 
-        const dynamicOpacity = p.opacity * (0.4 + scrollFactor * 1.5);
-        const dynamicSize = p.size * (0.8 + scrollFactor * 0.8);
+        const dynamicOpacity = p.opacity * (0.7 + scrollFactor * 0.8);
+        const dynamicSize = p.size * (0.9 + scrollFactor * 0.5);
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, dynamicSize, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${p.color}, ${Math.min(dynamicOpacity, 0.6)})`;
         ctx.fill();
 
-        // Glow effect that increases with scroll
-        if (scrollFactor > 0.2) {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, dynamicSize * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${p.color}, ${Math.min(dynamicOpacity * 0.15, 0.1)})`;
-          ctx.fill();
-        }
+        // Glow effect
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, dynamicSize * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color}, ${Math.min(dynamicOpacity * 0.12 + scrollFactor * 0.06, 0.12)})`;
+        ctx.fill();
       });
 
-      // Draw connections between nearby particles (more visible as you scroll)
-      if (scrollFactor > 0.1) {
-        const connectionOpacity = Math.min((scrollFactor - 0.1) * 0.15, 0.08);
+      // Draw connections between nearby particles
+      const connectionOpacity = 0.03 + scrollFactor * 0.06;
         for (let i = 0; i < particles.length; i++) {
           for (let j = i + 1; j < particles.length; j++) {
             const dx = particles[i].x - particles[j].x;
@@ -106,7 +103,6 @@ export function LegalParticles() {
             }
           }
         }
-      }
 
       animationRef.current = requestAnimationFrame(animate);
     };

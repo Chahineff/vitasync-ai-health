@@ -29,6 +29,7 @@ import CGV from "./pages/legal/CGV";
 import Disclaimer from "./pages/legal/Disclaimer";
 import Shipping from "./pages/legal/Shipping";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const queryClient = new QueryClient();
 

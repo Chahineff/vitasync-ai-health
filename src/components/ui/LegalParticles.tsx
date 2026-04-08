@@ -101,10 +101,9 @@ export function LegalParticles() {
               ctx.strokeStyle = `rgba(0, 212, 200, ${connectionOpacity * (1 - dist / 150)})`;
               ctx.lineWidth = 0.5;
               ctx.stroke();
+            }
+          }
         }
-      }
-        }
-      }
 
       animationRef.current = requestAnimationFrame(animate);
     };

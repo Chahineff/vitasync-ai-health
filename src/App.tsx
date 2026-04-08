@@ -30,6 +30,7 @@ import Disclaimer from "./pages/legal/Disclaimer";
 import Shipping from "./pages/legal/Shipping";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import RefundPolicy from "./pages/RefundPolicy";
 
 const queryClient = new QueryClient();
 

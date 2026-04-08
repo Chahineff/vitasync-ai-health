@@ -28,6 +28,7 @@ import CookiesPage from "./pages/legal/Cookies";
 import CGV from "./pages/legal/CGV";
 import Disclaimer from "./pages/legal/Disclaimer";
 import Shipping from "./pages/legal/Shipping";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 

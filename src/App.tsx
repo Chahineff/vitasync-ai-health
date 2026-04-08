@@ -28,10 +28,6 @@ import CookiesPage from "./pages/legal/Cookies";
 import CGV from "./pages/legal/CGV";
 import Disclaimer from "./pages/legal/Disclaimer";
 import Shipping from "./pages/legal/Shipping";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import RefundPolicy from "./pages/RefundPolicy";
-import ShippingPolicy from "./pages/ShippingPolicy";
 
 const queryClient = new QueryClient();
 
@@ -75,10 +71,10 @@ function AppContent() {
         <Route path="/cgv" element={<CGV />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/shipping" element={<Shipping />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-service" element={<TermsOfService />} />
-        <Route path="/refund-policy" element={<RefundPolicy />} />
-        <Route path="/shipping-policy" element={<ShippingPolicy />} />
+        <Route path="/privacy-policy" element={<Privacy />} />
+        <Route path="/terms-of-service" element={<Terms />} />
+        <Route path="/refund-policy" element={<Shipping />} />
+        <Route path="/shipping-policy" element={<Shipping />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

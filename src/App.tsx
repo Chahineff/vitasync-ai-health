@@ -31,6 +31,7 @@ import Shipping from "./pages/legal/Shipping";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import RefundPolicy from "./pages/RefundPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
 
 const queryClient = new QueryClient();
 

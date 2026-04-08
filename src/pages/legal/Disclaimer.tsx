@@ -5,14 +5,14 @@ export default function Disclaimer() {
     <LegalPageLayout
       title="Disclaimer Santé et Médical"
       subtitle="Avertissements réglementaires — FDA, UE, EU AI Act, Directive 2002/46/CE"
-      date="4 mars 2026"
+      date="8 avril 2026"
     >
       <p>Ce document regroupe l'ensemble des avertissements réglementaires applicables à la plateforme VitaSync, à ses services d'intelligence artificielle et aux compléments alimentaires commercialisés.</p>
 
       <h2>1. Disclaimer Général — VitaSync n'est pas un Service Médical</h2>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground font-medium">
-          ⚠️ VitaSync est une plateforme d'information sur le bien-être et le mode de vie. Les informations et recommandations fournies ne constituent PAS un avis médical, un diagnostic ou un traitement. VitaSync n'est PAS un dispositif médical au sens du Règlement (UE) 2017/745 (MDR). Consultez toujours un professionnel de santé qualifié avant toute décision concernant votre santé ou votre alimentation.
+          ⚠️ VitaSync est une plateforme d'information sur le bien-être et le mode de vie. Les informations et recommandations fournies ne constituent PAS un avis médical, un diagnostic ou un traitement. VitaSync n'est PAS un dispositif médical au sens du Règlement (UE) 2017/745 (MDR), ni au sens du FD&C Act américain. Consultez toujours un professionnel de santé qualifié avant toute décision concernant votre santé ou votre alimentation.
         </p>
       </div>
 
@@ -27,24 +27,24 @@ export default function Disclaimer() {
       <h2>3. Disclaimer Analyses Sanguines</h2>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
-          <strong>IMPORTANT :</strong> L'analyse de vos résultats sanguins est fournie à titre informatif et éducatif uniquement. Elle ne constitue PAS une interprétation médicale, un diagnostic ou une évaluation clinique. Seul un professionnel de santé agréé peut interpréter correctement vos résultats dans le contexte de votre historique médical complet. Si des valeurs semblent hors normes, consultez immédiatement votre médecin. Ne retardez jamais une consultation médicale sur la base des informations fournies par VitaSync.
+          <strong>IMPORTANT :</strong> L'analyse de vos résultats sanguins par l'IA VitaSync est fournie à titre informatif et éducatif uniquement. Elle ne constitue PAS une interprétation médicale, un diagnostic ou une évaluation clinique. Seul un professionnel de santé agréé peut interpréter correctement vos résultats dans le contexte de votre historique médical complet. Si des valeurs semblent hors normes, consultez immédiatement votre médecin. Ne retardez jamais une consultation médicale sur la base des informations fournies par VitaSync.
         </p>
       </div>
 
       <h2>4. Disclaimer Compléments Alimentaires — Recommandations IA</h2>
-      <p>Les suggestions de compléments alimentaires sont des informations générales de bien-être, pas des prescriptions médicales. Les compléments peuvent interagir avec des médicaments. Consultez votre médecin ou pharmacien avant tout nouveau complément, particulièrement en cas de grossesse, allaitement, traitement médicamenteux ou condition médicale. Les résultats individuels peuvent varier.</p>
+      <p>Les suggestions de compléments alimentaires sont des informations générales de bien-être, pas des prescriptions médicales. Les compléments peuvent interagir avec des médicaments. Consultez votre médecin ou pharmacien avant tout nouveau complément, particulièrement en cas de grossesse, allaitement, traitement médicamenteux, pathologie chronique ou préparation d'une intervention chirurgicale. Les résultats individuels peuvent varier.</p>
 
-      <h2>5. Disclaimer FDA/DSHEA (Marché américain)</h2>
+      <h2>5. Disclaimer FDA / DSHEA (Marché américain)</h2>
       <div className="p-4 rounded-xl bg-muted/50 border border-border/50 my-4">
         <p className="text-foreground font-medium">
           FDA DISCLAIMER (21 CFR 101.93) : These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
         </p>
       </div>
-      <p>Ce disclaimer est obligatoire en vertu du DSHEA (Dietary Supplement Health and Education Act) de 1994 pour tout complément alimentaire portant une allégation de type structure/fonction.</p>
+      <p>Ce disclaimer est obligatoire en vertu du Dietary Supplement Health and Education Act (DSHEA) de 1994 pour tout complément alimentaire portant une allégation de type structure/fonction. Il doit apparaître sur chaque page produit, chaque étiquette et chaque communication marketing aux États-Unis.</p>
 
       <h2>6. Disclaimer UE — Directive 2002/46/CE</h2>
       <p>Les compléments alimentaires ne doivent pas être utilisés comme substituts d'un régime alimentaire varié et équilibré et d'un mode de vie sain. Ne pas dépasser la dose journalière recommandée. Tenir hors de la portée des jeunes enfants.</p>
-      <p>Ces mentions sont imposées par l'article 6(2) de la Directive 2002/46/CE. Il est formellement INTERDIT d'attribuer aux compléments des propriétés de prévention, de traitement ou de guérison de maladies.</p>
+      <p>Ces mentions sont imposées par l'article 6(2) de la Directive 2002/46/CE. Il est formellement INTERDIT d'attribuer aux compléments des propriétés de prévention, de traitement ou de guérison de maladies humaines.</p>
 
       <h2>7. Disclaimer Combiné International (Pages Produit)</h2>
       <div className="p-4 rounded-xl bg-muted/50 border border-border/50 my-4 space-y-3">
@@ -60,7 +60,7 @@ export default function Disclaimer() {
       <p>VitaSync est une plateforme d'information sur le bien-être. Les produits proposés sont des compléments alimentaires et non des médicaments. Les recommandations IA ne constituent pas un avis médical. Consultez un professionnel de santé avant toute décision concernant votre santé. — These statements have not been evaluated by the FDA. Not intended to diagnose, treat, cure, or prevent any disease.</p>
 
       <h2>9. Responsabilité Civile et Directive Produits Défectueux</h2>
-      <p>La Directive (UE) 2024/2853 sur la responsabilité du fait des produits (applicable aux produits mis sur le marché à partir du 9 décembre 2026) inclut explicitement les logiciels et systèmes IA dans la définition de « produit ». VitaSync sera soumis à un régime de responsabilité stricte pour les défauts IA. Les clauses de limitation de responsabilité dans les CGU/CGV ne peuvent pas exclure cette responsabilité légale.</p>
+      <p>La Directive (UE) 2024/2853 sur la responsabilité du fait des produits (applicable aux produits mis sur le marché à partir du 9 décembre 2026) inclut explicitement les logiciels et systèmes IA dans la définition de « produit ». VitaSync sera soumis à un régime de responsabilité stricte pour les défauts IA vis-à-vis des utilisateurs UE. Les clauses de limitation de responsabilité dans les CGU/CGV ne peuvent pas exclure cette responsabilité légale. Pour le marché américain, les règles de product liability applicables au niveau fédéral et étatique s'appliquent.</p>
 
       <h2>10. Tableau de Synthèse — Où Placer Chaque Disclaimer</h2>
       <table>
@@ -72,7 +72,7 @@ export default function Disclaimer() {
           <tr><td>Transparence IA (EU AI Act)</td><td>Chaque interaction Coach IA</td><td>Oui (depuis 02/2025)</td></tr>
           <tr><td>Analyses sanguines</td><td>Écran upload + page résultats</td><td>Oui (évite MDR)</td></tr>
           <tr><td>Recommandation compléments</td><td>Avec chaque reco IA</td><td>Oui</td></tr>
-          <tr><td>FDA/DSHEA</td><td>Chaque page produit (près des allégations)</td><td>Oui (marché USA)</td></tr>
+          <tr><td>FDA / DSHEA</td><td>Chaque page produit (près des allégations)</td><td>Oui (marché USA)</td></tr>
           <tr><td>UE Directive 2002/46</td><td>Chaque page produit</td><td>Oui (marché UE)</td></tr>
           <tr><td>Combiné international</td><td>Pages produit (bloc complet)</td><td>Recommandé</td></tr>
           <tr><td>Footer condensé</td><td>Footer site (toutes pages)</td><td>Recommandé</td></tr>

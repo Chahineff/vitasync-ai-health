@@ -127,23 +127,8 @@ export function Footer() {
           </p>
         </div>
 
-        {/* Legal links row */}
+        {/* Copyright */}
         <div className="mt-6 pt-6 border-t" style={{ borderColor: "#E2E8F0" }}>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
-            {[
-              { label: "Privacy Policy", href: "/privacy-policy" },
-              { label: "Terms of Service", href: "/terms-of-service" },
-              { label: "Refund Policy", href: "/refund-policy" },
-              { label: "Shipping Policy", href: "/shipping-policy" },
-            ].map((link, i, arr) => (
-              <span key={link.href} className="flex items-center gap-4">
-                <Link to={link.href} style={{ fontSize: 12, color: "#718096" }} className="hover:underline">
-                  {link.label}
-                </Link>
-                {i < arr.length - 1 && <span style={{ color: "#718096", fontSize: 12 }}>|</span>}
-              </span>
-            ))}
-          </div>
           <p className="text-center" style={{ fontSize: 12, color: "#718096" }}>
             © 2026 VitaSync. All rights reserved. Ships to the US only via Supliful.
           </p>

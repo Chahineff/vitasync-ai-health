@@ -74,6 +74,7 @@ function AppContent() {
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

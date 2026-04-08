@@ -88,7 +88,6 @@ export function LegalParticles() {
 
       // Draw connections between nearby particles
       const connectionOpacity = 0.03 + scrollFactor * 0.06;
-        const connectionOpacity = Math.min((scrollFactor - 0.1) * 0.15, 0.08);
         for (let i = 0; i < particles.length; i++) {
           for (let j = i + 1; j < particles.length; j++) {
             const dx = particles[i].x - particles[j].x;

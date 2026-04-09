@@ -461,8 +461,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
 
         {/* Medical disclaimer banner — always visible, non-dismissible */}
         <div
-          className="flex items-center gap-2 px-4 py-2.5 text-[13px] shrink-0"
-          style={{ backgroundColor: "#FFF3CD", color: "#856404" }}
+          className="flex items-center gap-2 px-4 py-2.5 text-[13px] shrink-0 bg-amber-100/90 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 border-b border-amber-200/50 dark:border-amber-700/30"
         >
           <span className="shrink-0">⚕️</span>
           <span>VitaSync's AI coach provides wellness guidance only — not medical advice. Always consult a healthcare professional before starting supplements.</span>

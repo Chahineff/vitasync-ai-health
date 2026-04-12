@@ -1,31 +1,82 @@
 
 
-# Refonte de la question "Où souhaites-tu être livré ?"
+# Plan d'amélioration UX/UI de la Boutique et des Fiches Produit
 
-## Changements prevus
+## Objectif
+Transformer la boutique et les pages produit en une expérience e-commerce premium qui maximise la conversion, en s'inspirant des meilleures pratiques (Apple Store, Ritual, AG1, Myprotein).
 
-### 1. Titre et sous-titre plus explicites
-- Titre : "Où souhaites-tu recevoir tes compléments ?" (au lieu de "Où souhaites-tu être livré ?")
-- Sous-titre : "Nous livrons dans le monde entier. Sélectionne ton pays pour voir les délais et frais de livraison."
+---
 
-### 2. Liste exhaustive des 196 pays avec drapeaux emoji
-Remplacer la liste actuelle de 23 pays par les ~196 pays du monde, organisés par regions :
-- **Amerique du Nord** (US, CA, MX) en premier
-- **Europe** (~45 pays)
-- **Asie** (~50 pays)
-- **Amerique du Sud** (~15 pays)
-- **Afrique** (~55 pays)
-- **Oceanie** (~15 pays)
-- **Moyen-Orient** (~15 pays)
+## 1. Boutique (ShopSection) — Refonte Hero + Grille
 
-Chaque pays aura son **drapeau emoji** (ex: 🇺🇸 🇫🇷 🇩🇪) affiche a cote du nom dans le bouton de selection.
+**Header immersif :**
+- Remplacer le header basique par un hero compact avec gradient de marque, titre accrocheur ("Your Personalized Supplement Store"), et barre de recherche intégrée en plein centre
+- Ajouter une barre de progression "Livraison gratuite" (ex: "Plus que 15€ pour la livraison offerte") connectée au panier
 
-### 3. Fichier modifie
-- **`src/components/onboarding/CountrySelect.tsx`** : Remplacer le tableau `countries` par la liste complete des 196 pays avec drapeaux emoji. Ajouter un champ `flag` a l'interface Country. Afficher le drapeau dans chaque bouton. Reorganiser les regions (US first, puis EU, puis les autres continents).
-- **`src/components/onboarding/OnboardingFlow.tsx`** : Mettre a jour le titre et sous-titre de la question `shipping_country`.
+**Grille produit améliorée :**
+- Ajouter une section "Bestsellers" ou "Trending Now" en haut (carousel horizontal) avant la grille principale
+- Badge "Bestseller" / "Nouveau" sur les cartes concernées
 
-### Detail technique
-- Les drapeaux seront des emoji Unicode natifs (ex: `🇺🇸`) - pas besoin de librairie externe
-- L'ordre des regions sera : North America > Europe > Asia > South America > Africa > Oceania > Middle East
-- La barre de recherche existante reste en place pour filtrer parmi les 196 pays
+**Fichiers modifiés :** `src/components/dashboard/ShopSection.tsx`
+
+---
+
+## 2. Carte Produit (ProductGroupCard) — Conversion maximale
+
+**Améliorations visuelles :**
+- Afficher le prix d'abonnement barré/remisé directement sur la carte (comme dans le widget AI Recommendations), pas juste un hint discret
+- Ajouter un badge "Économisez X%" bien visible en vert sur les produits avec abonnement
+- Bouton "Ajouter" plus grand et plus contrasté, avec texte complet visible même sur mobile (pas de `hidden sm:inline`)
+- Micro-animation de confetti ou pulse sur le bouton après ajout
+
+**Social proof renforcé :**
+- Afficher "X personnes regardent ce produit" (simulé) ou "Ajouté X fois cette semaine"
+
+**Fichiers modifiés :** `src/components/dashboard/shop/ProductGroupCard.tsx`
+
+---
+
+## 3. Fiche Produit (PDP) — Expérience immersive
+
+**Zone d'achat (ProductPurchaseBox) :**
+- Mettre en avant l'abonnement de manière plus agressive : card premium avec bordure accent, comparaison visuelle côte-à-côte "Achat unique vs Abonnement" avec les économies annuelles calculées
+- Ajouter une barre de confiance sous le bouton d'achat : icônes "Livraison gratuite", "Satisfait ou remboursé", "Paiement sécurisé"
+- Urgence subtile : "X en stock" ou "Commandez avant 14h pour une expédition aujourd'hui"
+
+**Section "Pourquoi s'abonner" :**
+- Ajouter un bloc visuel listant les avantages de l'abonnement (économies, pas de rupture, annulation facile)
+
+**Fichiers modifiés :** `src/components/dashboard/pdp/ProductPurchaseBox.tsx`, `src/components/dashboard/pdp/ProductDetailMaster.tsx`
+
+---
+
+## 4. Panier (CartDrawer) — Incitation au checkout
+
+**Améliorations :**
+- Ajouter une barre de progression "Livraison gratuite" en haut du panier
+- Section "Vous pourriez aussi aimer" avec 2-3 produits IA en bas du panier (cross-sell)
+- Bouton checkout plus imposant avec animation pulse et mention "Paiement sécurisé"
+
+**Fichiers modifiés :** `src/components/dashboard/CartDrawer.tsx`
+
+---
+
+## 5. Traductions
+
+- Ajouter toutes les nouvelles clés i18n dans les 6 langues (FR, EN, ES, AR, ZH, PT)
+
+**Fichiers modifiés :** `src/lib/i18n.ts`
+
+---
+
+## Résumé technique
+
+| Fichier | Action |
+|---|---|
+| `ShopSection.tsx` | Hero compact, barre livraison gratuite, section trending |
+| `ProductGroupCard.tsx` | Prix abo visible, badge économie, bouton amélioré |
+| `ProductPurchaseBox.tsx` | Comparaison abo vs unique, barre de confiance, urgence |
+| `ProductDetailMaster.tsx` | Bloc "Pourquoi s'abonner" |
+| `CartDrawer.tsx` | Barre livraison, cross-sell, bouton checkout premium |
+| `i18n.ts` | Nouvelles clés de traduction (6 langues) |
 

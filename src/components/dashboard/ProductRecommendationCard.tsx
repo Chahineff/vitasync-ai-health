@@ -39,6 +39,7 @@ interface ProductData {
 
 interface ProductRecommendationCardProps {
   product: ProductRecommendation;
+  onProductSelect?: (handle: string) => void;
 }
 
 // Skeleton loading state
@@ -120,7 +121,7 @@ const MEAL_OPTIONS = [
   { value: 'none', label: 'Indifférent' },
 ];
 
-export function ProductRecommendationCard({ product }: ProductRecommendationCardProps) {
+export function ProductRecommendationCard({ product, onProductSelect }: ProductRecommendationCardProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [productData, setProductData] = useState<ProductData | null>(null);

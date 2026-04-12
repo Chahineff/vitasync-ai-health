@@ -310,7 +310,7 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate, on
         </div>
 
         <div className="text-foreground/90 relative">
-          <MessageContent content={content} isStreaming={isStreaming} onQuizComplete={onQuizComplete} />
+          <MessageContent content={content} isStreaming={isStreaming} onQuizComplete={onQuizComplete} onProductSelect={onProductSelect} />
           {/* Gradient mask during streaming for progressive reveal */}
           {isStreaming && (
             <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />

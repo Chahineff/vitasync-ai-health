@@ -402,6 +402,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.exploreAll": "Explorer toutes les catégories",
     "shop.popularSearches": "Recherches populaires",
     "shop.viewDetails": "Voir détails",
+    "shop.heroTitle": "Votre Boutique Personnalisée",
+    "shop.heroSubtitle": "Des compléments sélectionnés pour votre profil de santé",
+    "shop.trending": "Tendances du moment",
+    "shop.saveWithSub": "Économisez avec l'abonnement mensuel",
     "cart.title": "Panier",
     "cart.item": "article",
     "cart.items": "articles",
@@ -410,6 +414,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "Passer commande",
     "cart.freeShippingRemaining": "pour la livraison gratuite",
     "cart.freeShippingUnlocked": "Livraison gratuite débloquée !",
+    "cart.secureCheckout": "Paiement 100% sécurisé",
 
     // Settings
     "settings.title": "Paramètres",

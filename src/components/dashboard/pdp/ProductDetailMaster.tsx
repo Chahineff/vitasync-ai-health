@@ -293,7 +293,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* HERO — 50/50 columns */}
+        {/* PDP content with persistent sticky gallery */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
           <div className="lg:sticky lg:top-28 lg:self-start lg:h-[calc(100vh-7rem)] lg:flex lg:items-center">
             <div className="w-full lg:max-h-full">
@@ -423,52 +423,59 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               productTitle={product.title}
             />
           </div>
+</section>
+
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start mt-8">
+          <div className="hidden lg:block" aria-hidden="true" />
+
+          <div className="space-y-8 lg:col-start-2">
+            <QuickBenefitsStrip 
+              productType={product.productType}
+              parsedData={parsedData}
+              bestForTags={enrichedData?.best_for_tags}
+              enrichedDosage={enrichedData?.suggested_use?.dosage}
+              enrichedTiming={enrichedData?.suggested_use?.timing}
+            />
+
+            <QualitySourcing 
+              parsedData={parsedData}
+              vendor={product.vendor}
+              enrichedQuality={enrichedData?.quality_info}
+            />
+
+            <SafetyCautions 
+              parsedData={parsedData}
+              enrichedSafety={enrichedData?.safety_warnings}
+            />
+
+            <div id="product-reviews">
+              <ProductReviews 
+                productTitle={product.title}
+                productHandle={product.handle}
+                enrichedFaq={enrichedData?.faq as any}
+                reviewRating={reviewRating}
+                reviewCount={reviewCount}
+              />
+            </div>
+          </div>
         </section>
 
-        {/* Full-width below-the-fold */}
-        <QuickBenefitsStrip 
-          productType={product.productType}
-          parsedData={parsedData}
-          bestForTags={enrichedData?.best_for_tags}
-          enrichedDosage={enrichedData?.suggested_use?.dosage}
-          enrichedTiming={enrichedData?.suggested_use?.timing}
-        />
-
-        <QualitySourcing 
-          parsedData={parsedData}
-          vendor={product.vendor}
-          enrichedQuality={enrichedData?.quality_info}
-        />
-
-        <SafetyCautions 
-          parsedData={parsedData}
-          enrichedSafety={enrichedData?.safety_warnings}
-        />
-
-        <div id="product-reviews">
-          <ProductReviews 
-            productTitle={product.title}
-            productHandle={product.handle}
-            enrichedFaq={enrichedData?.faq as any}
-            reviewRating={reviewRating}
-            reviewCount={reviewCount}
+        <div className="mt-8 space-y-8">
+          <CrossSellSection
+            products={allProducts}
+            currentProductId={product.id}
+            currentProductTitle={product.title}
+            onProductClick={handleFlavorChange}
           />
+
+          <BuildYourStack
+            products={allProducts}
+            currentProductId={product.id}
+            onProductClick={handleFlavorChange}
+          />
+
+          <PDPFooter />
         </div>
-
-        <CrossSellSection
-          products={allProducts}
-          currentProductId={product.id}
-          currentProductTitle={product.title}
-          onProductClick={handleFlavorChange}
-        />
-
-        <BuildYourStack
-          products={allProducts}
-          currentProductId={product.id}
-          onProductClick={handleFlavorChange}
-        />
-
-        <PDPFooter />
 
         {/* FDA Disclaimer */}
         <div className="max-w-[1200px] mx-auto px-4 lg:px-6 py-8">

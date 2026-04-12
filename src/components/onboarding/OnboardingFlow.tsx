@@ -512,11 +512,19 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
                     {reco.product?.title || reco.handle}
                   </p>
                   <p className="text-xs text-muted-foreground line-clamp-1">{reco.reason}</p>
+                  {/* Subscription delivery frequency */}
+                  <p className="text-[11px] text-primary/80 mt-0.5 flex items-center gap-1">
+                    <ArrowsClockwise weight="bold" className="w-3 h-3" />
+                    {t('onboarding.deliveredEvery').replace('{months}', String(reco.deliveryMonths || 1))}
+                  </p>
                 </div>
                 {reco.product?.price && (
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
                     <span className="text-sm font-semibold text-foreground">
                       {parseFloat(reco.product.price).toFixed(2)} {reco.product.currency}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {t('onboarding.subscriptionLabel')}
                     </span>
                     {reco.product?.variantId && (
                       <Button
@@ -531,7 +539,7 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
                         ) : addedToCart.has(reco.handle) ? (
                           <><Check className="w-3 h-3" /> {t("onboarding.coachAdded")}</>
                         ) : (
-                          <><ShoppingCart className="w-3 h-3" /> {t("onboarding.coachAddToCart")}</>
+                          <><ArrowsClockwise className="w-3 h-3" /> {t("onboarding.subscribe")}</>
                         )}
                       </Button>
                     )}

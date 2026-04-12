@@ -455,8 +455,12 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
           />
         </div>
 
-
-
+        <CrossSellSection
+          products={allProducts}
+          currentProductId={product.id}
+          currentProductTitle={product.title}
+          onProductClick={handleFlavorChange}
+        />
 
         <BuildYourStack
           products={allProducts}

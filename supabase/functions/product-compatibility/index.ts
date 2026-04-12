@@ -120,7 +120,7 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks. Example:
       return new Response(JSON.stringify({ error: "AI service not configured" }), { status: 500, headers: { ...cors, "Content-Type": "application/json" } });
     }
 
-    const aiResponse = await fetch("https://ai-gateway.lovable.dev/v1/chat/completions", {
+    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

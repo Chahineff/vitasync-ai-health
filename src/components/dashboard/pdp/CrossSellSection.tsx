@@ -49,7 +49,7 @@ export function CrossSellSection({ products, currentProductId, currentProductTit
     addItem({
       variantId: variant.id,
       title: product.node.title,
-      price: parseFloat(variant.price.amount),
+      price: variant.price,
       quantity: 1,
       imageUrl: product.node.images.edges[0]?.node.url,
       handle: product.node.handle,

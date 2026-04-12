@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from '@/hooks/useTranslation';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, type AIModel, type ChatInputRef } from './chat';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -405,6 +406,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const stackIsOpen = useAIStackStore(s => s.isOpen);
   const setStackOpen = useAIStackStore(s => s.setOpen);
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   const isNewConversation = messages.length === 0;
 
   return (
@@ -464,7 +466,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
           className="flex items-center gap-2 px-4 py-2.5 text-[13px] shrink-0 bg-amber-100/90 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 border-b border-amber-200/50 dark:border-amber-700/30"
         >
           <span className="shrink-0">⚕️</span>
-          <span>VitaSync's AI coach provides wellness guidance only — not medical advice. Always consult a healthcare professional before starting supplements.</span>
+          <span>{t('chat.medicalDisclaimer')}</span>
         </div>
 
         {isNewConversation ? (

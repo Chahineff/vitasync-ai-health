@@ -2780,7 +2780,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.daily": 'Daily',
     "pdp.trainingDay": 'Training day',
     "pdp.dosageLabel": 'Dosage',
-    "pdp.dosageLabel": 'Dosage',
     "pdp.supplyDuration": "Supply",
     "pdp.timingLabel": 'Timing',
     "pdp.withFood": 'With Food',

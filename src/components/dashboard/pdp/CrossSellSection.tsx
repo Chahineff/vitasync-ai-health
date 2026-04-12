@@ -43,16 +43,16 @@ export function CrossSellSection({ products, currentProductId, currentProductTit
     return shuffled.slice(0, 4);
   }, [products, currentProductId, currentProductTitle, frequentlyBought]);
 
-  const handleAddToCart = (product: ShopifyProduct) => {
-    const variant = product.node.variants.edges[0]?.node;
+  const handleAddToCart = (p: ShopifyProduct) => {
+    const variant = p.node.variants.edges[0]?.node;
     if (!variant) return;
     addItem({
+      product: p,
       variantId: variant.id,
-      title: product.node.title,
+      variantTitle: variant.title,
       price: variant.price,
       quantity: 1,
-      imageUrl: product.node.images.edges[0]?.node.url,
-      handle: product.node.handle,
+      selectedOptions: variant.selectedOptions || [],
     });
     toast.success(t('pdp.addedToCart'));
   };

@@ -27,6 +27,7 @@ interface Conversation {
 
 interface ChatInterfaceProps {
   onFirstMessage?: () => void;
+  onProductSelect?: (handle: string) => void;
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-coach`;

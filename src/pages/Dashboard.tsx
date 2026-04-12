@@ -419,7 +419,7 @@ const Dashboard = () => {
         {/* Add padding bottom on mobile for bottom nav */}
         <div id="dashboard-scroll-container" className={`flex-1 overflow-x-hidden ${activeSection === 'coach' ? 'overflow-hidden p-0 pb-0 lg:p-4 lg:pb-4' : 'overflow-auto p-4 lg:p-8 pb-24 lg:pb-8'}`}>
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
-              {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} onGoToStack={() => handleSectionChange("mystack")} onGoToAnalyses={() => handleSectionChange("analyses")} />}
+              {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} onGoToStack={() => handleSectionChange("mystack")} onGoToAnalyses={() => handleSectionChange("analyses")} onProductSelect={handleProductSelect} />}
               {activeSection === "coach" && <motion.div key="coach" className="h-full" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <ChatInterface onProductSelect={handleProductSelect} />
                 </motion.div>}
@@ -467,6 +467,7 @@ interface DashboardHomeProps {
   onGoToShop: () => void;
   onGoToStack: () => void;
   onGoToAnalyses: () => void;
+  onProductSelect: (handle: string) => void;
 }
 const DashboardHome = ({
   userName,
@@ -475,6 +476,7 @@ const DashboardHome = ({
   onGoToShop,
   onGoToStack,
   onGoToAnalyses,
+  onProductSelect,
 }: DashboardHomeProps) => {
   const {
     t
@@ -539,9 +541,7 @@ const DashboardHome = ({
       </div>
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.08 }}>
-      <AIRecommendationsWidget onProductClick={(handle) => {
-        onGoToShop();
-      }} />
+      <AIRecommendationsWidget onProductClick={onProductSelect} />
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.14 }}>
       <DailyCheckinWidget />

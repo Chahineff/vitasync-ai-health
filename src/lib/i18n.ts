@@ -7584,6 +7584,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.exploreAll": "Explorar todas as categorias",
     "shop.popularSearches": "Pesquisas populares",
     "shop.viewDetails": "Ver detalhes",
+    "shop.heroTitle": "Sua Loja Personalizada",
+    "shop.heroSubtitle": "Suplementos selecionados para seu perfil de saúde",
+    "shop.trending": "Em alta",
+    "shop.saveWithSub": "Economize com assinatura mensal",
     "cart.title": "Carrinho",
     "cart.item": "item",
     "cart.items": "itens",
@@ -7592,6 +7596,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "Finalizar compra",
     "cart.freeShippingRemaining": "para frete grátis",
     "cart.freeShippingUnlocked": "Frete grátis desbloqueado!",
+    "cart.secureCheckout": "Pagamento 100% seguro",
 
     // Settings
     "settings.title": "Configurações",
@@ -7685,6 +7690,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.monthlySubscription": "Assinatura mensal",
     "pdp.oneTimePurchase": "Compra única",
     "pdp.quantity": "Quantidade",
+    "pdp.annualSavings": "Economia anual",
+    "pdp.perYear": "ano",
+    "pdp.trustFreeShipping": "Frete grátis acima de 59€",
+    "pdp.trustSecurePayment": "Pagamento seguro",
+    "pdp.trustSatisfaction": "Garantia de devolução",
+    "pdp.whySubscribe": "Por que assinar?",
+    "pdp.whySub1": "Economize em cada pedido",
+    "pdp.whySub2": "Sem ruptura — entrega automática",
+    "pdp.whySub3": "Cancele a qualquer momento",
+    "pdp.whySub4": "Stack ajustado ao seu progresso",
     "pdp.askCoach": "Perguntar ao meu coach",
 
     // Coach

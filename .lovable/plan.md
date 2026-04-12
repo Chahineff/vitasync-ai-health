@@ -1,82 +1,78 @@
 
 
-# Plan d'amélioration UX/UI de la Boutique et des Fiches Produit
+# Plan : Améliorations Boutique, Catégories, Scroll & Pages Produit
 
-## Objectif
-Transformer la boutique et les pages produit en une expérience e-commerce premium qui maximise la conversion, en s'inspirant des meilleures pratiques (Apple Store, Ritual, AG1, Myprotein).
+## Problèmes identifiés
 
----
+1. **Scroll bloqué** : La boutique utilise `h-full` + `flex flex-col` avec un conteneur interne `overflow-y-auto`, mais le wrapper parent dans Dashboard a aussi `className="h-full"`. Le hero et les filtres restent "scotchés" en haut car ils sont hors du div scrollable. Il faut supprimer la structure `h-full flex flex-col` et laisser le scroll naturel du `dashboard-scroll-container`.
 
-## 1. Boutique (ShopSection) — Refonte Hero + Grille
+2. **Section "Tendances du moment"** : À supprimer.
 
-**Header immersif :**
-- Remplacer le header basique par un hero compact avec gradient de marque, titre accrocheur ("Your Personalized Supplement Store"), et barre de recherche intégrée en plein centre
-- Ajouter une barre de progression "Livraison gratuite" (ex: "Plus que 15€ pour la livraison offerte") connectée au panier
+3. **Catégories sans icônes** : Les pills de catégorie n'ont aucune icône visuelle.
 
-**Grille produit améliorée :**
-- Ajouter une section "Bestsellers" ou "Trending Now" en haut (carousel horizontal) avant la grille principale
-- Badge "Bestseller" / "Nouveau" sur les cartes concernées
+4. **Abonnement — selling plan "Daily LV" au lieu du vrai label** : Le composant affiche `getDeliveryFrequency(plan)` qui lit `plan.options[0].value` brut (ex: "Daily LV Treatment"). Il faut parser/nettoyer ce label pour afficher la fréquence réelle.
 
-**Fichiers modifiés :** `src/components/dashboard/ShopSection.tsx`
+5. **Quantité/posologie non affichées** : Pas d'espace dans la PDP pour afficher la quantité dans la boîte ni la posologie quotidienne recommandée.
 
 ---
 
-## 2. Carte Produit (ProductGroupCard) — Conversion maximale
+## 1. Correction du scroll dans la boutique
 
-**Améliorations visuelles :**
-- Afficher le prix d'abonnement barré/remisé directement sur la carte (comme dans le widget AI Recommendations), pas juste un hint discret
-- Ajouter un badge "Économisez X%" bien visible en vert sur les produits avec abonnement
-- Bouton "Ajouter" plus grand et plus contrasté, avec texte complet visible même sur mobile (pas de `hidden sm:inline`)
-- Micro-animation de confetti ou pulse sur le bouton après ajout
+**Fichier** : `src/components/dashboard/ShopSection.tsx`
+- Retirer `h-full flex flex-col` du conteneur racine et `flex-1 overflow-y-auto` du conteneur de grille
+- Tout doit scroller naturellement dans le `dashboard-scroll-container` parent
+- Le hero, les catégories, les filtres et la grille s'enchaînent dans un seul flux vertical
 
-**Social proof renforcé :**
-- Afficher "X personnes regardent ce produit" (simulé) ou "Ajouté X fois cette semaine"
+## 2. Suppression de "Tendances du moment"
 
-**Fichiers modifiés :** `src/components/dashboard/shop/ProductGroupCard.tsx`
+**Fichier** : `src/components/dashboard/ShopSection.tsx`
+- Supprimer le bloc `trendingGroups` (lignes 248-278) et le `useMemo` associé
+
+## 3. Icônes sur les catégories
+
+**Fichier** : `src/components/dashboard/ShopSection.tsx`
+- Associer une icône Phosphor à chaque catégorie :
+  - All → `GridFour`, Sport → `Barbell`, Wellness → `Leaf`, Digestive → `Stomach` (ou `Drop`), Vitamins → `Pill`, Brain → `Brain`, Weight → `Scales`, Mushrooms → `Plant`, Bones → `Bone`, Other → `DotsThree`
+- Rendre la catégorie active plus visuellement distincte (fond + icône en couleur primaire, légère animation)
+
+## 4. Correction du label d'abonnement (selling plan)
+
+**Fichier** : `src/lib/shopify.ts` (fonction `getDeliveryFrequency`)
+- Parser le champ `plan.options` pour extraire la fréquence réelle (ex: "30 Day(s)" → "Tous les mois", "90 Day(s)" → "Tous les 3 mois")
+- Nettoyer les labels comme "Daily LV", "Daily LV Treatment" en les remplaçant par la fréquence calculée
+- Fallback sur le plan name si pas de parsing possible
+
+## 5. Affichage quantité / posologie sur la PDP
+
+**Fichier** : `src/components/dashboard/pdp/ProductPurchaseBox.tsx`
+- Ajouter un bloc sous le sélecteur d'abonnement affichant :
+  - Quantité dans la boîte (depuis les enriched data ou le variant title)
+  - Posologie recommandée par jour (depuis enriched data `suggested_use`)
+  - Durée estimée d'une boîte (quantité / posologie)
+- Laisser un espace pour ces données même si elles ne sont pas encore fournies (afficher un placeholder discret)
+
+## 6. Améliorations design PDP
+
+**Fichier** : `src/components/dashboard/pdp/ProductPurchaseBox.tsx` & `ProductDetailMaster.tsx`
+- Ajouter un bandeau "Livraison estimée" plus visible avec icône camion
+- Améliorer le bloc "Pourquoi s'abonner" avec des icônes et un design en grille 2x2
+- Rendre les boutons d'accordéon plus visuels (icône thématique par section)
+- S'assurer que tous les boutons (wishlist, ajouter au panier, etc.) fonctionnent correctement en dark mode
+
+## 7. Traductions
+
+**Fichier** : `src/lib/i18n.ts`
+- Ajouter les clés pour : quantité par boîte, posologie/jour, durée estimée, fréquence d'abonnement nettoyée — dans les 6 langues
 
 ---
 
-## 3. Fiche Produit (PDP) — Expérience immersive
-
-**Zone d'achat (ProductPurchaseBox) :**
-- Mettre en avant l'abonnement de manière plus agressive : card premium avec bordure accent, comparaison visuelle côte-à-côte "Achat unique vs Abonnement" avec les économies annuelles calculées
-- Ajouter une barre de confiance sous le bouton d'achat : icônes "Livraison gratuite", "Satisfait ou remboursé", "Paiement sécurisé"
-- Urgence subtile : "X en stock" ou "Commandez avant 14h pour une expédition aujourd'hui"
-
-**Section "Pourquoi s'abonner" :**
-- Ajouter un bloc visuel listant les avantages de l'abonnement (économies, pas de rupture, annulation facile)
-
-**Fichiers modifiés :** `src/components/dashboard/pdp/ProductPurchaseBox.tsx`, `src/components/dashboard/pdp/ProductDetailMaster.tsx`
-
----
-
-## 4. Panier (CartDrawer) — Incitation au checkout
-
-**Améliorations :**
-- Ajouter une barre de progression "Livraison gratuite" en haut du panier
-- Section "Vous pourriez aussi aimer" avec 2-3 produits IA en bas du panier (cross-sell)
-- Bouton checkout plus imposant avec animation pulse et mention "Paiement sécurisé"
-
-**Fichiers modifiés :** `src/components/dashboard/CartDrawer.tsx`
-
----
-
-## 5. Traductions
-
-- Ajouter toutes les nouvelles clés i18n dans les 6 langues (FR, EN, ES, AR, ZH, PT)
-
-**Fichiers modifiés :** `src/lib/i18n.ts`
-
----
-
-## Résumé technique
+## Résumé des fichiers modifiés
 
 | Fichier | Action |
 |---|---|
-| `ShopSection.tsx` | Hero compact, barre livraison gratuite, section trending |
-| `ProductGroupCard.tsx` | Prix abo visible, badge économie, bouton amélioré |
-| `ProductPurchaseBox.tsx` | Comparaison abo vs unique, barre de confiance, urgence |
-| `ProductDetailMaster.tsx` | Bloc "Pourquoi s'abonner" |
-| `CartDrawer.tsx` | Barre livraison, cross-sell, bouton checkout premium |
-| `i18n.ts` | Nouvelles clés de traduction (6 langues) |
+| `ShopSection.tsx` | Fix scroll, suppr. trending, icônes catégories |
+| `shopify.ts` | Fix parsing `getDeliveryFrequency` |
+| `ProductPurchaseBox.tsx` | Quantité/posologie, design amélioré |
+| `ProductDetailMaster.tsx` | Icônes accordéon, améliorations visuelles |
+| `i18n.ts` | Nouvelles clés de traduction |
 

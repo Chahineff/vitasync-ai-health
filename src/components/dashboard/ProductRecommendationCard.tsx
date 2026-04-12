@@ -284,7 +284,10 @@ export function ProductRecommendationCard({ product, onProductSelect }: ProductR
       
       <div className="flex gap-4 p-4">
         {/* Product Image */}
-        <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-white/5 border border-white/10">
+        <div 
+          className={cn("relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-white/5 border border-white/10", onProductSelect && "cursor-pointer")}
+          onClick={() => onProductSelect && productData.fullProduct.node.handle && onProductSelect(productData.fullProduct.node.handle)}
+        >
           {productData.imageUrl ? (
             <img 
               src={productData.imageUrl} 
@@ -301,7 +304,10 @@ export function ProductRecommendationCard({ product, onProductSelect }: ProductR
         {/* Product Info */}
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
-            <h4 className="font-medium text-sm text-foreground line-clamp-2 leading-snug">
+            <h4 
+              className={cn("font-medium text-sm text-foreground line-clamp-2 leading-snug", onProductSelect && "cursor-pointer hover:text-primary transition-colors")}
+              onClick={() => onProductSelect && productData.fullProduct.node.handle && onProductSelect(productData.fullProduct.node.handle)}
+            >
               {productData.title}
             </h4>
             <div className="flex items-baseline gap-2 mt-1">

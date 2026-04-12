@@ -982,6 +982,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Chat Welcome Screen
     "chat.personalizeMyPlan": "Personnaliser mon plan (60 sec)",
+    "chat.medicalDisclaimer": "Le coach IA de VitaSync fournit uniquement des conseils bien-être — pas d'avis médical. Consultez toujours un professionnel de santé avant de prendre des compléments.",
 
     // Profile Section - Data management
     "settings.exportInProgress": "Export en cours...",
@@ -2409,6 +2410,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "dashboard.welcome": "Welcome to your dashboard",
 
     "chat.personalizeMyPlan": "Personalize my plan (60 sec)",
+    "chat.medicalDisclaimer": "VitaSync's AI coach provides wellness guidance only — not medical advice. Always consult a healthcare professional before starting supplements.",
 
     "settings.exportInProgress": "Exporting...",
     "settings.exportData": "Export my data (JSON)",
@@ -3809,6 +3811,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     "dashboard.welcome": "Bienvenido a tu dashboard",
     "chat.personalizeMyPlan": "Personalizar mi plan (60 seg)",
+    "chat.medicalDisclaimer": "El coach IA de VitaSync ofrece solo orientación de bienestar, no asesoramiento médico. Consulte siempre a un profesional de la salud antes de tomar suplementos.",
 
     "settings.exportInProgress": "Exportando...",
     "settings.exportData": "Exportar mis datos (JSON)",
@@ -5207,6 +5210,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     "dashboard.welcome": "مرحباً بك في لوحة التحكم",
     "chat.personalizeMyPlan": "تخصيص خطتي (60 ثانية)",
+    "chat.medicalDisclaimer": "مدرب VitaSync الذكي يقدم إرشادات صحية فقط — وليس نصيحة طبية. استشر دائمًا متخصصًا في الرعاية الصحية قبل تناول المكملات.",
 
     "settings.exportInProgress": "جارٍ التصدير...",
     "settings.exportData": "تصدير بياناتي (JSON)",
@@ -6605,6 +6609,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     "dashboard.welcome": "欢迎来到您的仪表板",
     "chat.personalizeMyPlan": "定制我的方案（60秒）",
+    "chat.medicalDisclaimer": "VitaSync AI教练仅提供健康指导，而非医疗建议。在服用补充剂之前，请务必咨询医疗专业人员。",
 
     "settings.exportInProgress": "导出中...",
     "settings.exportData": "导出我的数据 (JSON)",
@@ -8003,6 +8008,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     "dashboard.welcome": "Bem-vindo ao seu dashboard",
     "chat.personalizeMyPlan": "Personalizar meu plano (60 seg)",
+    "chat.medicalDisclaimer": "O coach IA da VitaSync oferece apenas orientação de bem-estar — não aconselhamento médico. Consulte sempre um profissional de saúde antes de tomar suplementos.",
 
     "settings.exportInProgress": "Exportando...",
     "settings.exportData": "Exportar meus dados (JSON)",

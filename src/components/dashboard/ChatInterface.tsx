@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from '@/hooks/useTranslation';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatWelcomeScreen, ChatMessageBubble, ChatInput, ChatSidebar, ChatModelSelector, AI_MODELS, type AIModel, type ChatInputRef } from './chat';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';

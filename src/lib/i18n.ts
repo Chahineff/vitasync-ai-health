@@ -1861,6 +1861,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.exploreAll": "Explore all categories",
     "shop.popularSearches": "Popular searches",
     "shop.viewDetails": "View details",
+    "shop.heroTitle": "Your Personalized Supplement Store",
+    "shop.heroSubtitle": "Supplements selected for your health profile",
+    "shop.trending": "Trending Now",
+    "shop.saveWithSub": "Save with monthly subscription",
     "cart.title": "Cart",
     "cart.item": "item",
     "cart.items": "items",
@@ -1869,6 +1873,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "Checkout",
     "cart.freeShippingRemaining": "for free shipping",
     "cart.freeShippingUnlocked": "Free shipping unlocked!",
+    "cart.secureCheckout": "100% secure checkout",
 
     // Settings
     "settings.title": "Settings",
@@ -1962,6 +1967,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.monthlySubscription": "Monthly subscription",
     "pdp.oneTimePurchase": "One-time purchase",
     "pdp.quantity": "Quantity",
+    "pdp.annualSavings": "Annual savings",
+    "pdp.perYear": "year",
+    "pdp.trustFreeShipping": "Free shipping over €59",
+    "pdp.trustSecurePayment": "Secure payment",
+    "pdp.trustSatisfaction": "Money-back guarantee",
+    "pdp.whySubscribe": "Why subscribe?",
+    "pdp.whySub1": "Save on every order",
+    "pdp.whySub2": "Never run out — auto delivery",
+    "pdp.whySub3": "Cancel anytime, no commitment",
+    "pdp.whySub4": "Stack adjusted to your progress",
     "pdp.askCoach": "Ask my coach",
 
     // Coach

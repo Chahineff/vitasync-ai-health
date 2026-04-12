@@ -4842,6 +4842,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.monthlySubscription": "اشتراك شهري",
     "pdp.oneTimePurchase": "شراء لمرة واحدة",
     "pdp.quantity": "الكمية",
+    "pdp.annualSavings": "التوفير السنوي",
+    "pdp.perYear": "سنة",
+    "pdp.trustFreeShipping": "شحن مجاني فوق 59€",
+    "pdp.trustSecurePayment": "دفع آمن",
+    "pdp.trustSatisfaction": "ضمان استرداد الأموال",
+    "pdp.whySubscribe": "لماذا الاشتراك؟",
+    "pdp.whySub1": "وفّر في كل طلب",
+    "pdp.whySub2": "لا نفاذ — توصيل تلقائي",
+    "pdp.whySub3": "إلغاء في أي وقت",
+    "pdp.whySub4": "مكمّلات تتكيف مع تقدمك",
     "pdp.askCoach": "اسأل مدربي",
 
     // Coach

@@ -421,6 +421,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
             <CoachInsightCard 
               enrichedData={enrichedData as any}
               productTitle={product.title}
+              productHandle={handle}
             />
           </div>
 </section>

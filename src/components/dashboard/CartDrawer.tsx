@@ -143,20 +143,26 @@ export function CartDrawer({ children }: CartDrawerProps) {
                   <span className="text-foreground/60 font-light">Total</span>
                   <span className="text-xl font-semibold text-foreground">{totalPrice.toFixed(2)} {currencyCode}</span>
                 </div>
-                <button
+                <motion.button
                   onClick={handleCheckout}
                   disabled={items.length === 0 || isLoading || isSyncing}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full flex flex-col items-center justify-center gap-1 py-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
                 >
                   {isLoading || isSyncing ? (
                     <SpinnerGap className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
-                      <ArrowSquareOut weight="bold" className="w-5 h-5" />
-                      {t('cart.checkout')}
+                      <div className="flex items-center gap-2">
+                        <ArrowSquareOut weight="bold" className="w-5 h-5" />
+                        <span className="text-base">{t('cart.checkout')}</span>
+                      </div>
+                      <span className="text-[10px] opacity-70 font-light flex items-center gap-1">
+                        🔒 {t('cart.secureCheckout')}
+                      </span>
                     </>
                   )}
-                </button>
+                </motion.button>
               </div>
             </>
           )}

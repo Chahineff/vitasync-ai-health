@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, forwardRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Sparkle, X, SlidersHorizontal, Heart } from '@phosphor-icons/react';
+import { ShoppingCart, Sparkle, X, SlidersHorizontal, Heart, MagnifyingGlass, Package, TrendUp } from '@phosphor-icons/react';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { CartDrawer } from './CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
@@ -25,6 +25,7 @@ interface ShopSectionProps {
 }
 
 const ITEMS_PER_PAGE = 20;
+const FREE_SHIPPING_THRESHOLD = 59;
 
 // Wishlist stored in localStorage
 function getWishlist(): string[] {
@@ -55,6 +56,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
   const shopContainerRef = useRef<HTMLDivElement>(null);
   const cartItems = useCartStore(state => state.items);
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalCartPrice = cartItems.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
   const productGroups = useProductGroups(products);
 
@@ -104,12 +106,10 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
   const filteredGroups = useMemo(() => {
     let filtered = productGroups;
 
-    // Wishlist filter
     if (showFavoritesOnly) {
       filtered = filtered.filter(g => wishlist.includes(g.baseTitle));
     }
 
-    // Search
     if (searchQuery.trim()) {
       const words = searchQuery.toLowerCase().trim().split(/\s+/);
       filtered = filtered.filter(group =>
@@ -122,7 +122,6 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
       );
     }
 
-    // Category
     if (selectedCategory !== 'all') {
       const categoryTypes = CATEGORY_MAPPING[selectedCategory];
       if (selectedCategory === 'other') {
@@ -133,10 +132,8 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
       }
     }
 
-    // Price
     filtered = filtered.filter(g => g.minPrice >= priceRange[0] && g.minPrice <= priceRange[1]);
 
-    // Sort
     switch (sortOption) {
       case 'az': filtered.sort((a, b) => a.baseTitle.localeCompare(b.baseTitle)); break;
       case 'za': filtered.sort((a, b) => b.baseTitle.localeCompare(a.baseTitle)); break;
@@ -146,6 +143,11 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
 
     return filtered;
   }, [productGroups, searchQuery, selectedCategory, sortOption, priceRange, showFavoritesOnly, wishlist]);
+
+  // Trending products (first 6 by simulated popularity)
+  const trendingGroups = useMemo(() => {
+    return productGroups.slice(0, 6);
+  }, [productGroups]);
 
   const totalPages = Math.ceil(filteredGroups.length / ITEMS_PER_PAGE);
   const paginatedGroups = filteredGroups.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -177,31 +179,103 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
     { key: 'other' as CategoryKey, label: t('shop.other') },
   ];
 
+  // Free shipping progress
+  const shippingRemaining = Math.max(FREE_SHIPPING_THRESHOLD - totalCartPrice, 0);
+  const shippingProgress = Math.min((totalCartPrice / FREE_SHIPPING_THRESHOLD) * 100, 100);
+
   return (
     <div ref={ref} className="h-full flex flex-col">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-light text-foreground flex items-center gap-2">
-            {t('shop.title')}
-            <Sparkle weight="fill" className="w-5 h-5 text-primary/60" />
-          </h2>
-        </div>
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl mb-6 p-6 md:p-8 bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 border border-border/30">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_60%)]" />
+        <div className="relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                {t('shop.heroTitle')}
+              </h2>
+              <p className="text-foreground/60 font-light mt-1 text-sm md:text-base">
+                {t('shop.heroSubtitle')}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <SearchOverlay products={products} onProductSelect={onProductSelect || (() => {})} onSearch={setSearchQuery} />
+              <CartDrawer>
+                <button className="relative p-3 rounded-xl bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-sm">
+                  <ShoppingCart weight="light" className="w-5 h-5 text-foreground" />
+                  {totalCartItems > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                      {totalCartItems}
+                    </span>
+                  )}
+                </button>
+              </CartDrawer>
+            </div>
+          </div>
 
-        <div className="flex items-center gap-3">
-          <SearchOverlay products={products} onProductSelect={onProductSelect || (() => {})} onSearch={setSearchQuery} />
-          <CartDrawer>
-            <button className="relative p-3 rounded-xl bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/10 hover:bg-muted dark:hover:bg-white/10 transition-colors">
-              <ShoppingCart weight="light" className="w-5 h-5 text-foreground" />
-              {totalCartItems > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
-                  {totalCartItems}
-                </span>
-              )}
-            </button>
-          </CartDrawer>
+          {/* Free Shipping Progress Bar */}
+          {totalCartItems > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 p-3 rounded-xl bg-background/60 backdrop-blur-sm border border-border/30"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <Package weight="light" className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-medium text-foreground">
+                    {shippingRemaining > 0
+                      ? `${shippingRemaining.toFixed(2)} € ${t('cart.freeShippingRemaining')}`
+                      : t('cart.freeShippingUnlocked')
+                    }
+                  </span>
+                </div>
+                {shippingRemaining <= 0 && <Sparkle weight="fill" className="w-4 h-4 text-primary" />}
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${shippingProgress}%` }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  className={`h-full rounded-full ${shippingRemaining <= 0 ? 'bg-primary' : 'bg-primary/60'}`}
+                />
+              </div>
+            </motion.div>
+          )}
         </div>
       </div>
+
+      {/* Trending Now Section */}
+      {!loading && trendingGroups.length > 0 && !hasActiveFilters && (
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendUp weight="bold" className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">{t('shop.trending')}</h3>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+            {trendingGroups.map((group) => {
+              const mainImg = group.primaryProduct.node.images.edges[0]?.node;
+              const price = parseFloat(group.primaryProduct.node.priceRange.minVariantPrice.amount);
+              return (
+                <motion.button
+                  key={group.baseTitle}
+                  whileHover={{ y: -2 }}
+                  onClick={() => onProductSelect?.(group.primaryProduct.node.handle)}
+                  className="flex-shrink-0 w-[140px] rounded-xl overflow-hidden bg-card border border-border/50 hover:border-primary/30 hover:shadow-md transition-all group"
+                >
+                  <div className="aspect-square bg-muted/30 overflow-hidden">
+                    {mainImg && <img src={mainImg.url} alt={group.baseTitle} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
+                  </div>
+                  <div className="p-2.5">
+                    <p className="text-xs font-semibold text-foreground line-clamp-1">{group.baseTitle}</p>
+                    <p className="text-xs font-bold text-primary mt-0.5">{price.toFixed(2)} €</p>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Category Pills with counts */}
       <div className="overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
@@ -327,7 +401,6 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center justify-center py-20 text-center"
               >
-                {/* Animated empty state */}
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}

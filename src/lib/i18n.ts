@@ -508,6 +508,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.monthlySubscription": "Abonnement mensuel",
     "pdp.oneTimePurchase": "Achat unique",
     "pdp.quantity": "Quantité",
+    "pdp.annualSavings": "Économie annuelle",
+    "pdp.perYear": "an",
+    "pdp.trustFreeShipping": "Livraison offerte dès 59€",
+    "pdp.trustSecurePayment": "Paiement sécurisé",
+    "pdp.trustSatisfaction": "Satisfait ou remboursé",
+    "pdp.whySubscribe": "Pourquoi s'abonner ?",
+    "pdp.whySub1": "Économisez sur chaque commande",
+    "pdp.whySub2": "Jamais en rupture — livraison automatique",
+    "pdp.whySub3": "Annulation à tout moment, sans engagement",
+    "pdp.whySub4": "Stack ajusté selon vos progrès",
     "pdp.askCoach": "Demander à mon coach",
 
     // Coach

@@ -65,7 +65,6 @@ export function Navbar() {
         },
         { threshold: [0, 0.25, 0.5, 0.75], rootMargin: "-80px 0px -40% 0px" }
       );
-      );
       observer.observe(el);
       observers.push(observer);
     });

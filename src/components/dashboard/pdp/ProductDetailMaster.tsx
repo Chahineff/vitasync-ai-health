@@ -237,7 +237,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-[1200px] mx-auto px-4 lg:px-6 pb-24 lg:pb-8 overflow-x-hidden">
         {/* Header */}
-        <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/30 -mx-4 lg:-mx-6 px-4 lg:px-6 py-4 mb-2">
+        <div className="sticky top-0 z-30 bg-transparent backdrop-blur-md border-b border-border/10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-4 mb-2">
           <div className="flex items-center justify-between">
             <button onClick={onBack} className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors">
               <ArrowLeft weight="light" className="w-5 h-5" />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCartSimple, Star, Check, SpinnerGap, Repeat, Eye, Heart } from '@phosphor-icons/react';
+import { ShoppingCartSimple, Star, Check, SpinnerGap, Repeat, Eye, Heart, Tag } from '@phosphor-icons/react';
 import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -24,7 +24,7 @@ function StarRating() {
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       ))}
-      <span className="text-xs text-muted-foreground ml-1">5.0 (0 avis)</span>
+      <span className="text-xs text-muted-foreground ml-1">5.0</span>
     </div>
   );
 }
@@ -44,6 +44,11 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const mainImage = displayProduct.node.images.edges[0]?.node;
   const selectedVariant = displayProduct.node.variants.edges[0]?.node;
   const price = selectedVariant?.price || displayProduct.node.priceRange.minVariantPrice;
+
+  // Subscription info
+  const plan = getFirstSellingPlan(displayProduct);
+  const subPrice = plan ? calculateSubscriptionPrice(parseFloat(price.amount), plan) : null;
+  const pct = plan ? getDiscountPercentage(plan) : null;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -102,7 +107,6 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
 
           {/* Overlay actions */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {/* Favorite */}
             <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite?.(); }}
               className={`p-2 rounded-full backdrop-blur-sm border transition-colors ${
@@ -113,7 +117,6 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             >
               <Heart weight={isFavorite ? 'fill' : 'regular'} className="w-4 h-4" />
             </button>
-            {/* Quick view */}
             <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView?.(); }}
               className="p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-foreground/60 hover:text-foreground transition-colors"
@@ -122,8 +125,21 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             </button>
           </div>
 
+          {/* Save badge */}
+          {pct && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', bounce: 0.5, delay: 0.1 }}
+              className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500 text-white text-xs font-bold shadow-md"
+            >
+              <Tag weight="fill" className="w-3 h-3" />
+              -{pct}%
+            </motion.div>
+          )}
+
           {/* AI Badge */}
-          {recommendedByAI && (
+          {recommendedByAI && !pct && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -135,7 +151,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
             </motion.div>
           )}
 
-          {hasMultipleFlavors && !recommendedByAI && (
+          {hasMultipleFlavors && !recommendedByAI && !pct && (
             <div className="absolute top-3 left-3 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
               {flavors.length} {t('shop.flavors')}
             </div>
@@ -174,52 +190,58 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
 
           <div className="flex-1" />
 
-          {/* Subscribe hint */}
-          {(() => {
-            const plan = getFirstSellingPlan(displayProduct);
-            if (!plan) return null;
-            const subPrice = calculateSubscriptionPrice(parseFloat(price.amount), plan);
-            const pct = getDiscountPercentage(plan);
-            const freq = getDeliveryFrequency(plan);
-            return (
-              <div className="flex items-center gap-1">
-                <Repeat weight="bold" className="w-3 h-3 text-secondary" />
-                <span className="text-xs text-secondary font-medium">{subPrice.toFixed(2)} {price.currencyCode}</span>
-                <span className="text-xs text-muted-foreground">/{freq.toLowerCase().replace('every ', '').replace('deliver ', '')}</span>
-                {pct && <span className="text-[10px] font-semibold text-secondary">-{pct}%</span>}
-              </div>
-            );
-          })()}
-
-          {/* Price + Add */}
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-xl font-bold text-foreground">{parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}</span>
-            <button
-              onClick={handleAddToCart}
-              disabled={isAdding || !selectedVariant?.availableForSale}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                justAdded ? 'bg-green-500/15 text-green-600 dark:text-green-400' : 'bg-accent text-accent-foreground hover:brightness-110'
-              } disabled:opacity-40 disabled:cursor-not-allowed`}
-            >
-              {isAdding ? (
-                <SpinnerGap className="w-4 h-4 animate-spin" />
-              ) : justAdded ? (
-                <>
-                  <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', bounce: 0.5 }}>
-                    <Check weight="bold" className="w-4 h-4" />
-                  </motion.div>
-                  <span className="hidden sm:inline">{t('shop.added')}</span>
-                </>
-              ) : (
-                <>
-                  <ShoppingCartSimple weight="bold" className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t('shop.addToCart')}</span>
-                </>
+          {/* Pricing Section */}
+          <div className="space-y-1.5 pt-1">
+            {/* Base price */}
+            <div className="flex items-baseline gap-2">
+              <span className={`text-xl font-bold ${subPrice ? 'text-foreground/40 line-through text-base' : 'text-foreground'}`}>
+                {parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}
+              </span>
+              {subPrice && (
+                <span className="text-xl font-bold text-primary">
+                  {subPrice.toFixed(2)}&nbsp;{price.currencyCode}
+                </span>
               )}
-            </button>
+            </div>
+            {/* Subscribe hint */}
+            {subPrice && (
+              <div className="flex items-center gap-1.5 py-1 px-2 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15">
+                <Repeat weight="bold" className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                  {t('shop.saveWithSub')}
+                </span>
+              </div>
+            )}
           </div>
 
-          {!selectedVariant?.availableForSale && <p className="text-xs text-destructive">{t('shop.outOfStock')}</p>}
+          {/* Add to Cart Button */}
+          <button
+            onClick={handleAddToCart}
+            disabled={isAdding || !selectedVariant?.availableForSale}
+            className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              justAdded 
+                ? 'bg-green-500/15 text-green-600 dark:text-green-400' 
+                : 'bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98]'
+            } disabled:opacity-40 disabled:cursor-not-allowed`}
+          >
+            {isAdding ? (
+              <SpinnerGap className="w-4 h-4 animate-spin" />
+            ) : justAdded ? (
+              <>
+                <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', bounce: 0.5 }}>
+                  <Check weight="bold" className="w-4 h-4" />
+                </motion.div>
+                {t('shop.added')}
+              </>
+            ) : (
+              <>
+                <ShoppingCartSimple weight="bold" className="w-4 h-4" />
+                {t('shop.addToCart')}
+              </>
+            )}
+          </button>
+
+          {!selectedVariant?.availableForSale && <p className="text-xs text-destructive text-center">{t('shop.outOfStock')}</p>}
         </div>
       </motion.div>
     </div>

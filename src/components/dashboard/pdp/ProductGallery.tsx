@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'framer-motion';
+import { useState, useRef, useCallback } from 'react';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { MagnifyingGlass, Star } from '@phosphor-icons/react';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [hoverZoom, setHoverZoom] = useState<{ active: boolean; x: number; y: number }>({ active: false, x: 50, y: 50 });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const realImages = images.filter((img) => !!img.url);
@@ -47,6 +48,18 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
     setSelectedIndex(index);
   };
 
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setHoverZoom({ active: true, x, y });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoverZoom({ active: false, x: 50, y: 50 });
+  }, []);
+
   const slideVariants = {
     enter: (d: number) => ({ x: d > 0 ? 200 : -200, opacity: 0 }),
     center: { x: 0, opacity: 1 },
@@ -59,6 +72,8 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
       <div className="relative">
         <div
           ref={containerRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
           className="relative aspect-square rounded-3xl overflow-hidden bg-[hsl(210_40%_98%)] dark:bg-muted/10 border border-[hsl(214_32%_91%)] dark:border-border/50 touch-pan-y"
         >
           <AnimatePresence mode="wait" custom={direction}>
@@ -77,7 +92,38 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.15}
                 onDragEnd={handleDragEnd}
-                className="w-full h-full object-contain p-6 cursor-grab active:cursor-grabbing rounded-3xl"
+                className="w-full h-full object-contain p-6 cursor-grab active:cursor-grabbing rounded-3xl hidden lg:block"
+                style={hoverZoom.active ? {
+                  transform: `scale(2)`,
+                  transformOrigin: `${hoverZoom.x}% ${hoverZoom.y}%`,
+                  cursor: 'zoom-in',
+                  transition: 'transform-origin 0.1s ease',
+                } : {
+                  transform: 'scale(1)',
+                  transition: 'transform 0.3s ease',
+                }}
+              />
+            ) : null}
+          </AnimatePresence>
+
+          {/* Mobile version without hover zoom */}
+          <AnimatePresence mode="wait" custom={direction}>
+            {selectedImage ? (
+              <motion.img
+                key={`mobile-${selectedImage.url}`}
+                src={selectedImage.url}
+                alt={selectedImage.altText || productTitle}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.25, ease: 'easeInOut' }}
+                drag={realImages.length > 1 ? 'x' : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.15}
+                onDragEnd={handleDragEnd}
+                className="w-full h-full object-contain p-6 cursor-grab active:cursor-grabbing rounded-3xl lg:hidden"
               />
             ) : (
               <motion.div
@@ -91,7 +137,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
           </AnimatePresence>
 
           {/* Overlay Badges — top left */}
-          <div className="absolute top-4 left-4 flex flex-wrap gap-1.5 pointer-events-none">
+          <div className="absolute top-4 left-4 flex flex-wrap gap-1.5 pointer-events-none z-10">
             {recommendedByAI && (
               <div className="px-3 py-1.5 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium flex items-center gap-1.5 shadow-lg">
                 <Star weight="fill" className="w-3.5 h-3.5" />
@@ -108,9 +154,17 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
             ))}
           </div>
 
+          {/* Hover zoom hint — desktop */}
+          {selectedImage && !hoverZoom.active && (
+            <div className="absolute bottom-4 left-4 hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-sm text-foreground/50 text-xs pointer-events-none">
+              <MagnifyingGlass weight="light" className="w-3.5 h-3.5" />
+              {t('pdp.hoverToZoom')}
+            </div>
+          )}
+
           {/* Dot indicators — mobile */}
           {realImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 lg:hidden">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 lg:hidden z-10">
               {realImages.map((_, i) => (
                 <button
                   key={i}
@@ -126,11 +180,11 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
             </div>
           )}
 
-          {/* Zoom Button */}
+          {/* Zoom Button — mobile only */}
           {selectedImage && (
             <Dialog open={isZoomOpen} onOpenChange={setIsZoomOpen}>
               <DialogTrigger asChild>
-                <button className="absolute bottom-4 right-4 p-2.5 rounded-xl bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg">
+                <button className="absolute bottom-4 right-4 p-2.5 rounded-xl bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg lg:hidden">
                   <MagnifyingGlass weight="light" className="w-5 h-5" />
                 </button>
               </DialogTrigger>
@@ -148,7 +202,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
         </div>
       </div>
 
-      {/* Thumbnails — desktop only, hover to preview */}
+      {/* Thumbnails — desktop only */}
       {realImages.length > 1 && (
         <div className="hidden lg:flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
           {realImages.map((img, index) => (

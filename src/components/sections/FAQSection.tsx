@@ -16,70 +16,33 @@ function FAQItem({
   onToggle: () => void;
 }) {
   return (
-    <>
-      {/* Light mode */}
-      <div
-        className="dark:hidden rounded-2xl overflow-hidden relative bg-white/70 backdrop-blur-xl border border-border/60"
-        style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}
+    <div
+      className="rounded-2xl overflow-hidden relative border bg-white/70 dark:bg-card/[0.92] backdrop-blur-xl border-border/60 dark:border-white/[0.06] shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_0_20px_rgba(0,240,255,0.04)]"
+    >
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/40 to-primary/10" />
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between p-6 text-left"
+        aria-expanded={isOpen}
       >
-        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, rgba(0,240,255,0.4), rgba(0,240,255,0.1))" }} />
-        <button
-          onClick={onToggle}
-          className="w-full flex items-center justify-between p-6 text-left"
-          aria-expanded={isOpen}
-        >
-          <span className="text-foreground font-light pr-4">{question}</span>
-          <CaretDown 
-            size={20} 
-            weight="light"
-            className={cn(
-              "text-foreground/50 transition-transform duration-300 flex-shrink-0",
-              isOpen && "rotate-180"
-            )}
-          />
-        </button>
-        <div className={cn("grid transition-all duration-300 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
-          <div className="overflow-hidden">
-            <div className="px-6 pb-6 pt-0">
-              <p className="text-foreground/60">{answer}</p>
-            </div>
+        <span className="text-foreground font-light pr-4">{question}</span>
+        <CaretDown 
+          size={20} 
+          weight="light"
+          className={cn(
+            "text-foreground/50 transition-transform duration-300 flex-shrink-0",
+            isOpen && "rotate-180"
+          )}
+        />
+      </button>
+      <div className={cn("grid transition-all duration-300 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
+        <div className="overflow-hidden">
+          <div className="px-6 pb-6 pt-0">
+            <p className="text-foreground/60">{answer}</p>
           </div>
         </div>
       </div>
-
-      {/* Dark mode */}
-      <div
-        className="hidden dark:block rounded-2xl overflow-hidden relative border border-white/[0.06]"
-        style={{
-          background: "hsl(var(--card) / 0.92)",
-          boxShadow: "0 0 20px rgba(0, 240, 255, 0.04), inset 0 1px 0 rgba(255,255,255,0.03)",
-        }}
-      >
-        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, rgba(0,240,255,0.3), rgba(0,240,255,0.05))" }} />
-        <button
-          onClick={onToggle}
-          className="w-full flex items-center justify-between p-6 text-left"
-          aria-expanded={isOpen}
-        >
-          <span className="text-foreground font-light pr-4">{question}</span>
-          <CaretDown 
-            size={20} 
-            weight="light"
-            className={cn(
-              "text-foreground/50 transition-transform duration-300 flex-shrink-0",
-              isOpen && "rotate-180"
-            )}
-          />
-        </button>
-        <div className={cn("grid transition-all duration-300 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
-          <div className="overflow-hidden">
-            <div className="px-6 pb-6 pt-0">
-              <p className="text-foreground/60">{answer}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
 

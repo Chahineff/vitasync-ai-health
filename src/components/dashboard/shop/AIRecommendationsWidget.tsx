@@ -170,13 +170,10 @@ export function AIRecommendationsWidget({ onProductClick, onViewAll }: { onProdu
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative rounded-2xl overflow-hidden border border-border/50 dark:border-white/10 mb-4"
+      className="glass-card-premium rounded-2xl mb-4"
     >
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5 dark:from-primary/10 dark:via-background dark:to-secondary/10" />
-      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
 
-      <div className="relative p-5">
+      <div className="p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">

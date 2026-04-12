@@ -3311,6 +3311,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.exploreAll": "Explorar todas las categorías",
     "shop.popularSearches": "Búsquedas populares",
     "shop.viewDetails": "Ver detalles",
+    "shop.heroTitle": "Tu Tienda Personalizada",
+    "shop.heroSubtitle": "Suplementos seleccionados para tu perfil de salud",
+    "shop.trending": "Tendencias",
+    "shop.saveWithSub": "Ahorra con la suscripción mensual",
     "cart.title": "Carrito",
     "cart.item": "artículo",
     "cart.items": "artículos",
@@ -3319,6 +3323,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "Finalizar compra",
     "cart.freeShippingRemaining": "para envío gratuito",
     "cart.freeShippingUnlocked": "¡Envío gratuito desbloqueado!",
+    "cart.secureCheckout": "Pago 100% seguro",
 
     // Settings
     "settings.title": "Configuración",
@@ -4731,6 +4736,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.exploreAll": "استكشاف جميع الفئات",
     "shop.popularSearches": "عمليات البحث الشائعة",
     "shop.viewDetails": "عرض التفاصيل",
+    "shop.heroTitle": "متجرك المخصص",
+    "shop.heroSubtitle": "مكملات مختارة لملفك الصحي",
+    "shop.trending": "الأكثر رواجاً",
+    "shop.saveWithSub": "وفّر مع الاشتراك الشهري",
     "cart.title": "السلة",
     "cart.item": "منتج",
     "cart.items": "منتجات",
@@ -4739,6 +4748,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "إتمام الشراء",
     "cart.freeShippingRemaining": "للشحن المجاني",
     "cart.freeShippingUnlocked": "تم فتح الشحن المجاني!",
+    "cart.secureCheckout": "دفع آمن 100%",
 
     // Settings
     "settings.title": "الإعدادات",

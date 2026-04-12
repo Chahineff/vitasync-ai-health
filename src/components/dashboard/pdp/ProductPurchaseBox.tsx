@@ -12,6 +12,13 @@ import {
   Package,
   CheckCircle,
   ShieldCheck,
+  Truck,
+  CurrencyDollar,
+  ArrowsClockwise,
+  CalendarCheck,
+  Pill,
+  Clock,
+  Timer,
 } from '@phosphor-icons/react';
 import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
@@ -383,12 +390,12 @@ export function ProductPurchaseBox({
       {/* Trust badges */}
       <div className="grid grid-cols-3 gap-2">
         {[
-          { icon: Package, label: t('pdp.trustFreeShipping') },
+          { icon: Truck, label: t('pdp.trustFreeShipping') },
           { icon: ShieldCheck, label: t('pdp.trustSecurePayment') },
           { icon: CheckCircle, label: t('pdp.trustSatisfaction') },
         ].map((badge, i) => (
-          <div key={i} className="flex flex-col items-center gap-1 py-2 px-1 rounded-xl bg-muted/40 border border-border/30">
-            <badge.icon weight="light" className="w-4 h-4 text-primary/70" />
+          <div key={i} className="flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl bg-muted/40 border border-border/30">
+            <badge.icon weight="duotone" className="w-5 h-5 text-primary/70" />
             <span className="text-[10px] text-foreground/50 font-medium text-center leading-tight">{badge.label}</span>
           </div>
         ))}
@@ -396,30 +403,50 @@ export function ProductPurchaseBox({
 
       {/* Estimated Delivery */}
       <div className="flex items-center gap-2 justify-center text-sm text-foreground/50 font-light">
-        <Package weight="light" className="w-4 h-4" />
+        <Truck weight="duotone" className="w-4 h-4 text-primary/60" />
         {t('pdp.estimatedDelivery')} {deliveryText}
       </div>
 
-      {/* Why Subscribe Block */}
+      {/* Dosage / Supply Info */}
+      {parsedData?.suggestedUse && (
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/20">
+            <Pill weight="duotone" className="w-4 h-4 text-primary/60 flex-shrink-0" />
+            <div>
+              <p className="text-[10px] text-foreground/40 font-medium uppercase tracking-wider">{t('pdp.dosageLabel')}</p>
+              <p className="text-sm font-semibold text-foreground">{parsedData.suggestedUse}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/20">
+            <Timer weight="duotone" className="w-4 h-4 text-primary/60 flex-shrink-0" />
+            <div>
+              <p className="text-[10px] text-foreground/40 font-medium uppercase tracking-wider">{t('pdp.supplyDuration')}</p>
+              <p className="text-sm font-semibold text-foreground">{selectedVariant?.title || '—'}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Why Subscribe Block — 2x2 grid */}
       {hasSubscription && (
         <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/5 via-accent/3 to-secondary/5 border border-primary/10">
           <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
             <Repeat weight="bold" className="w-4 h-4 text-primary" />
             {t('pdp.whySubscribe')}
           </h4>
-          <ul className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
             {[
-              t('pdp.whySub1'),
-              t('pdp.whySub2'),
-              t('pdp.whySub3'),
-              t('pdp.whySub4'),
-            ].map((benefit, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-foreground/60">
-                <CheckCircle weight="fill" className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                {benefit}
-              </li>
+              { icon: CurrencyDollar, text: t('pdp.whySub1') },
+              { icon: ArrowsClockwise, text: t('pdp.whySub2') },
+              { icon: CalendarCheck, text: t('pdp.whySub3') },
+              { icon: CheckCircle, text: t('pdp.whySub4') },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-2 p-2.5 rounded-xl bg-background/60 border border-border/20">
+                <item.icon weight="duotone" className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                <span className="text-xs text-foreground/60 leading-tight">{item.text}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
 

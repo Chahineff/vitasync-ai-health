@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, forwardRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ShoppingCart, Heart, Flask, Leaf, ShieldCheck, Flag, Plus, CaretRight } from '@phosphor-icons/react';
+import { ArrowLeft, ShoppingCart, Heart, Flask, Leaf, ShieldCheck, Flag, Plus, CaretRight, Sparkle, Timer, ListBullets, TestTube, Atom } from '@phosphor-icons/react';
 import { fetchProductByHandle, fetchProducts, ProductDetail, ShopifyProduct } from '@/lib/shopify';
 import { parseProductDescription, ParsedProductData } from '@/lib/shopify-parser';
 import { toast } from 'sonner';
@@ -324,7 +324,10 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="what-it-does" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    {t('pdp.accordionWhatItDoes')}
+                    <span className="flex items-center gap-2">
+                      <Sparkle weight="duotone" className="w-4 h-4 text-primary/60" />
+                      {t('pdp.accordionWhatItDoes')}
+                    </span>
                     <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
                   </span>
                 </AccordionTrigger>
@@ -343,8 +346,10 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="results-timeline" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    {t('pdp.accordionExpect')}
-                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                    <span className="flex items-center gap-2">
+                      <Timer weight="duotone" className="w-4 h-4 text-primary/60" />
+                      {t('pdp.accordionExpect')}
+                    </span>
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="pb-6">
@@ -355,8 +360,10 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="how-to-take" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    {t('pdp.howToTake')}
-                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                    <span className="flex items-center gap-2">
+                      <ListBullets weight="duotone" className="w-4 h-4 text-primary/60" />
+                      {t('pdp.howToTake')}
+                    </span>
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="pb-6">
@@ -371,8 +378,10 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="ingredients" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    {t('pdp.accordionIngredients')}
-                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                    <span className="flex items-center gap-2">
+                      <TestTube weight="duotone" className="w-4 h-4 text-primary/60" />
+                      {t('pdp.accordionIngredients')}
+                    </span>
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="pb-6">
@@ -389,8 +398,10 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               <AccordionItem value="science" className="border-b border-border/30">
                 <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
-                    {t('pdp.accordionScience')}
-                    <Plus weight="light" className="w-4 h-4 text-foreground/40 transition-transform duration-200 [[data-state=open]_&]:rotate-45" />
+                    <span className="flex items-center gap-2">
+                      <Atom weight="duotone" className="w-4 h-4 text-primary/60" />
+                      {t('pdp.accordionScience')}
+                    </span>
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="pb-6">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, forwardRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Sparkle, X, SlidersHorizontal, Heart, MagnifyingGlass, Package, TrendUp } from '@phosphor-icons/react';
+import { ShoppingCart, Sparkle, X, SlidersHorizontal, Heart, MagnifyingGlass, Package, TrendUp, GridFour, Barbell, Leaf, Brain, Drop, Pill, Scales, Plant, Bone, DotsThree } from '@phosphor-icons/react';
 import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
 import { CartDrawer } from './CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
@@ -144,10 +144,6 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
     return filtered;
   }, [productGroups, searchQuery, selectedCategory, sortOption, priceRange, showFavoritesOnly, wishlist]);
 
-  // Trending products (first 6 by simulated popularity)
-  const trendingGroups = useMemo(() => {
-    return productGroups.slice(0, 6);
-  }, [productGroups]);
 
   const totalPages = Math.ceil(filteredGroups.length / ITEMS_PER_PAGE);
   const paginatedGroups = filteredGroups.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -167,16 +163,16 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
   }, []);
 
   const categories = [
-    { key: 'all' as CategoryKey, label: t('shop.allCategories') },
-    { key: 'sport' as CategoryKey, label: t('shop.sport') },
-    { key: 'wellness' as CategoryKey, label: t('shop.wellness') },
-    { key: 'brain' as CategoryKey, label: t('shop.brain') },
-    { key: 'digestive' as CategoryKey, label: t('shop.digestive') },
-    { key: 'vitamins' as CategoryKey, label: t('shop.vitamins') },
-    { key: 'weight' as CategoryKey, label: t('shop.weight') },
-    { key: 'mushrooms' as CategoryKey, label: t('shop.mushrooms') },
-    { key: 'bones' as CategoryKey, label: t('shop.bones') },
-    { key: 'other' as CategoryKey, label: t('shop.other') },
+    { key: 'all' as CategoryKey, label: t('shop.allCategories'), icon: GridFour },
+    { key: 'sport' as CategoryKey, label: t('shop.sport'), icon: Barbell },
+    { key: 'wellness' as CategoryKey, label: t('shop.wellness'), icon: Leaf },
+    { key: 'brain' as CategoryKey, label: t('shop.brain'), icon: Brain },
+    { key: 'digestive' as CategoryKey, label: t('shop.digestive'), icon: Drop },
+    { key: 'vitamins' as CategoryKey, label: t('shop.vitamins'), icon: Pill },
+    { key: 'weight' as CategoryKey, label: t('shop.weight'), icon: Scales },
+    { key: 'mushrooms' as CategoryKey, label: t('shop.mushrooms'), icon: Plant },
+    { key: 'bones' as CategoryKey, label: t('shop.bones'), icon: Bone },
+    { key: 'other' as CategoryKey, label: t('shop.other'), icon: DotsThree },
   ];
 
   // Free shipping progress
@@ -184,7 +180,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
   const shippingProgress = Math.min((totalCartPrice / FREE_SHIPPING_THRESHOLD) * 100, 100);
 
   return (
-    <div ref={ref} className="h-full flex flex-col">
+    <div ref={ref} className="space-y-6">
       {/* Hero Header */}
       <div className="relative overflow-hidden rounded-2xl mb-6 p-6 md:p-8 bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 border border-border/30">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_60%)]" />
@@ -245,61 +241,36 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
         </div>
       </div>
 
-      {/* Trending Now Section */}
-      {!loading && trendingGroups.length > 0 && !hasActiveFilters && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendUp weight="bold" className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">{t('shop.trending')}</h3>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
-            {trendingGroups.map((group) => {
-              const mainImg = group.primaryProduct.node.images.edges[0]?.node;
-              const price = parseFloat(group.primaryProduct.node.priceRange.minVariantPrice.amount);
-              return (
-                <motion.button
-                  key={group.baseTitle}
-                  whileHover={{ y: -2 }}
-                  onClick={() => onProductSelect?.(group.primaryProduct.node.handle)}
-                  className="flex-shrink-0 w-[140px] rounded-xl overflow-hidden bg-card border border-border/50 hover:border-primary/30 hover:shadow-md transition-all group"
-                >
-                  <div className="aspect-square bg-muted/30 overflow-hidden">
-                    {mainImg && <img src={mainImg.url} alt={group.baseTitle} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
-                  </div>
-                  <div className="p-2.5">
-                    <p className="text-xs font-semibold text-foreground line-clamp-1">{group.baseTitle}</p>
-                    <p className="text-xs font-bold text-primary mt-0.5">{price.toFixed(2)} €</p>
-                  </div>
-                </motion.button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
-      {/* Category Pills with counts */}
+      {/* Category Pills with counts & icons */}
       <div className="overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
         <div className="flex gap-2 min-w-max">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => { setSelectedCategory(cat.key); setCurrentPage(1); }}
-              className={`px-4 h-9 rounded-full text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                selectedCategory === cat.key
-                  ? 'bg-accent text-accent-foreground shadow-sm'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
-            >
-              {cat.label}
-              {categoryCounts[cat.key] > 0 && (
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                  selectedCategory === cat.key ? 'bg-accent-foreground/20' : 'bg-foreground/10'
-                }`}>
-                  {categoryCounts[cat.key]}
-                </span>
-              )}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const Icon = cat.icon;
+            const isActive = selectedCategory === cat.key;
+            return (
+              <motion.button
+                key={cat.key}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => { setSelectedCategory(cat.key); setCurrentPage(1); }}
+                className={`px-4 h-10 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 border ${
+                  isActive
+                    ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
+                    : 'bg-card text-muted-foreground border-border/50 hover:border-primary/30 hover:bg-muted/60'
+                }`}
+              >
+                <Icon weight={isActive ? 'fill' : 'regular'} className="w-4 h-4" />
+                {cat.label}
+                {categoryCounts[cat.key] > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                    isActive ? 'bg-primary-foreground/20' : 'bg-foreground/10'
+                  }`}>
+                    {categoryCounts[cat.key]}
+                  </span>
+                )}
+              </motion.button>
+            );
+          })}
           {/* Favorites filter */}
           <button
             onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
@@ -388,7 +359,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
       </AnimatePresence>
 
       {/* Products Grid */}
-      <div ref={shopContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden mt-6 scroll-smooth">
+      <div ref={shopContainerRef} className="overflow-x-hidden scroll-smooth">
         {loading ? (
           <ShopSkeletonGrid />
         ) : (

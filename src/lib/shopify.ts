@@ -534,7 +534,42 @@ export function getDiscountPercentage(plan: SellingPlan): number | null {
 
 export function getDeliveryFrequency(plan: SellingPlan): string {
   const opt = plan.options?.find(o => o.name.toLowerCase().includes('delivery') || o.name.toLowerCase().includes('frequency') || o.name.toLowerCase().includes('billing'));
-  return opt?.value || plan.name || '';
+  const raw = opt?.value || plan.name || '';
+  
+  // Parse day-based patterns like "30 Day(s)", "60 Day(s)", "90 Day(s)"
+  const dayMatch = raw.match(/(\d+)\s*day/i);
+  if (dayMatch) {
+    const days = parseInt(dayMatch[1], 10);
+    if (days <= 30) return `${Math.round(days / 30) || 1} month`;
+    if (days <= 60) return `2 months`;
+    if (days <= 90) return `3 months`;
+    return `${Math.round(days / 30)} months`;
+  }
+  
+  // Parse week-based patterns
+  const weekMatch = raw.match(/(\d+)\s*week/i);
+  if (weekMatch) {
+    const weeks = parseInt(weekMatch[1], 10);
+    if (weeks <= 4) return '1 month';
+    return `${Math.round(weeks / 4)} months`;
+  }
+  
+  // Parse month-based patterns
+  const monthMatch = raw.match(/(\d+)\s*month/i);
+  if (monthMatch) {
+    const months = parseInt(monthMatch[1], 10);
+    return months === 1 ? '1 month' : `${months} months`;
+  }
+  
+  // Clean up labels like "Daily LV", "Daily LV Treatment" — fallback to plan name
+  if (/daily\s*lv/i.test(raw) || /treatment/i.test(raw)) {
+    // Try to extract from plan name instead
+    const nameMatch = plan.name?.match(/(\d+)\s*(day|week|month)/i);
+    if (nameMatch) return getDeliveryFrequency({ ...plan, options: [{ name: 'frequency', value: nameMatch[0] }] });
+    return plan.name || raw;
+  }
+  
+  return raw;
 }
 
 // ═══════════════ Cart ═══════════════

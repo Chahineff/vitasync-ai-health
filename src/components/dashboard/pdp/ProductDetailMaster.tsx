@@ -295,7 +295,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
         {/* PDP content with persistent sticky gallery */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-          <div className="lg:sticky lg:top-28 lg:self-start lg:h-[calc(100vh-7rem)] lg:flex lg:items-center">
+          <div className="lg:sticky lg:top-28 lg:self-start">
             <div className="w-full lg:max-h-full">
               <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} tags={product.tags} />
             </div>

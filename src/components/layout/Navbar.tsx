@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,6 +26,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const isNavigatingRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,6 +50,7 @@ export function Navbar() {
       if (!el) return;
       const observer = new IntersectionObserver(
         ([entry]) => {
+          if (isNavigatingRef.current) return;
           if (entry.isIntersecting) {
             visibleSections.set(id, entry.intersectionRatio);
           } else {
@@ -74,12 +76,18 @@ export function Navbar() {
     if (href.startsWith("#")) {
       e.preventDefault();
       setIsMobileMenuOpen(false);
+      const sectionId = href.replace("#", "");
       if (location.pathname !== "/") {
         navigate("/" + href);
       } else {
         const element = document.querySelector(href);
         if (element) {
+          // Lock active section immediately and block observer during scroll
+          setActiveSection(sectionId);
+          isNavigatingRef.current = true;
           element.scrollIntoView({ behavior: "smooth" });
+          // Re-enable observer after scroll settles
+          setTimeout(() => { isNavigatingRef.current = false; }, 1200);
         }
       }
     }

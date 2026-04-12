@@ -50,7 +50,7 @@ function getSavedModel(): AIModel {
   return DEFAULT_MODEL;
 }
 
-export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
+export function ChatInterface({ onFirstMessage, onProductSelect }: ChatInterfaceProps) {
   const { user, profile } = useAuth();
   const { healthProfile } = useHealthProfile();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -492,6 +492,7 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
                     content={message.content}
                     isStreaming={(isLoading || isRevealing) && index === messages.length - 1 && message.role === 'assistant'}
                     onQuizComplete={(summary) => handleSubmit(summary)}
+                    onProductSelect={onProductSelect}
                   />
                 ))}
               </AnimatePresence>

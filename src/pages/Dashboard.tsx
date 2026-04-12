@@ -421,7 +421,7 @@ const Dashboard = () => {
           {isTransitioning ? <DashboardSkeleton /> : <AnimatePresence mode="wait">
               {activeSection === "home" && <DashboardHome key="home" userName={userName} formatDate={formatDate} onGoToCoach={() => handleSectionChange("coach")} onGoToShop={() => handleSectionChange("shop")} onGoToStack={() => handleSectionChange("mystack")} onGoToAnalyses={() => handleSectionChange("analyses")} />}
               {activeSection === "coach" && <motion.div key="coach" className="h-full" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
-                  <ChatInterface />
+                  <ChatInterface onProductSelect={handleProductSelect} />
                 </motion.div>}
               {activeSection === "supplements" && <motion.div key="supplements" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
                   <h2 className="text-2xl font-light tracking-tight text-foreground mb-6">{t("dashboard.supplements")}</h2>

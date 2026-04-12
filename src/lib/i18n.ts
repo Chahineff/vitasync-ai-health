@@ -6160,6 +6160,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shop.exploreAll": "浏览所有类别",
     "shop.popularSearches": "热门搜索",
     "shop.viewDetails": "查看详情",
+    "shop.heroTitle": "您的个性化补剂商店",
+    "shop.heroSubtitle": "根据您的健康档案精选补剂",
+    "shop.trending": "热门趋势",
+    "shop.saveWithSub": "月订阅更省钱",
     "cart.title": "购物车",
     "cart.item": "件商品",
     "cart.items": "件商品",
@@ -6168,6 +6172,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.checkout": "结算",
     "cart.freeShippingRemaining": "即可免费配送",
     "cart.freeShippingUnlocked": "已解锁免费配送！",
+    "cart.secureCheckout": "100%安全支付",
 
     // Settings
     "settings.title": "设置",

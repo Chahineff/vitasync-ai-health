@@ -437,7 +437,7 @@ const Dashboard = () => {
               {activeSection === "shop" && <motion.div key="shop" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} className="h-full">
                   <ShopSection onProductSelect={handleProductSelect} />
                 </motion.div>}
-              {activeSection === "product" && selectedProductHandle && <motion.div key="product" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} className="h-full">
+              {activeSection === "product" && selectedProductHandle && <motion.div key="product" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                   <ProductDetailSection handle={selectedProductHandle} onBack={handleBackToShop} onProductSelect={handleProductSelect} />
                 </motion.div>}
               {activeSection === "mystack" && <motion.div key="mystack" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>

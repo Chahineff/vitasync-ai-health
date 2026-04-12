@@ -237,7 +237,7 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
   return (
     <>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-[1200px] mx-auto px-4 lg:px-6 pb-24 lg:pb-8 overflow-x-hidden">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-[1200px] mx-auto px-4 lg:px-6 pb-24 lg:pb-8 overflow-visible">
         {/* Header */}
         <div className="sticky top-0 z-30 bg-transparent backdrop-blur-md border-b border-border/10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-4 mb-2">
           <div className="flex items-center justify-between">
@@ -295,8 +295,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
         {/* HERO — 50/50 columns */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-          <div className="lg:sticky lg:top-[88px] lg:self-start lg:h-[calc(100vh-112px)] lg:flex lg:items-center">
-            <div className="w-full">
+          <div className="lg:sticky lg:top-28 lg:self-start lg:h-[calc(100vh-7rem)] lg:flex lg:items-center">
+            <div className="w-full lg:max-h-full">
               <ProductGallery images={images} productTitle={product.title} recommendedByAI={recommendedByAI} tags={product.tags} />
             </div>
           </div>

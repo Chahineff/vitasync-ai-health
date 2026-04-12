@@ -28,7 +28,7 @@ interface RecommendedProduct {
 
 const CACHE_KEY = 'vitasync_ai_recommendations';
 
-export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (handle: string) => void }) {
+export function AIRecommendationsWidget({ onProductClick, onViewAll }: { onProductClick?: (handle: string) => void; onViewAll?: () => void }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -287,14 +287,14 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                           AI Pick
                         </div>
                         {/* Quick add overlay on hover */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3">
                           <button
                             onClick={(e) => handleAddToCart(product, e)}
                             disabled={addingToCart === product.handle}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 backdrop-blur-sm ${
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 backdrop-blur-sm shadow-lg ${
                               addedProducts.has(product.handle)
                                 ? 'bg-emerald-500 text-white'
-                                : 'bg-white/90 text-foreground hover:bg-white'
+                                : 'bg-white text-gray-900 hover:bg-gray-100'
                             }`}
                           >
                             {addingToCart === product.handle ? (
@@ -344,10 +344,10 @@ export function AIRecommendationsWidget({ onProductClick }: { onProductClick?: (
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                onClick={() => recommendations[0] && onProductClick?.(recommendations[0].handle)}
+                onClick={() => onViewAll?.()}
                 className="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5"
               >
-                {t('shop.viewRecommendations') || 'Voir mes recommandations'}
+                {t('shop.viewRecommendations')}
                 <ArrowRight weight="bold" className="w-4 h-4" />
               </motion.button>
             </motion.div>

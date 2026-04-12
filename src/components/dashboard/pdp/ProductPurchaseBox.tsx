@@ -11,6 +11,7 @@ import {
   Star,
   Package,
   CheckCircle,
+  ShieldCheck,
 } from '@phosphor-icons/react';
 import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
@@ -340,6 +341,19 @@ export function ProductPurchaseBox({
         </div>
       </div>
 
+      {/* Annual savings callout */}
+      {hasSubscription && effectiveMode === 'subscribe' && discountPct && (
+        <motion.div
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-3 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20"
+        >
+          <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300 text-center">
+            💰 {t('pdp.annualSavings')}: {((basePrice - subscriptionPrice) * 12).toFixed(2)} €/{t('pdp.perYear')}
+          </p>
+        </motion.div>
+      )}
+
       {/* CTA */}
       <motion.button
         onClick={handleAddToCart}
@@ -350,7 +364,7 @@ export function ProductPurchaseBox({
           justAdded
             ? "bg-green-500/20 text-green-600 border border-green-500/30"
             : effectiveMode === 'subscribe'
-              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+              ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
               : "bg-foreground hover:bg-foreground/90 text-background",
           "disabled:opacity-50 disabled:cursor-not-allowed"
         )}
@@ -366,11 +380,48 @@ export function ProductPurchaseBox({
         )}
       </motion.button>
 
+      {/* Trust badges */}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { icon: Package, label: t('pdp.trustFreeShipping') },
+          { icon: ShieldCheck, label: t('pdp.trustSecurePayment') },
+          { icon: CheckCircle, label: t('pdp.trustSatisfaction') },
+        ].map((badge, i) => (
+          <div key={i} className="flex flex-col items-center gap-1 py-2 px-1 rounded-xl bg-muted/40 border border-border/30">
+            <badge.icon weight="light" className="w-4 h-4 text-primary/70" />
+            <span className="text-[10px] text-foreground/50 font-medium text-center leading-tight">{badge.label}</span>
+          </div>
+        ))}
+      </div>
+
       {/* Estimated Delivery */}
       <div className="flex items-center gap-2 justify-center text-sm text-foreground/50 font-light">
         <Package weight="light" className="w-4 h-4" />
         {t('pdp.estimatedDelivery')} {deliveryText}
       </div>
+
+      {/* Why Subscribe Block */}
+      {hasSubscription && (
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/5 via-accent/3 to-secondary/5 border border-primary/10">
+          <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+            <Repeat weight="bold" className="w-4 h-4 text-primary" />
+            {t('pdp.whySubscribe')}
+          </h4>
+          <ul className="space-y-2">
+            {[
+              t('pdp.whySub1'),
+              t('pdp.whySub2'),
+              t('pdp.whySub3'),
+              t('pdp.whySub4'),
+            ].map((benefit, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-foreground/60">
+                <CheckCircle weight="fill" className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                {benefit}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Ask VitaSync */}
       <button

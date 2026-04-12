@@ -533,7 +533,7 @@ const DashboardHome = ({
     <motion.div
       initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      className="glass-card rounded-2xl p-5"
+      className="glass-card-premium rounded-2xl p-5"
     >
       <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 items-start">
         <HealthScoreWidget embedded />
@@ -541,7 +541,7 @@ const DashboardHome = ({
       </div>
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.08 }}>
-      <AIRecommendationsWidget onProductClick={onProductSelect} />
+      <AIRecommendationsWidget onProductClick={onProductSelect} onViewAll={onGoToShop} />
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.14 }}>
       <DailyCheckinWidget />

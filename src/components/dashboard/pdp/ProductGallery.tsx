@@ -59,7 +59,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
       <div className="relative">
         <div
           ref={containerRef}
-          className="relative aspect-square rounded-[20px] overflow-hidden bg-[hsl(210_40%_98%)] dark:bg-muted/10 border border-[hsl(214_32%_91%)] dark:border-border/50 touch-pan-y"
+          className="relative aspect-square rounded-3xl overflow-hidden bg-[hsl(210_40%_98%)] dark:bg-muted/10 border border-[hsl(214_32%_91%)] dark:border-border/50 touch-pan-y"
         >
           <AnimatePresence mode="wait" custom={direction}>
             {selectedImage ? (
@@ -77,7 +77,7 @@ export function ProductGallery({ images, productTitle, recommendedByAI, tags }: 
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.15}
                 onDragEnd={handleDragEnd}
-                className="w-full h-full object-contain p-4 cursor-grab active:cursor-grabbing"
+                className="w-full h-full object-contain p-6 cursor-grab active:cursor-grabbing rounded-3xl"
               />
             ) : (
               <motion.div

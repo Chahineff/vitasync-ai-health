@@ -332,7 +332,11 @@ export function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
             if (data === '[DONE]') continue;
             try {
               const parsed = JSON.parse(data);
-              const content = parsed.choices?.[0]?.delta?.content || '';
+              let content = parsed.choices?.[0]?.delta?.content || '';
+              // Audit fix: normalize typographic quotes/apostrophes to ASCII
+              content = content
+                .replace(/[\u2018\u2019\u0060\u00B4]/g, "'")
+                .replace(/[\u201C\u201D]/g, '"');
               fullContentRef.current += content;
             } catch {}
           }

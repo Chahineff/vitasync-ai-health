@@ -46,7 +46,7 @@ export function SocialProofBar({ productTitle }: SocialProofBarProps) {
       {/* Stock */}
       <div className="flex items-center gap-1.5 text-xs text-foreground/50">
         <Package weight="light" className="w-3.5 h-3.5" />
-        <span>{t('pdp.inStock')}</span>
+        <span>{t('pdp.inStockFast')}</span>
       </div>
 
       {/* Shipping timer */}

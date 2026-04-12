@@ -6266,6 +6266,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.monthlySubscription": "月度订阅",
     "pdp.oneTimePurchase": "单次购买",
     "pdp.quantity": "数量",
+    "pdp.annualSavings": "年度节省",
+    "pdp.perYear": "年",
+    "pdp.trustFreeShipping": "满59€免邮",
+    "pdp.trustSecurePayment": "安全支付",
+    "pdp.trustSatisfaction": "退款保证",
+    "pdp.whySubscribe": "为什么订阅？",
+    "pdp.whySub1": "每次下单都省钱",
+    "pdp.whySub2": "不断货 — 自动配送",
+    "pdp.whySub3": "随时取消，无约束",
+    "pdp.whySub4": "根据您的进步调整配方",
     "pdp.askCoach": "咨询我的教练",
 
     // Coach

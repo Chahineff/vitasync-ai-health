@@ -35,6 +35,9 @@ import { PDPFooter } from './PDPFooter';
 import { MobileStickyCart } from './MobileStickyCart';
 import { ResultsTimeline } from './ResultsTimeline';
 import { ProductComparator } from './ProductComparator';
+import { SocialProofBar } from './SocialProofBar';
+import { CrossSellSection } from './CrossSellSection';
+import { ProductComparator } from './ProductComparator';
 
 interface ProductDetailMasterProps {
   handle: string;
@@ -311,7 +314,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               isInStack={isInStack}
             />
 
-            {/* Reassurance Strip */}
+            {/* Social Proof */}
+            <SocialProofBar productTitle={product.title} />
             <div className="flex items-center justify-between gap-3 py-4 border-t border-b border-border/30">
               {reassuranceKeys.map((item, i) => (
                 <div key={i} className="flex flex-col items-center gap-1.5 text-center flex-1">

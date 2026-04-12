@@ -5,7 +5,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useHealthProfile, HealthProfile } from "@/hooks/useHealthProfile";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle, ShoppingCart, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle, Loader2 } from "lucide-react";
+import { ArrowsClockwise } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useCartStore } from "@/stores/cartStore";
 import type { ShopifyProduct } from "@/lib/shopify";
@@ -335,7 +336,7 @@ function AIAnalysisAnimation({ onComplete }: { onComplete: () => void }) {
 function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any>; onContinue: () => void }) {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [aiRecommendations, setAiRecommendations] = useState<Array<{ handle: string; reason: string; product?: { title: string; price: string; currency: string; imageUrl: string; variantId: string } }>>([]);
+  const [aiRecommendations, setAiRecommendations] = useState<Array<{ handle: string; reason: string; deliveryMonths?: number; product?: { title: string; price: string; currency: string; imageUrl: string; variantId: string; deliveryMonths?: number } }>>([]);
   const [typedLines, setTypedLines] = useState(0);
   const [error, setError] = useState(false);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
@@ -512,11 +513,19 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
                     {reco.product?.title || reco.handle}
                   </p>
                   <p className="text-xs text-muted-foreground line-clamp-1">{reco.reason}</p>
+                  {/* Subscription delivery frequency */}
+                  <p className="text-[11px] text-primary/80 mt-0.5 flex items-center gap-1">
+                    <ArrowsClockwise weight="bold" className="w-3 h-3" />
+                    {t('onboarding.deliveredEvery').replace('{months}', String(reco.deliveryMonths || 1))}
+                  </p>
                 </div>
                 {reco.product?.price && (
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
                     <span className="text-sm font-semibold text-foreground">
                       {parseFloat(reco.product.price).toFixed(2)} {reco.product.currency}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {t('onboarding.subscriptionLabel')}
                     </span>
                     {reco.product?.variantId && (
                       <Button
@@ -531,7 +540,7 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
                         ) : addedToCart.has(reco.handle) ? (
                           <><Check className="w-3 h-3" /> {t("onboarding.coachAdded")}</>
                         ) : (
-                          <><ShoppingCart className="w-3 h-3" /> {t("onboarding.coachAddToCart")}</>
+                          <><ArrowsClockwise className="w-3 h-3" /> {t("onboarding.subscribe")}</>
                         )}
                       </Button>
                     )}

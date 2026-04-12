@@ -425,10 +425,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
           </div>
 </section>
 
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start mt-8">
-          <div className="hidden lg:block" aria-hidden="true" />
-
-          <div className="space-y-8 lg:col-start-2">
+        <section className="mt-8 space-y-8">
+          <div className="space-y-8">
             <QuickBenefitsStrip 
               productType={product.productType}
               parsedData={parsedData}

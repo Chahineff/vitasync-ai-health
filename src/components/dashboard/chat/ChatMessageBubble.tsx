@@ -27,9 +27,10 @@ interface ChatMessageBubbleProps {
   isStreaming?: boolean;
   onRegenerate?: () => void;
   onQuizComplete?: (summary: string) => void;
+  onProductSelect?: (handle: string) => void;
 }
 
-function MessageContent({ content, isStreaming, onQuizComplete }: { content: string; isStreaming?: boolean; onQuizComplete?: (summary: string) => void }) {
+function MessageContent({ content, isStreaming, onQuizComplete, onProductSelect }: { content: string; isStreaming?: boolean; onQuizComplete?: (summary: string) => void; onProductSelect?: (handle: string) => void }) {
   // Clean stack command tags from displayed content
   const { cleanContent: stackCleanedContent, commands: stackCommands } = parseStackCommands(content);
   const hasStackCommands = stackCommands.length > 0;
@@ -112,7 +113,7 @@ function MessageContent({ content, isStreaming, onQuizComplete }: { content: str
       if (placeholder?.type === 'product') {
         const product = products[placeholder.index];
         if (product) {
-          elements.push(<ProductRecommendationCard key={`el-${elementCounter++}`} product={product} />);
+          elements.push(<ProductRecommendationCard key={`el-${elementCounter++}`} product={product} onProductSelect={onProductSelect} />);
         }
       } else if (placeholder?.type === 'chart') {
         const chart = charts[placeholder.index];
@@ -249,7 +250,7 @@ function CopyButton({ content }: { content: string }) {
   );
 }
 
-export function ChatMessageBubble({ role, content, isStreaming, onRegenerate, onQuizComplete }: ChatMessageBubbleProps) {
+export function ChatMessageBubble({ role, content, isStreaming, onRegenerate, onQuizComplete, onProductSelect }: ChatMessageBubbleProps) {
   const isUser = role === 'user';
 
   if (isUser) {

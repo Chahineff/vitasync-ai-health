@@ -408,13 +408,13 @@ export function ProductPurchaseBox({
       </div>
 
       {/* Dosage / Supply Info */}
-      {parsedData?.dosage && (
+      {parsedData?.suggestedUse && (
         <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/20">
             <Pill weight="duotone" className="w-4 h-4 text-primary/60 flex-shrink-0" />
             <div>
               <p className="text-[10px] text-foreground/40 font-medium uppercase tracking-wider">{t('pdp.dosageLabel')}</p>
-              <p className="text-sm font-semibold text-foreground">{parsedData.dosage}</p>
+              <p className="text-sm font-semibold text-foreground">{parsedData.suggestedUse}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/30 border border-border/20">

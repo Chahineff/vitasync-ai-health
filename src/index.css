@@ -169,7 +169,21 @@
       0 8px 32px rgba(0, 0, 0, 0.08),
       0 2px 8px rgba(0, 0, 0, 0.04),
       inset 0 1px 1px rgba(255, 255, 255, 0.6);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .glass-card-premium::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), transparent 50%, hsl(var(--secondary) / 0.05));
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glass-card-premium > * {
+    position: relative;
+    z-index: 1;
   }
 
   .glass-card-premium:hover {
@@ -186,6 +200,10 @@
       0 8px 32px rgba(0, 0, 0, 0.4),
       0 2px 8px rgba(0, 0, 0, 0.2),
       inset 0 1px 1px rgba(255, 255, 255, 0.03);
+  }
+
+  .dark .glass-card-premium::before {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), transparent 50%, hsl(var(--secondary) / 0.1));
   }
 
   .dark .glass-card-premium:hover {

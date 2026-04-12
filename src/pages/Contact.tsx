@@ -8,8 +8,6 @@ import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { motion } from "framer-motion";
 import { 
   EnvelopeSimple, 
-  MapPin, 
-  Phone, 
   PaperPlaneTilt 
 } from "@phosphor-icons/react";
 import { useState } from "react";

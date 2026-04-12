@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { translations, detectBrowserLocale, type Locale, locales } from '@/lib/i18n';
+import { translations, detectBrowserLocale, type Locale } from '@/lib/i18n';
 
 interface I18nStore {
   locale: Locale;

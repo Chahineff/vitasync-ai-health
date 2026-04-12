@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { InstagramLogo, TwitterLogo, LinkedinLogo, YoutubeLogo } from "@phosphor-icons/react";
+import { InstagramLogo } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Mail, MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
 import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
 
 const socialLinks: { icon: typeof InstagramLogo; href: string; label: string }[] = [];

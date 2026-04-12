@@ -196,6 +196,39 @@ export type Database = {
           },
         ]
       }
+      product_compatibility_analyses: {
+        Row: {
+          compatibility_score: number
+          created_at: string
+          id: string
+          insight_text: string | null
+          product_handle: string
+          product_title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          compatibility_score: number
+          created_at?: string
+          id?: string
+          insight_text?: string | null
+          product_handle: string
+          product_title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          compatibility_score?: number
+          created_at?: string
+          id?: string
+          insight_text?: string | null
+          product_handle?: string
+          product_title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_enriched_data: {
         Row: {
           best_for_tags: string[] | null

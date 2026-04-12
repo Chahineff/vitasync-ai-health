@@ -468,12 +468,6 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
             onProductClick={handleFlavorChange}
           />
 
-          <BuildYourStack
-            products={allProducts}
-            currentProductId={product.id}
-            onProductClick={handleFlavorChange}
-          />
-
           <PDPFooter />
         </div>
 

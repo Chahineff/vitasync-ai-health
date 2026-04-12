@@ -8,8 +8,6 @@ import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { motion } from "framer-motion";
 import { 
   EnvelopeSimple, 
-  MapPin, 
-  Phone, 
   PaperPlaneTilt 
 } from "@phosphor-icons/react";
 import { useState } from "react";
@@ -29,20 +27,8 @@ const Contact = () => {
     {
       icon: EnvelopeSimple,
       label: t("contact.email"),
-      value: "contact@vitasync.com",
-      href: "mailto:contact@vitasync.com",
-    },
-    {
-      icon: Phone,
-      label: t("contact.phone"),
-      value: "+33 1 23 45 67 89",
-      href: "tel:+33123456789",
-    },
-    {
-      icon: MapPin,
-      label: t("contact.address"),
-      value: "42 Rue de l'Innovation, 75001 Paris",
-      href: "#",
+      value: "contact@vitasync.ai",
+      href: "mailto:contact@vitasync.ai",
     },
   ];
 
@@ -113,13 +99,7 @@ const Contact = () => {
                   </div>
 
                   <div className="mt-12">
-                    <h3 className="text-lg font-light text-foreground mb-4">{t("contact.hoursTitle")}</h3>
-                    <div className="space-y-2 text-sm text-foreground/60">
-                      <p>{t("contact.hours1")}</p>
-                      <p>{t("contact.hours2")}</p>
-                      <p>{t("contact.hours3")}</p>
-                    </div>
-                    <p className="mt-4 text-sm text-foreground/50">
+                    <p className="text-sm text-foreground/50">
                       <span className="text-secondary">Note :</span> {t("contact.hoursNote")}
                     </p>
                   </div>

@@ -1,15 +1,10 @@
 import { Link } from "react-router-dom";
-import { InstagramLogo, TwitterLogo, LinkedinLogo, YoutubeLogo } from "@phosphor-icons/react";
+import { InstagramLogo } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Mail, MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
 import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
 
-const socialLinks = [
-  { icon: InstagramLogo, href: "#", label: "Instagram" },
-  { icon: TwitterLogo, href: "#", label: "Twitter" },
-  { icon: LinkedinLogo, href: "#", label: "LinkedIn" },
-  { icon: YoutubeLogo, href: "#", label: "YouTube" },
-];
+const socialLinks: { icon: typeof InstagramLogo; href: string; label: string }[] = [];
 
 export function Footer() {
   const { t } = useTranslation();
@@ -20,7 +15,6 @@ export function Footer() {
       links: [
         { label: t("footer.features"), href: "#features" },
         { label: t("footer.pricing"), href: "#pricing" },
-        { label: t("footer.testimonials"), href: "#testimonials" },
         { label: t("footer.faq"), href: "#faq" },
       ],
     },
@@ -30,7 +24,6 @@ export function Footer() {
         { label: t("footer.about"), href: "/about" },
         { label: t("footer.blog"), href: "/blog" },
         { label: t("footer.contact"), href: "/contact" },
-        { label: t("footer.careers"), href: "#" },
       ],
     },
     {
@@ -49,7 +42,6 @@ export function Footer() {
 
   const contactInfo = [
     { icon: <Mail size={16} className="text-primary" />, text: "contact@vitasync.ai", href: "mailto:contact@vitasync.ai" },
-    { icon: <MapPin size={16} className="text-primary" />, text: "Paris, France" },
   ];
 
   return (

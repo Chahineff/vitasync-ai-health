@@ -28,7 +28,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.startFree": "Démarrer gratuitement",
 
     // Hero
-    "hero.badge": "Nouveau : Analyse vocale IA disponible",
+    "hero.badge": "Nouveau : Coach IA personnalisé disponible",
     "hero.title": "Votre Santé,",
     "hero.titleHighlight": "Propulsée par l'Intelligence Artificielle",
     "hero.subtitle": "VitaSync analyse vos besoins en temps réel pour créer la routine de compléments parfaite, adaptée à votre mode de vie.",
@@ -84,7 +84,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "Comment fonctionne l'analyse des documents médicaux ?",
     "faq.a2": "Notre IA utilise la reconnaissance d'image avancée et le traitement du langage naturel pour extraire et interpréter vos résultats d'analyses. Il suffit de prendre une photo ou d'uploader un PDF, et l'IA analyse vos biomarqueurs en quelques secondes.",
     "faq.q3": "D'où viennent les compléments alimentaires ?",
-    "faq.a3": "Nos compléments sont fabriqués en France dans des laboratoires certifiés GMP (Bonnes Pratiques de Fabrication). Chaque lot est testé par des laboratoires indépendants pour garantir pureté et efficacité. Nous privilégions les formes bioactives pour une absorption optimale.",
+    "faq.a3": "Nos compléments sont fabriqués aux États-Unis dans des installations certifiées GMP (Bonnes Pratiques de Fabrication) via notre partenaire Supliful. Chaque lot est testé pour garantir pureté et efficacité. Nous privilégions les formes bioactives pour une absorption optimale.",
     "faq.q4": "Puis-je annuler mon abonnement à tout moment ?",
     "faq.a4": "Absolument. Vous pouvez annuler votre abonnement Premium IA ou votre abonnement compléments à tout moment depuis votre espace personnel. Aucun engagement, aucun frais caché.",
     "faq.q5": "L'IA peut-elle remplacer mon médecin ?",
@@ -1506,7 +1506,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.startFree": "Start for free",
 
     // Hero
-    "hero.badge": "New: AI Voice Analysis available",
+    "hero.badge": "New: Personalized AI Coach available",
     "hero.title": "Your Health,",
     "hero.titleHighlight": "Powered by Artificial Intelligence",
     "hero.subtitle": "VitaSync analyzes your needs in real-time to create the perfect supplement routine, tailored to your lifestyle.",
@@ -1562,7 +1562,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "How does medical document analysis work?",
     "faq.a2": "Our AI uses advanced image recognition and natural language processing to extract and interpret your test results. Simply take a photo or upload a PDF, and the AI analyzes your biomarkers in seconds.",
     "faq.q3": "Where do the supplements come from?",
-    "faq.a3": "Our supplements are manufactured in France in GMP-certified laboratories (Good Manufacturing Practices). Each batch is tested by independent laboratories to guarantee purity and efficacy. We favor bioactive forms for optimal absorption.",
+    "faq.a3": "Our supplements are manufactured in the United States in GMP-certified facilities through our partner Supliful. Each batch is tested to guarantee purity and efficacy. We favor bioactive forms for optimal absorption.",
     "faq.q4": "Can I cancel my subscription at any time?",
     "faq.a4": "Absolutely. You can cancel your AI Premium subscription or your supplement subscription at any time from your personal space. No commitment, no hidden fees.",
     "faq.q5": "Can the AI replace my doctor?",
@@ -2974,7 +2974,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.startFree": "Comenzar gratis",
 
     // Hero
-    "hero.badge": "Nuevo: Análisis de voz IA disponible",
+    "hero.badge": "Nuevo: Coach IA personalizado disponible",
     "hero.title": "Tu Salud,",
     "hero.titleHighlight": "Impulsada por la Inteligencia Artificial",
     "hero.subtitle": "VitaSync analiza tus necesidades en tiempo real para crear la rutina de suplementos perfecta, adaptada a tu estilo de vida.",
@@ -3030,7 +3030,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "¿Cómo funciona el análisis de documentos médicos?",
     "faq.a2": "Nuestra IA utiliza reconocimiento de imagen avanzado y procesamiento del lenguaje natural para extraer e interpretar los resultados de tus análisis. Simplemente toma una foto o sube un PDF, y la IA analiza tus biomarcadores en segundos.",
     "faq.q3": "¿De dónde vienen los suplementos?",
-    "faq.a3": "Nuestros suplementos se fabrican en Francia en laboratorios certificados GMP. Cada lote es probado por laboratorios independientes para garantizar pureza y eficacia.",
+    "faq.a3": "Nuestros suplementos se fabrican en Estados Unidos en instalaciones certificadas GMP a través de nuestro socio Supliful. Cada lote es probado para garantizar pureza y eficacia.",
     "faq.q4": "¿Puedo cancelar mi suscripción en cualquier momento?",
     "faq.a4": "Absolutamente. Puedes cancelar tu suscripción en cualquier momento desde tu espacio personal. Sin compromiso, sin cargos ocultos.",
     "faq.q5": "¿Puede la IA reemplazar a mi médico?",
@@ -4418,7 +4418,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.startFree": "ابدأ مجاناً",
 
     // Hero
-    "hero.badge": "جديد: تحليل صوتي بالذكاء الاصطناعي",
+    "hero.badge": "جديد: مدرب ذكاء اصطناعي مخصص",
     "hero.title": "صحتك،",
     "hero.titleHighlight": "مدعومة بالذكاء الاصطناعي",
     "hero.subtitle": "يحلل VitaSync احتياجاتك في الوقت الفعلي لإنشاء روتين المكملات المثالي المصمم لنمط حياتك.",
@@ -4474,7 +4474,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "كيف يعمل تحليل الوثائق الطبية؟",
     "faq.a2": "يستخدم ذكاؤنا الاصطناعي التعرف المتقدم على الصور ومعالجة اللغة الطبيعية لاستخراج وتفسير نتائج تحاليلك. التقط صورة أو ارفع PDF وسيحلل الذكاء الاصطناعي مؤشراتك الحيوية في ثوانٍ.",
     "faq.q3": "من أين تأتي المكملات؟",
-    "faq.a3": "مكملاتنا مصنوعة في فرنسا في مختبرات معتمدة GMP. كل دفعة يتم اختبارها من قبل مختبرات مستقلة لضمان النقاء والفعالية.",
+    "faq.a3": "مكملاتنا مصنوعة في الولايات المتحدة في مرافق معتمدة GMP عبر شريكنا Supliful. كل دفعة يتم اختبارها لضمان النقاء والفعالية.",
     "faq.q4": "هل يمكنني إلغاء اشتراكي في أي وقت؟",
     "faq.a4": "بالطبع. يمكنك إلغاء اشتراكك في أي وقت من مساحتك الشخصية. بدون التزام، بدون رسوم خفية.",
     "faq.q5": "هل يمكن للذكاء الاصطناعي أن يحل محل طبيبي؟",
@@ -5861,7 +5861,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.startFree": "免费开始",
 
     // Hero
-    "hero.badge": "全新：AI语音分析已上线",
+    "hero.badge": "全新：个性化AI教练已上线",
     "hero.title": "您的健康，",
     "hero.titleHighlight": "由人工智能驱动",
     "hero.subtitle": "VitaSync实时分析您的需求，创建适合您生活方式的完美补充剂方案。",
@@ -5917,7 +5917,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "医疗文件分析如何工作？",
     "faq.a2": "我们的AI使用高级图像识别和自然语言处理来提取和解读您的检查结果。只需拍照或上传PDF，AI就能在几秒内分析您的生物标志物。",
     "faq.q3": "补充剂来自哪里？",
-    "faq.a3": "我们的补充剂在法国GMP认证实验室生产。每批次都由独立实验室测试以保证纯度和功效。",
+    "faq.a3": "我们的补充剂在美国GMP认证设施中通过合作伙伴Supliful生产。每批次都经过测试以保证纯度和功效。",
     "faq.q4": "我可以随时取消订阅吗？",
     "faq.a4": "当然。您可以随时从个人空间取消订阅。无承诺，无隐藏费用。",
     "faq.q5": "AI能替代我的医生吗？",
@@ -7304,7 +7304,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "nav.startFree": "Começar grátis",
 
     // Hero
-    "hero.badge": "Novo: Análise de voz IA disponível",
+    "hero.badge": "Novo: Coach IA personalizado disponível",
     "hero.title": "Sua Saúde,",
     "hero.titleHighlight": "Impulsionada pela Inteligência Artificial",
     "hero.subtitle": "O VitaSync analisa suas necessidades em tempo real para criar a rotina de suplementos perfeita, adaptada ao seu estilo de vida.",
@@ -7360,7 +7360,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "Como funciona a análise de documentos médicos?",
     "faq.a2": "Nossa IA usa reconhecimento de imagem avançado e processamento de linguagem natural para extrair e interpretar seus resultados. Basta tirar uma foto ou enviar um PDF, e a IA analisa seus biomarcadores em segundos.",
     "faq.q3": "De onde vêm os suplementos?",
-    "faq.a3": "Nossos suplementos são fabricados na França em laboratórios certificados GMP. Cada lote é testado por laboratórios independentes para garantir pureza e eficácia.",
+    "faq.a3": "Nossos suplementos são fabricados nos Estados Unidos em instalações certificadas GMP através do nosso parceiro Supliful. Cada lote é testado para garantir pureza e eficácia.",
     "faq.q4": "Posso cancelar minha assinatura a qualquer momento?",
     "faq.a4": "Absolutamente. Você pode cancelar sua assinatura a qualquer momento no seu espaço pessoal. Sem compromisso, sem taxas ocultas.",
     "faq.q5": "A IA pode substituir meu médico?",

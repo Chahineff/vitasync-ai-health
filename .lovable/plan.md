@@ -1,44 +1,35 @@
 
-Plan : correction réelle du sticky de la galerie PDP
 
-1. Diagnostic du bug
-- Le sticky est déjà déclaré dans `ProductDetailMaster.tsx`, donc le problème vient très probablement du contexte parent.
-- Deux causes ressortent dans le code actuel :
-  - `ProductDetailMaster.tsx` utilise un wrapper animé avec `overflow-x-hidden`, ce qui peut casser `position: sticky` en créant un contexte de scroll/clipping intermédiaire.
-  - `Dashboard.tsx` rend la PDP dans un `motion.div` avec animation en `y` + `className="h-full"`, ce qui rend souvent le sticky instable ou inactif sur ce type de layout.
+# Audit et correction des traductions manquantes
 
-2. Correctif à appliquer
-- `src/pages/Dashboard.tsx`
-  - Supprimer `h-full` du wrapper de la vue produit.
-  - Remplacer l’animation verticale `y` du wrapper produit par une animation sans transform perturbateur pour le sticky (par ex. opacity only, ou animation déplacée sur un inner wrapper non parent de la galerie sticky).
+## Problèmes identifiés
 
-- `src/components/dashboard/pdp/ProductDetailMaster.tsx`
-  - Retirer `overflow-x-hidden` du conteneur principal de la PDP.
-  - Garder la galerie dans une vraie colonne sticky desktop :
-    - wrapper gauche en `lg:sticky`
-    - offset top recalibré pour tenir compte du header PDP
-    - hauteur de zone sticky conservée pour centrer la galerie verticalement
-  - S’assurer que la galerie reste collée à gauche pendant le scroll du bloc infos de droite, puis se libère seulement quand on atteint la fin de la section prévue.
+### 1. MarqueeBanner — textes en dur (non traduits)
+- `src/pages/Index.tsx` passe des chaînes en anglais directement : `"Smart supplements, real results"` et `"Your health needs VitaSync"`
+- Le composant `MarqueeBanner` ne fait aucun appel à `useTranslation()`
 
-3. Ajustement de structure si nécessaire
-- Si le sticky s’arrête encore trop tôt, élargir son conteneur logique pour qu’il accompagne toute la zone d’infos produit voulue à droite avant les sections full width suivantes.
-- Ne pas appliquer le sticky sur mobile.
+### 2. Dashboard — FAQ et Quick Guides en dur (français uniquement)
+- `src/pages/Dashboard.tsx` lignes 566-584 : `FAQ_DATA` (10 items) et `QUICK_GUIDES` (4 items) sont codés en dur en français, sans passer par le système i18n
 
-4. Fichiers concernés
-- `src/pages/Dashboard.tsx`
-- `src/components/dashboard/pdp/ProductDetailMaster.tsx`
-- Éventuellement `src/components/dashboard/pdp/ProductGallery.tsx` seulement pour de petits ajustements de hauteur/centrage si besoin
+### 3. Pages légales — aucune traduction (7 pages)
+- `Terms.tsx`, `Privacy.tsx`, `Cookies.tsx`, `CGV.tsx`, `Disclaimer.tsx`, `LegalNotice.tsx`, `Shipping.tsx` — tout est en français brut, sans `useTranslation()`
+- **Note** : ces pages sont très longues et complexes juridiquement. Je recommande de **ne pas les traduire via i18n** pour l'instant (contenu légal sensible), mais c'est à confirmer.
 
-5. Résultat attendu
-- Sur desktop :
-  - la galerie reste fixe à gauche
-  - elle reste visuellement centrée dans sa colonne
-  - le contenu produit à droite scrolle indépendamment dans le flux
-  - la galerie ne “descend” plus avec le scroll
-  - elle se décroche seulement au bon moment, lorsqu’elle atteint la limite de sa section
+## Plan d'action
 
-6. Vérification après implémentation
-- Tester une PDP longue dans le dashboard
-- Vérifier le comportement sticky sur grand écran
-- Vérifier qu’aucun overflow/clip n’a cassé les autres sections PDP
-- Vérifier que mobile reste normal, sans sticky parasite
+### Étape 1 — MarqueeBanner i18n
+- Ajouter les clés `marquee.line1` et `marquee.line2` dans les 6 langues dans `src/lib/i18n.ts`
+- Modifier `src/pages/Index.tsx` pour passer `t("marquee.line1")` et `t("marquee.line2")` au lieu des chaînes en dur
+
+### Étape 2 — Dashboard FAQ & Quick Guides i18n
+- Ajouter ~28 clés (`help.faq.1.cat`, `.q`, `.a`, etc. + `help.guide.1.title`, `.desc`) dans les 6 langues
+- Modifier `FAQ_DATA` et `QUICK_GUIDES` dans `Dashboard.tsx` pour utiliser `t()`
+
+### Étape 3 — Pages légales (recommandation)
+- Les pages légales resteront en français pour l'instant (contenu juridique sensible nécessitant une validation humaine par langue). On pourra les internationaliser dans un second temps si nécessaire.
+
+## Détails techniques
+- Fichier principal modifié : `src/lib/i18n.ts` (ajout d'environ 180 nouvelles clés, 30 par langue × 6 langues)
+- Composants modifiés : `Index.tsx`, `Dashboard.tsx`
+- Pas de changement de structure ni de nouveau fichier
+

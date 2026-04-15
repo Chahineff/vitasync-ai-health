@@ -614,7 +614,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground mb-1">{t("help.title")}</h2>
-            <p className="text-foreground/50 text-sm">Guides, FAQ et assistance — tout ce qu'il faut pour maîtriser VitaSync.</p>
+            <p className="text-foreground/50 text-sm">{t("help.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -623,7 +623,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
       <div>
         <div className="flex items-center gap-2 mb-5">
           <BookOpen weight="fill" className="w-4 h-4 text-primary" />
-          <h3 className="text-base font-medium text-foreground">Premiers pas</h3>
+          <h3 className="text-base font-medium text-foreground">{t("help.gettingStarted")}</h3>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {QUICK_GUIDES.map((guide, i) => (
@@ -637,7 +637,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/15 transition-colors">
                 <guide.icon weight="duotone" className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-[10px] text-primary/50 font-mono tracking-wider uppercase mb-1">Étape {guide.num}</span>
+              <span className="text-[10px] text-primary/50 font-mono tracking-wider uppercase mb-1">{t("help.step")} {guide.num}</span>
               <p className="text-sm font-medium text-foreground mb-1.5 leading-snug">{guide.title}</p>
               <p className="text-xs text-foreground/45 leading-relaxed mt-auto">{guide.desc}</p>
             </motion.div>
@@ -649,7 +649,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
       <div>
         <div className="flex items-center gap-2 mb-5">
           <Question weight="fill" className="w-4 h-4 text-primary" />
-          <h3 className="text-base font-medium text-foreground">Questions fréquentes</h3>
+          <h3 className="text-base font-medium text-foreground">{t("help.frequentQuestions")}</h3>
         </div>
 
         {/* Search */}
@@ -659,7 +659,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Rechercher dans la FAQ..."
+            placeholder={t("help.searchPlaceholder")}
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted/30 border border-border/30 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
           />
         </div>
@@ -670,7 +670,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             onClick={() => setActiveCategory(null)}
             className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all active:scale-[0.97] ${!activeCategory ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/40 text-foreground/50 hover:bg-muted/60'}`}
           >
-            Tout
+            {t("help.all")}
           </button>
           {categories.map(cat => (
             <button

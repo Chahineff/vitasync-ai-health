@@ -10,8 +10,11 @@ import { FAQSection } from "@/components/sections/FAQSection";
 import { MarqueeBanner } from "@/components/sections/MarqueeBanner";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const Index = () => {
+  const { t } = useTranslation();
+
   return (
     <PageTransition className="min-h-screen bg-background relative">
       <FloatingThemeToggle />
@@ -21,9 +24,9 @@ const Index = () => {
         <HeroSection />
         <CinematicDashboardSection />
         <HowItWorksSection />
-        <MarqueeBanner text="Smart supplements, real results" />
+        <MarqueeBanner text={t("marquee.line1")} />
         <FeaturesSection />
-        <MarqueeBanner text="Your health needs VitaSync" />
+        <MarqueeBanner text={t("marquee.line2")} />
         <PricingSection />
         <FAQSection />
       </main>

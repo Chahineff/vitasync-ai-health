@@ -563,24 +563,24 @@ const DashboardHome = ({
     </motion.div>
   </motion.div>;
 };
-const FAQ_DATA = [
-  { category: "Compléments", q: "Comment ajouter un complément à mon suivi ?", a: "Rendez-vous dans la section 'Compléments', cliquez sur '+ Ajouter un complément', puis renseignez le nom, le dosage et le moment de prise." },
-  { category: "Compléments", q: "Puis-je suivre des compléments non vendus sur VitaSync ?", a: "Oui ! Vous pouvez ajouter manuellement n'importe quel complément, même s'il ne fait pas partie de notre boutique." },
-  { category: "Analyses", q: "Comment importer une analyse sanguine ?", a: "Allez dans 'Mes Analyses', cliquez sur 'Importer une analyse', puis uploadez votre PDF. Notre IA analysera les résultats en quelques secondes." },
-  { category: "Analyses", q: "Mes données médicales sont-elles sécurisées ?", a: "Absolument. Vos données sont chiffrées, stockées sur des serveurs sécurisés, et accessibles uniquement par vous. Nous respectons le RGPD." },
-  { category: "Coach IA", q: "Le Coach IA peut-il remplacer un médecin ?", a: "Non. Le Coach IA fournit des conseils de bien-être basés sur vos données, mais ne pose jamais de diagnostic. Consultez un professionnel pour tout problème de santé." },
-  { category: "Coach IA", q: "Comment le Coach IA personnalise-t-il ses conseils ?", a: "Il utilise votre profil santé, vos check-ins quotidiens, vos analyses sanguines et votre stack actuel pour des recommandations sur mesure." },
-  { category: "Compte", q: "Comment modifier mon profil santé ?", a: "Allez dans Paramètres, puis cliquez sur 'Modifier' dans la section Profil Santé pour relancer le questionnaire." },
-  { category: "Compte", q: "Comment supprimer mon compte ?", a: "Dans Paramètres, descendez jusqu'à 'Vos données personnelles' puis cliquez sur 'Supprimer mon compte'. L'action est irréversible." },
-  { category: "Mon Stack", q: "Qu'est-ce que le Stack Mensuel ?", a: "C'est votre sélection personnalisée de compléments, construite avec l'aide du Coach IA, livrée chaque mois avec -10% d'abonnement." },
-  { category: "Mon Stack", q: "Comment modifier ma commande mensuelle ?", a: "Depuis 'Mon Stack', vous pouvez ajouter, retirer ou modifier les quantités de chaque produit à tout moment." },
+const useFaqData = (t: (key: string) => string) => [
+  { category: t("help.catSupplements"), q: t("help.faq1Q"), a: t("help.faq1A") },
+  { category: t("help.catSupplements"), q: t("help.faq2Q"), a: t("help.faq2A") },
+  { category: t("help.catAnalyses"), q: t("help.faq3Q"), a: t("help.faq3A") },
+  { category: t("help.catAnalyses"), q: t("help.faq4Q"), a: t("help.faq4A") },
+  { category: t("help.catCoach"), q: t("help.faq5Q"), a: t("help.faq5A") },
+  { category: t("help.catCoach"), q: t("help.faq6Q"), a: t("help.faq6A") },
+  { category: t("help.catAccount"), q: t("help.faq7Q"), a: t("help.faq7A") },
+  { category: t("help.catAccount"), q: t("help.faq8Q"), a: t("help.faq8A") },
+  { category: t("help.catStack"), q: t("help.faq9Q"), a: t("help.faq9A") },
+  { category: t("help.catStack"), q: t("help.faq10Q"), a: t("help.faq10A") },
 ];
 
-const QUICK_GUIDES = [
-  { num: "01", title: "Ajouter un complément", desc: "Depuis la section Compléments, ajoutez votre stack et suivez vos prises quotidiennes.", icon: FirstAidKit },
-  { num: "02", title: "Importer une analyse", desc: "Uploadez votre PDF d'analyse sanguine pour une lecture automatique par l'IA.", icon: TestTube },
-  { num: "03", title: "Utiliser le Coach IA", desc: "Posez vos questions santé, demandez des recommandations personnalisées.", icon: ChatCircleDots },
-  { num: "04", title: "Construire mon stack", desc: "Créez votre abonnement mensuel avec les produits recommandés par le Coach.", icon: Package },
+const useQuickGuides = (t: (key: string) => string) => [
+  { num: "01", title: t("help.guide1Title"), desc: t("help.guide1Desc"), icon: FirstAidKit },
+  { num: "02", title: t("help.guide2Title"), desc: t("help.guide2Desc"), icon: TestTube },
+  { num: "03", title: t("help.guide3Title"), desc: t("help.guide3Desc"), icon: ChatCircleDots },
+  { num: "04", title: t("help.guide4Title"), desc: t("help.guide4Desc"), icon: Package },
 ];
 
 interface HelpSectionProps {
@@ -591,6 +591,9 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const FAQ_DATA = useFaqData(t);
+  const QUICK_GUIDES = useQuickGuides(t);
 
   const categories = [...new Set(FAQ_DATA.map(f => f.category))];
   const filtered = FAQ_DATA.filter(f => {
@@ -611,7 +614,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground mb-1">{t("help.title")}</h2>
-            <p className="text-foreground/50 text-sm">Guides, FAQ et assistance — tout ce qu'il faut pour maîtriser VitaSync.</p>
+            <p className="text-foreground/50 text-sm">{t("help.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -620,7 +623,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
       <div>
         <div className="flex items-center gap-2 mb-5">
           <BookOpen weight="fill" className="w-4 h-4 text-primary" />
-          <h3 className="text-base font-medium text-foreground">Premiers pas</h3>
+          <h3 className="text-base font-medium text-foreground">{t("help.gettingStarted")}</h3>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {QUICK_GUIDES.map((guide, i) => (
@@ -634,7 +637,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/15 transition-colors">
                 <guide.icon weight="duotone" className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-[10px] text-primary/50 font-mono tracking-wider uppercase mb-1">Étape {guide.num}</span>
+              <span className="text-[10px] text-primary/50 font-mono tracking-wider uppercase mb-1">{t("help.step")} {guide.num}</span>
               <p className="text-sm font-medium text-foreground mb-1.5 leading-snug">{guide.title}</p>
               <p className="text-xs text-foreground/45 leading-relaxed mt-auto">{guide.desc}</p>
             </motion.div>
@@ -646,7 +649,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
       <div>
         <div className="flex items-center gap-2 mb-5">
           <Question weight="fill" className="w-4 h-4 text-primary" />
-          <h3 className="text-base font-medium text-foreground">Questions fréquentes</h3>
+          <h3 className="text-base font-medium text-foreground">{t("help.frequentQuestions")}</h3>
         </div>
 
         {/* Search */}
@@ -656,7 +659,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Rechercher dans la FAQ..."
+            placeholder={t("help.searchPlaceholder")}
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted/30 border border-border/30 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
           />
         </div>
@@ -667,7 +670,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             onClick={() => setActiveCategory(null)}
             className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all active:scale-[0.97] ${!activeCategory ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/40 text-foreground/50 hover:bg-muted/60'}`}
           >
-            Tout
+            {t("help.all")}
           </button>
           {categories.map(cat => (
             <button
@@ -698,7 +701,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
           {filtered.length === 0 && (
             <div className="text-center py-12">
               <SearchIcon weight="light" className="w-8 h-8 text-foreground/20 mx-auto mb-3" />
-              <p className="text-sm text-foreground/40">Aucun résultat pour « {search} »</p>
+              <p className="text-sm text-foreground/40">{t("help.noResults")} « {search} »</p>
             </div>
           )}
         </Accordion>
@@ -711,9 +714,9 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
               <Lifebuoy weight="duotone" className="w-5 h-5 text-primary" />
             </div>
-            <h3 className="text-sm font-medium text-foreground">Nous contacter</h3>
+            <h3 className="text-sm font-medium text-foreground">{t("help.contactLabel")}</h3>
           </div>
-          <p className="text-xs text-foreground/50 leading-relaxed">Une question ? Notre équipe est là pour vous aider par email.</p>
+          <p className="text-xs text-foreground/50 leading-relaxed">{t("help.contactSub")}</p>
         </Link>
 
         {onGoToCoach && (
@@ -722,9 +725,9 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center group-hover:from-primary/20 group-hover:to-secondary/20 transition-colors">
                 <img src={vitasyncLogo} alt="" className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-medium text-foreground">Demander au Coach IA</h3>
+              <h3 className="text-sm font-medium text-foreground">{t("help.askCoach")}</h3>
             </div>
-            <p className="text-xs text-foreground/50 leading-relaxed">Posez votre question directement au Coach pour une aide personnalisée.</p>
+            <p className="text-xs text-foreground/50 leading-relaxed">{t("help.askCoachSub")}</p>
           </button>
         )}
       </div>

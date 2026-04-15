@@ -563,24 +563,24 @@ const DashboardHome = ({
     </motion.div>
   </motion.div>;
 };
-const FAQ_DATA = [
-  { category: "Compléments", q: "Comment ajouter un complément à mon suivi ?", a: "Rendez-vous dans la section 'Compléments', cliquez sur '+ Ajouter un complément', puis renseignez le nom, le dosage et le moment de prise." },
-  { category: "Compléments", q: "Puis-je suivre des compléments non vendus sur VitaSync ?", a: "Oui ! Vous pouvez ajouter manuellement n'importe quel complément, même s'il ne fait pas partie de notre boutique." },
-  { category: "Analyses", q: "Comment importer une analyse sanguine ?", a: "Allez dans 'Mes Analyses', cliquez sur 'Importer une analyse', puis uploadez votre PDF. Notre IA analysera les résultats en quelques secondes." },
-  { category: "Analyses", q: "Mes données médicales sont-elles sécurisées ?", a: "Absolument. Vos données sont chiffrées, stockées sur des serveurs sécurisés, et accessibles uniquement par vous. Nous respectons le RGPD." },
-  { category: "Coach IA", q: "Le Coach IA peut-il remplacer un médecin ?", a: "Non. Le Coach IA fournit des conseils de bien-être basés sur vos données, mais ne pose jamais de diagnostic. Consultez un professionnel pour tout problème de santé." },
-  { category: "Coach IA", q: "Comment le Coach IA personnalise-t-il ses conseils ?", a: "Il utilise votre profil santé, vos check-ins quotidiens, vos analyses sanguines et votre stack actuel pour des recommandations sur mesure." },
-  { category: "Compte", q: "Comment modifier mon profil santé ?", a: "Allez dans Paramètres, puis cliquez sur 'Modifier' dans la section Profil Santé pour relancer le questionnaire." },
-  { category: "Compte", q: "Comment supprimer mon compte ?", a: "Dans Paramètres, descendez jusqu'à 'Vos données personnelles' puis cliquez sur 'Supprimer mon compte'. L'action est irréversible." },
-  { category: "Mon Stack", q: "Qu'est-ce que le Stack Mensuel ?", a: "C'est votre sélection personnalisée de compléments, construite avec l'aide du Coach IA, livrée chaque mois avec -10% d'abonnement." },
-  { category: "Mon Stack", q: "Comment modifier ma commande mensuelle ?", a: "Depuis 'Mon Stack', vous pouvez ajouter, retirer ou modifier les quantités de chaque produit à tout moment." },
+const useFaqData = (t: (key: string) => string) => [
+  { category: t("help.catSupplements"), q: t("help.faq1Q"), a: t("help.faq1A") },
+  { category: t("help.catSupplements"), q: t("help.faq2Q"), a: t("help.faq2A") },
+  { category: t("help.catAnalyses"), q: t("help.faq3Q"), a: t("help.faq3A") },
+  { category: t("help.catAnalyses"), q: t("help.faq4Q"), a: t("help.faq4A") },
+  { category: t("help.catCoach"), q: t("help.faq5Q"), a: t("help.faq5A") },
+  { category: t("help.catCoach"), q: t("help.faq6Q"), a: t("help.faq6A") },
+  { category: t("help.catAccount"), q: t("help.faq7Q"), a: t("help.faq7A") },
+  { category: t("help.catAccount"), q: t("help.faq8Q"), a: t("help.faq8A") },
+  { category: t("help.catStack"), q: t("help.faq9Q"), a: t("help.faq9A") },
+  { category: t("help.catStack"), q: t("help.faq10Q"), a: t("help.faq10A") },
 ];
 
-const QUICK_GUIDES = [
-  { num: "01", title: "Ajouter un complément", desc: "Depuis la section Compléments, ajoutez votre stack et suivez vos prises quotidiennes.", icon: FirstAidKit },
-  { num: "02", title: "Importer une analyse", desc: "Uploadez votre PDF d'analyse sanguine pour une lecture automatique par l'IA.", icon: TestTube },
-  { num: "03", title: "Utiliser le Coach IA", desc: "Posez vos questions santé, demandez des recommandations personnalisées.", icon: ChatCircleDots },
-  { num: "04", title: "Construire mon stack", desc: "Créez votre abonnement mensuel avec les produits recommandés par le Coach.", icon: Package },
+const useQuickGuides = (t: (key: string) => string) => [
+  { num: "01", title: t("help.guide1Title"), desc: t("help.guide1Desc"), icon: FirstAidKit },
+  { num: "02", title: t("help.guide2Title"), desc: t("help.guide2Desc"), icon: TestTube },
+  { num: "03", title: t("help.guide3Title"), desc: t("help.guide3Desc"), icon: ChatCircleDots },
+  { num: "04", title: t("help.guide4Title"), desc: t("help.guide4Desc"), icon: Package },
 ];
 
 interface HelpSectionProps {

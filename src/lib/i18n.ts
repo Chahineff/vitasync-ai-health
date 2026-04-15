@@ -29,6 +29,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Hero
     "hero.badge": "Nouveau : Coach IA personnalisé disponible",
+    "marquee.line1": "Des compléments intelligents, des résultats réels",
+    "marquee.line2": "Votre santé a besoin de VitaSync",
     "hero.title": "Votre Santé,",
     "hero.titleHighlight": "Propulsée par l'Intelligence Artificielle",
     "hero.subtitle": "VitaSync analyse vos besoins en temps réel pour créer la routine de compléments parfaite, adaptée à votre mode de vie.",
@@ -1507,6 +1509,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Hero
     "hero.badge": "New: Personalized AI Coach available",
+    "marquee.line1": "Smart supplements, real results",
+    "marquee.line2": "Your health needs VitaSync",
     "hero.title": "Your Health,",
     "hero.titleHighlight": "Powered by Artificial Intelligence",
     "hero.subtitle": "VitaSync analyzes your needs in real-time to create the perfect supplement routine, tailored to your lifestyle.",
@@ -2976,6 +2980,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Hero
     "hero.badge": "Nuevo: Coach IA personalizado disponible",
+    "marquee.line1": "Suplementos inteligentes, resultados reales",
+    "marquee.line2": "Tu salud necesita VitaSync",
     "hero.title": "Tu Salud,",
     "hero.titleHighlight": "Impulsada por la Inteligencia Artificial",
     "hero.subtitle": "VitaSync analiza tus necesidades en tiempo real para crear la rutina de suplementos perfecta, adaptada a tu estilo de vida.",
@@ -4420,6 +4426,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Hero
     "hero.badge": "جديد: مدرب ذكاء اصطناعي مخصص",
+    "marquee.line1": "مكملات ذكية، نتائج حقيقية",
+    "marquee.line2": "صحتك تحتاج VitaSync",
     "hero.title": "صحتك،",
     "hero.titleHighlight": "مدعومة بالذكاء الاصطناعي",
     "hero.subtitle": "يحلل VitaSync احتياجاتك في الوقت الفعلي لإنشاء روتين المكملات المثالي المصمم لنمط حياتك.",
@@ -5863,6 +5871,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Hero
     "hero.badge": "全新：个性化AI教练已上线",
+    "marquee.line1": "智能补充剂，真实效果",
+    "marquee.line2": "您的健康需要VitaSync",
     "hero.title": "您的健康，",
     "hero.titleHighlight": "由人工智能驱动",
     "hero.subtitle": "VitaSync实时分析您的需求，创建适合您生活方式的完美补充剂方案。",
@@ -7306,6 +7316,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Hero
     "hero.badge": "Novo: Coach IA personalizado disponível",
+    "marquee.line1": "Suplementos inteligentes, resultados reais",
+    "marquee.line2": "Sua saúde precisa do VitaSync",
     "hero.title": "Sua Saúde,",
     "hero.titleHighlight": "Impulsionada pela Inteligência Artificial",
     "hero.subtitle": "O VitaSync analisa suas necessidades em tempo real para criar a rotina de suplementos perfeita, adaptada ao seu estilo de vida.",

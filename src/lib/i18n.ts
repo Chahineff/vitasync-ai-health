@@ -2863,6 +2863,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "pdp.formatLabel": 'Format',
     "pdp.keyIngredient": 'Key Ingredient',
     "pdp.whenLabel": 'When',
+    "pdp.restDay": 'Rest day',
     "privacyPolicy.title": "Privacy Policy",
     "privacyPolicy.subtitle": "VitaSync — Last updated: April 2026",
     "privacyPolicy.s1Title": "1. Introduction",

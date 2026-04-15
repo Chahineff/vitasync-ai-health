@@ -592,6 +592,9 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
+  const FAQ_DATA = useFaqData(t);
+  const QUICK_GUIDES = useQuickGuides(t);
+
   const categories = [...new Set(FAQ_DATA.map(f => f.category))];
   const filtered = FAQ_DATA.filter(f => {
     const matchSearch = !search || f.q.toLowerCase().includes(search.toLowerCase()) || f.a.toLowerCase().includes(search.toLowerCase());

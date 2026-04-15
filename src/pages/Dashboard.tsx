@@ -701,7 +701,7 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
           {filtered.length === 0 && (
             <div className="text-center py-12">
               <SearchIcon weight="light" className="w-8 h-8 text-foreground/20 mx-auto mb-3" />
-              <p className="text-sm text-foreground/40">Aucun résultat pour « {search} »</p>
+              <p className="text-sm text-foreground/40">{t("help.noResults")} « {search} »</p>
             </div>
           )}
         </Accordion>
@@ -714,9 +714,9 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
               <Lifebuoy weight="duotone" className="w-5 h-5 text-primary" />
             </div>
-            <h3 className="text-sm font-medium text-foreground">Nous contacter</h3>
+            <h3 className="text-sm font-medium text-foreground">{t("help.contactLabel")}</h3>
           </div>
-          <p className="text-xs text-foreground/50 leading-relaxed">Une question ? Notre équipe est là pour vous aider par email.</p>
+          <p className="text-xs text-foreground/50 leading-relaxed">{t("help.contactSub")}</p>
         </Link>
 
         {onGoToCoach && (
@@ -725,9 +725,9 @@ const HelpSection = ({ onGoToCoach }: HelpSectionProps) => {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center group-hover:from-primary/20 group-hover:to-secondary/20 transition-colors">
                 <img src={vitasyncLogo} alt="" className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-medium text-foreground">Demander au Coach IA</h3>
+              <h3 className="text-sm font-medium text-foreground">{t("help.askCoach")}</h3>
             </div>
-            <p className="text-xs text-foreground/50 leading-relaxed">Posez votre question directement au Coach pour une aide personnalisée.</p>
+            <p className="text-xs text-foreground/50 leading-relaxed">{t("help.askCoachSub")}</p>
           </button>
         )}
       </div>

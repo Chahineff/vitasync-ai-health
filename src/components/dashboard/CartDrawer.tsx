@@ -347,6 +347,67 @@ export function CartDrawer({ children }: CartDrawerProps) {
                 </AnimatePresence>
               </div>
 
+              {/* Free shipping upsell */}
+              <AnimatePresence>
+                {showUpsell && upsellProduct && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: 12, height: 0 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex-shrink-0 px-6 pb-3"
+                  >
+                    <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/12 via-primary/5 to-transparent p-3">
+                      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-primary/15 blur-2xl pointer-events-none" />
+                      <div className="relative flex items-center gap-3">
+                        {/* Tiny product image */}
+                        <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-muted/60 dark:bg-white/5 overflow-hidden ring-1 ring-primary/20">
+                          {upsellProduct.product.node.images?.edges?.[0]?.node ? (
+                            <img
+                              src={upsellProduct.product.node.images.edges[0].node.url}
+                              alt={upsellProduct.product.node.title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Gift weight="duotone" className="w-6 h-6 text-primary/60" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1 mb-0.5">
+                            <Gift weight="fill" className="w-3 h-3 text-primary" />
+                            <p className="text-[10px] font-bold text-primary uppercase tracking-wider">
+                              {t('cart.upsellTitle')}
+                            </p>
+                          </div>
+                          <p className="text-xs font-medium text-foreground truncate leading-tight">
+                            {upsellProduct.product.node.title}
+                          </p>
+                          <p className="text-[11px] text-foreground/60 font-light mt-0.5">
+                            ${upsellProduct.price.toFixed(2)}
+                          </p>
+                        </div>
+                        <motion.button
+                          whileTap={{ scale: 0.92 }}
+                          whileHover={{ scale: 1.05 }}
+                          onClick={handleAddUpsell}
+                          disabled={addingUpsell}
+                          className="flex-shrink-0 w-9 h-9 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-md transition-colors disabled:opacity-50"
+                          aria-label={t('cart.upsellAdd')}
+                        >
+                          {addingUpsell ? (
+                            <SpinnerGap className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Plus weight="bold" className="w-4 h-4" />
+                          )}
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* Footer */}
               <div className="flex-shrink-0 border-t border-border/30 bg-muted/20 dark:bg-white/[0.02]">
                 <div className="px-6 py-5 space-y-4">

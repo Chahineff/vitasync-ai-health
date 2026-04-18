@@ -1,13 +1,15 @@
-import { useState, useEffect, ReactNode, useRef } from 'react';
+import { useState, useEffect, ReactNode, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck, PiggyBank
+  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck, PiggyBank, Gift
 } from '@phosphor-icons/react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useCartStore } from '@/stores/cartStore';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Confetti } from '@/components/ui/Confetti';
+import { fetchProducts, type ShopifyProduct } from '@/lib/shopify';
+import { toast } from 'sonner';
 
 interface CartDrawerProps {
   children: ReactNode;
@@ -15,6 +17,7 @@ interface CartDrawerProps {
 
 const FREE_SHIPPING_THRESHOLD = 59;
 const SUBSCRIPTION_DISCOUNT = 0.15; // 15% subscription savings
+const UPSELL_TRIGGER_THRESHOLD = 0.4; // Show upsell from 40% of progress bar
 
 export function CartDrawer({ children }: CartDrawerProps) {
   const { t } = useTranslation();

@@ -33,8 +33,9 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const { t } = useTranslation();
   const [selectedProductIndex, setSelectedProductIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [isAdding, setIsAdding] = useState(false);
-  const [justAdded, setJustAdded] = useState(false);
+  const [addingMode, setAddingMode] = useState<'sub' | 'once' | null>(null);
+  const [justAdded, setJustAdded] = useState<'sub' | 'once' | null>(null);
+  const [hoveredBtn, setHoveredBtn] = useState<'sub' | 'once' | null>(null);
   const addItem = useCartStore(state => state.addItem);
 
   const { products, baseTitle, flavors } = group;

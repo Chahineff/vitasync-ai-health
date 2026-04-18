@@ -337,8 +337,9 @@ export function CartDrawer({ children }: CartDrawerProps) {
               </div>
             </>
           )}
-        </div>
-      </SheetContent>
-    </Sheet>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

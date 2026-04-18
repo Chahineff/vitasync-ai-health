@@ -1,13 +1,15 @@
-import { useState, useEffect, ReactNode, useRef } from 'react';
+import { useState, useEffect, ReactNode, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck, PiggyBank
+  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck, PiggyBank, Gift
 } from '@phosphor-icons/react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useCartStore } from '@/stores/cartStore';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Confetti } from '@/components/ui/Confetti';
+import { fetchProducts, type ShopifyProduct } from '@/lib/shopify';
+import { toast } from 'sonner';
 
 interface CartDrawerProps {
   children: ReactNode;
@@ -15,6 +17,7 @@ interface CartDrawerProps {
 
 const FREE_SHIPPING_THRESHOLD = 59;
 const SUBSCRIPTION_DISCOUNT = 0.15; // 15% subscription savings
+const UPSELL_TRIGGER_THRESHOLD = 0.4; // Show upsell from 40% of progress bar
 
 export function CartDrawer({ children }: CartDrawerProps) {
   const { t } = useTranslation();
@@ -63,6 +66,68 @@ export function CartDrawer({ children }: CartDrawerProps) {
     setRemovingId(variantId);
     await removeItem(variantId);
     setRemovingId(null);
+  };
+
+  // ─── Upsell suggestion ──────────────────────────────────────
+  const [upsellPool, setUpsellPool] = useState<ShopifyProduct[]>([]);
+  const [upsellLoading, setUpsellLoading] = useState(false);
+  const [addingUpsell, setAddingUpsell] = useState(false);
+  const addItem = useCartStore(state => state.addItem);
+
+  // Fetch a small product pool the first time the drawer opens with items
+  useEffect(() => {
+    if (!isOpen || items.length === 0 || upsellPool.length > 0 || upsellLoading) return;
+    setUpsellLoading(true);
+    fetchProducts(20)
+      .then(setUpsellPool)
+      .catch((err) => console.error('Upsell fetch failed:', err))
+      .finally(() => setUpsellLoading(false));
+  }, [isOpen, items.length, upsellPool.length, upsellLoading]);
+
+  const showUpsell = !freeShipping && remaining > 0 && shippingProgress >= UPSELL_TRIGGER_THRESHOLD * 100;
+  const cartVariantIds = useMemo(() => new Set(items.map(i => i.variantId)), [items]);
+
+  // Pick the best product: not in cart, price <= remaining + small buffer, smallest gap
+  const upsellProduct = useMemo(() => {
+    if (!showUpsell || upsellPool.length === 0) return null;
+    const candidates = upsellPool
+      .map(p => {
+        const variant = p.node.variants.edges[0]?.node;
+        if (!variant || !variant.availableForSale) return null;
+        if (cartVariantIds.has(variant.id)) return null;
+        const price = parseFloat(variant.price.amount);
+        if (isNaN(price) || price <= 0) return null;
+        return { product: p, variant, price };
+      })
+      .filter((c): c is NonNullable<typeof c> => c !== null);
+
+    // Prefer products that unlock free shipping but aren't excessively expensive
+    const unlockers = candidates.filter(c => c.price >= remaining && c.price <= remaining * 2.5);
+    if (unlockers.length > 0) {
+      return unlockers.sort((a, b) => a.price - b.price)[0];
+    }
+    // Fallback: any affordable product
+    return candidates.sort((a, b) => Math.abs(a.price - remaining) - Math.abs(b.price - remaining))[0] || null;
+  }, [showUpsell, upsellPool, cartVariantIds, remaining]);
+
+  const handleAddUpsell = async () => {
+    if (!upsellProduct || addingUpsell) return;
+    setAddingUpsell(true);
+    try {
+      await addItem({
+        product: upsellProduct.product,
+        variantId: upsellProduct.variant.id,
+        variantTitle: upsellProduct.variant.title,
+        price: upsellProduct.variant.price,
+        quantity: 1,
+        selectedOptions: upsellProduct.variant.selectedOptions || [],
+      });
+      toast.success(t('cart.upsellAdded'), { position: 'top-center' });
+    } catch {
+      toast.error(t('shop.addError'));
+    } finally {
+      setAddingUpsell(false);
+    }
   };
 
   return (
@@ -281,6 +346,67 @@ export function CartDrawer({ children }: CartDrawerProps) {
                   ))}
                 </AnimatePresence>
               </div>
+
+              {/* Free shipping upsell */}
+              <AnimatePresence>
+                {showUpsell && upsellProduct && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: 12, height: 0 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex-shrink-0 px-6 pb-3"
+                  >
+                    <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/12 via-primary/5 to-transparent p-3">
+                      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-primary/15 blur-2xl pointer-events-none" />
+                      <div className="relative flex items-center gap-3">
+                        {/* Tiny product image */}
+                        <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-muted/60 dark:bg-white/5 overflow-hidden ring-1 ring-primary/20">
+                          {upsellProduct.product.node.images?.edges?.[0]?.node ? (
+                            <img
+                              src={upsellProduct.product.node.images.edges[0].node.url}
+                              alt={upsellProduct.product.node.title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Gift weight="duotone" className="w-6 h-6 text-primary/60" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1 mb-0.5">
+                            <Gift weight="fill" className="w-3 h-3 text-primary" />
+                            <p className="text-[10px] font-bold text-primary uppercase tracking-wider">
+                              {t('cart.upsellTitle')}
+                            </p>
+                          </div>
+                          <p className="text-xs font-medium text-foreground truncate leading-tight">
+                            {upsellProduct.product.node.title}
+                          </p>
+                          <p className="text-[11px] text-foreground/60 font-light mt-0.5">
+                            ${upsellProduct.price.toFixed(2)}
+                          </p>
+                        </div>
+                        <motion.button
+                          whileTap={{ scale: 0.92 }}
+                          whileHover={{ scale: 1.05 }}
+                          onClick={handleAddUpsell}
+                          disabled={addingUpsell}
+                          className="flex-shrink-0 w-9 h-9 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-md transition-colors disabled:opacity-50"
+                          aria-label={t('cart.upsellAdd')}
+                        >
+                          {addingUpsell ? (
+                            <SpinnerGap className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Plus weight="bold" className="w-4 h-4" />
+                          )}
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Footer */}
               <div className="flex-shrink-0 border-t border-border/30 bg-muted/20 dark:bg-white/[0.02]">

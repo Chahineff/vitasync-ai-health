@@ -285,6 +285,43 @@ export function CartDrawer({ children }: CartDrawerProps) {
               {/* Footer */}
               <div className="flex-shrink-0 border-t border-border/30 bg-muted/20 dark:bg-white/[0.02]">
                 <div className="px-6 py-5 space-y-4">
+                  {/* Subscription savings recap */}
+                  <AnimatePresence>
+                    {hasSubscription && subscriptionSavings > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-3.5"
+                      >
+                        <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-primary/10 blur-2xl" />
+                        <div className="relative flex items-center gap-3">
+                          <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center">
+                            <PiggyBank weight="duotone" className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-medium text-primary/80 uppercase tracking-wide">
+                              {t('cart.subscriptionPerks')}
+                            </p>
+                            <p className="text-sm font-semibold text-foreground mt-0.5">
+                              {t('cart.savings')}{' '}
+                              <motion.span
+                                key={subscriptionSavings.toFixed(2)}
+                                initial={{ scale: 1.2 }}
+                                animate={{ scale: 1 }}
+                                className="text-primary font-bold"
+                              >
+                                ${subscriptionSavings.toFixed(2)}
+                              </motion.span>
+                              <span className="text-foreground/60 font-light"> {t('cart.savingsPerMonth')}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Subtotal */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">

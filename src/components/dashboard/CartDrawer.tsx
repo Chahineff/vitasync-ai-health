@@ -66,10 +66,11 @@ export function CartDrawer({ children }: CartDrawerProps) {
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-full sm:max-w-[440px] flex flex-col h-full p-0 bg-background border-l border-border/30 overflow-hidden">
-        
+    <>
+      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>{children}</SheetTrigger>
+        <SheetContent className="w-full sm:max-w-[440px] flex flex-col h-full p-0 bg-background border-l border-border/30 overflow-hidden">
         {/* Header with gradient accent */}
         <div className="relative flex-shrink-0">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/8 to-transparent pointer-events-none" />

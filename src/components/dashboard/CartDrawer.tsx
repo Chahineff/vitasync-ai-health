@@ -68,6 +68,68 @@ export function CartDrawer({ children }: CartDrawerProps) {
     setRemovingId(null);
   };
 
+  // ─── Upsell suggestion ──────────────────────────────────────
+  const [upsellPool, setUpsellPool] = useState<ShopifyProduct[]>([]);
+  const [upsellLoading, setUpsellLoading] = useState(false);
+  const [addingUpsell, setAddingUpsell] = useState(false);
+  const addItem = useCartStore(state => state.addItem);
+
+  // Fetch a small product pool the first time the drawer opens with items
+  useEffect(() => {
+    if (!isOpen || items.length === 0 || upsellPool.length > 0 || upsellLoading) return;
+    setUpsellLoading(true);
+    fetchProducts(20)
+      .then(setUpsellPool)
+      .catch((err) => console.error('Upsell fetch failed:', err))
+      .finally(() => setUpsellLoading(false));
+  }, [isOpen, items.length, upsellPool.length, upsellLoading]);
+
+  const showUpsell = !freeShipping && remaining > 0 && shippingProgress >= UPSELL_TRIGGER_THRESHOLD * 100;
+  const cartVariantIds = useMemo(() => new Set(items.map(i => i.variantId)), [items]);
+
+  // Pick the best product: not in cart, price <= remaining + small buffer, smallest gap
+  const upsellProduct = useMemo(() => {
+    if (!showUpsell || upsellPool.length === 0) return null;
+    const candidates = upsellPool
+      .map(p => {
+        const variant = p.node.variants.edges[0]?.node;
+        if (!variant || !variant.availableForSale) return null;
+        if (cartVariantIds.has(variant.id)) return null;
+        const price = parseFloat(variant.price.amount);
+        if (isNaN(price) || price <= 0) return null;
+        return { product: p, variant, price };
+      })
+      .filter((c): c is NonNullable<typeof c> => c !== null);
+
+    // Prefer products that unlock free shipping but aren't excessively expensive
+    const unlockers = candidates.filter(c => c.price >= remaining && c.price <= remaining * 2.5);
+    if (unlockers.length > 0) {
+      return unlockers.sort((a, b) => a.price - b.price)[0];
+    }
+    // Fallback: any affordable product
+    return candidates.sort((a, b) => Math.abs(a.price - remaining) - Math.abs(b.price - remaining))[0] || null;
+  }, [showUpsell, upsellPool, cartVariantIds, remaining]);
+
+  const handleAddUpsell = async () => {
+    if (!upsellProduct || addingUpsell) return;
+    setAddingUpsell(true);
+    try {
+      await addItem({
+        product: upsellProduct.product,
+        variantId: upsellProduct.variant.id,
+        variantTitle: upsellProduct.variant.title,
+        price: upsellProduct.variant.price,
+        quantity: 1,
+        selectedOptions: upsellProduct.variant.selectedOptions || [],
+      });
+      toast.success(t('cart.upsellAdded'), { position: 'top-center' });
+    } catch {
+      toast.error(t('shop.addError'));
+    } finally {
+      setAddingUpsell(false);
+    }
+  };
+
   return (
     <>
       <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />

@@ -203,56 +203,164 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
 
           <div className="flex-1" />
 
-          {/* Pricing Section */}
-          <div className="space-y-1.5 pt-1">
-            {/* Base price */}
-            <div className="flex items-baseline gap-2">
-              <span className={`text-xl font-bold ${subPrice ? 'text-foreground/40 line-through text-base' : 'text-foreground'}`}>
-                {parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}
-              </span>
-              {subPrice && (
-                <span className="text-xl font-bold text-primary">
-                  {subPrice.toFixed(2)}&nbsp;{price.currencyCode}
+          {/* Pricing Section — dynamic emphasis based on hovered button */}
+          <div className="space-y-1.5 pt-1 min-h-[3rem]">
+            <div className="flex items-baseline gap-2 transition-all duration-300">
+              {subPrice ? (
+                <>
+                  {/* Subscription price (primary by default, dimmed on Buy Once hover) */}
+                  <motion.span
+                    animate={{
+                      scale: hoveredBtn === 'once' ? 0.9 : 1,
+                      opacity: hoveredBtn === 'once' ? 0.45 : 1,
+                    }}
+                    transition={{ duration: 0.2 }}
+                    className={`text-xl font-bold origin-left ${
+                      hoveredBtn === 'once'
+                        ? 'text-foreground/50 line-through text-base'
+                        : 'text-primary'
+                    }`}
+                  >
+                    {subPrice.toFixed(2)}&nbsp;{price.currencyCode}
+                  </motion.span>
+                  {/* Once price (struck-through by default, highlighted on its hover) */}
+                  <motion.span
+                    animate={{
+                      scale: hoveredBtn === 'once' ? 1.05 : 1,
+                      opacity: hoveredBtn === 'once' ? 1 : 0.5,
+                    }}
+                    transition={{ duration: 0.2 }}
+                    className={`font-bold origin-left ${
+                      hoveredBtn === 'once'
+                        ? 'text-xl text-foreground'
+                        : 'text-base text-foreground/40 line-through'
+                    }`}
+                  >
+                    {parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}
+                  </motion.span>
+                </>
+              ) : (
+                <span className="text-xl font-bold text-foreground">
+                  {parseFloat(price.amount).toFixed(2)}&nbsp;{price.currencyCode}
                 </span>
               )}
             </div>
             {/* Subscribe hint */}
-            {subPrice && (
-              <div className="flex items-center gap-1.5 py-1 px-2 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15">
-                <Repeat weight="bold" className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                  {t('shop.saveWithSub')}
-                </span>
-              </div>
-            )}
+            <AnimatePresence mode="wait">
+              {subPrice && hoveredBtn !== 'once' && (
+                <motion.div
+                  key="sub-hint"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  className="flex items-center gap-1.5 py-1 px-2 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15"
+                >
+                  <Repeat weight="bold" className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                    {pct ? `${t('shop.saveWithSub')} · -${pct}%` : t('shop.saveWithSub')}
+                  </span>
+                </motion.div>
+              )}
+              {subPrice && hoveredBtn === 'once' && (
+                <motion.div
+                  key="once-hint"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  className="flex items-center gap-1.5 py-1 px-2 rounded-lg bg-muted"
+                >
+                  <span className="text-[11px] font-medium text-muted-foreground">
+                    {t('shop.oneTimePurchase')}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Add to Cart Button */}
-          <button
-            onClick={handleAddToCart}
-            disabled={isAdding || !selectedVariant?.availableForSale}
-            className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-              justAdded 
-                ? 'bg-green-500/15 text-green-600 dark:text-green-400' 
-                : 'bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98]'
-            } disabled:opacity-40 disabled:cursor-not-allowed`}
-          >
-            {isAdding ? (
-              <SpinnerGap className="w-4 h-4 animate-spin" />
-            ) : justAdded ? (
-              <>
-                <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', bounce: 0.5 }}>
+          {/* Action buttons — Subscribe (primary, large) + Buy Once (compact) */}
+          {subPrice && plan ? (
+            <div className="flex gap-1.5">
+              <motion.button
+                onClick={(e) => handleAddToCart(e, 'sub')}
+                onMouseEnter={() => setHoveredBtn('sub')}
+                onMouseLeave={() => setHoveredBtn(null)}
+                disabled={!!addingMode || !selectedVariant?.availableForSale}
+                whileTap={{ scale: 0.97 }}
+                className={`flex-1 relative overflow-hidden flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                  justAdded === 'sub'
+                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md'
+                } disabled:opacity-40 disabled:cursor-not-allowed`}
+              >
+                {/* Shimmer on hover */}
+                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 hover:translate-x-full" />
+                {addingMode === 'sub' ? (
+                  <SpinnerGap className="w-4 h-4 animate-spin" />
+                ) : justAdded === 'sub' ? (
+                  <>
+                    <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', bounce: 0.5 }}>
+                      <Check weight="bold" className="w-4 h-4" />
+                    </motion.div>
+                    {t('shop.added')}
+                  </>
+                ) : (
+                  <>
+                    <Repeat weight="bold" className="w-4 h-4" />
+                    <span className="truncate">{t('shop.subscribeMonthly')}</span>
+                  </>
+                )}
+              </motion.button>
+              <motion.button
+                onClick={(e) => handleAddToCart(e, 'once')}
+                onMouseEnter={() => setHoveredBtn('once')}
+                onMouseLeave={() => setHoveredBtn(null)}
+                disabled={!!addingMode || !selectedVariant?.availableForSale}
+                whileTap={{ scale: 0.97 }}
+                title={t('shop.buyOnce')}
+                aria-label={t('shop.buyOnce')}
+                className={`flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl text-xs font-medium transition-all border ${
+                  justAdded === 'once'
+                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                    : 'bg-background text-foreground/80 border-border hover:bg-muted hover:text-foreground'
+                } disabled:opacity-40 disabled:cursor-not-allowed`}
+              >
+                {addingMode === 'once' ? (
+                  <SpinnerGap className="w-4 h-4 animate-spin" />
+                ) : justAdded === 'once' ? (
                   <Check weight="bold" className="w-4 h-4" />
-                </motion.div>
-                {t('shop.added')}
-              </>
-            ) : (
-              <>
-                <ShoppingCartSimple weight="bold" className="w-4 h-4" />
-                {t('shop.addToCart')}
-              </>
-            )}
-          </button>
+                ) : (
+                  <>
+                    <ShoppingCartSimple weight="bold" className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{t('shop.buyOnce')}</span>
+                  </>
+                )}
+              </motion.button>
+            </div>
+          ) : (
+            <button
+              onClick={(e) => handleAddToCart(e, 'once')}
+              disabled={!!addingMode || !selectedVariant?.availableForSale}
+              className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                justAdded === 'once'
+                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98]'
+              } disabled:opacity-40 disabled:cursor-not-allowed`}
+            >
+              {addingMode === 'once' ? (
+                <SpinnerGap className="w-4 h-4 animate-spin" />
+              ) : justAdded === 'once' ? (
+                <>
+                  <Check weight="bold" className="w-4 h-4" />
+                  {t('shop.added')}
+                </>
+              ) : (
+                <>
+                  <ShoppingCartSimple weight="bold" className="w-4 h-4" />
+                  {t('shop.addToCart')}
+                </>
+              )}
+            </button>
+          )}
 
           {!selectedVariant?.availableForSale && <p className="text-xs text-destructive text-center">{t('shop.outOfStock')}</p>}
         </div>

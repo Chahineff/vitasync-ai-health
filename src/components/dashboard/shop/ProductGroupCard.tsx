@@ -51,28 +51,40 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const subPrice = plan ? calculateSubscriptionPrice(parseFloat(price.amount), plan) : null;
   const pct = plan ? getDiscountPercentage(plan) : null;
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent, mode: 'sub' | 'once') => {
     e.preventDefault();
     e.stopPropagation();
-    if (!selectedVariant || isAdding) return;
+    if (!selectedVariant || addingMode) return;
+    if (mode === 'sub' && !plan) return;
 
-    setIsAdding(true);
+    setAddingMode(mode);
     try {
+      const finalPrice = mode === 'sub' && subPrice
+        ? { amount: subPrice.toFixed(2), currencyCode: price.currencyCode }
+        : selectedVariant.price;
+
       await addItem({
         product: displayProduct,
         variantId: selectedVariant.id,
         variantTitle: selectedVariant.title,
-        price: selectedVariant.price,
+        price: finalPrice,
         quantity: 1,
         selectedOptions: selectedVariant.selectedOptions || [],
+        ...(mode === 'sub' && plan ? {
+          sellingPlanId: plan.id,
+          sellingPlanName: plan.name || t('shop.monthlySubscription'),
+        } : {}),
       });
-      setJustAdded(true);
-      toast.success(t('shop.productAdded'), { description: displayProduct.node.title, position: 'top-center' });
-      setTimeout(() => setJustAdded(false), 2000);
+      setJustAdded(mode);
+      toast.success(t('shop.productAdded'), {
+        description: `${displayProduct.node.title}${mode === 'sub' ? ' · ' + t('shop.monthlySubscription') : ''}`,
+        position: 'top-center',
+      });
+      setTimeout(() => setJustAdded(null), 2000);
     } catch {
       toast.error(t('shop.addError'));
     } finally {
-      setIsAdding(false);
+      setAddingMode(null);
     }
   };
 

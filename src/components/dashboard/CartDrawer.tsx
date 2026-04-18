@@ -1,32 +1,54 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck
+  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck, PiggyBank
 } from '@phosphor-icons/react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useCartStore } from '@/stores/cartStore';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Confetti } from '@/components/ui/Confetti';
 
 interface CartDrawerProps {
   children: ReactNode;
 }
 
 const FREE_SHIPPING_THRESHOLD = 59;
+const SUBSCRIPTION_DISCOUNT = 0.15; // 15% subscription savings
 
 export function CartDrawer({ children }: CartDrawerProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const previousFreeShippingRef = useRef(false);
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
   
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
   const currencyCode = items[0]?.price.currencyCode || 'USD';
 
+  // Calculate subscription savings: for each subscribed line, the discounted price
+  // is what's stored. Pre-discount price = price / (1 - 0.15). Savings = pre - price.
+  const subscriptionSavings = items.reduce((sum, item) => {
+    if (!item.sellingPlanId) return sum;
+    const linePrice = parseFloat(item.price.amount) * item.quantity;
+    const originalPrice = linePrice / (1 - SUBSCRIPTION_DISCOUNT);
+    return sum + (originalPrice - linePrice);
+  }, 0);
+  const hasSubscription = items.some(item => item.sellingPlanId);
+
   const shippingProgress = Math.min((totalPrice / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - totalPrice, 0);
   const freeShipping = remaining <= 0;
+
+  // Trigger confetti when crossing the free shipping threshold (only while drawer is open)
+  useEffect(() => {
+    if (isOpen && freeShipping && !previousFreeShippingRef.current && totalPrice > 0) {
+      setShowConfetti(true);
+    }
+    previousFreeShippingRef.current = freeShipping;
+  }, [freeShipping, isOpen, totalPrice]);
 
   useEffect(() => {
     if (isOpen) syncCart();

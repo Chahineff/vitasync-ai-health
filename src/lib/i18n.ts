@@ -419,6 +419,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.freeShippingRemaining": "pour la livraison gratuite",
     "cart.freeShippingUnlocked": "Livraison gratuite débloquée !",
     "cart.secureCheckout": "Paiement 100% sécurisé",
+    "cart.savings": "Vous économisez",
+    "cart.savingsPerMonth": "par mois avec l'abonnement",
+    "cart.subscriptionPerks": "Abonnement actif",
 
     // Settings
     "settings.title": "Paramètres",
@@ -1910,6 +1913,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.freeShippingRemaining": "for free shipping",
     "cart.freeShippingUnlocked": "Free shipping unlocked!",
     "cart.secureCheckout": "100% secure checkout",
+    "cart.savings": "You save",
+    "cart.savingsPerMonth": "per month with subscription",
+    "cart.subscriptionPerks": "Subscription active",
 
     // Settings
     "settings.title": "Settings",
@@ -3392,6 +3398,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.freeShippingRemaining": "para envío gratuito",
     "cart.freeShippingUnlocked": "¡Envío gratuito desbloqueado!",
     "cart.secureCheckout": "Pago 100% seguro",
+    "cart.savings": "Ahorras",
+    "cart.savingsPerMonth": "al mes con la suscripción",
+    "cart.subscriptionPerks": "Suscripción activa",
 
     // Settings
     "settings.title": "Configuración",
@@ -4849,6 +4858,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.freeShippingRemaining": "للشحن المجاني",
     "cart.freeShippingUnlocked": "تم فتح الشحن المجاني!",
     "cart.secureCheckout": "دفع آمن 100%",
+    "cart.savings": "أنت توفر",
+    "cart.savingsPerMonth": "شهرياً مع الاشتراك",
+    "cart.subscriptionPerks": "الاشتراك نشط",
 
     // Settings
     "settings.title": "الإعدادات",
@@ -6305,6 +6317,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.freeShippingRemaining": "即可免费配送",
     "cart.freeShippingUnlocked": "已解锁免费配送！",
     "cart.secureCheckout": "100%安全支付",
+    "cart.savings": "您节省",
+    "cart.savingsPerMonth": "每月通过订阅",
+    "cart.subscriptionPerks": "订阅已激活",
 
     // Settings
     "settings.title": "设置",
@@ -7761,6 +7776,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cart.freeShippingRemaining": "para frete grátis",
     "cart.freeShippingUnlocked": "Frete grátis desbloqueado!",
     "cart.secureCheckout": "Pagamento 100% seguro",
+    "cart.savings": "Você economiza",
+    "cart.savingsPerMonth": "por mês com a assinatura",
+    "cart.subscriptionPerks": "Assinatura ativa",
 
     // Settings
     "settings.title": "Configurações",

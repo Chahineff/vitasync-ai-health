@@ -1,32 +1,54 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck
+  Minus, Plus, Trash, ShoppingCart, ArrowSquareOut, SpinnerGap, Repeat, Package, Sparkle, ShoppingBag, Lightning, Truck, PiggyBank
 } from '@phosphor-icons/react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useCartStore } from '@/stores/cartStore';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Confetti } from '@/components/ui/Confetti';
 
 interface CartDrawerProps {
   children: ReactNode;
 }
 
 const FREE_SHIPPING_THRESHOLD = 59;
+const SUBSCRIPTION_DISCOUNT = 0.15; // 15% subscription savings
 
 export function CartDrawer({ children }: CartDrawerProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const previousFreeShippingRef = useRef(false);
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
   
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
   const currencyCode = items[0]?.price.currencyCode || 'USD';
 
+  // Calculate subscription savings: for each subscribed line, the discounted price
+  // is what's stored. Pre-discount price = price / (1 - 0.15). Savings = pre - price.
+  const subscriptionSavings = items.reduce((sum, item) => {
+    if (!item.sellingPlanId) return sum;
+    const linePrice = parseFloat(item.price.amount) * item.quantity;
+    const originalPrice = linePrice / (1 - SUBSCRIPTION_DISCOUNT);
+    return sum + (originalPrice - linePrice);
+  }, 0);
+  const hasSubscription = items.some(item => item.sellingPlanId);
+
   const shippingProgress = Math.min((totalPrice / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - totalPrice, 0);
   const freeShipping = remaining <= 0;
+
+  // Trigger confetti when crossing the free shipping threshold (only while drawer is open)
+  useEffect(() => {
+    if (isOpen && freeShipping && !previousFreeShippingRef.current && totalPrice > 0) {
+      setShowConfetti(true);
+    }
+    previousFreeShippingRef.current = freeShipping;
+  }, [freeShipping, isOpen, totalPrice]);
 
   useEffect(() => {
     if (isOpen) syncCart();
@@ -44,10 +66,11 @@ export function CartDrawer({ children }: CartDrawerProps) {
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-full sm:max-w-[440px] flex flex-col h-full p-0 bg-background border-l border-border/30 overflow-hidden">
-        
+    <>
+      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>{children}</SheetTrigger>
+        <SheetContent className="w-full sm:max-w-[440px] flex flex-col h-full p-0 bg-background border-l border-border/30 overflow-hidden">
         {/* Header with gradient accent */}
         <div className="relative flex-shrink-0">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/8 to-transparent pointer-events-none" />
@@ -262,6 +285,43 @@ export function CartDrawer({ children }: CartDrawerProps) {
               {/* Footer */}
               <div className="flex-shrink-0 border-t border-border/30 bg-muted/20 dark:bg-white/[0.02]">
                 <div className="px-6 py-5 space-y-4">
+                  {/* Subscription savings recap */}
+                  <AnimatePresence>
+                    {hasSubscription && subscriptionSavings > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-3.5"
+                      >
+                        <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-primary/10 blur-2xl" />
+                        <div className="relative flex items-center gap-3">
+                          <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center">
+                            <PiggyBank weight="duotone" className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-medium text-primary/80 uppercase tracking-wide">
+                              {t('cart.subscriptionPerks')}
+                            </p>
+                            <p className="text-sm font-semibold text-foreground mt-0.5">
+                              {t('cart.savings')}{' '}
+                              <motion.span
+                                key={subscriptionSavings.toFixed(2)}
+                                initial={{ scale: 1.2 }}
+                                animate={{ scale: 1 }}
+                                className="text-primary font-bold"
+                              >
+                                ${subscriptionSavings.toFixed(2)}
+                              </motion.span>
+                              <span className="text-foreground/60 font-light"> {t('cart.savingsPerMonth')}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Subtotal */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
@@ -314,8 +374,9 @@ export function CartDrawer({ children }: CartDrawerProps) {
               </div>
             </>
           )}
-        </div>
-      </SheetContent>
-    </Sheet>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

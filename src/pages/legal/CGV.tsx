@@ -3,8 +3,8 @@ import { LegalPageLayout } from "@/components/layout/LegalPageLayout";
 export default function CGV() {
   return (
     <LegalPageLayout
-      title="Conditions Générales de Vente"
-      subtitle="Vente de compléments alimentaires — Livraison USA uniquement via Supliful"
+      title="Terms of Sale"
+      subtitle="Conditions applicable to product purchases on vitasync.ai"
       date="8 avril 2026"
     >
       <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 my-4">
@@ -44,13 +44,13 @@ export default function CGV() {
 
       <h2>6. Livraison</h2>
       <p>La livraison est assurée par Supliful via USPS Ground Advantage (USA uniquement). Les conditions détaillées de livraison sont décrites dans la <a href="/shipping">Politique de Livraison et Retours</a>. Les délais indicatifs sont de 4 à 10 jours ouvrés après expédition.</p>
-      <p>Conformément à l'article L. 216-1 du Code de la consommation français (applicable aux Utilisateurs ayant leur résidence habituelle en France), à défaut de date de livraison indiquée, la livraison doit intervenir dans les 30 jours suivant la conclusion du contrat. En cas de retard, l'acheteur peut mettre en demeure le vendeur puis, si le délai supplémentaire raisonnable n'est pas respecté, résoudre le contrat et obtenir le remboursement intégral sous 14 jours.</p>
+      <p>Unless a delivery date is specified, delivery shall occur within 30 days of order confirmation. En cas de retard, l'acheteur peut mettre en demeure le vendeur puis, si le délai supplémentaire raisonnable n'est pas respecté, résoudre le contrat et obtenir le remboursement intégral sous 14 jours.</p>
 
       <h2>7. Droit de Rétractation</h2>
-      <p><strong>Pour les consommateurs résidant dans l'Union européenne :</strong> conformément aux articles L. 221-18 et suivants du Code de la consommation, le consommateur dispose d'un délai de 14 jours calendaires à compter de la réception du produit pour exercer son droit de rétractation, sans avoir à justifier de motif ni à payer de pénalités.</p>
+      <p><strong>Pour les consommateurs résidant dans l'Union européenne :</strong> EU consumers have 14 calendar days from receipt of the product to exercise their right of withdrawal, sans avoir à justifier de motif ni à payer de pénalités.</p>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
-          <strong>Exception — Produits scellés :</strong> Conformément à l'article L. 221-28, 5° du Code de la consommation, le droit de rétractation ne peut être exercé pour les biens scellés ne pouvant être renvoyés pour des raisons de protection de la santé ou d'hygiène et ayant été descellés après la livraison. Les compléments alimentaires dont le sceau d'inviolabilité a été brisé après livraison ne sont pas éligibles au retour pour des raisons sanitaires.
+          <strong>Exception — Produits scellés :</strong> In accordance with applicable consumer protection law, le droit de rétractation ne peut être exercé pour les biens scellés ne pouvant être renvoyés pour des raisons de protection de la santé ou d'hygiène et ayant été descellés après la livraison. Les compléments alimentaires dont le sceau d'inviolabilité a été brisé après livraison ne sont pas éligibles au retour pour des raisons sanitaires.
         </p>
       </div>
       <p><strong>Pour les consommateurs résidant aux États-Unis :</strong> la politique de retour VitaSync est détaillée dans la Politique de Livraison et Retours. Les produits scellés non ouverts peuvent être retournés dans un délai de 14 jours après réception. Les produits descellés ne sont pas retournables pour des raisons d'hygiène et de sécurité alimentaire.</p>
@@ -59,16 +59,16 @@ export default function CGV() {
       <h2>8. Garanties Légales</h2>
       <p>Le consommateur bénéficie des garanties légales prévues par la réglementation applicable :</p>
       <ul>
-        <li><strong>Garantie légale de conformité (Art. L. 217-3 et suivants du Code de la consommation) :</strong> VitaSync est tenu de livrer un bien conforme au contrat. Le consommateur dispose d'un délai de 2 ans à compter de la délivrance du bien pour agir.</li>
-        <li><strong>Garantie légale des vices cachés (Art. 1641 et suivants du Code civil) :</strong> VitaSync est tenu des vices cachés rendant le bien impropre à l'usage auquel on le destine.</li>
+        <li><strong>Legal warranty of conformity (applicable to EU consumers) :</strong> VitaSync est tenu de livrer un bien conforme au contrat. Le consommateur dispose d'un délai de 2 ans à compter de la délivrance du bien pour agir.</li>
+        <li><strong>Garantie légale des vices cachés (applicable warranty law) :</strong> VitaSync est tenu des vices cachés rendant le bien impropre à l'usage auquel on le destine.</li>
         <li><strong>Pour les consommateurs US :</strong> les garanties légales applicables selon le droit de l'état de résidence de l'acheteur (Magnuson-Moss Warranty Act et Uniform Commercial Code).</li>
       </ul>
 
       <h2>9. Médiation et Règlement des Litiges</h2>
-      <p>Conformément à l'article L. 612-1 du Code de la consommation, en cas de litige non résolu directement avec VitaSync, le consommateur UE peut recourir gratuitement à un médiateur de la consommation. Le nom et les coordonnées du médiateur seront communiqués dès la désignation de celui-ci. Plateforme européenne de règlement des litiges en ligne : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr</a>. Pour les litiges avec des consommateurs US, les parties s'efforceront de trouver une solution amiable avant tout recours judiciaire.</p>
+      <p>In case of an unresolved dispute, EU consumers may use a free consumer mediation service. Le nom et les coordonnées du médiateur seront communiqués dès la désignation de celui-ci. Plateforme européenne de règlement des litiges en ligne : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr</a>. Pour les litiges avec des consommateurs US, les parties s'efforceront de trouver une solution amiable avant tout recours judiciaire.</p>
 
       <h2>10. Loi Applicable</h2>
-      <p>Les présentes CGV sont régies par le droit français. Si vous résidez dans l'Union européenne, vous bénéficiez également des dispositions impératives de la loi de protection des consommateurs du pays dans lequel vous résidez. Pour les ventes aux consommateurs résidant aux États-Unis, les dispositions impératives du droit fédéral américain et du droit de l'État de résidence du consommateur s'appliquent également.</p>
+      <p>These Terms of Sale are governed by US federal law and the laws of the State of Delaware. Si vous résidez dans l'Union européenne, vous bénéficiez également des dispositions impératives de la loi de protection des consommateurs du pays dans lequel vous résidez. Pour les ventes aux consommateurs résidant aux États-Unis, les dispositions impératives du droit fédéral américain et du droit de l'État de résidence du consommateur s'appliquent également.</p>
 
       <h2>11. Données Personnelles</h2>
       <p>Les données collectées lors des commandes sont traitées conformément à notre <a href="/privacy">Politique de Confidentialité</a>, au RGPD et aux lois américaines applicables (CCPA/CPRA). Les données de facturation sont conservées pendant 10 ans conformément aux obligations comptables.</p>

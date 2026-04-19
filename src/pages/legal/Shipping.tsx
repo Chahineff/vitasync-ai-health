@@ -34,7 +34,7 @@ export default function Shipping() {
       <h2>3. Délais de Traitement et de Livraison</h2>
       <p><strong>Délai de fabrication et d'expédition :</strong> les produits étant fabriqués à la demande en mode white-label, un délai de 1 à 3 jours ouvrés est nécessaire entre la validation de la commande et l'expédition (étiquetage, conditionnement, remise au transporteur).</p>
       <p><strong>Délai de livraison :</strong> 4 à 10 jours ouvrés après expédition via USPS Ground Advantage. Ce délai commence à courir à compter de l'expédition du colis (et non de la commande). Les délais ne sont pas garantis et peuvent être impactés par les périodes de forte demande, les conditions météorologiques ou les opérations postales USPS.</p>
-      <p>Conformément à l'article L. 216-1 du Code de la consommation français (applicable aux Utilisateurs résidant en France), à défaut de date de livraison indiquée lors de la commande, la livraison doit intervenir dans un délai maximal de 30 jours. En cas de dépassement de ce délai, l'acheteur peut, après mise en demeure restée infructueuse, résoudre le contrat et obtenir le remboursement intégral sous 14 jours.</p>
+      <p>Unless a delivery date is specified at checkout, delivery shall occur within 30 days of order confirmation. En cas de dépassement de ce délai, l'acheteur peut, après mise en demeure restée infructueuse, résoudre le contrat et obtenir le remboursement intégral sous 14 jours.</p>
 
       <h2>4. Suivi de Commande</h2>
       <p>Un numéro de suivi USPS est fourni par email dès l'expédition du colis. Le suivi est disponible sur <a href="https://www.usps.com/tracking" target="_blank" rel="noopener noreferrer">www.usps.com/tracking</a>. Les notifications d'étapes de livraison sont envoyées automatiquement par Shopify.</p>
@@ -42,12 +42,12 @@ export default function Shipping() {
       <h2>5. Politique de Retours</h2>
 
       <h3>5.1 Droit de rétractation (14 jours — produits scellés uniquement)</h3>
-      <p><strong>Pour les consommateurs résidant dans l'Union européenne :</strong> conformément aux articles L. 221-18 et suivants du Code de la consommation, vous disposez de 14 jours calendaires après réception pour exercer votre droit de rétractation, sans motif, pour les produits restés scellés (sceau d'inviolabilité intact).</p>
+      <p><strong>Pour les consommateurs résidant dans l'Union européenne :</strong> EU consumers have 14 calendar days from receipt to exercise their right of withdrawal, sans motif, pour les produits restés scellés (sceau d'inviolabilité intact).</p>
       <p><strong>Pour les consommateurs résidant aux États-Unis :</strong> vous disposez d'un délai de 14 jours calendaires après réception pour retourner un produit scellé non ouvert, conformément à notre politique commerciale volontaire.</p>
       <p>Pour exercer ce droit, contactez-nous à <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a> avec votre numéro de commande.</p>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
-          <strong>Exception santé et hygiène :</strong> Le droit de rétractation et le retour commercial ne s'appliquent PAS aux compléments alimentaires dont le sceau de sécurité (shrink-wrap, scellé d'inviolabilité) a été brisé après livraison. Cette exception est fondée sur l'article L. 221-28, 5° du Code de la consommation pour les consommateurs UE, et sur les pratiques standards du secteur des compléments alimentaires aux USA, pour des raisons de protection de la santé publique et d'hygiène.
+          <strong>Exception santé et hygiène :</strong> Le droit de rétractation et le retour commercial ne s'appliquent PAS aux compléments alimentaires dont le sceau de sécurité (shrink-wrap, scellé d'inviolabilité) a été brisé après livraison. Cette exception est fondée sur applicable EU consumer protection law, et sur les pratiques standards du secteur des compléments alimentaires aux USA, pour des raisons de protection de la santé publique et d'hygiène.
         </p>
       </div>
 
@@ -72,7 +72,7 @@ export default function Shipping() {
       <h2>6. Garanties Légales</h2>
       <p>Indépendamment de la présente politique, le consommateur bénéficie des garanties légales applicables :</p>
       <ul>
-        <li><strong>UE / France :</strong> garantie légale de conformité (Art. L. 217-3 et suivants du Code de la consommation, 2 ans) et garantie des vices cachés (Art. 1641 et suivants du Code civil).</li>
+        <li><strong>UE / France :</strong> legal warranty of conformity (2 years for EU consumers) et warranty against hidden defects (applicable consumer law).</li>
         <li><strong>USA :</strong> Magnuson-Moss Warranty Act (fédéral) et Uniform Commercial Code (UCC) de l'état de résidence de l'acheteur, incluant les garanties implicites de qualité marchande (implied warranty of merchantability) et d'adéquation à un usage particulier (fitness for a particular purpose).</li>
       </ul>
 

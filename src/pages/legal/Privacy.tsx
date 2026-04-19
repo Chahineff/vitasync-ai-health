@@ -143,7 +143,7 @@ export default function Privacy() {
         <li><strong>Retrait du consentement :</strong> Retirer votre consentement à tout moment sans affecter la légalité du traitement antérieur.</li>
         <li><strong>Droit de ne pas faire l'objet d'une décision automatisée (Art. 22) :</strong> Les recommandations IA de VitaSync sont informatives et ne produisent pas d'effets juridiques.</li>
       </ul>
-      <p>Pour exercer vos droits : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>. Délai de réponse : 30 jours maximum. Vous pouvez également déposer une réclamation auprès de la CNIL (3 Place de Fontenoy, 75007 Paris, <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>) ou de l'autorité de protection des données de votre pays de résidence.</p>
+      <p>Pour exercer vos droits : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>. Délai de réponse : 30 jours maximum. You may also file a complaint with your local data protection authority (EU users) or with the US Federal Trade Commission at <a href="https://www.ftc.gov/complaint" target="_blank" rel="noopener noreferrer">ftc.gov/complaint</a> (US users).</p>
 
       <h2>7. Traitement Spécifique des Données de Santé et IA</h2>
       <p>VitaSync traite des données de santé au sens de l'article 9 du RGPD. Ce traitement est strictement encadré :</p>

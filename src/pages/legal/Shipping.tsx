@@ -3,82 +3,82 @@ import { LegalPageLayout } from "@/components/layout/LegalPageLayout";
 export default function Shipping() {
   return (
     <LegalPageLayout
-      title="Politique de Livraison et Retours"
-      subtitle="Conditions d'expédition, zones de livraison et retours — Fulfillment par Supliful"
-      date="8 avril 2026"
+      title="Shipping &amp; Returns Policy"
+      subtitle="Shipping conditions, delivery zones and returns — Fulfillment by Supliful"
+      date="April 8, 2026"
     >
-      <h2>1. Présentation du Service de Livraison</h2>
-      <p>Les produits VitaSync sont fabriqués et expédiés par notre partenaire fulfillment Supliful (Brand On Demand, Inc., Delaware, USA) depuis ses entrepôts situés principalement à Arvada, Colorado, USA. Les produits sont fabriqués à la demande en mode white-label (étiquetage à la commande avec la marque VitaSync).</p>
+      <h2>1. Overview of the Shipping Service</h2>
+      <p>VitaSync products are manufactured and shipped by our fulfillment partner Supliful (Brand On Demand, Inc., Delaware, USA) from warehouses located primarily in Arvada, Colorado, USA. Products are made on demand under a white-label model (labeled at order time with the VitaSync brand).</p>
 
-      <h2>2. Zones de Livraison et Tarifs</h2>
-      <p><strong>Livraison domestique États-Unis uniquement</strong> — Transporteur : USPS Ground Advantage (Supliful).</p>
+      <h2>2. Shipping Zones and Rates</h2>
+      <p><strong>Domestic US shipping only</strong> — Carrier: USPS Ground Advantage (Supliful).</p>
       <table>
         <thead>
-          <tr><th>Poids total commande</th><th>Tarif livraison</th><th>Délai estimé</th></tr>
+          <tr><th>Total order weight</th><th>Shipping rate</th><th>Estimated delivery</th></tr>
         </thead>
         <tbody>
-          <tr><td>Jusqu'à 0,5 lb (≈ 225 g)</td><td>4,50 $</td><td>4-10 jours ouvrés</td></tr>
-          <tr><td>0,51 à 0,75 lb (≈ 340 g)</td><td>5,50 $</td><td>4-10 jours ouvrés</td></tr>
-          <tr><td>0,76 à 1,00 lb (≈ 450 g)</td><td>6,50 $</td><td>4-10 jours ouvrés</td></tr>
-          <tr><td>1,01 à 2,00 lb (≈ 900 g)</td><td>8,00 $</td><td>4-10 jours ouvrés</td></tr>
+          <tr><td>Up to 0.5 lb (≈ 225 g)</td><td>$4.50</td><td>4-10 business days</td></tr>
+          <tr><td>0.51 to 0.75 lb (≈ 340 g)</td><td>$5.50</td><td>4-10 business days</td></tr>
+          <tr><td>0.76 to 1.00 lb (≈ 450 g)</td><td>$6.50</td><td>4-10 business days</td></tr>
+          <tr><td>1.01 to 2.00 lb (≈ 900 g)</td><td>$8.00</td><td>4-10 business days</td></tr>
         </tbody>
       </table>
-      <p>Les tarifs ci-dessus sont calculés automatiquement au checkout Shopify en fonction du poids total du panier. La sales tax applicable est ajoutée automatiquement selon l'état de livraison.</p>
+      <p>The rates above are calculated automatically at Shopify checkout based on the total cart weight. Applicable sales tax is added automatically based on the shipping state.</p>
 
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
-          <strong>ZONES NON DESSERVIES :</strong> Alaska, Hawaii, territoires US (Porto Rico, Guam, îles Vierges), et tous les pays hors États-Unis. Si vous n'êtes pas résident des 48 États contigus, vous ne pourrez pas finaliser de commande. Nous vous invitons à vous inscrire à notre newsletter pour être informé de l'ouverture de nouvelles zones.
+          <strong>UNSERVED ZONES:</strong> Alaska, Hawaii, US territories (Puerto Rico, Guam, Virgin Islands), and all countries outside the United States. If you are not a resident of the 48 contiguous states, you will not be able to complete an order. We invite you to subscribe to our newsletter to be notified when new zones open.
         </p>
       </div>
 
-      <h2>3. Délais de Traitement et de Livraison</h2>
-      <p><strong>Délai de fabrication et d'expédition :</strong> les produits étant fabriqués à la demande en mode white-label, un délai de 1 à 3 jours ouvrés est nécessaire entre la validation de la commande et l'expédition (étiquetage, conditionnement, remise au transporteur).</p>
-      <p><strong>Délai de livraison :</strong> 4 à 10 jours ouvrés après expédition via USPS Ground Advantage. Ce délai commence à courir à compter de l'expédition du colis (et non de la commande). Les délais ne sont pas garantis et peuvent être impactés par les périodes de forte demande, les conditions météorologiques ou les opérations postales USPS.</p>
-      <p>Conformément à l'article L. 216-1 du Code de la consommation français (applicable aux Utilisateurs résidant en France), à défaut de date de livraison indiquée lors de la commande, la livraison doit intervenir dans un délai maximal de 30 jours. En cas de dépassement de ce délai, l'acheteur peut, après mise en demeure restée infructueuse, résoudre le contrat et obtenir le remboursement intégral sous 14 jours.</p>
+      <h2>3. Processing and Delivery Times</h2>
+      <p><strong>Manufacturing and dispatch time:</strong> as products are made on demand under a white-label model, a delay of 1 to 3 business days is required between order validation and dispatch (labeling, packaging, handing over to the carrier).</p>
+      <p><strong>Delivery time:</strong> 4 to 10 business days after dispatch via USPS Ground Advantage. This time begins from the dispatch of the package (not from the order). Delivery times are not guaranteed and may be impacted by peak periods, weather conditions, or USPS postal operations.</p>
+      <p>Unless a delivery date is specified at checkout, delivery shall occur within 30 days of order confirmation. In the event of a delay, the buyer may, after a written notice that remains unanswered, terminate the contract and obtain a full refund within 14 days.</p>
 
-      <h2>4. Suivi de Commande</h2>
-      <p>Un numéro de suivi USPS est fourni par email dès l'expédition du colis. Le suivi est disponible sur <a href="https://www.usps.com/tracking" target="_blank" rel="noopener noreferrer">www.usps.com/tracking</a>. Les notifications d'étapes de livraison sont envoyées automatiquement par Shopify.</p>
+      <h2>4. Order Tracking</h2>
+      <p>A USPS tracking number is provided by email as soon as the package ships. Tracking is available at <a href="https://www.usps.com/tracking" target="_blank" rel="noopener noreferrer">www.usps.com/tracking</a>. Delivery milestone notifications are sent automatically by Shopify.</p>
 
-      <h2>5. Politique de Retours</h2>
+      <h2>5. Return Policy</h2>
 
-      <h3>5.1 Droit de rétractation (14 jours — produits scellés uniquement)</h3>
-      <p><strong>Pour les consommateurs résidant dans l'Union européenne :</strong> conformément aux articles L. 221-18 et suivants du Code de la consommation, vous disposez de 14 jours calendaires après réception pour exercer votre droit de rétractation, sans motif, pour les produits restés scellés (sceau d'inviolabilité intact).</p>
-      <p><strong>Pour les consommateurs résidant aux États-Unis :</strong> vous disposez d'un délai de 14 jours calendaires après réception pour retourner un produit scellé non ouvert, conformément à notre politique commerciale volontaire.</p>
-      <p>Pour exercer ce droit, contactez-nous à <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a> avec votre numéro de commande.</p>
+      <h3>5.1 Right of withdrawal (14 days — sealed products only)</h3>
+      <p><strong>For consumers residing in the European Union:</strong> EU consumers have 14 calendar days from receipt to exercise their right of withdrawal, without justification, for products that remain sealed (tamper seal intact).</p>
+      <p><strong>For consumers residing in the United States:</strong> you have 14 calendar days from receipt to return a sealed, unopened product, in accordance with our voluntary commercial policy.</p>
+      <p>To exercise this right, contact us at <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a> with your order number.</p>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
-          <strong>Exception santé et hygiène :</strong> Le droit de rétractation et le retour commercial ne s'appliquent PAS aux compléments alimentaires dont le sceau de sécurité (shrink-wrap, scellé d'inviolabilité) a été brisé après livraison. Cette exception est fondée sur l'article L. 221-28, 5° du Code de la consommation pour les consommateurs UE, et sur les pratiques standards du secteur des compléments alimentaires aux USA, pour des raisons de protection de la santé publique et d'hygiène.
+          <strong>Health and hygiene exception:</strong> The right of withdrawal and commercial returns do NOT apply to dietary supplements whose safety seal (shrink-wrap, tamper-evident seal) has been broken after delivery. This exception is based on applicable EU consumer protection law for EU consumers, and on standard practices in the dietary supplement industry in the USA, for reasons of public health protection and hygiene.
         </p>
       </div>
 
-      <h3>5.2 Produits défectueux ou endommagés</h3>
-      <p>Si vous recevez un produit défectueux, endommagé en transit ou mal imprimé, contactez-nous à <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a> dans les 30 jours suivant la réception avec une photo claire du problème (produit, sceau, emballage extérieur). VitaSync prendra en charge le remplacement ou le remboursement intégral, frais de retour à la charge de VitaSync.</p>
+      <h3>5.2 Defective or damaged products</h3>
+      <p>If you receive a defective product, one damaged in transit, or misprinted, contact us at <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a> within 30 days of receipt with a clear photo of the issue (product, seal, outer packaging). VitaSync will cover replacement or full refund, with return shipping at VitaSync's expense.</p>
 
-      <h3>5.3 Colis perdus en transit</h3>
-      <p>Si votre colis est déclaré perdu en transit par USPS (aucune mise à jour du suivi pendant plus de 10 jours ouvrés après expédition), contactez-nous. Nous procéderons à une enquête auprès de USPS et, une fois la perte confirmée, à un remplacement ou remboursement.</p>
+      <h3>5.3 Packages lost in transit</h3>
+      <p>If your package is declared lost in transit by USPS (no tracking update for more than 10 business days after dispatch), contact us. We will open an investigation with USPS and, once the loss is confirmed, proceed with replacement or refund.</p>
 
-      <h3>5.4 Cas exclus de remboursement</h3>
+      <h3>5.4 Cases excluded from refund</h3>
       <ul>
-        <li>Erreur d'adresse de livraison fournie par le client (adresse incomplète, inexistante, zip code erroné).</li>
-        <li>Colis non réclamé auprès du transporteur et retourné à l'expéditeur.</li>
-        <li>Remords d'acheteur après ouverture du produit (sceau brisé).</li>
-        <li>Dépassement du délai de 14 jours pour le droit de rétractation (produits scellés).</li>
-        <li>Dommages causés par une mauvaise utilisation ou un stockage inadapté après réception.</li>
+        <li>Shipping address error provided by the customer (incomplete address, non-existent address, wrong zip code).</li>
+        <li>Package not picked up from the carrier and returned to sender.</li>
+        <li>Buyer's remorse after opening the product (broken seal).</li>
+        <li>Exceeding the 14-day window for the right of withdrawal (sealed products).</li>
+        <li>Damage caused by misuse or improper storage after receipt.</li>
       </ul>
 
-      <h3>5.5 Modalités de remboursement</h3>
-      <p>Les remboursements sont effectués sur le moyen de paiement original (via Shopify Payments) dans un délai de 14 jours suivant la réception du retour ou la preuve de perte. Pour les consommateurs UE exerçant leur droit de rétractation, le remboursement inclut les frais de livraison initiale au tarif standard. Les frais de retour sont à la charge de l'acheteur, sauf en cas de produit défectueux ou d'erreur de VitaSync.</p>
+      <h3>5.5 Refund Terms</h3>
+      <p>Refunds are issued to the original payment method (via Shopify Payments) within 14 days of receipt of the return or proof of loss. For EU consumers exercising the right of withdrawal, the refund includes initial shipping fees at the standard rate. Return shipping costs are the buyer's responsibility, except in case of a defective product or VitaSync error.</p>
 
-      <h2>6. Garanties Légales</h2>
-      <p>Indépendamment de la présente politique, le consommateur bénéficie des garanties légales applicables :</p>
+      <h2>6. Legal Warranties</h2>
+      <p>Independent of this policy, the consumer benefits from the applicable legal warranties:</p>
       <ul>
-        <li><strong>UE / France :</strong> garantie légale de conformité (Art. L. 217-3 et suivants du Code de la consommation, 2 ans) et garantie des vices cachés (Art. 1641 et suivants du Code civil).</li>
-        <li><strong>USA :</strong> Magnuson-Moss Warranty Act (fédéral) et Uniform Commercial Code (UCC) de l'état de résidence de l'acheteur, incluant les garanties implicites de qualité marchande (implied warranty of merchantability) et d'adéquation à un usage particulier (fitness for a particular purpose).</li>
+        <li><strong>EU / France:</strong> legal warranty of conformity (2 years for EU consumers) and warranty against hidden defects (applicable consumer law).</li>
+        <li><strong>USA:</strong> Magnuson-Moss Warranty Act (federal) and the Uniform Commercial Code (UCC) of the buyer's state of residence, including implied warranties of merchantability and fitness for a particular purpose.</li>
       </ul>
 
       <h2>7. Contact</h2>
-      <p>Pour toute question relative à une livraison ou un retour :</p>
-      <p>Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Délai de réponse : 48h ouvrées maximum</p>
+      <p>For any question regarding a delivery or return:</p>
+      <p>Email: <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Response time: within 48 business hours</p>
     </LegalPageLayout>
   );
 }

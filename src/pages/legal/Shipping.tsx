@@ -44,7 +44,7 @@ export default function Shipping() {
       <h3>5.1 Droit de rétractation (14 jours — produits scellés uniquement)</h3>
       <p><strong>Pour les consommateurs résidant dans l'Union européenne :</strong> conformément aux articles L. 221-18 et suivants du Code de la consommation, vous disposez de 14 jours calendaires après réception pour exercer votre droit de rétractation, sans motif, pour les produits restés scellés (sceau d'inviolabilité intact).</p>
       <p><strong>Pour les consommateurs résidant aux États-Unis :</strong> vous disposez d'un délai de 14 jours calendaires après réception pour retourner un produit scellé non ouvert, conformément à notre politique commerciale volontaire.</p>
-      <p>Pour exercer ce droit, contactez-nous à <a href="mailto:contact@vitasync.com">contact@vitasync.com</a> avec votre numéro de commande.</p>
+      <p>Pour exercer ce droit, contactez-nous à <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a> avec votre numéro de commande.</p>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
           <strong>Exception santé et hygiène :</strong> Le droit de rétractation et le retour commercial ne s'appliquent PAS aux compléments alimentaires dont le sceau de sécurité (shrink-wrap, scellé d'inviolabilité) a été brisé après livraison. Cette exception est fondée sur l'article L. 221-28, 5° du Code de la consommation pour les consommateurs UE, et sur les pratiques standards du secteur des compléments alimentaires aux USA, pour des raisons de protection de la santé publique et d'hygiène.
@@ -52,7 +52,7 @@ export default function Shipping() {
       </div>
 
       <h3>5.2 Produits défectueux ou endommagés</h3>
-      <p>Si vous recevez un produit défectueux, endommagé en transit ou mal imprimé, contactez-nous à <a href="mailto:contact@vitasync.com">contact@vitasync.com</a> dans les 30 jours suivant la réception avec une photo claire du problème (produit, sceau, emballage extérieur). VitaSync prendra en charge le remplacement ou le remboursement intégral, frais de retour à la charge de VitaSync.</p>
+      <p>Si vous recevez un produit défectueux, endommagé en transit ou mal imprimé, contactez-nous à <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a> dans les 30 jours suivant la réception avec une photo claire du problème (produit, sceau, emballage extérieur). VitaSync prendra en charge le remplacement ou le remboursement intégral, frais de retour à la charge de VitaSync.</p>
 
       <h3>5.3 Colis perdus en transit</h3>
       <p>Si votre colis est déclaré perdu en transit par USPS (aucune mise à jour du suivi pendant plus de 10 jours ouvrés après expédition), contactez-nous. Nous procéderons à une enquête auprès de USPS et, une fois la perte confirmée, à un remplacement ou remboursement.</p>
@@ -78,7 +78,7 @@ export default function Shipping() {
 
       <h2>7. Contact</h2>
       <p>Pour toute question relative à une livraison ou un retour :</p>
-      <p>Email : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a><br />Délai de réponse : 48h ouvrées maximum</p>
+      <p>Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Délai de réponse : 48h ouvrées maximum</p>
     </LegalPageLayout>
   );
 }

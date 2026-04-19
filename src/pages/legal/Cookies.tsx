@@ -45,7 +45,7 @@ export default function Cookies() {
       <p>Conformément aux recommandations de la CNIL, la durée de vie maximale des cookies non essentiels est de 13 mois à compter de leur dépôt ou de la dernière visite de l'utilisateur. Au-delà, un nouveau consentement sera demandé.</p>
 
       <h2>7. Contact</h2>
-      <p>Pour toute question relative aux cookies : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a></p>
+      <p>Pour toute question relative aux cookies : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a></p>
     </LegalPageLayout>
   );
 }

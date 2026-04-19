@@ -9,7 +9,7 @@ export default function LegalNotice() {
     >
       <h2>1. Éditeur du Site</h2>
       <p>Conformément à l'article 6 III-1 de la Loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'Économie Numérique (LCEN), le site vitasync-ai-health.lovable.app est édité par :</p>
-      <p><strong>VitaSync</strong><br />Plateforme de bien-être et nutrition propulsée par l'intelligence artificielle<br />Email de contact : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a><br />Directeur de la publication : le responsable légal de VitaSync</p>
+      <p><strong>VitaSync</strong><br />Plateforme de bien-être et nutrition propulsée par l'intelligence artificielle<br />Email de contact : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Directeur de la publication : le responsable légal de VitaSync</p>
       <p><em>Structure juridique en cours de création : conformément au Code civil (art. 388) et au Code de commerce (art. L.121-2), VitaSync est en cours de création sous forme de société (structure envisagée : SASU ou OÜ estonienne selon arbitrage en cours). Les mentions suivantes seront mises à jour dès l'immatriculation : dénomination sociale, forme juridique, numéro SIRET/SIREN, RCS et ville du greffe, capital social, adresse du siège social, numéro de TVA intracommunautaire.</em></p>
 
       <h2>2. Hébergement</h2>
@@ -43,7 +43,7 @@ export default function LegalNotice() {
       <p>L'ensemble des éléments composant le site (textes, images, logos, code, design, bases de données, contenus scientifiques) sont protégés par le droit de la propriété intellectuelle. Toute reproduction, représentation, modification, publication ou exploitation non autorisée est interdite (articles L.335-2 et suivants du Code de la propriété intellectuelle). La marque VitaSync et ses logos associés sont la propriété exclusive de VitaSync.</p>
 
       <h2>7. Protection des Données Personnelles</h2>
-      <p>Conformément au RGPD (UE 2016/679), à la loi Informatique et Libertés, et aux lois américaines applicables (CCPA/CPRA et équivalents), l'Utilisateur dispose de droits sur ses données personnelles. VitaSync traite des données de santé (Art. 9 RGPD) avec consentement explicite. Pour plus de détails, consultez notre <a href="/privacy">Politique de Confidentialité</a>. Contact DPO : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a>. Autorité de contrôle UE : CNIL, 3 Place de Fontenoy, 75007 Paris.</p>
+      <p>Conformément au RGPD (UE 2016/679), à la loi Informatique et Libertés, et aux lois américaines applicables (CCPA/CPRA et équivalents), l'Utilisateur dispose de droits sur ses données personnelles. VitaSync traite des données de santé (Art. 9 RGPD) avec consentement explicite. Pour plus de détails, consultez notre <a href="/privacy">Politique de Confidentialité</a>. Contact DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>. Autorité de contrôle UE : CNIL, 3 Place de Fontenoy, 75007 Paris.</p>
 
       <h2>8. Cookies</h2>
       <p>Le site utilise des cookies techniques nécessaires à son fonctionnement, ainsi que des cookies soumis à consentement (analytics). Voir notre <a href="/cookies">Politique de Cookies</a> pour plus de détails.</p>

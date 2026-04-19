@@ -81,7 +81,7 @@ export default function Terms() {
         <li>Ne pas tenter d'accéder aux données d'autres utilisateurs.</li>
         <li>Ne pas détourner le Coach IA de son usage prévu (bien-être et nutrition).</li>
         <li>Consulter un professionnel de santé avant de prendre des compléments, surtout en cas de grossesse, traitement médical ou pathologie existante.</li>
-        <li>Signaler immédiatement toute faille de sécurité constatée à <a href="mailto:contact@vitasync.com">contact@vitasync.com</a>.</li>
+        <li>Signaler immédiatement toute faille de sécurité constatée à <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>.</li>
         <li>Ne pas utiliser la Plateforme si l'Utilisateur est mineur (moins de 18 ans).</li>
       </ul>
 

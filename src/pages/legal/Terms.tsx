@@ -65,7 +65,7 @@ export default function Terms() {
       </div>
       <p>VitaSync décline toute responsabilité en cas de dommage résultant de l'utilisation des recommandations IA sans validation préalable par un professionnel de santé.</p>
       <ul>
-        <li>VitaSync ne garantit pas l'exactitude des analyses IA sur les résultats sanguins.</li>
+        <li>VitaSync ne garantit pas l'exactitude des analyses IA sur les résestimates sanguins.</li>
         <li>VitaSync ne peut être tenu responsable des effets indésirables liés à la prise de compléments alimentaires.</li>
         <li>VitaSync ne garantit pas la disponibilité permanente de la Plateforme.</li>
         <li>Les recommandations de produits sont des informations générales de bien-être, pas des prescriptions médicales.</li>

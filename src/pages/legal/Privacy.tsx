@@ -167,17 +167,17 @@ export default function Privacy() {
       <h2>9. Droits Spécifiques des Résidents Américains</h2>
 
       <h3>9.1 Californie (CCPA / CPRA)</h3>
-      <p>Si vous résidez en Californie, vous bénéficiez de droits supplémentaires en vertu du California Consumer Privacy Act (CCPA), tel que modifié par le California Privacy Rights Act (CPRA) : droit de connaître les catégories de données collectées et leur finalité, droit de suppression, droit de rectification, droit de refuser la vente ou le partage de vos données (VitaSync ne vend aucune donnée personnelle), droit de limiter l'utilisation des informations personnelles sensibles, droit de non-discrimination. Pour exercer ces droits : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a>.</p>
+      <p>Si vous résidez en Californie, vous bénéficiez de droits supplémentaires en vertu du California Consumer Privacy Act (CCPA), tel que modifié par le California Privacy Rights Act (CPRA) : droit de connaître les catégories de données collectées et leur finalité, droit de suppression, droit de rectification, droit de refuser la vente ou le partage de vos données (VitaSync ne vend aucune donnée personnelle), droit de limiter l'utilisation des informations personnelles sensibles, droit de non-discrimination. Pour exercer ces droits : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>.</p>
 
       <h3>9.2 Autres États américains</h3>
-      <p>Les résidents des États suivants bénéficient de droits équivalents en vertu de leurs lois respectives : Virginie (VCDPA), Colorado (CPA), Connecticut (CTDPA), Utah (UCPA), Texas (TDPSA), Oregon (OCPA), Montana (MCDPA), Delaware (DPDPA), Iowa (ICDPA), Tennessee (TIPA), New Jersey (NJDPA), New Hampshire (NHDPA), Maryland (MODPA), Minnesota (MCDPA), Nebraska (NEDPA). Ces droits incluent généralement l'accès, la correction, la suppression et le refus de la vente/profilage. Contact : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a>.</p>
+      <p>Les résidents des États suivants bénéficient de droits équivalents en vertu de leurs lois respectives : Virginie (VCDPA), Colorado (CPA), Connecticut (CTDPA), Utah (UCPA), Texas (TDPSA), Oregon (OCPA), Montana (MCDPA), Delaware (DPDPA), Iowa (ICDPA), Tennessee (TIPA), New Jersey (NJDPA), New Hampshire (NHDPA), Maryland (MODPA), Minnesota (MCDPA), Nebraska (NEDPA). Ces droits incluent généralement l'accès, la correction, la suppression et le refus de la vente/profilage. Contact : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>.</p>
 
       <h2>10. Modifications de cette Politique</h2>
       <p>Nous nous réservons le droit de modifier cette politique à tout moment. En cas de modification substantielle, vous serez informé par email ou notification in-app au moins 30 jours avant l'entrée en vigueur des modifications.</p>
 
       <h2>11. Contact</h2>
       <p>Pour toute question relative à cette politique ou à vos données personnelles :</p>
-      <p>Email : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a><br />DPO : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a><br />Site web : vitasync-ai-health.lovable.app</p>
+      <p>Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site web : vitasync-ai-health.lovable.app</p>
     </LegalPageLayout>
   );
 }

@@ -17,7 +17,7 @@ export default function CGV() {
       <p>Les présentes Conditions Générales de Vente (ci-après « CGV ») régissent les ventes de compléments alimentaires réalisées via la boutique en ligne VitaSync (ci-après « la Boutique »), accessible depuis la Plateforme VitaSync. Toute commande implique l'acceptation sans réserve des présentes CGV. Les CGV applicables sont celles en vigueur au jour de la commande. VitaSync se réserve le droit de les modifier à tout moment, les modifications ne s'appliquant qu'aux commandes postérieures.</p>
 
       <h2>2. Identification du Vendeur</h2>
-      <p>VitaSync — Plateforme de bien-être et nutrition<br />Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site : vitasync-ai-health.lovable.app</p>
+      <p>VitaSync — Plateforme de bien-être et nutrition<br />Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site : vitasync.ai</p>
       <p><em>Note : les informations complètes du vendeur (dénomination sociale, forme juridique, SIRET, RCS, siège social, TVA intracommunautaire, capital social) seront ajoutées dès l'immatriculation définitive de la société. Les produits sont expédiés par Supliful (Brand On Demand, Inc., Delaware, USA) en mode white-label.</em></p>
 
       <h2>3. Produits</h2>

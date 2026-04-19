@@ -16,7 +16,7 @@ export default function Privacy() {
       </div>
 
       <h2>1. Responsable du Traitement</h2>
-      <p><strong>VitaSync</strong> — Plateforme de bien-être et nutrition propulsée par l'IA<br />Contact / DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site web : vitasync-ai-health.lovable.app</p>
+      <p><strong>VitaSync</strong> — Plateforme de bien-être et nutrition propulsée par l'IA<br />Contact / DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site web : vitasync.ai</p>
       <p><em>Structure juridique en cours de création. Dès l'immatriculation, les mentions complètes (dénomination sociale, forme juridique, SIRET/SIREN, RCS, siège social, TVA intracommunautaire) seront publiées dans les Mentions Légales et dans la présente politique.</em></p>
 
       <h2>2. Données Collectées</h2>
@@ -177,7 +177,7 @@ export default function Privacy() {
 
       <h2>11. Contact</h2>
       <p>Pour toute question relative à cette politique ou à vos données personnelles :</p>
-      <p>Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site web : vitasync-ai-health.lovable.app</p>
+      <p>Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site web : vitasync.ai</p>
     </LegalPageLayout>
   );
 }

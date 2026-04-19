@@ -51,13 +51,16 @@ const QuickCoachWidget = ({ onStartChat, userName }: QuickCoachWidgetProps) => {
               <ArrowRight weight="bold" className="w-4 h-4" />
             </motion.div>
           </motion.button>
-          <button
-            disabled
-            className="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm border border-white/20 flex items-center justify-center text-foreground/40 cursor-not-allowed"
+          <motion.button
+            onClick={onStartChat}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm border border-white/20 flex items-center justify-center text-foreground/70 hover:text-primary hover:border-primary/30 transition-all duration-300"
             title={t("coach.vocalSoon")}
+            aria-label={t("coach.vocalSoon")}
           >
             <Microphone weight="light" className="w-5 h-5" />
-          </button>
+          </motion.button>
         </div>
       </div>
 

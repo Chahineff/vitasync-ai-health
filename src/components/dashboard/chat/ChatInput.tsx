@@ -291,7 +291,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
                         "p-2.5 rounded-xl transition-all duration-200",
                         "text-foreground/50 hover:text-foreground/80 hover:bg-white/10"
                       )}
-                      title="Langue de dictée vocale"
+                      title="Voice input language"
                     >
                       <span className="text-sm">{currentLang.flag}</span>
                     </button>

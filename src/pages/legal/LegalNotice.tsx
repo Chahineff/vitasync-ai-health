@@ -4,7 +4,7 @@ export default function LegalNotice() {
   return (
     <LegalPageLayout
       title="Mentions Légales"
-      subtitle="Informations légales obligatoires — LCEN Art. 6 III-1"
+      subtitle="Legal Information — vitasync.ai"
       date="8 avril 2026"
     >
       <h2>1. Éditeur du Site</h2>

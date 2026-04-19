@@ -16,9 +16,9 @@ const STACK_ITEMS = [
 ];
 
 const COACHING_TIERS = [
-  { name: "Gratuit", price: "0 €", features: ["Coach IA basique", "Suivi des compléments", "Check-in quotidien"], current: true },
-  { name: "Pro", price: "9,99 €/mois", features: ["Coach IA avancé", "Analyse sanguine IA", "Plan personnalisé", "Support prioritaire"], current: false },
-  { name: "Elite", price: "19,99 €/mois", features: ["Tout Pro +", "Coaching vocal", "Formules sur-mesure", "Accès bêta"], current: false },
+  { name: "Gratuit", price: "$0", features: ["Coach IA basique", "Suivi des compléments", "Check-in quotidien"], current: true },
+  { name: "Pro", price: "$7.99/mo", features: ["Coach IA avancé", "Analyse sanguine IA", "Plan personnalisé", "Support prioritaire"], current: false },
+  { name: "Elite", price: "$24.99/mo", features: ["Tout Pro +", "Voice coaching", "Custom formulas", "Accès bêta"], current: false },
 ];
 
 function matchStackImage(name: string, products: ShopifyProduct[]): string | null {
@@ -216,7 +216,7 @@ export function TutorialMyStackDemo() {
                 </div>
               ) : (
                 <div className="mt-3 px-3 py-1.5 rounded-lg bg-foreground/5 text-foreground/30 text-xs font-medium text-center border border-white/10">
-                  Bientôt
+                  Soon
                 </div>
               )}
             </div>

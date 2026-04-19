@@ -338,7 +338,7 @@ export function DashboardTutorial({ onComplete }: DashboardTutorialProps) {
                       <p className="text-sm font-medium text-foreground">Application mobile</p>
                     </div>
                     <div className="w-full mt-2 px-3 py-2 rounded-lg bg-foreground/5 text-foreground/40 text-xs font-medium text-center border border-white/10">
-                      Bientôt
+                      Soon
                     </div>
                   </Card>
                 </div>

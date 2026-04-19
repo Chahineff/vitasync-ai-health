@@ -9,7 +9,7 @@ export default function LegalNotice() {
     >
       <h2>1. Éditeur du Site</h2>
       <p>Conformément à l'article 6 III-1 de la Loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'Économie Numérique (LCEN), le site vitasync-ai-health.lovable.app est édité par :</p>
-      <p><strong>VitaSync</strong><br />Plateforme de bien-être et nutrition propulsée par l'intelligence artificielle<br />Email de contact : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a><br />Directeur de la publication : le responsable légal de VitaSync</p>
+      <p><strong>VitaSync</strong><br />Plateforme de bien-être et nutrition propulsée par l'intelligence artificielle<br />Email de contact : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Directeur de la publication : le responsable légal de VitaSync</p>
       <p><em>Structure juridique en cours de création : conformément au Code civil (art. 388) et au Code de commerce (art. L.121-2), VitaSync est en cours de création sous forme de société (structure envisagée : SASU ou OÜ estonienne selon arbitrage en cours). Les mentions suivantes seront mises à jour dès l'immatriculation : dénomination sociale, forme juridique, numéro SIRET/SIREN, RCS et ville du greffe, capital social, adresse du siège social, numéro de TVA intracommunautaire.</em></p>
 
       <h2>2. Hébergement</h2>

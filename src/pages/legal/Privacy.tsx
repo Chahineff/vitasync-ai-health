@@ -16,7 +16,7 @@ export default function Privacy() {
       </div>
 
       <h2>1. Responsable du Traitement</h2>
-      <p><strong>VitaSync</strong> — Plateforme de bien-être et nutrition propulsée par l'IA<br />Contact / DPO : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a><br />Site web : vitasync-ai-health.lovable.app</p>
+      <p><strong>VitaSync</strong> — Plateforme de bien-être et nutrition propulsée par l'IA<br />Contact / DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site web : vitasync-ai-health.lovable.app</p>
       <p><em>Structure juridique en cours de création. Dès l'immatriculation, les mentions complètes (dénomination sociale, forme juridique, SIRET/SIREN, RCS, siège social, TVA intracommunautaire) seront publiées dans les Mentions Légales et dans la présente politique.</em></p>
 
       <h2>2. Données Collectées</h2>
@@ -143,7 +143,7 @@ export default function Privacy() {
         <li><strong>Retrait du consentement :</strong> Retirer votre consentement à tout moment sans affecter la légalité du traitement antérieur.</li>
         <li><strong>Droit de ne pas faire l'objet d'une décision automatisée (Art. 22) :</strong> Les recommandations IA de VitaSync sont informatives et ne produisent pas d'effets juridiques.</li>
       </ul>
-      <p>Pour exercer vos droits : <a href="mailto:contact@vitasync.com">contact@vitasync.com</a>. Délai de réponse : 30 jours maximum. Vous pouvez également déposer une réclamation auprès de la CNIL (3 Place de Fontenoy, 75007 Paris, <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>) ou de l'autorité de protection des données de votre pays de résidence.</p>
+      <p>Pour exercer vos droits : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>. Délai de réponse : 30 jours maximum. Vous pouvez également déposer une réclamation auprès de la CNIL (3 Place de Fontenoy, 75007 Paris, <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>) ou de l'autorité de protection des données de votre pays de résidence.</p>
 
       <h2>7. Traitement Spécifique des Données de Santé et IA</h2>
       <p>VitaSync traite des données de santé au sens de l'article 9 du RGPD. Ce traitement est strictement encadré :</p>

@@ -16,9 +16,9 @@ const STACK_ITEMS = [
 ];
 
 const COACHING_TIERS = [
-  { name: "Gratuit", price: "$0", features: ["Coach IA basique", "Suivi des compléments", "Check-in quotidien"], current: true },
-  { name: "Pro", price: "$7.99/mo", features: ["Coach IA avancé", "Analyse sanguine IA", "Plan personnalisé", "Support prioritaire"], current: false },
-  { name: "Elite", price: "$24.99/mo", features: ["Tout Pro +", "Voice coaching", "Custom formulas", "Accès bêta"], current: false },
+  { name: "Free", price: "$0", features: ["Basic AI Coach", "Supplement tracker", "Daily check-in"], current: true },
+  { name: "Pro", price: "$7.99/mo", features: ["Advanced AI Coach", "Blood test AI analysis", "Personalized plan", "Priority support"], current: false },
+  { name: "Premium", price: "$24.99/mo", features: ["Everything in Pro +", "Voice coaching", "Custom formulas", "Beta access"], current: false },
 ];
 
 function matchStackImage(name: string, products: ShopifyProduct[]): string | null {

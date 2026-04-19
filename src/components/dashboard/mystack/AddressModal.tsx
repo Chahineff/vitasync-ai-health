@@ -153,7 +153,7 @@ export function AddressModal({ open, onOpenChange, currentAddress, executeQuery,
                 id="city"
                 value={form.city}
                 onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))}
-                placeholder="Paris"
+                placeholder="New York"
               />
             </div>
           </div>

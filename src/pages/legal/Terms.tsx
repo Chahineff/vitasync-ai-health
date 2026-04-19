@@ -8,7 +8,7 @@ export default function Terms() {
       date="8 avril 2026"
     >
       <h2>1. Préambule et Objet</h2>
-      <p>Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès et l'utilisation de la plateforme VitaSync, accessible à l'adresse vitasync-ai-health.lovable.app (ci-après « la Plateforme »). VitaSync est une plateforme de bien-être et nutrition propulsée par l'intelligence artificielle, proposant un coach IA personnalisé, un suivi de compléments alimentaires, des analyses informatives de résultats sanguins, une boutique en ligne de compléments et des outils de suivi quotidien.</p>
+      <p>Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès et l'utilisation de la plateforme VitaSync, accessible à l'adresse vitasync.ai (ci-après « la Plateforme »). VitaSync est une plateforme de bien-être et nutrition propulsée par l'intelligence artificielle, proposant un coach IA personnalisé, un suivi de compléments alimentaires, des analyses informatives de résultats sanguins, une boutique en ligne de compléments et des outils de suivi quotidien.</p>
 
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-6">
         <p className="text-foreground font-medium">

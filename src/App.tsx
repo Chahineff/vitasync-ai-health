@@ -19,6 +19,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Onboarding from "./pages/Onboarding";
 import Product from "./pages/Product";
+import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
 import ShopifyCallback from "./pages/ShopifyCallback";
 import Privacy from "./pages/legal/Privacy";
@@ -63,6 +64,7 @@ function AppContent() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/product/:handle" element={<Product />} />
+        <Route path="/shop" element={<Shop />} />
         <Route path="/shopify-callback" element={<ShopifyCallback />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />

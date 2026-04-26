@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { CinematicDashboardSection } from "@/components/sections/CinematicDashboardSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
 import { FeaturesSection } from "@/components/sections/FeaturesSection";
+import { OurProductsSection } from "@/components/sections/OurProductsSection";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MarqueeBanner } from "@/components/sections/MarqueeBanner";
@@ -27,6 +28,7 @@ const Index = () => {
         <MarqueeBanner text={t("marquee.line1")} />
         <FeaturesSection />
         <MarqueeBanner text={t("marquee.line2")} />
+        <OurProductsSection />
         <PricingSection />
         <FAQSection />
       </main>

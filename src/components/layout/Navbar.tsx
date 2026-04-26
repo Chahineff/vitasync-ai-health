@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { List, X } from "@phosphor-icons/react";
+import { List, X, CaretDown } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
-const SECTION_IDS = ["how-it-works", "features", "pricing", "faq"];
+const SECTION_IDS = ["how-it-works", "features", "products", "pricing", "faq"];
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -14,11 +14,13 @@ export function Navbar() {
   const navLinks = [
     { href: "#how-it-works", labelKey: "nav.howItWorks" },
     { href: "#features", labelKey: "nav.features" },
+    { href: "#products", labelKey: "nav.products" },
     { href: "#pricing", labelKey: "nav.pricing" },
     { href: "#faq", labelKey: "nav.faq" },
   ];
   
   const pageLinks = [
+    { href: "/shop", labelKey: "nav.shop" },
     { href: "/about", labelKey: "nav.about" },
     { href: "/blog", labelKey: "nav.blog" },
     { href: "/contact", labelKey: "nav.contact" },
@@ -26,6 +28,8 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [isHomeMenuOpen, setIsHomeMenuOpen] = useState(false);
+  const homeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isNavigatingRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,6 +80,7 @@ export function Navbar() {
     if (href.startsWith("#")) {
       e.preventDefault();
       setIsMobileMenuOpen(false);
+      setIsHomeMenuOpen(false);
       const sectionId = href.replace("#", "");
       if (location.pathname !== "/") {
         navigate("/" + href);
@@ -93,6 +98,17 @@ export function Navbar() {
     }
   };
 
+  const openHomeMenu = () => {
+    if (homeMenuTimeoutRef.current) clearTimeout(homeMenuTimeoutRef.current);
+    setIsHomeMenuOpen(true);
+  };
+  const closeHomeMenuDelayed = () => {
+    if (homeMenuTimeoutRef.current) clearTimeout(homeMenuTimeoutRef.current);
+    homeMenuTimeoutRef.current = setTimeout(() => setIsHomeMenuOpen(false), 150);
+  };
+
+  const isHomeActive = location.pathname === "/";
+
   return <>
       <nav className={`nav-sticky ${isScrolled ? "scrolled" : ""}`}>
         <div className="px-5 md:px-8">
@@ -106,50 +122,94 @@ export function Navbar() {
             {/* Desktop Navigation — Tubelight style */}
             <div className="hidden lg:flex items-center">
               <div className="flex items-center gap-1 bg-white/5 dark:bg-black/10 rounded-full px-1.5 py-1 border border-white/10 dark:border-white/5">
-                {navLinks.map(link => {
-                  const sectionId = link.href.replace("#", "");
-                  const isActive = activeSection === sectionId;
-                  return (
-                    <a 
-                      key={link.href} 
-                      href={link.href} 
-                      onClick={e => handleAnchorClick(e, link.href)} 
-                      className={cn(
-                        "relative cursor-pointer text-sm font-medium px-4 xl:px-5 py-1.5 rounded-full transition-colors duration-200",
-                        isActive ? "text-primary" : "text-current opacity-70 hover:opacity-100"
-                      )}
-                    >
-                      <span className="relative z-10">{t(link.labelKey)}</span>
-                      {isActive && (
-                        <motion.div
-                          layoutId="tubelight-nav"
-                          className="absolute inset-0 rounded-full z-0"
-                          style={{
-                            backgroundColor: "hsl(var(--primary) / 0.12)",
-                          }}
-                          transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                        >
-                          {/* Tubelight glow effect */}
-                          <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary opacity-70 blur-[3px]" />
-                          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-primary opacity-30 blur-[6px]" />
-                        </motion.div>
-                      )}
-                    </a>
-                  );
-                })}
-              </div>
-              
-              <div className="w-px h-5 bg-white/10 dark:bg-white/5 mx-4" />
-              
-              {pageLinks.map(link => (
-                <Link 
-                  key={link.href} 
-                  to={link.href} 
-                  className="text-sm text-current opacity-60 hover:opacity-100 transition-opacity duration-200 px-3"
+                {/* Home dropdown trigger */}
+                <div
+                  className="relative"
+                  onMouseEnter={openHomeMenu}
+                  onMouseLeave={closeHomeMenuDelayed}
                 >
-                  {t(link.labelKey)}
-                </Link>
-              ))}
+                  <Link
+                    to="/"
+                    className={cn(
+                      "relative cursor-pointer text-sm font-medium px-4 xl:px-5 py-1.5 rounded-full transition-colors duration-200 inline-flex items-center gap-1",
+                      isHomeActive ? "text-primary" : "text-current opacity-70 hover:opacity-100"
+                    )}
+                  >
+                    <span className="relative z-10">{t("nav.home")}</span>
+                    <CaretDown
+                      size={12}
+                      weight="bold"
+                      className={cn("relative z-10 transition-transform duration-200", isHomeMenuOpen && "rotate-180")}
+                    />
+                    {isHomeActive && (
+                      <motion.div
+                        layoutId="tubelight-nav"
+                        className="absolute inset-0 rounded-full z-0"
+                        style={{ backgroundColor: "hsl(var(--primary) / 0.12)" }}
+                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      >
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary opacity-70 blur-[3px]" />
+                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-primary opacity-30 blur-[6px]" />
+                      </motion.div>
+                    )}
+                  </Link>
+
+                  {/* Hover dropdown */}
+                  <AnimatePresence>
+                    {isHomeMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.15 }}
+                        onMouseEnter={openHomeMenu}
+                        onMouseLeave={closeHomeMenuDelayed}
+                        className="absolute left-0 top-full pt-3 min-w-[220px] z-50"
+                      >
+                        <div className="rounded-2xl border border-border/50 bg-background/95 backdrop-blur-xl shadow-2xl p-2">
+                          {navLinks.map((link) => {
+                            const sectionId = link.href.replace("#", "");
+                            const isActive = activeSection === sectionId;
+                            return (
+                              <a
+                                key={link.href}
+                                href={link.href}
+                                onClick={(e) => handleAnchorClick(e, link.href)}
+                                className={cn(
+                                  "block px-3 py-2 rounded-lg text-sm transition-colors",
+                                  isActive
+                                    ? "bg-primary/10 text-primary font-medium"
+                                    : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                                )}
+                              >
+                                {t(link.labelKey)}
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              <div className="w-px h-5 bg-white/10 dark:bg-white/5 mx-4" />
+
+              {pageLinks.map(link => {
+                const isActive = location.pathname === link.href || location.pathname.startsWith(link.href + "/");
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className={cn(
+                      "text-sm transition-opacity duration-200 px-3",
+                      isActive ? "text-primary opacity-100 font-medium" : "text-current opacity-60 hover:opacity-100"
+                    )}
+                  >
+                    {t(link.labelKey)}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Right Side - Language, CTA */}

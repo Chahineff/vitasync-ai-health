@@ -166,7 +166,16 @@ export function OurProductsSection() {
             <ArrowRight className="w-5 h-5" />
           </button>
 
-          <div className="overflow-hidden">
+          <div
+            ref={scrollerRef}
+            className="overflow-x-auto scrollbar-hide overscroll-x-contain"
+            onMouseEnter={() => {
+              interactionRef.current.hovering = true;
+            }}
+            onMouseLeave={() => {
+              interactionRef.current.hovering = false;
+            }}
+          >
             {loading ? (
               <div className="flex gap-4 md:gap-6 pb-4">
                 {Array.from({ length: 6 }).map((_, i) => (
@@ -175,12 +184,7 @@ export function OurProductsSection() {
               </div>
             ) : (
               <div
-                ref={trackRef}
-                className="flex gap-4 md:gap-6 pb-4 w-max animate-marquee group-hover/marquee:[animation-play-state:paused]"
-                style={{
-                  animationDuration: `${animationDuration}s`,
-                  animationDirection: direction === -1 ? "reverse" : "normal",
-                }}
+                className="flex gap-4 md:gap-6 pb-4 w-max"
               >
                 {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;

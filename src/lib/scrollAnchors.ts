@@ -24,7 +24,7 @@ const releaseStickyBypassSoon = () => {
   releaseTimer = window.setTimeout(() => setStickyBypass(false), 180);
 };
 
-export const cancelAnchorScroll = () => {
+const cancelActiveScroll = () => {
   if (activeFrame) {
     window.cancelAnimationFrame(activeFrame);
     activeFrame = null;
@@ -32,6 +32,10 @@ export const cancelAnchorScroll = () => {
 
   activeCleanup?.();
   activeCleanup = null;
+};
+
+export const cancelAnchorScroll = () => {
+  cancelActiveScroll();
   releaseStickyBypassSoon();
 };
 
@@ -52,7 +56,7 @@ const crossesFeaturePin = (startY: number, targetY: number) => {
 const easeOutCubic = (value: number) => 1 - Math.pow(1 - value, 3);
 
 export const scrollToY = (targetY: number, options: ScrollAnchorOptions = {}) => {
-  cancelAnchorScroll();
+  cancelActiveScroll();
 
   const { behavior = "smooth", onComplete, onCancel } = options;
   const startY = window.scrollY;
@@ -67,7 +71,7 @@ export const scrollToY = (targetY: number, options: ScrollAnchorOptions = {}) =>
     return;
   }
 
-  const duration = Math.min(620, Math.max(260, Math.abs(distance) * 0.16));
+  const duration = Math.min(420, Math.max(180, Math.abs(distance) * 0.055));
   const startTime = performance.now();
   let settled = false;
 
@@ -126,7 +130,7 @@ export const scrollToHomeAnchor = (anchor: string, options: ScrollAnchorOptions 
   const targetY = pageTopOf(target) - offset;
   const shouldBypassSticky = crossesFeaturePin(window.scrollY, targetY);
 
-  if (shouldBypassSticky) setStickyBypass(true);
+  setStickyBypass(shouldBypassSticky);
 
   scrollToY(targetY, {
     ...options,

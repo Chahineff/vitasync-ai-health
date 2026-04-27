@@ -186,7 +186,7 @@ export function OurProductsSection() {
           </button>
 
           <div
-            className="overflow-hidden"
+            className="overflow-hidden [contain:layout_paint]"
           >
             {loading ? (
               <div className="flex gap-4 md:gap-6 pb-4">
@@ -197,7 +197,7 @@ export function OurProductsSection() {
             ) : (
               <div
                 ref={trackRef}
-                className="flex gap-4 md:gap-6 pb-4 w-max will-change-transform"
+                className="flex gap-4 md:gap-6 pb-4 w-max will-change-transform [transform:translate3d(0,0,0)] [backface-visibility:hidden]"
               >
                 {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;

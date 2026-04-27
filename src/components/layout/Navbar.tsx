@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X, CaretDown } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Compass, Sparkles, ShoppingBag, Tag, HelpCircle, LayoutDashboard } from "lucide-react";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
@@ -12,11 +13,11 @@ export function Navbar() {
   const { t } = useTranslation();
   
   const navLinks = [
-    { href: "#how-it-works", labelKey: "nav.howItWorks" },
-    { href: "#features", labelKey: "nav.features" },
-    { href: "#products", labelKey: "nav.products" },
-    { href: "#pricing", labelKey: "nav.pricing" },
-    { href: "#faq", labelKey: "nav.faq" },
+    { href: "#how-it-works", labelKey: "nav.howItWorks", icon: Compass, descKey: "nav.howItWorksDesc" },
+    { href: "#features", labelKey: "nav.features", icon: Sparkles, descKey: "nav.featuresDesc" },
+    { href: "#products", labelKey: "nav.products", icon: ShoppingBag, descKey: "nav.productsDesc" },
+    { href: "#pricing", labelKey: "nav.pricing", icon: Tag, descKey: "nav.pricingDesc" },
+    { href: "#faq", labelKey: "nav.faq", icon: HelpCircle, descKey: "nav.faqDesc" },
   ];
   
   const pageLinks = [
@@ -164,28 +165,73 @@ export function Navbar() {
                         transition={{ duration: 0.15 }}
                         onMouseEnter={openHomeMenu}
                         onMouseLeave={closeHomeMenuDelayed}
-                        className="absolute left-0 top-full pt-3 min-w-[220px] z-50"
+                        className="absolute left-0 top-full pt-3 min-w-[340px] z-50"
                       >
-                        <div className="rounded-2xl border border-border/50 bg-background/95 backdrop-blur-xl shadow-2xl p-2">
+                        <div className="rounded-2xl border border-border/50 bg-background/95 backdrop-blur-xl shadow-2xl p-2.5 space-y-1">
                           {navLinks.map((link) => {
                             const sectionId = link.href.replace("#", "");
                             const isActive = activeSection === sectionId;
+                            const Icon = link.icon;
                             return (
-                              <a
+                              <motion.a
                                 key={link.href}
                                 href={link.href}
                                 onClick={(e) => handleAnchorClick(e, link.href)}
+                                whileHover={{ scale: 1.025 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 28 }}
                                 className={cn(
-                                  "block px-3 py-2 rounded-lg text-sm transition-colors",
+                                  "group flex items-start gap-3 px-3 py-2.5 rounded-xl transition-colors",
                                   isActive
-                                    ? "bg-primary/10 text-primary font-medium"
+                                    ? "bg-primary/10 text-primary"
                                     : "text-foreground/80 hover:bg-muted hover:text-foreground"
                                 )}
                               >
-                                {t(link.labelKey)}
-                              </a>
+                                <span
+                                  className={cn(
+                                    "shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
+                                    isActive
+                                      ? "bg-primary/15 text-primary"
+                                      : "bg-muted text-foreground/70 group-hover:bg-primary/10 group-hover:text-primary"
+                                  )}
+                                >
+                                  <Icon className="w-4 h-4" />
+                                </span>
+                                <span className="flex flex-col">
+                                  <span className={cn("text-sm leading-tight", isActive ? "font-semibold" : "font-medium")}>
+                                    {t(link.labelKey)}
+                                  </span>
+                                  <span className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                                    {t(link.descKey)}
+                                  </span>
+                                </span>
+                              </motion.a>
                             );
                           })}
+
+                          <div className="my-1 h-px bg-border/60" />
+
+                          <motion.div
+                            whileHover={{ scale: 1.025 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                          >
+                            <Link
+                              to="/dashboard"
+                              onClick={() => setIsHomeMenuOpen(false)}
+                              className="group flex items-start gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 hover:from-primary/15 hover:to-secondary/15 transition-colors"
+                            >
+                              <span className="shrink-0 w-9 h-9 rounded-lg bg-primary/15 text-primary flex items-center justify-center">
+                                <LayoutDashboard className="w-4 h-4" />
+                              </span>
+                              <span className="flex flex-col">
+                                <span className="text-sm font-semibold leading-tight text-foreground">
+                                  {t("nav.dashboard")}
+                                </span>
+                                <span className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                                  {t("nav.dashboardDesc")}
+                                </span>
+                              </span>
+                            </Link>
+                          </motion.div>
                         </div>
                       </motion.div>
                     )}

@@ -341,7 +341,7 @@ export const CinematicDashboardSection = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="cinematic-section relative w-full h-screen overflow-hidden bg-background">
+    <section id="dashboard" ref={containerRef} className="cinematic-section relative w-full h-screen overflow-hidden bg-background">
       <style dangerouslySetInnerHTML={{ __html: INJECTED_STYLES }} />
 
       {/* Grid overlay */}

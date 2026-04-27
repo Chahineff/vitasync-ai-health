@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowLeft, ShoppingBag, ShieldCheck, Leaf, FlaskConical } from "lucide-react";
+import { ArrowRight, ShoppingBag, ShieldCheck, Leaf, FlaskConical } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AnimatedText } from "@/components/ui/animated-shiny-text";
 import { MagicText } from "@/components/ui/magic-text";
@@ -17,14 +17,12 @@ export function OurProductsSection() {
   const { t } = useTranslation();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    fetchProducts(8)
+    fetchProducts(20)
       .then((data) => {
-        if (!cancelled) setProducts(data.slice(0, 8));
+        if (!cancelled) setProducts(data.slice(0, 16));
       })
       .catch((err) => console.error("Failed to load homepage products:", err))
       .finally(() => {
@@ -35,42 +33,16 @@ export function OurProductsSection() {
     };
   }, []);
 
-  // Auto-play loop: continuously scrolls to the right; loops back to start when reaching the end.
-  useEffect(() => {
-    if (loading || products.length === 0) return;
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    let rafId: number;
-    let lastTs = performance.now();
-    const speedPxPerSec = 40; // gentle continuous drift
-
-    const tick = (ts: number) => {
-      const dt = (ts - lastTs) / 1000;
-      lastTs = ts;
-      if (!isPaused) {
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        if (maxScroll > 0) {
-          let next = el.scrollLeft + speedPxPerSec * dt;
-          if (next >= maxScroll - 1) next = 0; // loop back smoothly
-          el.scrollLeft = next;
-        }
-      }
-      rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [loading, products.length, isPaused]);
-
-  const scrollBy = (delta: number) => {
-    scrollerRef.current?.scrollBy({ left: delta, behavior: "smooth" });
-  };
-
   const trustBadges = [
     { icon: ShieldCheck, label: t("ourProducts.badgeMadeInUSA") },
     { icon: FlaskConical, label: t("ourProducts.badgeThirdParty") },
     { icon: Leaf, label: t("ourProducts.badgeClean") },
   ];
+
+  // Duplicate products list so the marquee track loops seamlessly
+  const marqueeProducts = products.length > 0 ? [...products, ...products] : [];
+  // Animation duration scales with the number of products to keep speed consistent
+  const animationDuration = Math.max(40, products.length * 6);
 
   return (
     <section id="products" className="section-padding bg-transparent relative overflow-hidden">
@@ -111,48 +83,34 @@ export function OurProductsSection() {
           ))}
         </div>
 
-        {/* Carousel + arrows */}
-        <div
-          className="relative"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={() => setIsPaused(true)}
-          onTouchEnd={() => setIsPaused(false)}
-        >
-          <button
-            type="button"
-            onClick={() => scrollBy(-320)}
-            aria-label={t("ourProducts.previous")}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-11 h-11 rounded-full bg-background/80 backdrop-blur border border-border/60 items-center justify-center text-foreground hover:bg-background transition-colors shadow-lg"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollBy(320)}
-            aria-label={t("ourProducts.next")}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-11 h-11 rounded-full bg-background/80 backdrop-blur border border-border/60 items-center justify-center text-foreground hover:bg-background transition-colors shadow-lg"
-          >
-            <ArrowRight className="w-5 h-5" />
-          </button>
+        {/* Infinite marquee carousel */}
+        <div className="relative group/marquee">
+          {/* Edge fade masks */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 z-10 bg-gradient-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />
 
-          <div
-            ref={scrollerRef}
-            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-4 px-4 md:mx-0 md:px-0"
-            style={{ scrollPaddingLeft: 16 }}
-          >
-            {loading
-              ? Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
-              : products.map((p) => {
+          <div className="overflow-hidden">
+            {loading ? (
+              <div className="flex gap-4 md:gap-6 pb-4">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <ProductSkeleton key={i} />
+                ))}
+              </div>
+            ) : (
+              <div
+                className="flex gap-4 md:gap-6 pb-4 w-max animate-marquee group-hover/marquee:[animation-play-state:paused]"
+                style={{ animationDuration: `${animationDuration}s` }}
+              >
+                {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;
                   const price = parseFloat(p.node.priceRange.minVariantPrice.amount);
                   const currency = p.node.priceRange.minVariantPrice.currencyCode;
                   const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : `${currency} `;
                   return (
                     <Link
-                      key={p.node.id}
+                      key={`${p.node.id}-${idx}`}
                       to={`/product/${p.node.handle}`}
-                      className="group min-w-[260px] sm:min-w-[280px] md:min-w-[300px] max-w-[300px] snap-start rounded-2xl overflow-hidden border border-border/40 bg-card/80 backdrop-blur-sm hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300"
+                      className="group flex-shrink-0 w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl overflow-hidden border border-border/40 bg-card/80 backdrop-blur-sm hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300"
                     >
                       <div className="relative aspect-square bg-gradient-to-br from-muted/40 to-muted/10 overflow-hidden">
                         {image && (
@@ -188,6 +146,8 @@ export function OurProductsSection() {
                     </Link>
                   );
                 })}
+              </div>
+            )}
           </div>
         </div>
 

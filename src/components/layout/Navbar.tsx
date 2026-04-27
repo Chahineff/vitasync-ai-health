@@ -191,11 +191,11 @@ export function Navbar() {
                                   className={cn(
                                     "shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
                                     isActive
-                                      ? "bg-primary/20 text-primary"
-                                      : "bg-white/10 text-white group-hover:bg-primary/20 group-hover:text-primary"
+                                      ? "bg-primary/25 text-primary"
+                                      : "bg-white/15 text-white group-hover:bg-primary/25 group-hover:text-primary"
                                   )}
                                 >
-                                  <Icon className="w-4 h-4" />
+                                  <Icon className="w-5 h-5" strokeWidth={2.25} />
                                 </span>
                                 <span className="flex flex-col">
                                   <span className={cn("text-sm leading-tight", isActive ? "font-semibold text-primary" : "font-medium text-white")}>

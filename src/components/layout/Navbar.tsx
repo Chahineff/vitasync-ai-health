@@ -6,6 +6,7 @@ import { Compass, Sparkles, ShoppingBag, Tag, HelpCircle, LayoutDashboard } from
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
+import { getAnchorId, scrollToHomeAnchor } from "@/lib/scrollAnchors";
 
 const SECTION_IDS = ["dashboard", "how-it-works", "features", "products", "pricing", "faq"];
 
@@ -83,22 +84,17 @@ export function Navbar() {
       e.preventDefault();
       setIsMobileMenuOpen(false);
       setIsHomeMenuOpen(false);
-      const sectionId = href.replace("#", "");
+      const sectionId = getAnchorId(href);
       if (location.pathname !== "/") {
         navigate("/" + href);
       } else {
-        const element = document.getElementById(sectionId);
-        if (element) {
+        if (document.getElementById(sectionId)) {
           // Lock active section immediately and block observer during scroll
           setActiveSection(sectionId);
           isNavigatingRef.current = true;
-          // Compute target Y, accounting for the sticky navbar (~72px)
-          const navOffset = 72;
-          const rect = element.getBoundingClientRect();
-          const targetY = Math.max(0, window.scrollY + rect.top - navOffset);
-          window.scrollTo({ top: targetY, behavior: "smooth" });
+          scrollToHomeAnchor(href);
           // Re-enable observer after scroll settles
-          setTimeout(() => { isNavigatingRef.current = false; }, 900);
+          setTimeout(() => { isNavigatingRef.current = false; }, 300);
         }
       }
     }

@@ -52,10 +52,10 @@ export function FeatureSteps({
     window.scrollTo({ top: targetScroll, behavior: "smooth" });
   }, [features.length]);
 
-  // Shorter scroll on mobile
+  // Keep the sticky scroll-pin short so anchor jumps over the section feel snappy.
   const scrollHeight = isMobile
-    ? `${features.length * 50}vh`
-    : `${features.length * 80}vh`;
+    ? `${features.length * 35}vh`
+    : `${features.length * 45}vh`;
 
   return (
     <div

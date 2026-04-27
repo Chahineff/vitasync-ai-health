@@ -1,4 +1,4 @@
-import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise } from '@phosphor-icons/react';
+import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise, SignIn, Lock } from '@phosphor-icons/react';
 import { EnrichedProductData } from './types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -94,6 +94,52 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
 
   const isAnalyzed = analysisState === 'done' && score !== null;
   const isLoading = analysisState === 'loading';
+
+  // Guest mode: invite to sign in instead of attempting analysis
+  if (!user) {
+    return (
+      <section className="py-6">
+        <div className="relative rounded-2xl bg-background border border-border/30 overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-secondary to-primary" />
+          <div className="p-6 pl-7 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkle weight="fill" className="w-5 h-5 text-secondary" />
+                <h3 className="text-sm font-semibold text-foreground tracking-wide">{t('pdp.vitaSyncInsight')}</h3>
+              </div>
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-muted/40 border border-border/40">
+                <Lock weight="duotone" className="w-5 h-5 text-foreground/50" />
+              </div>
+            </div>
+
+            <p className="text-sm font-medium text-foreground/80 leading-relaxed">
+              {t('pdp.guestInsightTitle')}
+            </p>
+            <p className="text-xs text-foreground/60 font-light leading-relaxed">
+              {t('pdp.guestInsightDesc')}
+            </p>
+
+            <div className="flex items-center gap-3 pt-2 flex-wrap">
+              <button
+                onClick={() => navigate('/auth?mode=signin')}
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-primary-foreground rounded-full bg-gradient-to-r from-secondary to-primary shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
+              >
+                <SignIn weight="bold" className="w-4 h-4" />
+                {t('pdp.guestInsightCtaSignIn')}
+                <ArrowRight weight="bold" className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => navigate('/auth?mode=signup')}
+                className="text-xs text-foreground/60 hover:text-foreground transition-colors underline-offset-4 hover:underline"
+              >
+                {t('pdp.guestInsightCtaSignUp')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-6">

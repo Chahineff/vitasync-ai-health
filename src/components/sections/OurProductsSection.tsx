@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ShoppingBag, ShieldCheck, Leaf, FlaskConical } from "lucide-react";
+import { ArrowRight, ArrowLeft, ShoppingBag, ShieldCheck, Leaf, FlaskConical } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AnimatedText } from "@/components/ui/animated-shiny-text";
 import { MagicText } from "@/components/ui/magic-text";
@@ -17,6 +17,10 @@ export function OurProductsSection() {
   const { t } = useTranslation();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const trackRef = useRef<HTMLDivElement>(null);
+  // Direction: 1 = normal (left), -1 = reversed (right). Speed multiplier increases on hold.
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,8 +45,51 @@ export function OurProductsSection() {
 
   // Duplicate products list so the marquee track loops seamlessly
   const marqueeProducts = products.length > 0 ? [...products, ...products] : [];
-  // Animation duration scales with the number of products to keep speed consistent
-  const animationDuration = Math.max(40, products.length * 6);
+  // Base duration scales with the number of products to keep speed consistent
+  const baseDuration = Math.max(40, products.length * 6);
+  const animationDuration = baseDuration / speedMultiplier;
+
+  // Hold-to-accelerate handlers
+  const startBoost = (dir: 1 | -1) => {
+    setDirection(dir);
+    setSpeedMultiplier(8); // ~8x faster while holding
+  };
+  const stopBoost = () => {
+    setSpeedMultiplier(1);
+    setDirection(1);
+  };
+
+  // Quick jump on single click (one card width ~ 300px + gap)
+  const jumpBy = (dir: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    // Briefly disable animation, translate, then re-enable
+    const cardStep = 320;
+    const current = getComputedStyle(el).transform;
+    el.style.animationPlayState = "paused";
+    // Read current translateX from matrix
+    let currentX = 0;
+    if (current && current !== "none") {
+      const match = current.match(/matrix.*\((.+)\)/);
+      if (match) {
+        const values = match[1].split(", ");
+        currentX = parseFloat(values[4] ?? values[12] ?? "0");
+      }
+    }
+    const halfWidth = el.scrollWidth / 2;
+    let nextX = currentX - dir * cardStep;
+    // Wrap to keep within [-halfWidth, 0]
+    if (nextX <= -halfWidth) nextX += halfWidth;
+    if (nextX > 0) nextX -= halfWidth;
+    el.style.transition = "transform 0.4s ease-out";
+    el.style.transform = `translateX(${nextX}px)`;
+    window.setTimeout(() => {
+      if (!trackRef.current) return;
+      trackRef.current.style.transition = "";
+      trackRef.current.style.transform = "";
+      trackRef.current.style.animationPlayState = "";
+    }, 450);
+  };
 
   return (
     <section id="products" className="section-padding bg-transparent relative overflow-hidden">
@@ -89,6 +136,34 @@ export function OurProductsSection() {
           <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 z-10 bg-gradient-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />
 
+          {/* Speed control buttons */}
+          <button
+            type="button"
+            aria-label={t("ourProducts.previous")}
+            onMouseDown={() => startBoost(-1)}
+            onMouseUp={stopBoost}
+            onMouseLeave={stopBoost}
+            onTouchStart={() => startBoost(-1)}
+            onTouchEnd={stopBoost}
+            onClick={() => jumpBy(-1)}
+            className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/90 backdrop-blur border border-border/60 items-center justify-center text-foreground hover:bg-background hover:border-primary/50 hover:scale-105 active:scale-95 transition-all shadow-lg"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            aria-label={t("ourProducts.next")}
+            onMouseDown={() => startBoost(1)}
+            onMouseUp={stopBoost}
+            onMouseLeave={stopBoost}
+            onTouchStart={() => startBoost(1)}
+            onTouchEnd={stopBoost}
+            onClick={() => jumpBy(1)}
+            className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/90 backdrop-blur border border-border/60 items-center justify-center text-foreground hover:bg-background hover:border-primary/50 hover:scale-105 active:scale-95 transition-all shadow-lg"
+          >
+            <ArrowRight className="w-5 h-5" />
+          </button>
+
           <div className="overflow-hidden">
             {loading ? (
               <div className="flex gap-4 md:gap-6 pb-4">
@@ -98,8 +173,12 @@ export function OurProductsSection() {
               </div>
             ) : (
               <div
+                ref={trackRef}
                 className="flex gap-4 md:gap-6 pb-4 w-max animate-marquee group-hover/marquee:[animation-play-state:paused]"
-                style={{ animationDuration: `${animationDuration}s` }}
+                style={{
+                  animationDuration: `${animationDuration}s`,
+                  animationDirection: direction === -1 ? "reverse" : "normal",
+                }}
               >
                 {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;
@@ -149,6 +228,11 @@ export function OurProductsSection() {
               </div>
             )}
           </div>
+
+          {/* Hint text */}
+          <p className="text-center text-xs text-muted-foreground/70 mt-4 hidden md:block">
+            {t("ourProducts.speedHint")}
+          </p>
         </div>
 
         {/* CTA */}

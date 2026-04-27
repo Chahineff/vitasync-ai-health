@@ -18,7 +18,7 @@ export function OurProductsSection() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const interactionRef = useRef({ direction: 1 as 1 | -1, multiplier: 1, hovering: false });
+  const interactionRef = useRef({ direction: 1 as 1 | -1, multiplier: 1 });
 
   useEffect(() => {
     let cancelled = false;
@@ -52,16 +52,15 @@ export function OurProductsSection() {
 
     let raf = 0;
     let last = performance.now();
-    const baseSpeed = 28;
+    const baseSpeed = 70; // px / second — visible continuous flow
 
     const tick = (now: number) => {
       const delta = Math.min(now - last, 64) / 1000;
       last = now;
 
-      const { direction, multiplier, hovering } = interactionRef.current;
-      if (!hovering || multiplier > 1) {
-        el.scrollLeft += direction * baseSpeed * multiplier * delta;
-      }
+      const { direction, multiplier } = interactionRef.current;
+      // Always advance — when the user holds an arrow, multiplier boosts speed/direction.
+      el.scrollLeft += direction * baseSpeed * multiplier * delta;
 
       const loopWidth = el.scrollWidth / 2;
       if (loopWidth > 0) {
@@ -79,7 +78,7 @@ export function OurProductsSection() {
   // Hold-to-accelerate handlers
   const startBoost = (dir: 1 | -1) => {
     interactionRef.current.direction = dir;
-    interactionRef.current.multiplier = 10;
+    interactionRef.current.multiplier = 8;
   };
   const stopBoost = () => {
     interactionRef.current.multiplier = 1;
@@ -169,12 +168,6 @@ export function OurProductsSection() {
           <div
             ref={scrollerRef}
             className="overflow-x-auto scrollbar-hide overscroll-x-contain"
-            onMouseEnter={() => {
-              interactionRef.current.hovering = true;
-            }}
-            onMouseLeave={() => {
-              interactionRef.current.hovering = false;
-            }}
           >
             {loading ? (
               <div className="flex gap-4 md:gap-6 pb-4">

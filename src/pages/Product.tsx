@@ -29,7 +29,7 @@ export default function Product() {
       <ScrollToTopButton />
       <Navbar />
       <main className="pt-20 md:pt-24 pb-16">
-        <div className="container-custom">
+        <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8">
           <ProductDetailMaster
             handle={handle}
             onBack={handleBack}

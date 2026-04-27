@@ -6,7 +6,6 @@ import { Compass, Sparkles, ShoppingBag, Tag, HelpCircle, LayoutDashboard } from
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
-import { getAnchorId, scrollToHomeAnchor } from "@/lib/scrollAnchors";
 
 const SECTION_IDS = ["dashboard", "how-it-works", "features", "products", "pricing", "faq"];
 
@@ -84,17 +83,45 @@ export function Navbar() {
       e.preventDefault();
       setIsMobileMenuOpen(false);
       setIsHomeMenuOpen(false);
-      const sectionId = getAnchorId(href);
+      const sectionId = href.replace("#", "");
       if (location.pathname !== "/") {
         navigate("/" + href);
       } else {
-        if (document.getElementById(sectionId)) {
+        const element = document.getElementById(sectionId);
+        if (element) {
           // Lock active section immediately and block observer during scroll
           setActiveSection(sectionId);
           isNavigatingRef.current = true;
-          scrollToHomeAnchor(href);
-          // Re-enable observer after scroll settles
-          setTimeout(() => { isNavigatingRef.current = false; }, 300);
+          // Compute target Y, accounting for the sticky navbar (~72px)
+          const navOffset = 72;
+          const rect = element.getBoundingClientRect();
+          const targetY = Math.max(0, window.scrollY + rect.top - navOffset);
+          // Custom animated smooth scroll with easeInOutCubic for a more
+          // perceptible, elegant transition between sections.
+          const startY = window.scrollY;
+          const distance = targetY - startY;
+          const minDuration = 600;
+          const maxDuration = 1400;
+          const duration = Math.min(
+            maxDuration,
+            Math.max(minDuration, Math.abs(distance) * 0.6)
+          );
+          const startTime = performance.now();
+          const easeInOutCubic = (t: number) =>
+            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+          const animate = (now: number) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(1, elapsed / duration);
+            const eased = easeInOutCubic(progress);
+            window.scrollTo(0, startY + distance * eased);
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              isNavigatingRef.current = false;
+            }
+          };
+          requestAnimationFrame(animate);
         }
       }
     }

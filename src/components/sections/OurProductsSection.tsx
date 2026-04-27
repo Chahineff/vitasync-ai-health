@@ -21,7 +21,6 @@ export function OurProductsSection() {
   const offsetRef = useRef(0);
   const loopWidthRef = useRef(0);
   const interactionRef = useRef({ direction: 1 as 1 | -1, multiplier: 1 });
-  const hoverPausedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,8 +81,7 @@ export function OurProductsSection() {
       last = now;
 
       const { direction, multiplier } = interactionRef.current;
-      const speedMultiplier = hoverPausedRef.current && multiplier === 1 ? 0 : multiplier;
-      applyOffset(offsetRef.current + direction * baseSpeed * speedMultiplier * delta);
+      applyOffset(offsetRef.current + direction * baseSpeed * multiplier * delta);
 
       raf = requestAnimationFrame(tick);
     };
@@ -154,11 +152,7 @@ export function OurProductsSection() {
         </div>
 
         {/* Infinite marquee carousel */}
-        <div
-          className="relative group/marquee"
-          onMouseEnter={() => { hoverPausedRef.current = true; }}
-          onMouseLeave={() => { hoverPausedRef.current = false; }}
-        >
+        <div className="relative group/marquee">
           {/* Edge fade masks */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 z-10 bg-gradient-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 z-10 bg-gradient-to-l from-background to-transparent" />

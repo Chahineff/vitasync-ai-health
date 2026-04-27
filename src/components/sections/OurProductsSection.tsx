@@ -210,7 +210,7 @@ export function OurProductsSection() {
                       to={`/product/${p.node.handle}`}
                       data-product-card="true"
                       data-loop-start={idx === products.length ? "true" : undefined}
-                      className="group flex-shrink-0 w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl overflow-hidden border border-border/40 bg-card/80 backdrop-blur-sm hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300"
+                      className="group flex-shrink-0 w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl overflow-hidden border border-border/40 bg-card/80 backdrop-blur-sm hover:border-primary/40 transition-colors duration-300"
                     >
                       <div className="relative aspect-square bg-gradient-to-br from-muted/40 to-muted/10 overflow-hidden">
                         {image && (
@@ -218,7 +218,7 @@ export function OurProductsSection() {
                             src={image.url}
                             alt={image.altText || p.node.title}
                             loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover"
                           />
                         )}
                         <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur text-[10px] font-semibold text-foreground border border-border/50">

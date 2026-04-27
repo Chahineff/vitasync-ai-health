@@ -60,7 +60,7 @@ export function FeatureSteps({
   return (
     <div
       ref={containerRef}
-      className={cn("relative", className)}
+      className={cn("feature-steps-pin relative", className)}
       style={{ height: scrollHeight }}
     >
       <div className="sticky top-0 min-h-screen flex items-start md:items-center py-4 md:py-12 lg:py-20 overflow-hidden">

@@ -6,6 +6,7 @@ import { Compass, Sparkles, ShoppingBag, Tag, HelpCircle, LayoutDashboard } from
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
+import { scrollToHomeAnchor, scrollToPageTop } from "@/lib/scrollAnchors";
 
 const SECTION_IDS = ["dashboard", "how-it-works", "features", "products", "pricing", "faq"];
 
@@ -87,44 +88,27 @@ export function Navbar() {
       if (location.pathname !== "/") {
         navigate("/" + href);
       } else {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          // Lock active section immediately and block observer during scroll
-          setActiveSection(sectionId);
-          isNavigatingRef.current = true;
-          // Compute target Y, accounting for the sticky navbar (~72px)
-          const navOffset = 72;
-          const rect = element.getBoundingClientRect();
-          const targetY = Math.max(0, window.scrollY + rect.top - navOffset);
-          // Custom animated smooth scroll with easeInOutCubic for a more
-          // perceptible, elegant transition between sections.
-          const startY = window.scrollY;
-          const distance = targetY - startY;
-          const minDuration = 600;
-          const maxDuration = 1400;
-          const duration = Math.min(
-            maxDuration,
-            Math.max(minDuration, Math.abs(distance) * 0.6)
-          );
-          const startTime = performance.now();
-          const easeInOutCubic = (t: number) =>
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-          const animate = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(1, elapsed / duration);
-            const eased = easeInOutCubic(progress);
-            window.scrollTo(0, startY + distance * eased);
-            if (progress < 1) {
-              requestAnimationFrame(animate);
-            } else {
-              isNavigatingRef.current = false;
-            }
-          };
-          requestAnimationFrame(animate);
-        }
+        setActiveSection(sectionId);
+        isNavigatingRef.current = true;
+        scrollToHomeAnchor(href, {
+          behavior: "smooth",
+          onComplete: () => { isNavigatingRef.current = false; },
+          onCancel: () => { isNavigatingRef.current = false; },
+        });
       }
     }
+  };
+
+  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (location.pathname !== "/") return;
+    e.preventDefault();
+    setActiveSection(null);
+    isNavigatingRef.current = true;
+    scrollToPageTop({
+      behavior: "smooth",
+      onComplete: () => { isNavigatingRef.current = false; },
+      onCancel: () => { isNavigatingRef.current = false; },
+    });
   };
 
   const openHomeMenu = () => {
@@ -159,6 +143,7 @@ export function Navbar() {
                 >
                   <Link
                     to="/"
+                    onClick={handleHomeClick}
                     className={cn(
                       "relative cursor-pointer text-sm font-medium px-4 xl:px-5 py-1.5 rounded-full transition-colors duration-200 inline-flex items-center gap-1",
                       isHomeActive ? "text-primary" : "text-current opacity-70 hover:opacity-100"

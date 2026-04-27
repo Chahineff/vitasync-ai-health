@@ -18,6 +18,7 @@ export function OurProductsSection() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -33,6 +34,33 @@ export function OurProductsSection() {
       cancelled = true;
     };
   }, []);
+
+  // Auto-play loop: continuously scrolls to the right; loops back to start when reaching the end.
+  useEffect(() => {
+    if (loading || products.length === 0) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    let rafId: number;
+    let lastTs = performance.now();
+    const speedPxPerSec = 40; // gentle continuous drift
+
+    const tick = (ts: number) => {
+      const dt = (ts - lastTs) / 1000;
+      lastTs = ts;
+      if (!isPaused) {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (maxScroll > 0) {
+          let next = el.scrollLeft + speedPxPerSec * dt;
+          if (next >= maxScroll - 1) next = 0; // loop back smoothly
+          el.scrollLeft = next;
+        }
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [loading, products.length, isPaused]);
 
   const scrollBy = (delta: number) => {
     scrollerRef.current?.scrollBy({ left: delta, behavior: "smooth" });
@@ -84,7 +112,13 @@ export function OurProductsSection() {
         </div>
 
         {/* Carousel + arrows */}
-        <div className="relative">
+        <div
+          className="relative"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+        >
           <button
             type="button"
             onClick={() => scrollBy(-320)}

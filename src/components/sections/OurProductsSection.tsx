@@ -186,8 +186,7 @@ export function OurProductsSection() {
           </button>
 
           <div
-            ref={scrollerRef}
-            className="overflow-x-auto scrollbar-hide overscroll-x-contain"
+            className="overflow-hidden"
           >
             {loading ? (
               <div className="flex gap-4 md:gap-6 pb-4">
@@ -197,7 +196,8 @@ export function OurProductsSection() {
               </div>
             ) : (
               <div
-                className="flex gap-4 md:gap-6 pb-4 w-max"
+                ref={trackRef}
+                className="flex gap-4 md:gap-6 pb-4 w-max will-change-transform"
               >
                 {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;
@@ -208,6 +208,8 @@ export function OurProductsSection() {
                     <Link
                       key={`${p.node.id}-${idx}`}
                       to={`/product/${p.node.handle}`}
+                      data-product-card="true"
+                      data-loop-start={idx === products.length ? "true" : undefined}
                       className="group flex-shrink-0 w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl overflow-hidden border border-border/40 bg-card/80 backdrop-blur-sm hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300"
                     >
                       <div className="relative aspect-square bg-gradient-to-br from-muted/40 to-muted/10 overflow-hidden">

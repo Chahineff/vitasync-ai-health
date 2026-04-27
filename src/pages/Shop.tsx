@@ -24,7 +24,7 @@ export default function Shop() {
       <ScrollToTopButton />
       <Navbar />
       <main className="pt-24 md:pt-28 pb-16">
-        <div className="container-custom">
+        <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8">
           {/* Public banner — invite to login for AI recommendations */}
           {!user && (
             <div className="mb-6 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-secondary/5 to-accent/10 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3">

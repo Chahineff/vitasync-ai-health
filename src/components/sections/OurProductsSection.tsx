@@ -17,7 +17,9 @@ export function OurProductsSection() {
   const { t } = useTranslation();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const scrollerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const loopWidthRef = useRef(0);
   const interactionRef = useRef({ direction: 1 as 1 | -1, multiplier: 1 });
 
   useEffect(() => {
@@ -44,35 +46,51 @@ export function OurProductsSection() {
   // Duplicate products list so the marquee track loops seamlessly
   const marqueeProducts = products.length > 0 ? [...products, ...products] : [];
 
+  const applyOffset = (nextOffset: number) => {
+    const track = trackRef.current;
+    const loopWidth = loopWidthRef.current;
+    if (!track || loopWidth <= 0) return;
+
+    offsetRef.current = ((nextOffset % loopWidth) + loopWidth) % loopWidth;
+    track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
+  };
+
   useEffect(() => {
     if (loading || products.length === 0) return;
 
-    const el = scrollerRef.current;
-    if (!el) return;
+    const track = trackRef.current;
+    if (!track) return;
 
     let raf = 0;
     let last = performance.now();
     const baseSpeed = 70; // px / second — visible continuous flow
+
+    const updateLoopWidth = () => {
+      const loopStart = track.querySelector<HTMLElement>("[data-loop-start='true']");
+      const width = loopStart?.offsetLeft ?? track.scrollWidth / 2;
+      loopWidthRef.current = Math.max(width, 1);
+      applyOffset(offsetRef.current);
+    };
+
+    updateLoopWidth();
+    const resizeObserver = new ResizeObserver(updateLoopWidth);
+    resizeObserver.observe(track);
 
     const tick = (now: number) => {
       const delta = Math.min(now - last, 64) / 1000;
       last = now;
 
       const { direction, multiplier } = interactionRef.current;
-      // Always advance — when the user holds an arrow, multiplier boosts speed/direction.
-      el.scrollLeft += direction * baseSpeed * multiplier * delta;
-
-      const loopWidth = el.scrollWidth / 2;
-      if (loopWidth > 0) {
-        if (el.scrollLeft >= loopWidth) el.scrollLeft -= loopWidth;
-        if (el.scrollLeft <= 0) el.scrollLeft += loopWidth;
-      }
+      applyOffset(offsetRef.current + direction * baseSpeed * multiplier * delta);
 
       raf = requestAnimationFrame(tick);
     };
 
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      resizeObserver.disconnect();
+    };
   }, [loading, products.length]);
 
   // Hold-to-accelerate handlers
@@ -87,9 +105,11 @@ export function OurProductsSection() {
 
   // Quick jump on single click (one card width ~ 300px + gap)
   const jumpBy = (dir: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * 340, behavior: "smooth" });
+    const track = trackRef.current;
+    const firstCard = track?.querySelector<HTMLElement>("[data-product-card='true']");
+    const gap = track ? parseFloat(window.getComputedStyle(track).columnGap || "0") : 24;
+    const step = firstCard ? firstCard.getBoundingClientRect().width + gap : 340;
+    applyOffset(offsetRef.current + dir * step);
   };
 
   return (

@@ -6,7 +6,7 @@ import { Compass, Sparkles, ShoppingBag, Tag, HelpCircle, LayoutDashboard } from
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
-import { scrollToHomeAnchor, scrollToPageTop } from "@/lib/scrollAnchors";
+import { getAnchorId, scrollToHomeAnchor } from "@/lib/scrollAnchors";
 
 const SECTION_IDS = ["dashboard", "how-it-works", "features", "products", "pricing", "faq"];
 
@@ -84,31 +84,20 @@ export function Navbar() {
       e.preventDefault();
       setIsMobileMenuOpen(false);
       setIsHomeMenuOpen(false);
-      const sectionId = href.replace("#", "");
+      const sectionId = getAnchorId(href);
       if (location.pathname !== "/") {
         navigate("/" + href);
       } else {
-        setActiveSection(sectionId);
-        isNavigatingRef.current = true;
-        scrollToHomeAnchor(href, {
-          behavior: "smooth",
-          onComplete: () => { isNavigatingRef.current = false; },
-          onCancel: () => { isNavigatingRef.current = false; },
-        });
+        if (document.getElementById(sectionId)) {
+          // Lock active section immediately and block observer during scroll
+          setActiveSection(sectionId);
+          isNavigatingRef.current = true;
+          scrollToHomeAnchor(href);
+          // Re-enable observer after scroll settles
+          setTimeout(() => { isNavigatingRef.current = false; }, 300);
+        }
       }
     }
-  };
-
-  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (location.pathname !== "/") return;
-    e.preventDefault();
-    setActiveSection(null);
-    isNavigatingRef.current = true;
-    scrollToPageTop({
-      behavior: "smooth",
-      onComplete: () => { isNavigatingRef.current = false; },
-      onCancel: () => { isNavigatingRef.current = false; },
-    });
   };
 
   const openHomeMenu = () => {
@@ -143,7 +132,6 @@ export function Navbar() {
                 >
                   <Link
                     to="/"
-                    onClick={handleHomeClick}
                     className={cn(
                       "relative cursor-pointer text-sm font-medium px-4 xl:px-5 py-1.5 rounded-full transition-colors duration-200 inline-flex items-center gap-1",
                       isHomeActive ? "text-primary" : "text-current opacity-70 hover:opacity-100"

@@ -23,9 +23,9 @@ export function ScrollToTop() {
 
     // For subsequent navigations (user clicking links)
     if (hash) {
-      // User clicked an anchor link - scroll to the element
+      // User clicked an anchor link - jump past sticky scroll sections to the exact target
       setTimeout(() => {
-        scrollToHomeAnchor(hash, { behavior: "smooth" });
+        scrollToHomeAnchor(hash);
       }, 100);
     } else {
       // Regular page navigation - scroll to top

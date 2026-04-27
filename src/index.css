@@ -123,10 +123,6 @@
     scroll-behavior: smooth;
   }
 
-  html.anchor-scrolling {
-    scroll-behavior: auto;
-  }
-
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', sans-serif;
@@ -796,15 +792,6 @@
   /* Section Spacing */
   .section-padding {
     @apply py-8 md:py-12 lg:py-16;
-  }
-
-  html.anchor-scrolling .feature-steps-pin {
-    height: auto !important;
-  }
-
-  html.anchor-scrolling .feature-steps-pin > .sticky {
-    position: relative;
-    min-height: auto;
   }
 
   /* Container */

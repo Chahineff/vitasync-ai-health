@@ -168,7 +168,7 @@ export function Navbar() {
                         onMouseLeave={closeHomeMenuDelayed}
                         className="absolute left-0 top-full pt-3 min-w-[340px] z-50"
                       >
-                        <div className="rounded-2xl border border-border bg-popover text-popover-foreground backdrop-blur-xl shadow-2xl p-2.5 space-y-1">
+                        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 shadow-2xl p-2.5 space-y-1">
                           {navLinks.map((link) => {
                             const sectionId = link.href.replace("#", "");
                             const isActive = activeSection === sectionId;
@@ -183,25 +183,25 @@ export function Navbar() {
                                 className={cn(
                                   "group flex items-start gap-3 px-3 py-2.5 rounded-xl transition-colors",
                                   isActive
-                                    ? "bg-primary/10 text-primary"
-                                    : "text-foreground hover:bg-muted hover:text-foreground"
+                                    ? "bg-primary/15 text-primary"
+                                    : "text-white hover:bg-white/10"
                                 )}
                               >
                                 <span
                                   className={cn(
                                     "shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
                                     isActive
-                                      ? "bg-primary/15 text-primary"
-                                      : "bg-muted text-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                                      ? "bg-primary/20 text-primary"
+                                      : "bg-white/10 text-white group-hover:bg-primary/20 group-hover:text-primary"
                                   )}
                                 >
                                   <Icon className="w-4 h-4" />
                                 </span>
                                 <span className="flex flex-col">
-                                  <span className={cn("text-sm leading-tight text-foreground", isActive ? "font-semibold text-primary" : "font-medium")}>
+                                  <span className={cn("text-sm leading-tight", isActive ? "font-semibold text-primary" : "font-medium text-white")}>
                                     {t(link.labelKey)}
                                   </span>
-                                  <span className="text-[11px] text-foreground/70 leading-snug mt-0.5">
+                                  <span className="text-[11px] text-white/70 leading-snug mt-0.5">
                                     {t(link.descKey)}
                                   </span>
                                 </span>

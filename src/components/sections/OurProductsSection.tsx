@@ -17,10 +17,8 @@ export function OurProductsSection() {
   const { t } = useTranslation();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const trackRef = useRef<HTMLDivElement>(null);
-  // Direction: 1 = normal (left), -1 = reversed (right). Speed multiplier increases on hold.
-  const [direction, setDirection] = useState<1 | -1>(1);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const interactionRef = useRef({ direction: 1 as 1 | -1, multiplier: 1, hovering: false });
 
   useEffect(() => {
     let cancelled = false;
@@ -45,50 +43,54 @@ export function OurProductsSection() {
 
   // Duplicate products list so the marquee track loops seamlessly
   const marqueeProducts = products.length > 0 ? [...products, ...products] : [];
-  // Base duration scales with the number of products to keep speed consistent
-  const baseDuration = Math.max(40, products.length * 6);
-  const animationDuration = baseDuration / speedMultiplier;
+
+  useEffect(() => {
+    if (loading || products.length === 0) return;
+
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    let raf = 0;
+    let last = performance.now();
+    const baseSpeed = 28;
+
+    const tick = (now: number) => {
+      const delta = Math.min(now - last, 64) / 1000;
+      last = now;
+
+      const { direction, multiplier, hovering } = interactionRef.current;
+      if (!hovering || multiplier > 1) {
+        el.scrollLeft += direction * baseSpeed * multiplier * delta;
+      }
+
+      const loopWidth = el.scrollWidth / 2;
+      if (loopWidth > 0) {
+        if (el.scrollLeft >= loopWidth) el.scrollLeft -= loopWidth;
+        if (el.scrollLeft <= 0) el.scrollLeft += loopWidth;
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [loading, products.length]);
 
   // Hold-to-accelerate handlers
   const startBoost = (dir: 1 | -1) => {
-    setDirection(dir);
-    setSpeedMultiplier(8); // ~8x faster while holding
+    interactionRef.current.direction = dir;
+    interactionRef.current.multiplier = 10;
   };
   const stopBoost = () => {
-    setSpeedMultiplier(1);
-    setDirection(1);
+    interactionRef.current.multiplier = 1;
+    interactionRef.current.direction = 1;
   };
 
   // Quick jump on single click (one card width ~ 300px + gap)
   const jumpBy = (dir: 1 | -1) => {
-    const el = trackRef.current;
+    const el = scrollerRef.current;
     if (!el) return;
-    // Briefly disable animation, translate, then re-enable
-    const cardStep = 320;
-    const current = getComputedStyle(el).transform;
-    el.style.animationPlayState = "paused";
-    // Read current translateX from matrix
-    let currentX = 0;
-    if (current && current !== "none") {
-      const match = current.match(/matrix.*\((.+)\)/);
-      if (match) {
-        const values = match[1].split(", ");
-        currentX = parseFloat(values[4] ?? values[12] ?? "0");
-      }
-    }
-    const halfWidth = el.scrollWidth / 2;
-    let nextX = currentX - dir * cardStep;
-    // Wrap to keep within [-halfWidth, 0]
-    if (nextX <= -halfWidth) nextX += halfWidth;
-    if (nextX > 0) nextX -= halfWidth;
-    el.style.transition = "transform 0.4s ease-out";
-    el.style.transform = `translateX(${nextX}px)`;
-    window.setTimeout(() => {
-      if (!trackRef.current) return;
-      trackRef.current.style.transition = "";
-      trackRef.current.style.transform = "";
-      trackRef.current.style.animationPlayState = "";
-    }, 450);
+    el.scrollBy({ left: dir * 340, behavior: "smooth" });
   };
 
   return (
@@ -164,7 +166,16 @@ export function OurProductsSection() {
             <ArrowRight className="w-5 h-5" />
           </button>
 
-          <div className="overflow-hidden">
+          <div
+            ref={scrollerRef}
+            className="overflow-x-auto scrollbar-hide overscroll-x-contain"
+            onMouseEnter={() => {
+              interactionRef.current.hovering = true;
+            }}
+            onMouseLeave={() => {
+              interactionRef.current.hovering = false;
+            }}
+          >
             {loading ? (
               <div className="flex gap-4 md:gap-6 pb-4">
                 {Array.from({ length: 6 }).map((_, i) => (
@@ -173,12 +184,7 @@ export function OurProductsSection() {
               </div>
             ) : (
               <div
-                ref={trackRef}
-                className="flex gap-4 md:gap-6 pb-4 w-max animate-marquee group-hover/marquee:[animation-play-state:paused]"
-                style={{
-                  animationDuration: `${animationDuration}s`,
-                  animationDirection: direction === -1 ? "reverse" : "normal",
-                }}
+                className="flex gap-4 md:gap-6 pb-4 w-max"
               >
                 {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;

@@ -96,9 +96,32 @@ export function Navbar() {
           const navOffset = 72;
           const rect = element.getBoundingClientRect();
           const targetY = Math.max(0, window.scrollY + rect.top - navOffset);
-          window.scrollTo({ top: targetY, behavior: "smooth" });
-          // Re-enable observer after scroll settles
-          setTimeout(() => { isNavigatingRef.current = false; }, 900);
+          // Custom animated smooth scroll with easeInOutCubic for a more
+          // perceptible, elegant transition between sections.
+          const startY = window.scrollY;
+          const distance = targetY - startY;
+          const minDuration = 600;
+          const maxDuration = 1400;
+          const duration = Math.min(
+            maxDuration,
+            Math.max(minDuration, Math.abs(distance) * 0.6)
+          );
+          const startTime = performance.now();
+          const easeInOutCubic = (t: number) =>
+            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+          const animate = (now: number) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(1, elapsed / duration);
+            const eased = easeInOutCubic(progress);
+            window.scrollTo(0, startY + distance * eased);
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              isNavigatingRef.current = false;
+            }
+          };
+          requestAnimationFrame(animate);
         }
       }
     }

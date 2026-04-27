@@ -136,6 +136,10 @@ export default {
             transform: "rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * -1)) rotate(calc(var(--angle) * -1deg - 360deg))",
           },
         },
+        "marquee": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -157,6 +161,7 @@ export default {
         "spin-slow": "spin-slow 4s linear infinite",
         "shine": "shine var(--shine-pulse-duration, 14s) infinite linear",
         "orbit": "orbit calc(var(--duration, 20s)) linear infinite",
+        "marquee": "marquee 60s linear infinite",
       },
       backgroundSize: {
         "200%": "200% 200%",

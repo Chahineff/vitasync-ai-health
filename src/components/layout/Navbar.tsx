@@ -87,14 +87,18 @@ export function Navbar() {
       if (location.pathname !== "/") {
         navigate("/" + href);
       } else {
-        const element = document.querySelector(href);
+        const element = document.getElementById(sectionId);
         if (element) {
           // Lock active section immediately and block observer during scroll
           setActiveSection(sectionId);
           isNavigatingRef.current = true;
-          element.scrollIntoView({ behavior: "smooth" });
+          // Compute target Y, accounting for the sticky navbar (~72px)
+          const navOffset = 72;
+          const rect = element.getBoundingClientRect();
+          const targetY = Math.max(0, window.scrollY + rect.top - navOffset);
+          window.scrollTo({ top: targetY, behavior: "smooth" });
           // Re-enable observer after scroll settles
-          setTimeout(() => { isNavigatingRef.current = false; }, 1200);
+          setTimeout(() => { isNavigatingRef.current = false; }, 900);
         }
       }
     }

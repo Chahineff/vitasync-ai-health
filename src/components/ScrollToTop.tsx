@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { scrollToHomeAnchor } from "@/lib/scrollAnchors";
 
 export function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -22,12 +23,9 @@ export function ScrollToTop() {
 
     // For subsequent navigations (user clicking links)
     if (hash) {
-      // User clicked an anchor link - scroll to the element
+      // User clicked an anchor link - jump past sticky scroll sections to the exact target
       setTimeout(() => {
-        const element = document.querySelector(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
+        scrollToHomeAnchor(hash);
       }, 100);
     } else {
       // Regular page navigation - scroll to top

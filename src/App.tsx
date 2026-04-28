@@ -11,6 +11,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { useCartSync } from "@/hooks/useCartSync";
 import { CookieBanner } from "@/components/ui/CookieBanner";
 import "@/lib/cookie-consent";
+import { SkipToContent } from "@/components/a11y/SkipToContent";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
@@ -55,6 +56,7 @@ function AppContent() {
     <BrowserRouter>
       <ScrollToTop />
       <OAuthRedirectHandler />
+      <SkipToContent />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />

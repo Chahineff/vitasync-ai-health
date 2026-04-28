@@ -6,7 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useCartStore } from '@/stores/cartStore';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn, formatPriceUSD } from '@/lib/utils';
 
 interface CrossSellSectionProps {
   products: ShopifyProduct[];

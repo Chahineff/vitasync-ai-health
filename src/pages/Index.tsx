@@ -21,7 +21,7 @@ const Index = () => {
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />
-      <main id="main">
+      <main id="main" aria-label={t("a11y.mainContent")}>
         <HeroSection />
         <CinematicDashboardSection />
         <HowItWorksSection />

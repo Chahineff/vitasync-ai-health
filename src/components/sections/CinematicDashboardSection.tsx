@@ -444,9 +444,9 @@ export const CinematicDashboardSection = () => {
             </div>
             <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
           </div>
-           <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
+           <h3 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
             {t('cinema.trackingTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
-          </h4>
+          </h3>
           <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
             {t('cinema.trackingDesc')}
           </p>
@@ -561,9 +561,9 @@ export const CinematicDashboardSection = () => {
               <Brain className="w-5 h-5 text-violet-400" />
             </div>
           </div>
-          <h4 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
+          <h3 className="text-card-silver-matte text-2xl xl:text-3xl font-bold leading-tight mb-4 tracking-tight">
             {t('cinema.coachingTitle').split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
-          </h4>
+          </h3>
           <p className="text-white/45 text-sm xl:text-base font-light leading-relaxed mb-6">
             {t('cinema.coachingDesc')}
           </p>

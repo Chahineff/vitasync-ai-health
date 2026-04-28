@@ -321,7 +321,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
           }`}
         >
           <SlidersHorizontal className="w-4 h-4" />
-          {t('shop.priceRange')}: {priceRange[0]}€ – {priceRange[1]}€
+          {t('shop.priceRange')}: {formatPriceUSD(priceRange[0])} – {formatPriceUSD(priceRange[1])}
         </button>
 
         {hasActiveFilters && (
@@ -344,7 +344,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
             <div className="p-4 bg-muted/50 rounded-xl border border-border">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm text-muted-foreground">{t('shop.priceRange')}</span>
-                <span className="text-sm font-medium text-foreground">{priceRange[0]}€ – {priceRange[1]}€</span>
+                <span className="text-sm font-medium text-foreground">{formatPriceUSD(priceRange[0])} – {formatPriceUSD(priceRange[1])}</span>
               </div>
               <Slider
                 value={priceRange}

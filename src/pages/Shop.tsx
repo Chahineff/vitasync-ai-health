@@ -23,7 +23,7 @@ export default function Shop() {
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />
-      <main className="pt-24 md:pt-28 pb-16">
+      <main id="main" className="pt-24 md:pt-28 pb-16">
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8">
           {/* Public banner — invite to login for AI recommendations */}
           {!user && (

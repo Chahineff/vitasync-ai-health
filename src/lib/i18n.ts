@@ -1047,6 +1047,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.preferences.desc": "Mémorisent votre thème, la position de la barre latérale et votre langue pour personnaliser votre expérience.",
     "cookies.banner.cat.analytics.title": "Mesure d'audience",
     "cookies.banner.cat.analytics.desc": "Nous aident à comprendre comment vous utilisez VitaSync (statistiques anonymisées via Lovable Analytics). Désactivés par défaut.",
+    "a11y.skipToContent": "Aller au contenu",
+    "notFound.title": "Page introuvable",
+    "notFound.description": "Cette page n'existe pas ou a été déplacée.",
+    "notFound.cta": "Retour à l'accueil",
 
     // Auth messages
     "auth.signupError": "Erreur d'inscription",
@@ -2592,6 +2596,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.preferences.desc": "Remember your theme, sidebar state and language to personalize your experience.",
     "cookies.banner.cat.analytics.title": "Analytics",
     "cookies.banner.cat.analytics.desc": "Help us understand how you use VitaSync (anonymized stats via Lovable Analytics). Off by default.",
+    "a11y.skipToContent": "Skip to content",
+    "notFound.title": "Page not found",
+    "notFound.description": "This page does not exist or has been moved.",
+    "notFound.cta": "Back to home",
 
     "auth.signupError": "Registration error",
     "auth.accountCreated": "Account created!",
@@ -4108,6 +4116,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.preferences.desc": "Recuerdan su tema, estado de la barra lateral e idioma para personalizar su experiencia.",
     "cookies.banner.cat.analytics.title": "Analítica",
     "cookies.banner.cat.analytics.desc": "Nos ayudan a entender cómo usa VitaSync (estadísticas anónimas vía Lovable Analytics). Desactivadas por defecto.",
+    "a11y.skipToContent": "Saltar al contenido",
+    "notFound.title": "Página no encontrada",
+    "notFound.description": "Esta página no existe o ha sido movida.",
+    "notFound.cta": "Volver al inicio",
 
     "auth.signupError": "Error de registro",
     "auth.accountCreated": "¡Cuenta creada!",
@@ -5621,6 +5633,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.preferences.desc": "تتذكر السمة وحالة الشريط الجانبي واللغة لتخصيص تجربتك.",
     "cookies.banner.cat.analytics.title": "التحليلات",
     "cookies.banner.cat.analytics.desc": "تساعدنا على فهم كيفية استخدامك لـ VitaSync (إحصائيات مجهولة الهوية). معطلة افتراضياً.",
+    "a11y.skipToContent": "تخطي إلى المحتوى",
+    "notFound.title": "الصفحة غير موجودة",
+    "notFound.description": "هذه الصفحة غير موجودة أو تم نقلها.",
+    "notFound.cta": "العودة إلى الرئيسية",
 
     "auth.signupError": "خطأ في التسجيل",
     "auth.accountCreated": "تم إنشاء الحساب!",
@@ -7134,6 +7150,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.preferences.desc": "记住您的主题、侧边栏状态和语言以个性化体验。",
     "cookies.banner.cat.analytics.title": "分析",
     "cookies.banner.cat.analytics.desc": "帮助我们了解您如何使用 VitaSync（匿名统计）。默认关闭。",
+    "a11y.skipToContent": "跳至内容",
+    "notFound.title": "页面未找到",
+    "notFound.description": "此页面不存在或已被移动。",
+    "notFound.cta": "返回首页",
 
     "auth.signupError": "注册错误",
     "auth.accountCreated": "账户已创建！",
@@ -8647,6 +8667,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.preferences.desc": "Lembram seu tema, estado da barra lateral e idioma para personalizar sua experiência.",
     "cookies.banner.cat.analytics.title": "Analítica",
     "cookies.banner.cat.analytics.desc": "Ajudam-nos a entender como você usa o VitaSync (estatísticas anônimas via Lovable Analytics). Desativadas por padrão.",
+    "a11y.skipToContent": "Ir para o conteúdo",
+    "notFound.title": "Página não encontrada",
+    "notFound.description": "Esta página não existe ou foi movida.",
+    "notFound.cta": "Voltar ao início",
 
     "auth.signupError": "Erro de cadastro",
     "auth.accountCreated": "Conta criada!",

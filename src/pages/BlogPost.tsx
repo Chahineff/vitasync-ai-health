@@ -64,7 +64,7 @@ const BlogPost = () => {
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />
-      <main className="relative z-10 pt-32 pb-20">
+      <main id="main" className="relative z-10 pt-32 pb-20">
         <div className="container-custom max-w-3xl mx-auto">
           <Link
             to="/blog"

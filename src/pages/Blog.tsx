@@ -76,7 +76,7 @@ const Blog = () => {
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />
-      <main className="relative z-10">
+      <main id="main" className="relative z-10">
         {/* Hero */}
         <section className="pt-32 pb-20">
           <div className="container-custom">

@@ -81,7 +81,7 @@ export function CurrentStackList({ index, customer }: CurrentStackListProps) {
               name: item.title,
               image: item.image?.url || '/placeholder.svg',
               quantity: item.quantity,
-              price: `${parseFloat(item.discountedTotalPrice.amount).toFixed(2)} €`,
+              price: formatPriceUSD(item.discountedTotalPrice.amount),
             }))
           );
         }

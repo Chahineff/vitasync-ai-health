@@ -24,7 +24,7 @@ import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPr
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, formatPriceUSD } from '@/lib/utils';
 import { ParsedProductData } from '@/lib/shopify-parser';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useNavigate } from 'react-router-dom';

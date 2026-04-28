@@ -5,6 +5,7 @@ import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
+import { formatPriceUSD } from '@/lib/utils';
 
 interface ProductCardProps {
   product: ShopifyProduct;
@@ -136,7 +137,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
           <div className="flex items-center justify-between pt-2">
             <div>
               <span className="text-lg font-semibold text-foreground">
-                {parseFloat(price.amount).toFixed(2)} {price.currencyCode}
+                {formatPriceUSD(price.amount)}
               </span>
             </div>
             <button

@@ -166,6 +166,9 @@ export function ProductPurchaseBox({
             </span>
           </button>
         )}
+        {(!reviewRating || reviewRating === 0) && (
+          <p className="mt-2 text-[11px] italic text-foreground/50">{t('reviews.noneYet')}</p>
+        )}
 
         {/* Stack indicator */}
         {isInStack !== undefined && (

@@ -208,8 +208,6 @@ export function OurProductsSection() {
                 {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;
                   const price = parseFloat(p.node.priceRange.minVariantPrice.amount);
-                  const currency = p.node.priceRange.minVariantPrice.currencyCode;
-                  const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : `${currency} `;
                   return (
                     <Link
                       key={`${p.node.id}-${idx}`}

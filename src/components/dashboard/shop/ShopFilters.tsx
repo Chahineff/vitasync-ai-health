@@ -159,7 +159,7 @@ export function ShopFilters({
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-foreground/70">{t('shop.priceRange')}</span>
             <span className="text-sm font-medium text-foreground">
-              {priceRange[0]}€ - {priceRange[1]}€
+              {formatPriceUSD(priceRange[0])} - {formatPriceUSD(priceRange[1])}
             </span>
           </div>
           <Slider

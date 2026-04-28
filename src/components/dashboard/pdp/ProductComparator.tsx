@@ -101,7 +101,7 @@ export function ProductComparator({ currentProduct, alternatives, onProductClick
               <td className="py-3 pr-4 text-foreground/50 font-light">{t('pdp.price')}</td>
               {allProducts.map((p, i) => (
                 <td key={i} className={cn("py-3 px-3 font-semibold", p.isCurrent ? "text-primary" : "text-foreground/70")}>
-                  {p.price} €
+                  {formatPriceUSD(p.price)}
                 </td>
               ))}
             </tr>

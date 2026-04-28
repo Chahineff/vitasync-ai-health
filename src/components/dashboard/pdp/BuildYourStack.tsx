@@ -5,6 +5,7 @@ import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
 import { useState, useMemo } from 'react';
+import { formatPriceUSD } from '@/lib/utils';
 
 interface BuildYourStackProps {
   products: ShopifyProduct[];

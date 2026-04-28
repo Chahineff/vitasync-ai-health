@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 
 function generateSteps(count: number, from: number, to: number): [number[], number[]] {
   const inputs = Array.from({ length: count }, (_, i) => i / (count - 1));
@@ -24,22 +24,49 @@ interface SplineBackgroundProps {
 export function SplineBackground({ steps = 200 }: SplineBackgroundProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
+  const [splineReady, setSplineReady] = useState(false);
 
   const [colorInputs, colorOutputs] = useMemo(() => generateSteps(steps, 0, 6), [steps]);
 
   const colorIndex = useTransform(scrollYProgress, colorInputs, colorOutputs);
   const hueShift = useTransform(scrollYProgress, [0, 1], [0, 30]);
 
+  // Defer Spline mount: wait for idle + intersection so we don't block LCP
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 768) return; // Mobile: never mount Spline
+    const node = ref.current;
+    if (!node) return;
+    const mount = () => setSplineReady(true);
+    const idle = (cb: () => void) =>
+      "requestIdleCallback" in window
+        ? (window as any).requestIdleCallback(cb, { timeout: 1500 })
+        : setTimeout(cb, 600);
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          idle(mount);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div ref={ref} className="fixed inset-0 z-0 pointer-events-none">
-      <div className="absolute inset-0 hidden md:block">
-        <spline-viewer
-          url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
-          style={{ width: "100%", height: "100%", pointerEvents: "none" }}
-        />
-      </div>
-
-      <div className="absolute inset-0 md:hidden bg-gradient-mesh" />
+      {/* Static gradient placeholder — visible until Spline mounts (and on mobile) */}
+      <div className="absolute inset-0 bg-gradient-mesh" />
+      {splineReady && (
+        <div className="absolute inset-0 hidden md:block">
+          <spline-viewer
+            url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
+            style={{ width: "100%", height: "100%", pointerEvents: "none" }}
+          />
+        </div>
+      )}
 
       <motion.div
         className="absolute inset-0"

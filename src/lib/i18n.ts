@@ -271,7 +271,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "CGV",
     "footer.disclaimer": "Disclaimer santé",
     "footer.shipping": "Livraison & Retours",
-    "footer.copyright": "Tous droits réservés.",
 
     // Legal
     "legal.effectiveDate": "Date d'entrée en vigueur",
@@ -1829,7 +1828,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "Terms of Sale",
     "footer.disclaimer": "Health Disclaimer",
     "footer.shipping": "Shipping & Returns",
-    "footer.copyright": "All rights reserved.",
 
     // Legal
     "legal.effectiveDate": "Effective date",
@@ -3378,7 +3376,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "CGV",
     "footer.disclaimer": "Aviso de salud",
     "footer.shipping": "Envío y Devoluciones",
-    "footer.copyright": "Todos los derechos reservados.",
 
     // Legal
     "legal.effectiveDate": "Fecha de vigencia",
@@ -4902,7 +4899,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "شروط البيع",
     "footer.disclaimer": "إخلاء مسؤولية صحي",
     "footer.shipping": "الشحن والإرجاع",
-    "footer.copyright": "جميع الحقوق محفوظة.",
 
     // Legal
     "legal.effectiveDate": "تاريخ السريان",
@@ -6425,7 +6421,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "销售条款",
     "footer.disclaimer": "健康免责声明",
     "footer.shipping": "配送与退货",
-    "footer.copyright": "版权所有。",
 
     // Legal
     "legal.effectiveDate": "生效日期",
@@ -7948,7 +7943,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "Condições de Venda",
     "footer.disclaimer": "Aviso de saúde",
     "footer.shipping": "Envio e Devoluções",
-    "footer.copyright": "Todos os direitos reservados.",
 
     // Legal
     "legal.effectiveDate": "Data de vigência",

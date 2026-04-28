@@ -12,6 +12,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { storefrontApiRequest } from "@/lib/shopify";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ARTICLES_QUERY = `
   query GetArticles($first: Int!) {
@@ -104,8 +105,20 @@ const Blog = () => {
         <section className="section-padding">
           <div className="container-custom">
             {isLoading ? (
-              <div className="flex justify-center py-20">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <div className="grid md:grid-cols-2 gap-8">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-border/30 bg-card/40 p-6 space-y-4">
+                    <Skeleton className="h-48 w-full rounded-xl" />
+                    <div className="flex gap-3">
+                      <Skeleton className="h-3 w-20" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-24 mt-2" />
+                  </div>
+                ))}
               </div>
             ) : articles.length === 0 ? (
               <ScrollReveal>

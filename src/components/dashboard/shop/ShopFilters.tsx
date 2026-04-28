@@ -133,7 +133,7 @@ export function ShopFilters({
               : 'bg-white/5 border border-white/10 text-foreground/70 hover:bg-white/10'
           }`}
         >
-          {t('shop.priceRange')}: {priceRange[0]}€ - {priceRange[1]}€
+          {t('shop.priceRange')}: {formatPriceUSD(priceRange[0])} - {formatPriceUSD(priceRange[1])}
         </button>
 
         {/* Reset button */}

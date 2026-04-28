@@ -135,7 +135,7 @@ export function CrossSellSection({ products, currentProductId, currentProductTit
                     )}
                   </div>
                   <p className="text-sm font-medium text-foreground truncate">{p.node.title}</p>
-                  <p className="text-xs text-foreground/50 mt-0.5">{price.toFixed(2)}€</p>
+                  <p className="text-xs text-foreground/50 mt-0.5">{formatPriceUSD(price)}</p>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleAddToCart(p); }}
                     className="mt-2 w-full py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors flex items-center justify-center gap-1"

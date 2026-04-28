@@ -10,6 +10,7 @@ import { ThemeProvider } from "next-themes";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { useCartSync } from "@/hooks/useCartSync";
 import { CookieBanner } from "@/components/ui/CookieBanner";
+import "@/lib/cookie-consent";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Blog from "./pages/Blog";

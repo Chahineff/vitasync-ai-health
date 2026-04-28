@@ -6,6 +6,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { AnimatedText } from "@/components/ui/animated-shiny-text";
 import { MagicText } from "@/components/ui/magic-text";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
+import { formatPriceUSD } from "@/lib/utils";
 
 function ProductSkeleton() {
   return (

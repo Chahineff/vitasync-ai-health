@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowsDownUp, X } from '@phosphor-icons/react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Slider } from '@/components/ui/slider';
+import { formatPriceUSD } from '@/lib/utils';
 
 export type SortOption = 'az' | 'za' | 'price-low' | 'price-high';
 export type CategoryKey = 'all' | 'sport' | 'wellness' | 'digestive' | 'vitamins' | 'brain' | 'weight' | 'mushrooms' | 'bones' | 'other';

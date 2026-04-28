@@ -116,14 +116,15 @@ export function Footer() {
         {/* FDA Disclaimer */}
         <div className="mt-12 pt-6 border-t" style={{ borderColor: "#E2E8F0" }}>
           <p style={{ fontSize: 12, fontStyle: "italic", color: "#718096", lineHeight: 1.6 }}>
-            * These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.
+            {t("footer.fdaDisclaimerFr")}{" "}
+            <span lang="en">{t("footer.fdaDisclaimerEn")}</span>
           </p>
         </div>
 
         {/* Copyright */}
         <div className="mt-6 pt-6 border-t" style={{ borderColor: "#E2E8F0" }}>
           <p className="text-center" style={{ fontSize: 12, color: "#718096" }}>
-            © 2026 VitaSync. All rights reserved. Ships to the US only via Supliful.
+            {t("footer.copyright")}
           </p>
           <div className="mt-3 text-center">
             <button

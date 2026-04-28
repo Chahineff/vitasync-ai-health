@@ -540,9 +540,14 @@ export const CinematicDashboardSection = () => {
 
             {/* Badge: Trend */}
             <div className={`cine-badge absolute z-40 ${isMobile ? "bottom-1/4 -right-10" : "top-1/3 -right-20"}`}>
-              <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
-                <span className="text-white text-xs md:text-sm font-medium">{t('cinema.energyUp')}</span>
+              <div className="flex flex-col items-end gap-1">
+                <div className="floating-ui-badge rounded-xl px-3 py-2 md:px-4 md:py-3 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
+                  <span className="text-white text-xs md:text-sm font-medium">{t('cinema.energyUp')}*</span>
+                </div>
+                <span className="italic text-white/70 max-w-[180px] text-right leading-snug" style={{ fontSize: 11 }}>
+                  {t('cinema.energyUpDisclaimer')}
+                </span>
               </div>
             </div>
           </div>

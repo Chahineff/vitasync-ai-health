@@ -8,7 +8,7 @@ import { openCookieSettings } from "@/lib/cookie-consent";
 const socialLinks: { icon: typeof InstagramLogo; href: string; label: string }[] = [];
 
 export function Footer() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   const footerSections = [
     {

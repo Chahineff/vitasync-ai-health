@@ -87,7 +87,7 @@ export function CrossSellSection({ products, currentProductId, currentProductTit
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-foreground truncate max-w-[140px]">{p.node.title}</p>
                     <p className="text-xs text-foreground/50">
-                      {parseFloat(p.node.priceRange.minVariantPrice.amount).toFixed(2)}€
+                      {formatPriceUSD(p.node.priceRange.minVariantPrice.amount)}
                     </p>
                   </div>
                 </motion.div>

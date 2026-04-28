@@ -238,8 +238,7 @@ export function OurProductsSection() {
                         </h3>
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-semibold text-foreground">
-                            {symbol}
-                            {price.toFixed(2)}
+                            {formatPriceUSD(price)}
                           </span>
                           <span className="inline-flex items-center gap-1 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                             {t("ourProducts.viewProduct")}

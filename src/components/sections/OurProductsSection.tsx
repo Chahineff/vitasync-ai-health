@@ -6,6 +6,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { AnimatedText } from "@/components/ui/animated-shiny-text";
 import { MagicText } from "@/components/ui/magic-text";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
+import { formatPriceUSD } from "@/lib/utils";
 
 function ProductSkeleton() {
   return (
@@ -208,8 +209,6 @@ export function OurProductsSection() {
                 {marqueeProducts.map((p, idx) => {
                   const image = p.node.images.edges[0]?.node;
                   const price = parseFloat(p.node.priceRange.minVariantPrice.amount);
-                  const currency = p.node.priceRange.minVariantPrice.currencyCode;
-                  const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : `${currency} `;
                   return (
                     <Link
                       key={`${p.node.id}-${idx}`}
@@ -240,8 +239,7 @@ export function OurProductsSection() {
                         </h3>
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-semibold text-foreground">
-                            {symbol}
-                            {price.toFixed(2)}
+                            {formatPriceUSD(price)}
                           </span>
                           <span className="inline-flex items-center gap-1 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                             {t("ourProducts.viewProduct")}

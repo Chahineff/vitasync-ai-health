@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
+import { formatPriceUSD } from '@/lib/utils';
 
 interface StackProduct {
   id: string;
@@ -80,7 +81,7 @@ export function CurrentStackList({ index, customer }: CurrentStackListProps) {
               name: item.title,
               image: item.image?.url || '/placeholder.svg',
               quantity: item.quantity,
-              price: `${parseFloat(item.discountedTotalPrice.amount).toFixed(2)} €`,
+              price: formatPriceUSD(item.discountedTotalPrice.amount),
             }))
           );
         }

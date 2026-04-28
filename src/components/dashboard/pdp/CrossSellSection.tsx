@@ -6,7 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useCartStore } from '@/stores/cartStore';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn, formatPriceUSD } from '@/lib/utils';
 
 interface CrossSellSectionProps {
   products: ShopifyProduct[];
@@ -87,7 +87,7 @@ export function CrossSellSection({ products, currentProductId, currentProductTit
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-foreground truncate max-w-[140px]">{p.node.title}</p>
                     <p className="text-xs text-foreground/50">
-                      {parseFloat(p.node.priceRange.minVariantPrice.amount).toFixed(2)}€
+                      {formatPriceUSD(p.node.priceRange.minVariantPrice.amount)}
                     </p>
                   </div>
                 </motion.div>
@@ -135,7 +135,7 @@ export function CrossSellSection({ products, currentProductId, currentProductTit
                     )}
                   </div>
                   <p className="text-sm font-medium text-foreground truncate">{p.node.title}</p>
-                  <p className="text-xs text-foreground/50 mt-0.5">{price.toFixed(2)}€</p>
+                  <p className="text-xs text-foreground/50 mt-0.5">{formatPriceUSD(price)}</p>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleAddToCart(p); }}
                     className="mt-2 w-full py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors flex items-center justify-center gap-1"

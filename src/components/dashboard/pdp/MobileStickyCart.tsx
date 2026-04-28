@@ -5,7 +5,7 @@ import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPr
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn, formatPriceUSD } from '@/lib/utils';
 
 interface MobileStickyCartProps {
   product: ProductDetail;
@@ -88,7 +88,7 @@ export function MobileStickyCart({ product, selectedVariantIndex, purchaseMode =
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground truncate">{product.title}</p>
           <div className="flex items-center gap-1.5">
-            <span className="text-base font-bold text-foreground">{displayPrice.toFixed(2)} &euro;</span>
+            <span className="text-base font-bold text-foreground">{formatPriceUSD(displayPrice)}</span>
             {effectiveMode === 'subscribe' && (
               <span className="text-[10px] text-primary font-medium">{t('pdp.perMonth')}</span>
             )}

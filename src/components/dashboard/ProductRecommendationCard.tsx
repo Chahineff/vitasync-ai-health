@@ -14,6 +14,7 @@ import { inferTimeOfDay } from '@/lib/infer-time-of-day';
 import { SubscriptionCard } from './SubscriptionCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { formatPriceUSD } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

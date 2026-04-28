@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowsDownUp, X } from '@phosphor-icons/react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Slider } from '@/components/ui/slider';
+import { formatPriceUSD } from '@/lib/utils';
 
 export type SortOption = 'az' | 'za' | 'price-low' | 'price-high';
 export type CategoryKey = 'all' | 'sport' | 'wellness' | 'digestive' | 'vitamins' | 'brain' | 'weight' | 'mushrooms' | 'bones' | 'other';
@@ -132,7 +133,7 @@ export function ShopFilters({
               : 'bg-white/5 border border-white/10 text-foreground/70 hover:bg-white/10'
           }`}
         >
-          {t('shop.priceRange')}: {priceRange[0]}€ - {priceRange[1]}€
+          {t('shop.priceRange')}: {formatPriceUSD(priceRange[0])} - {formatPriceUSD(priceRange[1])}
         </button>
 
         {/* Reset button */}
@@ -158,7 +159,7 @@ export function ShopFilters({
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-foreground/70">{t('shop.priceRange')}</span>
             <span className="text-sm font-medium text-foreground">
-              {priceRange[0]}€ - {priceRange[1]}€
+              {formatPriceUSD(priceRange[0])} - {formatPriceUSD(priceRange[1])}
             </span>
           </div>
           <Slider

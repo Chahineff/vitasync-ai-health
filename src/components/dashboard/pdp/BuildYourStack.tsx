@@ -144,7 +144,7 @@ function CompactCrossSellCard({ product, reasonTag, onAdd, onClick }: {
           <h4 className="text-xs font-medium text-foreground line-clamp-2 leading-tight hover:text-primary transition-colors">{product.node.title}</h4>
         </button>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-foreground">{parseFloat(price.amount).toFixed(2)} &euro;</span>
+          <span className="text-xs font-semibold text-foreground">{formatPriceUSD(price.amount)}</span>
           <button
             onClick={handleAdd}
             disabled={adding}

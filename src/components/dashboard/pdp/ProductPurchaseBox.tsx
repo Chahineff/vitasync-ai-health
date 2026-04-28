@@ -280,7 +280,7 @@ export function ProductPurchaseBox({
                   )}
                 </div>
               </div>
-              <span className="text-lg font-bold text-primary">{subscriptionPrice.toFixed(2)} &euro;</span>
+              <span className="text-lg font-bold text-primary">{formatPriceUSD(subscriptionPrice)}</span>
             </div>
             {effectiveMode === 'subscribe' && (
               <motion.div
@@ -330,7 +330,7 @@ export function ProductPurchaseBox({
               {t('pdp.oneTime')}
             </span>
           </div>
-          <span className="text-sm text-foreground/50 font-light">{basePrice.toFixed(2)} &euro;</span>
+          <span className="text-sm text-foreground/50 font-light">{formatPriceUSD(basePrice)}</span>
         </button>
       </div>
 
@@ -356,7 +356,7 @@ export function ProductPurchaseBox({
           className="p-3 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20"
         >
           <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300 text-center">
-            💰 {t('pdp.annualSavings')}: {((basePrice - subscriptionPrice) * 12).toFixed(2)} €/{t('pdp.perYear')}
+            💰 {t('pdp.annualSavings')}: {formatPriceUSD((basePrice - subscriptionPrice) * 12)}/{t('pdp.perYear')}
           </p>
         </motion.div>
       )}

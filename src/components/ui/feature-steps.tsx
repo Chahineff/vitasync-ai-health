@@ -80,14 +80,19 @@ export function FeatureSteps({
                 <button
                   key={i}
                   onClick={() => scrollToStep(i)}
-                  className={cn(
-                    "rounded-full transition-all duration-300",
-                    i === currentFeature
-                      ? "w-7 h-2 bg-gradient-to-r from-primary to-secondary"
-                      : "w-2 h-2 bg-foreground/20"
-                  )}
                   aria-label={`Step ${i + 1}`}
-                />
+                  className="min-w-[24px] min-h-[24px] inline-flex items-center justify-center"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "block rounded-full transition-all duration-300",
+                      i === currentFeature
+                        ? "w-7 h-2 bg-gradient-to-r from-primary to-secondary"
+                        : "w-2 h-2 bg-foreground/20"
+                    )}
+                  />
+                </button>
               ))}
             </div>
           )}

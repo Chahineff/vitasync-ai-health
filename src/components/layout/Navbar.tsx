@@ -246,7 +246,7 @@ export function Navbar() {
             </div>
 
             {/* Mobile Menu Button */}
-            <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-current opacity-70 hover:opacity-100 transition-colors" aria-label="Open menu">
+           <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 min-w-[24px] min-h-[24px] inline-flex items-center justify-center text-current opacity-70 hover:opacity-100 transition-colors" aria-label="Open menu">
               <List size={24} weight="light" />
             </button>
           </div>

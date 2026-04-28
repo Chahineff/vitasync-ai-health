@@ -58,7 +58,7 @@ const About = () => {
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />
-      <main id="main" className="relative z-10">
+      <main id="main" aria-label="Contenu principal" className="relative z-10">
         {/* Hero */}
         <section className="pt-32 pb-20">
           <div className="container-custom">

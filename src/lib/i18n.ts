@@ -271,7 +271,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "CGV",
     "footer.disclaimer": "Disclaimer santé",
     "footer.shipping": "Livraison & Retours",
-    "footer.copyright": "Tous droits réservés.",
 
     // Legal
     "legal.effectiveDate": "Date d'entrée en vigueur",
@@ -1053,6 +1052,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.analytics.title": "Mesure d'audience",
     "cookies.banner.cat.analytics.desc": "Nous aident à comprendre comment vous utilisez VitaSync (statistiques anonymisées via Lovable Analytics). Désactivés par défaut.",
     "a11y.skipToContent": "Aller au contenu",
+    "a11y.mainContent": "Contenu principal",
     "notFound.title": "Page introuvable",
     "notFound.description": "Cette page n'existe pas ou a été déplacée.",
     "notFound.cta": "Retour à l'accueil",
@@ -1828,7 +1828,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "Terms of Sale",
     "footer.disclaimer": "Health Disclaimer",
     "footer.shipping": "Shipping & Returns",
-    "footer.copyright": "All rights reserved.",
 
     // Legal
     "legal.effectiveDate": "Effective date",
@@ -2607,6 +2606,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.analytics.title": "Analytics",
     "cookies.banner.cat.analytics.desc": "Help us understand how you use VitaSync (anonymized stats via Lovable Analytics). Off by default.",
     "a11y.skipToContent": "Skip to content",
+    "a11y.mainContent": "Main content",
     "notFound.title": "Page not found",
     "notFound.description": "This page does not exist or has been moved.",
     "notFound.cta": "Back to home",
@@ -3376,7 +3376,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "CGV",
     "footer.disclaimer": "Aviso de salud",
     "footer.shipping": "Envío y Devoluciones",
-    "footer.copyright": "Todos los derechos reservados.",
 
     // Legal
     "legal.effectiveDate": "Fecha de vigencia",
@@ -4132,6 +4131,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.analytics.title": "Analítica",
     "cookies.banner.cat.analytics.desc": "Nos ayudan a entender cómo usa VitaSync (estadísticas anónimas vía Lovable Analytics). Desactivadas por defecto.",
     "a11y.skipToContent": "Saltar al contenido",
+    "a11y.mainContent": "Contenido principal",
     "notFound.title": "Página no encontrada",
     "notFound.description": "Esta página no existe o ha sido movida.",
     "notFound.cta": "Volver al inicio",
@@ -4899,7 +4899,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "شروط البيع",
     "footer.disclaimer": "إخلاء مسؤولية صحي",
     "footer.shipping": "الشحن والإرجاع",
-    "footer.copyright": "جميع الحقوق محفوظة.",
 
     // Legal
     "legal.effectiveDate": "تاريخ السريان",
@@ -5654,6 +5653,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.analytics.title": "التحليلات",
     "cookies.banner.cat.analytics.desc": "تساعدنا على فهم كيفية استخدامك لـ VitaSync (إحصائيات مجهولة الهوية). معطلة افتراضياً.",
     "a11y.skipToContent": "تخطي إلى المحتوى",
+    "a11y.mainContent": "المحتوى الرئيسي",
     "notFound.title": "الصفحة غير موجودة",
     "notFound.description": "هذه الصفحة غير موجودة أو تم نقلها.",
     "notFound.cta": "العودة إلى الرئيسية",
@@ -6421,7 +6421,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "销售条款",
     "footer.disclaimer": "健康免责声明",
     "footer.shipping": "配送与退货",
-    "footer.copyright": "版权所有。",
 
     // Legal
     "legal.effectiveDate": "生效日期",
@@ -7176,6 +7175,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.analytics.title": "分析",
     "cookies.banner.cat.analytics.desc": "帮助我们了解您如何使用 VitaSync（匿名统计）。默认关闭。",
     "a11y.skipToContent": "跳至内容",
+    "a11y.mainContent": "主要内容",
     "notFound.title": "页面未找到",
     "notFound.description": "此页面不存在或已被移动。",
     "notFound.cta": "返回首页",
@@ -7943,7 +7943,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     "footer.cgv": "Condições de Venda",
     "footer.disclaimer": "Aviso de saúde",
     "footer.shipping": "Envio e Devoluções",
-    "footer.copyright": "Todos os direitos reservados.",
 
     // Legal
     "legal.effectiveDate": "Data de vigência",
@@ -8698,6 +8697,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "cookies.banner.cat.analytics.title": "Analítica",
     "cookies.banner.cat.analytics.desc": "Ajudam-nos a entender como você usa o VitaSync (estatísticas anônimas via Lovable Analytics). Desativadas por padrão.",
     "a11y.skipToContent": "Ir para o conteúdo",
+    "a11y.mainContent": "Conteúdo principal",
     "notFound.title": "Página não encontrada",
     "notFound.description": "Esta página não existe ou foi movida.",
     "notFound.cta": "Voltar ao início",

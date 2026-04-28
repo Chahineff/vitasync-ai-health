@@ -82,7 +82,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.title": "Une IA qui",
     "features.titleHighlight": "comprend vraiment",
     "features.titleEnd": "votre corps",
-    "features.subtitle": "Découvrez les fonctionnalités qui font de VitaSync le coach santé le plus avancé du marché.",
+    "features.subtitle": "Découvrez les fonctionnalités qui font de VitaSync l'un des coachs santé IA les plus complets, propulsé par Google Gemini 3.",
+    "footer.fdaDisclaimerFr": "* Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie. Consultez votre professionnel de santé avant de commencer toute supplémentation.",
+    "footer.fdaDisclaimerEn": "* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.",
+    "footer.copyright": "© 2026 VitaSync. Tous droits réservés. Livraison aux États-Unis uniquement via Supliful.",
+    "reviews.noneYet": "Pas encore d'avis vérifiés",
+    "cinema.energyUpDisclaimer": "Exemple illustratif. Les résultats individuels varient.",
 
     // Pricing
     "pricing.title": "Tarification simple",
@@ -1634,7 +1639,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.title": "An AI that",
     "features.titleHighlight": "truly understands",
     "features.titleEnd": "your body",
-    "features.subtitle": "Discover the features that make VitaSync the most advanced health coach on the market.",
+    "features.subtitle": "Discover the features that make VitaSync one of the most complete AI health coaches, powered by Google Gemini 3.",
+    "footer.fdaDisclaimerFr": "* Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie. Consultez votre professionnel de santé avant de commencer toute supplémentation.",
+    "footer.fdaDisclaimerEn": "* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.",
+    "footer.copyright": "© 2026 VitaSync. All rights reserved. Ships to the US only via Supliful.",
+    "reviews.noneYet": "No verified reviews yet",
+    "cinema.energyUpDisclaimer": "Illustrative example. Individual results vary.",
 
     // Pricing
     "pricing.title": "Simple pricing",
@@ -3177,7 +3187,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.title": "Una IA que",
     "features.titleHighlight": "realmente entiende",
     "features.titleEnd": "tu cuerpo",
-    "features.subtitle": "Descubre las características que hacen de VitaSync el coach de salud más avanzado del mercado.",
+    "features.subtitle": "Descubre las funcionalidades que hacen de VitaSync uno de los coachs de salud IA más completos, impulsado por Google Gemini 3.",
+    "footer.fdaDisclaimerFr": "* Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie. Consultez votre professionnel de santé avant de commencer toute supplémentation.",
+    "footer.fdaDisclaimerEn": "* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.",
+    "footer.copyright": "© 2026 VitaSync. Todos los derechos reservados. Envíos únicamente a Estados Unidos vía Supliful.",
+    "reviews.noneYet": "Aún no hay reseñas verificadas",
+    "cinema.energyUpDisclaimer": "Ejemplo ilustrativo. Los resultados individuales varían.",
 
     // Pricing
     "pricing.title": "Precios simples",
@@ -4695,7 +4710,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.title": "ذكاء اصطناعي",
     "features.titleHighlight": "يفهم حقاً",
     "features.titleEnd": "جسمك",
-    "features.subtitle": "اكتشف الميزات التي تجعل VitaSync أكثر مدرب صحي متقدم في السوق.",
+    "features.subtitle": "اكتشف الميزات التي تجعل VitaSync أحد أكثر مدربي الصحة بالذكاء الاصطناعي اكتمالاً، مدعوماً بـ Google Gemini 3.",
+    "footer.fdaDisclaimerFr": "* Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie. Consultez votre professionnel de santé avant de commencer toute supplémentation.",
+    "footer.fdaDisclaimerEn": "* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.",
+    "footer.copyright": "© 2026 VitaSync. جميع الحقوق محفوظة. الشحن إلى الولايات المتحدة فقط عبر Supliful.",
+    "reviews.noneYet": "لا توجد مراجعات موثقة بعد",
+    "cinema.energyUpDisclaimer": "مثال توضيحي. النتائج الفردية تختلف.",
 
     // Pricing
     "pricing.title": "أسعار بسيطة",
@@ -6212,7 +6232,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.title": "真正",
     "features.titleHighlight": "理解",
     "features.titleEnd": "您身体的AI",
-    "features.subtitle": "探索使VitaSync成为市场上最先进健康教练的功能。",
+    "features.subtitle": "探索使 VitaSync 成为最完整的 AI 健康教练之一的功能，由 Google Gemini 3 提供支持。",
+    "footer.fdaDisclaimerFr": "* Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie. Consultez votre professionnel de santé avant de commencer toute supplémentation.",
+    "footer.fdaDisclaimerEn": "* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.",
+    "footer.copyright": "© 2026 VitaSync。保留所有权利。仅通过 Supliful 发往美国。",
+    "reviews.noneYet": "暂无已验证评价",
+    "cinema.energyUpDisclaimer": "示例说明。个人结果可能不同。",
 
     // Pricing
     "pricing.title": "简单定价",
@@ -7729,7 +7754,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.title": "Uma IA que",
     "features.titleHighlight": "realmente entende",
     "features.titleEnd": "seu corpo",
-    "features.subtitle": "Descubra as funcionalidades que fazem do VitaSync o coach de saúde mais avançado do mercado.",
+    "features.subtitle": "Descubra as funcionalidades que tornam o VitaSync um dos coaches de saúde por IA mais completos, com a tecnologia do Google Gemini 3.",
+    "footer.fdaDisclaimerFr": "* Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie. Consultez votre professionnel de santé avant de commencer toute supplémentation.",
+    "footer.fdaDisclaimerEn": "* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.",
+    "footer.copyright": "© 2026 VitaSync. Todos os direitos reservados. Envio apenas para os EUA via Supliful.",
+    "reviews.noneYet": "Ainda sem avaliações verificadas",
+    "cinema.energyUpDisclaimer": "Exemplo ilustrativo. Os resultados individuais variam.",
 
     // Pricing
     "pricing.title": "Preços simples",

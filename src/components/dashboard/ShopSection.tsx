@@ -7,6 +7,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { useProductGroups, ProductGroup } from '@/hooks/useProductGroups';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Slider } from '@/components/ui/slider';
+import { formatPriceUSD } from '@/lib/utils';
 import { 
   SearchOverlay, 
   ShopFilters, 
@@ -221,7 +222,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
                   <Package weight="light" className="w-4 h-4 text-primary" />
                   <span className="text-xs font-medium text-foreground">
                     {shippingRemaining > 0
-                      ? `${shippingRemaining.toFixed(2)} € ${t('cart.freeShippingRemaining')}`
+                      ? `${formatPriceUSD(shippingRemaining)} ${t('cart.freeShippingRemaining')}`
                       : t('cart.freeShippingUnlocked')
                     }
                   </span>

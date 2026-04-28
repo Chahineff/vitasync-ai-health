@@ -3,6 +3,7 @@ import { InstagramLogo } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Mail } from "lucide-react";
 import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
+import { openCookieSettings } from "@/lib/cookie-consent";
 
 const socialLinks: { icon: typeof InstagramLogo; href: string; label: string }[] = [];
 
@@ -124,6 +125,15 @@ export function Footer() {
           <p className="text-center" style={{ fontSize: 12, color: "#718096" }}>
             © 2026 VitaSync. All rights reserved. Ships to the US only via Supliful.
           </p>
+          <div className="mt-3 text-center">
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="text-xs text-foreground/60 underline-offset-4 hover:text-foreground hover:underline transition-colors"
+            >
+              {t("cookies.banner.manage")}
+            </button>
+          </div>
         </div>
       </div>
 

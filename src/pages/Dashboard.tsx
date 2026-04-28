@@ -411,7 +411,7 @@ const Dashboard = () => {
       </aside>
 
       {/* Main - with margin-left to compensate for fixed sidebar */}
-      <main className={`flex-1 flex flex-col h-screen max-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
+      <main id="main" className={`flex-1 flex flex-col h-screen max-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
         {/* Top bar with notifications */}
         <div className="flex items-center justify-end px-4 pt-3 pb-1 lg:px-8">
           <NotificationPanel />

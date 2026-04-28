@@ -21,7 +21,7 @@ const Index = () => {
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />
-      <main>
+      <main id="main">
         <HeroSection />
         <CinematicDashboardSection />
         <HowItWorksSection />

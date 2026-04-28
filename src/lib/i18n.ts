@@ -320,8 +320,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     "blog.newsletterSubtitle": "Recevez nos derniers articles et conseils santé directement dans votre boîte mail.",
     "blog.emailPlaceholder": "Votre email",
     "blog.subscribe": "S'abonner",
-    "blog.emptyTitle": "Aucun article pour le moment",
-    "blog.emptySubtitle": "Nos premiers articles arrivent bientôt. Restez connecté !",
+    "blog.emptyTitle": "Le blog arrive bientôt",
+    "blog.emptySubtitle": "Inscrivez-vous à la newsletter pour être prévenu·e des premiers articles VitaSync.",
 
     // Contact Page
     "contact.badge": "Contact",

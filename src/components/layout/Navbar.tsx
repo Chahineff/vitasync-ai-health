@@ -7,6 +7,17 @@ import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 import { getAnchorId, scrollToHomeAnchor } from "@/lib/scrollAnchors";
+import { fetchProducts } from "@/lib/shopify";
+
+let shopPrefetchTriggered = false;
+const prefetchShop = () => {
+  if (shopPrefetchTriggered) return;
+  shopPrefetchTriggered = true;
+  // Warm up Shopify Storefront cache; ignore errors
+  fetchProducts(250).catch(() => {
+    shopPrefetchTriggered = false;
+  });
+};
 
 const SECTION_IDS = ["dashboard", "how-it-works", "features", "products", "pricing", "faq"];
 
@@ -223,6 +234,8 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     to={link.href}
+                    onMouseEnter={link.href === "/shop" ? prefetchShop : undefined}
+                    onFocus={link.href === "/shop" ? prefetchShop : undefined}
                     className={cn(
                       "text-sm transition-opacity duration-200 px-3",
                       isActive ? "text-primary opacity-100 font-medium" : "text-current opacity-60 hover:opacity-100"

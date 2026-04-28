@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,27 +12,37 @@ import { useCartSync } from "@/hooks/useCartSync";
 import { CookieBanner } from "@/components/ui/CookieBanner";
 import "@/lib/cookie-consent";
 import { SkipToContent } from "@/components/a11y/SkipToContent";
+// Eager: home + lightweight pages
 import Index from "./pages/Index";
-import About from "./pages/About";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Contact from "./pages/Contact";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import Onboarding from "./pages/Onboarding";
-import Product from "./pages/Product";
-import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
-import ShopifyCallback from "./pages/ShopifyCallback";
-import Privacy from "./pages/legal/Privacy";
-import Terms from "./pages/legal/Terms";
-import LegalNotice from "./pages/legal/LegalNotice";
-import CookiesPage from "./pages/legal/Cookies";
-import CGV from "./pages/legal/CGV";
-import Disclaimer from "./pages/legal/Disclaimer";
-import Shipping from "./pages/legal/Shipping";
+// Lazy: heavy / non-critical routes (split into separate chunks)
+const About = lazy(() => import("./pages/About"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Product = lazy(() => import("./pages/Product"));
+const Shop = lazy(() => import("./pages/Shop"));
+const ShopifyCallback = lazy(() => import("./pages/ShopifyCallback"));
+const Privacy = lazy(() => import("./pages/legal/Privacy"));
+const Terms = lazy(() => import("./pages/legal/Terms"));
+const LegalNotice = lazy(() => import("./pages/legal/LegalNotice"));
+const CookiesPage = lazy(() => import("./pages/legal/Cookies"));
+const CGV = lazy(() => import("./pages/legal/CGV"));
+const Disclaimer = lazy(() => import("./pages/legal/Disclaimer"));
+const Shipping = lazy(() => import("./pages/legal/Shipping"));
 
 const queryClient = new QueryClient();
+
+function FullPageSpinner() {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
+      <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    </div>
+  );
+}
 
 function OAuthRedirectHandler() {
   const { user, loading } = useAuth();
@@ -57,6 +67,7 @@ function AppContent() {
       <ScrollToTop />
       <OAuthRedirectHandler />
       <SkipToContent />
+      <Suspense fallback={<FullPageSpinner />}>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
@@ -83,6 +94,7 @@ function AppContent() {
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
       <CookieBanner />
     </BrowserRouter>
   );

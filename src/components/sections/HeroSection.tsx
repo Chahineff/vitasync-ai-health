@@ -1,11 +1,35 @@
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
+  const [splineReady, setSplineReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 768) return;
+    const node = sectionRef.current;
+    if (!node) return;
+    const mount = () => setSplineReady(true);
+    const idle = (cb: () => void) =>
+      "requestIdleCallback" in window
+        ? (window as any).requestIdleCallback(cb, { timeout: 1500 })
+        : setTimeout(cb, 600);
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          idle(mount);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -19,14 +43,16 @@ export function HeroSection() {
     <section ref={sectionRef} className="relative min-h-screen md:min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-3 md:mx-5 mb-4 md:mb-6">
       {/* Spline background — hidden on mobile, shown on tablet+ */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
-        <div className="absolute inset-0 hidden md:block">
-          <spline-viewer
-            url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
-            style={{ width: "100%", height: "100%", pointerEvents: "none" }}
-          />
-        </div>
-        {/* Mobile: simple gradient background, no Spline */}
-        <div className="absolute inset-0 md:hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        {/* Static gradient placeholder — always visible, replaced by Spline once idle */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        {splineReady && (
+          <div className="absolute inset-0 hidden md:block">
+            <spline-viewer
+              url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
+              style={{ width: "100%", height: "100%", pointerEvents: "none" }}
+            />
+          </div>
+        )}
         <div className="absolute inset-0 bg-background/70 dark:bg-background/60" />
       </div>
 

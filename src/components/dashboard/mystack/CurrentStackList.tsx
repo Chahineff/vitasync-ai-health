@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
+import { formatPriceUSD } from '@/lib/utils';
 
 interface StackProduct {
   id: string;

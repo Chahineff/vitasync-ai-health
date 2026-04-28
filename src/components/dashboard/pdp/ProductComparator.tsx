@@ -1,7 +1,7 @@
 import { ShopifyProduct } from '@/lib/shopify';
 import { CheckCircle, XCircle } from '@phosphor-icons/react';
 import { useTranslation } from '@/hooks/useTranslation';
-import { cn } from '@/lib/utils';
+import { cn, formatPriceUSD } from '@/lib/utils';
 
 interface ProductComparatorProps {
   currentProduct: {

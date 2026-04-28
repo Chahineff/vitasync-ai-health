@@ -144,7 +144,7 @@ export function FeatureSteps({
                       >
                         {feature.step}
                       </p>
-                      <h4
+                      <h3
                         className={cn(
                           "text-sm md:text-base lg:text-lg font-medium transition-colors duration-500",
                           index === currentFeature
@@ -153,7 +153,7 @@ export function FeatureSteps({
                         )}
                       >
                         {feature.title || feature.step}
-                      </h4>
+                      </h3>
                       <AnimatePresence>
                         {index === currentFeature && (
                           <motion.p

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, MagnifyingGlass, Compass } from "@phosphor-icons/react";
-import { POSTS, ACCENT_CLASSES } from "@/data/blog/posts";
+import { POSTS } from "@/data/blog/posts";
 import { PostCard } from "@/components/blog/PostCard";
 
 interface BlogNotFoundProps {
@@ -83,11 +83,9 @@ export function BlogNotFound({ attemptedSlug }: BlogNotFoundProps) {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {suggestions.map((p) => {
-              const accent = ACCENT_CLASSES[p.accent];
-              // Use PostCard if compatible, else inline card
-              return <PostCard key={p.slug} post={p} compact />;
-            })}
+            {suggestions.map((p) => (
+              <PostCard key={p.slug} post={p} />
+            ))}
           </div>
         </section>
       )}

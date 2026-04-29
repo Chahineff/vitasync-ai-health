@@ -22,6 +22,8 @@ import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import { renderInline } from "@/components/blog/blogShared";
 import { useDocumentSEO } from "@/components/blog/useDocumentSEO";
 import { ShareButtons } from "@/components/blog/ShareButtons";
+import { BlogNotFound } from "@/components/blog/BlogNotFound";
+import { useEffect as useEffectAlias } from "react";
 
 function renderBlock(block: ContentBlock, idx: number) {
   switch (block.kind) {
@@ -148,19 +150,24 @@ const BlogPost = () => {
   }
 
   if (!post) {
+    // Tell crawlers not to index missing-article pages
+    if (typeof document !== "undefined") {
+      let robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
+      if (!robots) {
+        robots = document.createElement("meta");
+        robots.setAttribute("name", "robots");
+        document.head.appendChild(robots);
+      }
+      robots.setAttribute("content", "noindex, follow");
+    }
     return (
       <PageTransition className="min-h-screen bg-background">
         <SplineBackground />
         <FloatingThemeToggle />
+        <ScrollToTopButton />
         <Navbar />
         <main id="main" className="relative z-10 pt-32 pb-20">
-          <div className="container-custom max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl font-light text-foreground mb-4">Article introuvable</h1>
-            <p className="text-foreground/60 mb-8">Cet article n'existe pas ou a été déplacé.</p>
-            <Link to="/blog" className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all">
-              <ArrowLeft size={16} weight="light" /> Retour au blog
-            </Link>
-          </div>
+          <BlogNotFound attemptedSlug={slug} />
         </main>
         <Footer />
       </PageTransition>

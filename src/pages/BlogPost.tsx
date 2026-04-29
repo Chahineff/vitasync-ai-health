@@ -7,6 +7,7 @@ import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { ArrowLeft, FilePdf, Clock } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 import {
   ACCENT_CLASSES,
   DISCLAIMERS,
@@ -199,12 +200,14 @@ const BlogPost = () => {
 
           <article className="rounded-2xl border border-border/40 bg-white/50 dark:bg-transparent dark:border-white/[0.06] p-6 md:p-10 backdrop-blur">
             {/* Hero gradient cover */}
-            <div
+            <motion.div
+              layoutId={`blog-cover-${post.slug}`}
               aria-hidden="true"
               className={`h-40 md:h-56 rounded-xl bg-gradient-to-br ${accent.gradient} relative overflow-hidden mb-8`}
+              transition={{ type: "spring", stiffness: 260, damping: 32 }}
             >
               <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[radial-gradient(circle_at_30%_30%,white_0%,transparent_60%)]" />
-            </div>
+            </motion.div>
 
             <header className="mb-8">
               <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/60 mb-4">

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -7,69 +7,48 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { motion } from "framer-motion";
-import { ArrowRight, Clock, Tag, NotePencil } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SplineBackground } from "@/components/sections/SplineBackground";
-import { storefrontApiRequest } from "@/lib/shopify";
-import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
-
-const ARTICLES_QUERY = `
-  query GetArticles($first: Int!) {
-    articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
-      edges {
-        node {
-          id
-          title
-          handle
-          excerpt
-          publishedAt
-          image {
-            url
-            altText
-          }
-          blog {
-            title
-            handle
-          }
-          authorV2 {
-            name
-          }
-        }
-      }
-    }
-  }
-`;
-
-interface ShopifyArticle {
-  id: string;
-  title: string;
-  handle: string;
-  excerpt: string | null;
-  publishedAt: string;
-  image: { url: string; altText: string | null } | null;
-  blog: { title: string; handle: string };
-  authorV2: { name: string } | null;
-}
+import { POSTS, CATEGORIES, type BlogCategory } from "@/data/blog/posts";
+import { PostCard } from "@/components/blog/PostCard";
+import { useDocumentSEO } from "@/components/blog/useDocumentSEO";
 
 const Blog = () => {
   const { t } = useTranslation();
+  const [activeCategory, setActiveCategory] = useState<"all" | BlogCategory>("all");
 
-  const { data: articles = [], isLoading } = useQuery({
-    queryKey: ["shopify-blog-articles"],
-    queryFn: async () => {
-      const data = await storefrontApiRequest(ARTICLES_QUERY, { first: 20 });
-      const edges = data?.data?.articles?.edges || [];
-      return edges.map((e: { node: ShopifyArticle }) => e.node) as ShopifyArticle[];
+  const posts = useMemo(
+    () =>
+      activeCategory === "all"
+        ? POSTS
+        : POSTS.filter((p) => p.category === activeCategory),
+    [activeCategory]
+  );
+
+  const canonical =
+    typeof window !== "undefined" ? `${window.location.origin}/blog` : "https://vitasyncai.lovable.app/blog";
+
+  useDocumentSEO({
+    title: "Blog VitaSync — Science de la supplémentation, décodée",
+    description:
+      "Articles fondateurs VitaSync : vitamine D, magnésium, oméga-3, créatine. Données NHANES, méta-analyses et recommandations pratiques pour votre stack.",
+    canonical,
+    ogImage: POSTS[0]?.ogImage || "/placeholder.svg",
+    ogType: "website",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      name: "Blog VitaSync",
+      url: canonical,
+      blogPost: POSTS.map((p) => ({
+        "@type": "BlogPosting",
+        headline: p.title,
+        url: `${canonical}/${p.slug}`,
+        datePublished: p.publishedAt,
+        description: p.metaDescription,
+      })),
     },
   });
-
-  const gradients = [
-    "from-primary to-accent",
-    "from-secondary to-primary",
-    "from-accent to-secondary",
-    "from-primary to-secondary",
-  ];
 
   return (
     <PageTransition className="min-h-screen bg-background">
@@ -79,7 +58,7 @@ const Blog = () => {
       <Navbar />
       <main id="main" className="relative z-10">
         {/* Hero */}
-        <section className="pt-32 pb-20">
+        <section className="pt-32 pb-12">
           <div className="container-custom">
             <motion.div
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
@@ -91,92 +70,53 @@ const Blog = () => {
                 {t("blog.badge")}
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground mb-6">
-                {t("blog.title")}{" "}
-                <span className="gradient-text">{t("blog.titleHighlight")}</span>
+                {t("blog.title")} <span className="gradient-text">{t("blog.titleHighlight")}</span>
               </h1>
-              <p className="text-lg text-foreground/60">
-                {t("blog.subtitle")}
-              </p>
+              <p className="text-lg text-foreground/60">{t("blog.subtitle")}</p>
             </motion.div>
           </div>
         </section>
 
-        {/* Articles Grid or Empty State */}
-        <section className="section-padding">
+        {/* Category filters */}
+        <section className="pb-8">
           <div className="container-custom">
-            {isLoading ? (
-              <div className="grid md:grid-cols-2 gap-8">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl border border-border/30 bg-card/40 p-6 space-y-4">
-                    <Skeleton className="h-48 w-full rounded-xl" />
-                    <div className="flex gap-3">
-                      <Skeleton className="h-3 w-20" />
-                      <Skeleton className="h-3 w-16" />
-                    </div>
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6" />
-                    <Skeleton className="h-4 w-24 mt-2" />
-                  </div>
-                ))}
-              </div>
-            ) : articles.length === 0 ? (
-              <ScrollReveal>
-                <GlassCard className="max-w-2xl mx-auto text-center py-16 px-8">
-                  <NotePencil size={56} weight="light" className="mx-auto text-foreground/30 mb-6" />
-                  <h2 className="text-2xl font-light tracking-tight text-foreground mb-3">
-                    {t("blog.emptyTitle")}
-                  </h2>
-                  <p className="text-foreground/50">
-                    {t("blog.emptySubtitle")}
-                  </p>
-                </GlassCard>
-              </ScrollReveal>
+            <div
+              className="flex flex-wrap justify-center gap-2"
+              role="tablist"
+              aria-label="Catégories d'articles"
+            >
+              {CATEGORIES.map((c) => {
+                const active = activeCategory === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setActiveCategory(c.id)}
+                    className={`px-4 py-2 rounded-full text-sm transition-all border ${
+                      active
+                        ? "bg-primary/15 text-primary border-primary/40"
+                        : "bg-card/30 text-foreground/60 border-border/40 hover:text-foreground hover:border-border"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Articles Grid */}
+        <section className="section-padding pt-4">
+          <div className="container-custom">
+            {posts.length === 0 ? (
+              <p className="text-center text-foreground/50 py-20">Aucun article dans cette catégorie pour l'instant.</p>
             ) : (
               <div className="grid md:grid-cols-2 gap-8">
-                {articles.map((article, index) => (
-                  <ScrollReveal key={article.id} delay={index * 0.1}>
-                    <Link to={`/blog/${article.blog.handle}/${article.handle}`} className="block group">
-                      <GlassCard hover className="h-full">
-                        {article.image ? (
-                          <div className="h-48 rounded-xl overflow-hidden mb-6">
-                            <img
-                              src={article.image.url}
-                              alt={article.image.altText || article.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                          </div>
-                        ) : (
-                          <div className={`h-48 rounded-xl bg-gradient-to-br ${gradients[index % gradients.length]} mb-6 opacity-20 group-hover:opacity-30 transition-opacity`} />
-                        )}
-                        <div className="flex items-center gap-4 mb-4">
-                          <span className="inline-flex items-center gap-1.5 text-xs text-primary">
-                            <Tag size={14} weight="light" />
-                            {article.blog.title}
-                          </span>
-                          {article.authorV2?.name && (
-                            <span className="text-xs text-foreground/50">
-                              {article.authorV2.name}
-                            </span>
-                          )}
-                          <span className="text-xs text-foreground/40">
-                            {new Date(article.publishedAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <h2 className="text-xl font-light tracking-tight text-foreground mb-3 group-hover:text-primary transition-colors">
-                          {article.title}
-                        </h2>
-                        {article.excerpt && (
-                          <p className="text-sm text-foreground/50 mb-4 line-clamp-3">
-                            {article.excerpt}
-                          </p>
-                        )}
-                        <span className="inline-flex items-center gap-2 text-sm text-primary group-hover:gap-3 transition-all">
-                          {t("blog.readArticle")}
-                          <ArrowRight size={16} weight="light" />
-                        </span>
-                      </GlassCard>
-                    </Link>
+                {posts.map((post, index) => (
+                  <ScrollReveal key={post.slug} delay={index * 0.08}>
+                    <PostCard post={post} />
                   </ScrollReveal>
                 ))}
               </div>
@@ -192,11 +132,13 @@ const Blog = () => {
                 <h2 className="text-3xl md:text-4xl font-light tracking-tight text-foreground mb-4">
                   {t("blog.newsletterTitle")}
                 </h2>
-                <p className="text-lg text-foreground/60 mb-8">
-                  {t("blog.newsletterSubtitle")}
-                </p>
+                <p className="text-lg text-foreground/60 mb-8">{t("blog.newsletterSubtitle")}</p>
                 <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                  <label htmlFor="newsletter-email" className="sr-only">
+                    {t("blog.emailPlaceholder")}
+                  </label>
                   <input
+                    id="newsletter-email"
                     type="email"
                     placeholder={t("blog.emailPlaceholder")}
                     className="flex-1 px-6 py-4 rounded-xl bg-background border border-border/50 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"

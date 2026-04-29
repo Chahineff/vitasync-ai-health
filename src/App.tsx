@@ -72,6 +72,8 @@ function AppContent() {
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+        {/* Legacy Shopify nested URL — redirect to slug-based route */}
         <Route path="/blog/:blogHandle/:articleHandle" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<Auth />} />

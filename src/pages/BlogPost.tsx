@@ -97,12 +97,7 @@ function renderBlock(block: ContentBlock, idx: number) {
 const BlogPost = () => {
   const params = useParams<{ slug?: string; articleHandle?: string }>();
   const slug = params.slug || params.articleHandle;
-
-  // Legacy /blog/:blogHandle/:articleHandle → /blog/:slug
-  if (!params.slug && params.articleHandle) {
-    return <Navigate to={`/blog/${params.articleHandle}`} replace />;
-  }
-
+  const isLegacy = !params.slug && !!params.articleHandle;
   const post = slug ? getPostBySlug(slug) : undefined;
 
   useEffect(() => {
@@ -141,6 +136,11 @@ const BlogPost = () => {
         }
       : undefined,
   });
+
+  // Legacy /blog/:blogHandle/:articleHandle → /blog/:slug
+  if (isLegacy) {
+    return <Navigate to={`/blog/${params.articleHandle}`} replace />;
+  }
 
   if (!post) {
     return (

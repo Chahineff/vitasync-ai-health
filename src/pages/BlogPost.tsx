@@ -24,6 +24,7 @@ import { renderInline } from "@/components/blog/blogShared";
 import { useDocumentSEO } from "@/components/blog/useDocumentSEO";
 import { ShareButtons } from "@/components/blog/ShareButtons";
 import { BlogNotFound } from "@/components/blog/BlogNotFound";
+import { BlogBreadcrumbs } from "@/components/blog/BlogBreadcrumbs";
 
 function renderBlock(block: ContentBlock, idx: number) {
   switch (block.kind) {
@@ -190,6 +191,14 @@ const BlogPost = () => {
       <Navbar />
       <main id="main" className="relative z-10 pt-32 pb-20">
         <div className="container-custom max-w-3xl mx-auto">
+          <BlogBreadcrumbs
+            className="mb-6"
+            items={[
+              { label: "Accueil", href: "/" },
+              { label: "Blog", href: "/blog" },
+              { label: post.title },
+            ]}
+          />
           <Link
             to="/blog"
             className="inline-flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all mb-8"

@@ -209,7 +209,12 @@ const BlogPost = () => {
               <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[radial-gradient(circle_at_30%_30%,white_0%,transparent_60%)]" />
             </motion.div>
 
-            <header className="mb-8">
+            <motion.header
+              className="mb-8"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
               <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/60 mb-4">
                 <span className={`text-xs uppercase tracking-widest px-2.5 py-1 rounded-full ${accent.bg} ${accent.text}`}>
                   {post.category}
@@ -238,18 +243,35 @@ const BlogPost = () => {
                 title={post.title}
                 className="mt-6"
               />
-            </header>
+            </motion.header>
 
             {/* Lead */}
-            <p className="text-lg md:text-xl text-foreground/80 italic leading-relaxed border-l-4 border-primary/40 pl-5 my-8">
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="text-lg md:text-xl text-foreground/80 italic leading-relaxed border-l-4 border-primary/40 pl-5 my-8"
+            >
               {renderInline(post.lead)}
-            </p>
+            </motion.p>
 
             {/* Stats */}
-            <StatRow items={post.stats} />
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <StatRow items={post.stats} />
+            </motion.div>
 
             {/* Body */}
-            <div>{post.body.map(renderBlock)}</div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.36 }}
+            >
+              {post.body.map(renderBlock)}
+            </motion.div>
 
             {/* CTA */}
             <aside className={`not-prose my-12 rounded-2xl p-6 md:p-8 bg-gradient-to-br ${accent.gradient} border border-border/30`}>

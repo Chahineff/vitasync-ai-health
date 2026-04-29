@@ -116,6 +116,10 @@ const BlogPost = () => {
     canonical: canonical || "https://vitasyncai.lovable.app/blog",
     ogImage: post?.ogImage || "/placeholder.svg",
     ogType: "article",
+    keywords: post?.keywords,
+    publishedTime: post?.publishedAt,
+    modifiedTime: post?.publishedAt,
+    tags: post ? [post.category, ...post.keywords] : undefined,
     jsonLd: post
       ? {
           "@context": "https://schema.org",

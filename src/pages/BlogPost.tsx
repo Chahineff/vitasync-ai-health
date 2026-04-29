@@ -21,6 +21,7 @@ import { SourceList } from "@/components/blog/SourceList";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import { renderInline } from "@/components/blog/blogShared";
 import { useDocumentSEO } from "@/components/blog/useDocumentSEO";
+import { ShareButtons } from "@/components/blog/ShareButtons";
 
 function renderBlock(block: ContentBlock, idx: number) {
   switch (block.kind) {
@@ -219,6 +220,11 @@ const BlogPost = () => {
                 {post.title}
               </h1>
               <p className="text-lg md:text-xl text-foreground/60 font-light leading-snug">{post.subtitle}</p>
+              <ShareButtons
+                url={canonical || (typeof window !== "undefined" ? `${window.location.origin}/blog/${post.slug}` : `/blog/${post.slug}`)}
+                title={post.title}
+                className="mt-6"
+              />
             </header>
 
             {/* Lead */}
@@ -261,6 +267,15 @@ const BlogPost = () => {
             <section className="not-prose my-10">
               <h2 className="text-xl font-light text-foreground tracking-tight mb-4">Sources</h2>
               <SourceList sources={post.sources} />
+            </section>
+
+            {/* Share (bottom) */}
+            <section className="not-prose mt-10 pt-6 border-t border-border/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <p className="text-sm text-foreground/60">Cet article vous a été utile ? Partagez-le.</p>
+              <ShareButtons
+                url={canonical || (typeof window !== "undefined" ? `${window.location.origin}/blog/${post.slug}` : `/blog/${post.slug}`)}
+                title={post.title}
+              />
             </section>
 
             {/* Disclaimers */}

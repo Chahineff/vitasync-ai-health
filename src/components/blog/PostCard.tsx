@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ACCENT_CLASSES, type BlogPost } from "@/data/blog/posts";
@@ -14,15 +15,21 @@ export function PostCard({ post }: Props) {
   const excerpt = post.lead.replace(/[*`]/g, "").slice(0, 150).trim() + "…";
 
   return (
-    <Link to={`/blog/${post.slug}`} className="block group focus-visible:outline-none">
-      <GlassCard hover className="h-full p-0 overflow-hidden">
+    <Link
+      to={`/blog/${post.slug}`}
+      className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-3xl"
+      aria-label={`Lire l'article : ${post.title}`}
+    >
+      <GlassCard hover className="h-full p-0 overflow-hidden transition-transform duration-300 group-hover:-translate-y-1">
         {/* Cover gradient */}
-        <div
+        <motion.div
+          layoutId={`blog-cover-${post.slug}`}
           aria-hidden="true"
           className={`h-44 bg-gradient-to-br ${accent.gradient} relative overflow-hidden`}
+          transition={{ type: "spring", stiffness: 260, damping: 32 }}
         >
           <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[radial-gradient(circle_at_30%_30%,white_0%,transparent_60%)]" />
-        </div>
+        </motion.div>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-3">
             <span

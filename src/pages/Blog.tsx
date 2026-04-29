@@ -113,13 +113,33 @@ const Blog = () => {
             {posts.length === 0 ? (
               <p className="text-center text-foreground/50 py-20">Aucun article dans cette catégorie pour l'instant.</p>
             ) : (
-              <div className="grid md:grid-cols-2 gap-8">
-                {posts.map((post, index) => (
-                  <ScrollReveal key={post.slug} delay={index * 0.08}>
+              <motion.div
+                className="grid md:grid-cols-2 gap-8"
+                initial="hidden"
+                animate="show"
+                variants={{
+                  hidden: {},
+                  show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+                }}
+                key={activeCategory}
+              >
+                {posts.map((post) => (
+                  <motion.div
+                    key={post.slug}
+                    variants={{
+                      hidden: { opacity: 0, y: 18, filter: "blur(6px)" },
+                      show: {
+                        opacity: 1,
+                        y: 0,
+                        filter: "blur(0px)",
+                        transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] },
+                      },
+                    }}
+                  >
                     <PostCard post={post} />
-                  </ScrollReveal>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </div>
         </section>

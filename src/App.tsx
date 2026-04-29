@@ -12,6 +12,7 @@ import { useCartSync } from "@/hooks/useCartSync";
 import { CookieBanner } from "@/components/ui/CookieBanner";
 import "@/lib/cookie-consent";
 import { SkipToContent } from "@/components/a11y/SkipToContent";
+import { BlogPostSkeleton } from "@/components/blog/BlogPostSkeleton";
 // Eager: home + lightweight pages
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -71,10 +72,31 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route
+          path="/blog"
+          element={
+            <Suspense fallback={<BlogPostSkeleton />}>
+              <Blog />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/blog/:slug"
+          element={
+            <Suspense fallback={<BlogPostSkeleton />}>
+              <BlogPost />
+            </Suspense>
+          }
+        />
         {/* Legacy Shopify nested URL — redirect to slug-based route */}
-        <Route path="/blog/:blogHandle/:articleHandle" element={<BlogPost />} />
+        <Route
+          path="/blog/:blogHandle/:articleHandle"
+          element={
+            <Suspense fallback={<BlogPostSkeleton />}>
+              <BlogPost />
+            </Suspense>
+          }
+        />
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />

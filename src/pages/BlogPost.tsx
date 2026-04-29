@@ -7,6 +7,7 @@ import { FloatingThemeToggle } from "@/components/ui/FloatingThemeToggle";
 import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { SplineBackground } from "@/components/sections/SplineBackground";
 import { ArrowLeft, FilePdf, Clock } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 import {
   ACCENT_CLASSES,
   DISCLAIMERS,
@@ -199,14 +200,21 @@ const BlogPost = () => {
 
           <article className="rounded-2xl border border-border/40 bg-white/50 dark:bg-transparent dark:border-white/[0.06] p-6 md:p-10 backdrop-blur">
             {/* Hero gradient cover */}
-            <div
+            <motion.div
+              layoutId={`blog-cover-${post.slug}`}
               aria-hidden="true"
               className={`h-40 md:h-56 rounded-xl bg-gradient-to-br ${accent.gradient} relative overflow-hidden mb-8`}
+              transition={{ type: "spring", stiffness: 260, damping: 32 }}
             >
               <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[radial-gradient(circle_at_30%_30%,white_0%,transparent_60%)]" />
-            </div>
+            </motion.div>
 
-            <header className="mb-8">
+            <motion.header
+              className="mb-8"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
               <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/60 mb-4">
                 <span className={`text-xs uppercase tracking-widest px-2.5 py-1 rounded-full ${accent.bg} ${accent.text}`}>
                   {post.category}
@@ -235,18 +243,35 @@ const BlogPost = () => {
                 title={post.title}
                 className="mt-6"
               />
-            </header>
+            </motion.header>
 
             {/* Lead */}
-            <p className="text-lg md:text-xl text-foreground/80 italic leading-relaxed border-l-4 border-primary/40 pl-5 my-8">
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="text-lg md:text-xl text-foreground/80 italic leading-relaxed border-l-4 border-primary/40 pl-5 my-8"
+            >
               {renderInline(post.lead)}
-            </p>
+            </motion.p>
 
             {/* Stats */}
-            <StatRow items={post.stats} />
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <StatRow items={post.stats} />
+            </motion.div>
 
             {/* Body */}
-            <div>{post.body.map(renderBlock)}</div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.36 }}
+            >
+              {post.body.map(renderBlock)}
+            </motion.div>
 
             {/* CTA */}
             <aside className={`not-prose my-12 rounded-2xl p-6 md:p-8 bg-gradient-to-br ${accent.gradient} border border-border/30`}>

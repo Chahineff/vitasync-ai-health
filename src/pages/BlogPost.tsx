@@ -23,7 +23,6 @@ import { renderInline } from "@/components/blog/blogShared";
 import { useDocumentSEO } from "@/components/blog/useDocumentSEO";
 import { ShareButtons } from "@/components/blog/ShareButtons";
 import { BlogNotFound } from "@/components/blog/BlogNotFound";
-import { useEffect as useEffectAlias } from "react";
 
 function renderBlock(block: ContentBlock, idx: number) {
   switch (block.kind) {

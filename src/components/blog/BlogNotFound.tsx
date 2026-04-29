@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, MagnifyingGlass, Compass } from "@phosphor-icons/react";
 import { POSTS } from "@/data/blog/posts";
 import { PostCard } from "@/components/blog/PostCard";
+import { BlogBreadcrumbs } from "@/components/blog/BlogBreadcrumbs";
 
 interface BlogNotFoundProps {
   attemptedSlug?: string;
@@ -15,6 +16,14 @@ export function BlogNotFound({ attemptedSlug }: BlogNotFoundProps) {
 
   return (
     <div className="container-custom max-w-4xl mx-auto">
+      <BlogBreadcrumbs
+        className="mb-8"
+        items={[
+          { label: "Accueil", href: "/" },
+          { label: "Blog", href: "/blog" },
+          { label: "Article introuvable" },
+        ]}
+      />
       {/* Hero */}
       <div className="text-center mb-14">
         <div

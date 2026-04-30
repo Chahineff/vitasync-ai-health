@@ -99,7 +99,7 @@ export function FeatureSteps({
 
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-14 items-start">
             {/* Left: Steps list (below preview on mobile) */}
-            <div className="w-full lg:w-2/5 space-y-1 max-h-[35vh] lg:max-h-none overflow-y-auto order-2 lg:order-none">
+            <div className="w-full lg:w-2/5 space-y-1 max-h-[45vh] lg:max-h-none overflow-y-auto order-2 lg:order-none">
               {features.map((feature, index) => (
                 <button
                   key={index}
@@ -175,7 +175,7 @@ export function FeatureSteps({
 
             {/* Right: Preview area */}
             <div className="w-full lg:w-3/5 order-1 lg:order-none">
-              <div className="relative h-[38vh] md:h-[350px] lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
+              <div className="relative h-[30vh] md:h-[350px] lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
                 <AnimatePresence mode="wait">
                   {features.map(
                     (feature, index) =>

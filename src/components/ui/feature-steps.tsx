@@ -63,7 +63,7 @@ export function FeatureSteps({
       className={cn("relative", className)}
       style={{ height: scrollHeight }}
     >
-      <div className="sticky top-0 min-h-screen flex items-center py-4 md:py-12 lg:py-20 overflow-hidden">
+      <div className="sticky top-0 h-screen flex flex-col justify-center py-2 md:py-12 lg:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto w-full px-4 md:px-6">
           {/* Header */}
           {title && (
@@ -99,7 +99,7 @@ export function FeatureSteps({
 
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-14 items-start">
             {/* Left: Steps list (below preview on mobile) */}
-            <div className="w-full lg:w-2/5 space-y-1 max-h-[30vh] lg:max-h-none overflow-y-auto order-2 lg:order-none">
+            <div className="w-full lg:w-2/5 space-y-1 max-h-[35vh] lg:max-h-none overflow-y-auto order-2 lg:order-none">
               {features.map((feature, index) => (
                 <button
                   key={index}
@@ -175,7 +175,7 @@ export function FeatureSteps({
 
             {/* Right: Preview area */}
             <div className="w-full lg:w-3/5 order-1 lg:order-none">
-              <div className="relative h-[300px] md:h-[350px] lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
+              <div className="relative h-[38vh] md:h-[350px] lg:h-[500px] rounded-2xl overflow-hidden bg-card border border-border/30">
                 <AnimatePresence mode="wait">
                   {features.map(
                     (feature, index) =>

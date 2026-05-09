@@ -26,7 +26,6 @@ import {
   ArrowRight,
 } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { SplineBackground } from "@/components/sections/SplineBackground";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 
@@ -70,7 +69,20 @@ const About = () => {
 
   return (
     <PageTransition className="min-h-screen bg-background">
-      <SplineBackground />
+      {/* Custom layered background — Spline-like aura at top, gradients below */}
+      <div aria-hidden className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Top aura (hero zone only) */}
+        <div className="absolute inset-x-0 top-0 h-[100vh] bg-gradient-mesh opacity-90" />
+        <div className="absolute inset-x-0 top-0 h-[100vh] bg-[radial-gradient(ellipse_120%_70%_at_50%_0%,hsl(var(--primary)/0.28),transparent_60%),radial-gradient(ellipse_80%_50%_at_80%_10%,hsl(var(--secondary)/0.22),transparent_60%)]" />
+        {/* Fade hero into background */}
+        <div className="absolute inset-x-0 top-[60vh] h-[40vh] bg-gradient-to-b from-transparent to-background" />
+        {/* Mid drifting blobs */}
+        <div className="absolute left-[-10%] top-[120vh] w-[55vw] h-[55vw] rounded-full bg-secondary/15 blur-[120px]" />
+        <div className="absolute right-[-10%] top-[200vh] w-[50vw] h-[50vw] rounded-full bg-primary/15 blur-[140px]" />
+        <div className="absolute left-[20%] top-[300vh] w-[45vw] h-[45vw] rounded-full bg-secondary/10 blur-[120px]" />
+        {/* Subtle base wash */}
+        <div className="absolute inset-0 bg-background/40 dark:bg-background/30" />
+      </div>
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />

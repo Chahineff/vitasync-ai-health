@@ -246,8 +246,10 @@ const About = () => {
                   return (
                     <ScrollReveal key={i} delay={i * 0.05}>
                       <div
-                        className={`relative grid md:grid-cols-2 gap-6 md:gap-12 items-center ${
-                          isRight ? "md:[&>*:first-child]:order-2" : ""
+                        className={`relative grid gap-6 md:gap-12 items-center ${
+                          isHighlight
+                            ? "md:grid-cols-1"
+                            : `md:grid-cols-2 ${isRight ? "md:[&>*:first-child]:order-2" : ""}`
                         }`}
                       >
                         {/* dot */}
@@ -260,13 +262,19 @@ const About = () => {
                           }`}
                         />
                         {/* content */}
-                        <div className={`pl-12 md:pl-0 ${isRight ? "md:pl-12" : "md:pr-12 md:text-right"}`}>
+                        <div
+                          className={
+                            isHighlight
+                              ? "pl-12 md:pl-0 md:max-w-md md:mx-auto md:text-center w-full"
+                              : `pl-12 md:pl-0 ${isRight ? "md:pl-12" : "md:pr-12 md:text-right"}`
+                          }
+                        >
                           <div className={`relative ${isHighlight ? "rounded-3xl p-[1.5px] bg-gradient-to-br from-primary/70 via-secondary/50 to-primary/70 shadow-[0_0_50px_hsl(var(--primary)/0.25)]" : ""}`}>
                             <GlassCard className={`p-5 md:p-6 relative overflow-hidden ${isHighlight ? "bg-background/80 dark:bg-background/60" : ""}`}>
                               {isHighlight && (
                                 <div aria-hidden className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gradient-to-br from-primary/30 to-secondary/20 blur-3xl" />
                               )}
-                              <div className={`relative flex items-center gap-2 mb-3 ${isRight ? "" : "md:justify-end"}`}>
+                              <div className={`relative flex items-center gap-2 mb-3 ${isHighlight ? "md:justify-center" : isRight ? "" : "md:justify-end"}`}>
                                 <m.icon size={isHighlight ? 22 : 20} weight={isHighlight ? "fill" : "duotone"} className="text-primary" />
                                 <span className={`text-xs uppercase tracking-widest ${isHighlight ? "text-primary font-semibold" : "text-foreground/50"}`}>
                                   {m.year}
@@ -285,7 +293,7 @@ const About = () => {
                           </div>
                         </div>
                         {/* spacer */}
-                        <div className="hidden md:block" />
+                        {!isHighlight && <div className="hidden md:block" />}
                       </div>
                     </ScrollReveal>
                   );

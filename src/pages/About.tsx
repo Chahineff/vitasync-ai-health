@@ -253,14 +253,12 @@ const About = () => {
                         }`}
                       >
                         {/* dot */}
-                        <div
-                          aria-hidden
-                          className={`absolute left-4 md:left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-br from-primary to-secondary z-10 ${
-                            isHighlight
-                              ? "w-4 h-4 shadow-[0_0_30px_hsl(var(--primary)/0.9)] animate-pulse-glow"
-                              : "w-3 h-3 shadow-[0_0_20px_hsl(var(--primary)/0.6)]"
-                          }`}
-                        />
+                        {!isHighlight && (
+                          <div
+                            aria-hidden
+                            className="absolute left-4 md:left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-br from-primary to-secondary z-10 w-3 h-3 shadow-[0_0_20px_hsl(var(--primary)/0.6)]"
+                          />
+                        )}
                         {/* content */}
                         <div
                           className={

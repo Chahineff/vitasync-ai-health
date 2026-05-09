@@ -356,7 +356,10 @@ const About = () => {
                   <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-gradient-to-br from-primary/30 to-secondary/20 blur-3xl" />
                   <div className="relative">
                     <div className="icon-container mb-5">
-                      <values[0].icon size={28} weight="duotone" className="text-primary" />
+                      {(() => {
+                        const Icon = values[0].icon;
+                        return <Icon size={28} weight="duotone" className="text-primary" />;
+                      })()}
                     </div>
                     <h3
                       className="text-2xl md:text-3xl font-medium text-foreground mb-3"

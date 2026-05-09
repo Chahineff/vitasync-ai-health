@@ -247,9 +247,7 @@ const About = () => {
                     <ScrollReveal key={i} delay={i * 0.05}>
                       <div
                         className={`relative grid gap-6 md:gap-12 items-center ${
-                          isHighlight
-                            ? "md:grid-cols-1"
-                            : `md:grid-cols-2 ${isRight ? "md:[&>*:first-child]:order-2" : ""}`
+                          isHighlight ? "md:grid-cols-1" : "md:grid-cols-2"
                         }`}
                       >
                         {/* dot */}
@@ -264,7 +262,7 @@ const About = () => {
                           className={
                             isHighlight
                               ? "pl-12 md:pl-0 md:max-w-md md:mx-auto md:text-center w-full"
-                              : `pl-12 md:pl-0 ${isRight ? "md:pl-12" : "md:pr-12 md:text-right"}`
+                              : `pl-12 md:pl-0 ${isRight ? "md:pl-12 md:order-2" : "md:pr-12 md:text-right md:order-1"}`
                           }
                         >
                           <div className={`relative ${isHighlight ? "rounded-3xl p-[1.5px] bg-gradient-to-br from-primary/70 via-secondary/50 to-primary/70 shadow-[0_0_50px_hsl(var(--primary)/0.25)]" : ""}`}>
@@ -291,7 +289,7 @@ const About = () => {
                           </div>
                         </div>
                         {/* spacer */}
-                        {!isHighlight && <div className="hidden md:block" />}
+                        {!isHighlight && <div className={`hidden md:block ${isRight ? "md:order-1" : "md:order-2"}`} />}
                       </div>
                     </ScrollReveal>
                   );

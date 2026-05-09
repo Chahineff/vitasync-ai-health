@@ -1,35 +1,50 @@
+## Plan : Refonte design de la page À propos
 
+Objectif : transformer `/about` en une page éditoriale immersive, alignée sur l'identité VitaSync (dark glassmorphism, Electric Blue / Teal-Mint, Space Grotesk + Inter), avec plus de narration visuelle et de profondeur.
 
-# Audit et correction des traductions manquantes
+### 1. Hero repensé
+- Composition asymétrique : titre éditorial à gauche (Space Grotesk, mix avec Playfair Display sur le mot accentué façon hero homepage), visuel orbital à droite (réutiliser `OrbitingCircles` avec icônes Brain / Heart / ShieldCheck).
+- Ajout d'un badge animé `AnimatedText` pour le tagline.
+- Background : dégradé radial Electric Blue → Teal sur Spline existant + grain subtil.
+- Stat "ticker" en bas du hero : 4 chiffres clés avec animation count-up (réutiliser les `facts`).
 
-## Problèmes identifiés
+### 2. Section "Notre histoire" — format storytelling
+- Layout en timeline verticale (3-4 jalons) au lieu du bloc texte + carte facts.
+- Chaque jalon = `GlassCard` compact avec année / titre / phrase courte, connectés par une ligne dégradée animée au scroll (ScrollReveal + motion path).
+- Citation mise en exergue (pull quote) entre deux jalons, typographie large Playfair.
 
-### 1. MarqueeBanner — textes en dur (non traduits)
-- `src/pages/Index.tsx` passe des chaînes en anglais directement : `"Smart supplements, real results"` et `"Your health needs VitaSync"`
-- Le composant `MarqueeBanner` ne fait aucun appel à `useTranslation()`
+### 3. Section "Chiffres clés" dédiée
+- Sortir les `facts` du hero pour en faire une bande pleine largeur avec 4 `GlowCard` (variant cyan), chiffres en gradient text, micro-icônes Phosphor.
+- Animation d'apparition séquentielle (stagger 0.1s).
 
-### 2. Dashboard — FAQ et Quick Guides en dur (français uniquement)
-- `src/pages/Dashboard.tsx` lignes 566-584 : `FAQ_DATA` (10 items) et `QUICK_GUIDES` (4 items) sont codés en dur en français, sans passer par le système i18n
+### 4. Section "Nos valeurs" enrichie
+- Passer de 4 cartes égales à un layout bento (1 carte large + 3 standards) pour hiérarchiser.
+- Ajout d'un visuel/illustration discret par carte (icône orbitale ou shape gradient).
+- Hover : `ShineBorder` sur la carte active.
 
-### 3. Pages légales — aucune traduction (7 pages)
-- `Terms.tsx`, `Privacy.tsx`, `Cookies.tsx`, `CGV.tsx`, `Disclaimer.tsx`, `LegalNotice.tsx`, `Shipping.tsx` — tout est en français brut, sans `useTranslation()`
-- **Note** : ces pages sont très longues et complexes juridiquement. Je recommande de **ne pas les traduire via i18n** pour l'instant (contenu légal sensible), mais c'est à confirmer.
+### 5. Nouvelle section "Comment l'IA nous guide"
+- Bloc dédié expliquant le rôle de l'IA (Gemini) avec 3 mini-features alignées (analyse, recommandation, suivi).
+- Format `feature-steps` léger ou cartes horizontales scrollables sur mobile.
 
-## Plan d'action
+### 6. Section "Engagements & sécurité"
+- Bandeau dark plein écran avec checklist (HIPAA-ready, FDA disclaimer, données chiffrées, append-only logs).
+- Icônes ShieldCheck en orbite + texte sobre, pour rassurer.
 
-### Étape 1 — MarqueeBanner i18n
-- Ajouter les clés `marquee.line1` et `marquee.line2` dans les 6 langues dans `src/lib/i18n.ts`
-- Modifier `src/pages/Index.tsx` pour passer `t("marquee.line1")` et `t("marquee.line2")` au lieu des chaînes en dur
+### 7. CTA final repensé
+- Remplacer la `GlassCard` simple par un bloc full-width avec dégradé Electric Blue → Teal, double CTA (Commencer gratuitement / Voir les plans), micro-texte légal.
+- Ajout d'un `MagicText` ou `TextHoverEffect` sur le titre.
 
-### Étape 2 — Dashboard FAQ & Quick Guides i18n
-- Ajouter ~28 clés (`help.faq.1.cat`, `.q`, `.a`, etc. + `help.guide.1.title`, `.desc`) dans les 6 langues
-- Modifier `FAQ_DATA` et `QUICK_GUIDES` dans `Dashboard.tsx` pour utiliser `t()`
+### 8. Cohérence transversale
+- Breadcrumbs en haut (Accueil / À propos) façon `/blog/:slug`.
+- Transitions de section avec `ScrollReveal` uniformes (blur + fade-up).
+- Mobile : désactiver Spline lourd (déjà règle projet), simplifier l'orbital hero en mesh gradient CSS.
+- Respect strict des tokens `index.css` (aucune couleur en dur).
 
-### Étape 3 — Pages légales (recommandation)
-- Les pages légales resteront en français pour l'instant (contenu juridique sensible nécessitant une validation humaine par langue). On pourra les internationaliser dans un second temps si nécessaire.
+### Détails techniques
+- Fichiers impactés : `src/pages/About.tsx` (refonte structure), nouveaux sous-composants dans `src/components/sections/about/` (ex. `AboutHero.tsx`, `StoryTimeline.tsx`, `FactsBand.tsx`, `ValuesBento.tsx`, `AICommitments.tsx`, `AboutCTA.tsx`).
+- Réutilisation : `GlassCard`, `GlowCard`, `OrbitingCircles`, `ScrollReveal`, `AnimatedText`, `ShineBorder`, `MagicText`.
+- i18n : ajouter clés manquantes dans `src/lib/i18n.ts` pour la timeline, l'IA, les engagements, le nouveau CTA (6 langues).
+- Pas de logique métier modifiée — uniquement présentation.
+- QA mobile (≤768px) : vérifier que la timeline reste lisible et que le hero ne casse pas.
 
-## Détails techniques
-- Fichier principal modifié : `src/lib/i18n.ts` (ajout d'environ 180 nouvelles clés, 30 par langue × 6 langues)
-- Composants modifiés : `Index.tsx`, `Dashboard.tsx`
-- Pas de changement de structure ni de nouveau fichier
-
+Confirmer pour que je passe à l'implémentation.

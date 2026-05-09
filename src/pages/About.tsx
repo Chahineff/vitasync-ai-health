@@ -26,7 +26,6 @@ import {
   ArrowRight,
 } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { SplineBackground } from "@/components/sections/SplineBackground";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 
@@ -70,7 +69,20 @@ const About = () => {
 
   return (
     <PageTransition className="min-h-screen bg-background">
-      <SplineBackground />
+      {/* Custom layered background — Spline-like aura at top, gradients below */}
+      <div aria-hidden className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Top aura (hero zone only) */}
+        <div className="absolute inset-x-0 top-0 h-[100vh] bg-gradient-mesh opacity-90" />
+        <div className="absolute inset-x-0 top-0 h-[100vh] bg-[radial-gradient(ellipse_120%_70%_at_50%_0%,hsl(var(--primary)/0.28),transparent_60%),radial-gradient(ellipse_80%_50%_at_80%_10%,hsl(var(--secondary)/0.22),transparent_60%)]" />
+        {/* Fade hero into background */}
+        <div className="absolute inset-x-0 top-[60vh] h-[40vh] bg-gradient-to-b from-transparent to-background" />
+        {/* Mid drifting blobs */}
+        <div className="absolute left-[-10%] top-[120vh] w-[55vw] h-[55vw] rounded-full bg-secondary/15 blur-[120px]" />
+        <div className="absolute right-[-10%] top-[200vh] w-[50vw] h-[50vw] rounded-full bg-primary/15 blur-[140px]" />
+        <div className="absolute left-[20%] top-[300vh] w-[45vw] h-[45vw] rounded-full bg-secondary/10 blur-[120px]" />
+        {/* Subtle base wash */}
+        <div className="absolute inset-0 bg-background/40 dark:bg-background/30" />
+      </div>
       <FloatingThemeToggle />
       <ScrollToTopButton />
       <Navbar />
@@ -230,6 +242,7 @@ const About = () => {
               <div className="space-y-10 md:space-y-16">
                 {milestones.map((m, i) => {
                   const isRight = i % 2 === 1;
+                  const isHighlight = i === milestones.length - 1;
                   return (
                     <ScrollReveal key={i} delay={i * 0.05}>
                       <div
@@ -240,27 +253,36 @@ const About = () => {
                         {/* dot */}
                         <div
                           aria-hidden
-                          className="absolute left-4 md:left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-gradient-to-br from-primary to-secondary shadow-[0_0_20px_hsl(var(--primary)/0.6)] z-10"
+                          className={`absolute left-4 md:left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-br from-primary to-secondary z-10 ${
+                            isHighlight
+                              ? "w-4 h-4 shadow-[0_0_30px_hsl(var(--primary)/0.9)] animate-pulse-glow"
+                              : "w-3 h-3 shadow-[0_0_20px_hsl(var(--primary)/0.6)]"
+                          }`}
                         />
                         {/* content */}
                         <div className={`pl-12 md:pl-0 ${isRight ? "md:pl-12" : "md:pr-12 md:text-right"}`}>
-                          <GlassCard className="p-5 md:p-6">
-                            <div className={`flex items-center gap-2 mb-3 ${isRight ? "" : "md:justify-end"}`}>
-                              <m.icon size={20} weight="duotone" className="text-primary" />
-                              <span className="text-xs uppercase tracking-widest text-foreground/50">
-                                {m.year}
-                              </span>
-                            </div>
-                            <h3
-                              className="text-xl md:text-2xl font-medium text-foreground mb-2"
-                              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                            >
-                              {m.title}
-                            </h3>
-                            <p className="text-sm md:text-base text-foreground/60 leading-relaxed">
-                              {m.desc}
-                            </p>
-                          </GlassCard>
+                          <div className={`relative ${isHighlight ? "rounded-3xl p-[1.5px] bg-gradient-to-br from-primary/70 via-secondary/50 to-primary/70 shadow-[0_0_50px_hsl(var(--primary)/0.25)]" : ""}`}>
+                            <GlassCard className={`p-5 md:p-6 relative overflow-hidden ${isHighlight ? "bg-background/80 dark:bg-background/60" : ""}`}>
+                              {isHighlight && (
+                                <div aria-hidden className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gradient-to-br from-primary/30 to-secondary/20 blur-3xl" />
+                              )}
+                              <div className={`relative flex items-center gap-2 mb-3 ${isRight ? "" : "md:justify-end"}`}>
+                                <m.icon size={isHighlight ? 22 : 20} weight={isHighlight ? "fill" : "duotone"} className="text-primary" />
+                                <span className={`text-xs uppercase tracking-widest ${isHighlight ? "text-primary font-semibold" : "text-foreground/50"}`}>
+                                  {m.year}
+                                </span>
+                              </div>
+                              <h3
+                                className={`relative font-medium text-foreground mb-2 ${isHighlight ? "text-2xl md:text-3xl" : "text-xl md:text-2xl"}`}
+                                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                              >
+                                {isHighlight ? <span className="gradient-text">{m.title}</span> : m.title}
+                              </h3>
+                              <p className="relative text-sm md:text-base text-foreground/60 leading-relaxed">
+                                {m.desc}
+                              </p>
+                            </GlassCard>
+                          </div>
                         </div>
                         {/* spacer */}
                         <div className="hidden md:block" />
@@ -349,10 +371,10 @@ const About = () => {
               </div>
             </ScrollReveal>
 
-            <div className="grid md:grid-cols-3 gap-5 md:gap-6">
+            <div className="grid md:grid-cols-2 gap-5 md:gap-6 items-stretch">
               {/* Hero card */}
               <ScrollReveal>
-                <GlassCard hover className="md:row-span-2 h-full relative overflow-hidden flex flex-col justify-between">
+                <GlassCard hover className="h-full relative overflow-hidden flex flex-col justify-between">
                   <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-gradient-to-br from-primary/30 to-secondary/20 blur-3xl" />
                   <div className="relative">
                     <div className="icon-container mb-5">
@@ -375,21 +397,23 @@ const About = () => {
                 </GlassCard>
               </ScrollReveal>
 
-              {/* Side cards */}
-              <div className="md:col-span-2 grid sm:grid-cols-2 gap-5 md:gap-6">
+              {/* Side cards — stacked, fill available height */}
+              <div className="flex flex-col gap-5 md:gap-6 h-full">
                 {values.slice(1).map((v, i) => (
-                  <ScrollReveal key={i} delay={(i + 1) * 0.1}>
-                    <GlassCard hover className="h-full">
-                      <div className="icon-container mb-4">
+                  <ScrollReveal key={i} delay={(i + 1) * 0.1} className="flex-1">
+                    <GlassCard hover className="h-full flex items-start gap-4">
+                      <div className="icon-container shrink-0">
                         <v.icon size={24} weight="duotone" className="text-primary" />
                       </div>
-                      <h3
-                        className="text-lg font-medium text-foreground mb-2"
-                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                      >
-                        {v.title}
-                      </h3>
-                      <p className="text-sm text-foreground/55 leading-relaxed">{v.description}</p>
+                      <div className="flex-1">
+                        <h3
+                          className="text-lg font-medium text-foreground mb-1.5"
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
+                          {v.title}
+                        </h3>
+                        <p className="text-sm text-foreground/55 leading-relaxed">{v.description}</p>
+                      </div>
                     </GlassCard>
                   </ScrollReveal>
                 ))}

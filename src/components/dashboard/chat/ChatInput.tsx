@@ -218,18 +218,13 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
           <div 
             className={cn(
               "relative rounded-2xl overflow-hidden transition-all duration-300",
-              "bg-white/60 dark:bg-white/5 backdrop-blur-xl",
-              "border shadow-xl",
-              isFocused 
-                ? "border-primary/50 shadow-primary/10 ring-2 ring-primary/20" 
-                : "border-white/20 shadow-black/5"
+              "bg-card/60 dark:bg-card/40 backdrop-blur-xl",
+              "border",
+              isFocused
+                ? "border-primary/40 shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.25)] ring-1 ring-primary/15"
+                : "border-border/50 shadow-[0_1px_0_hsl(var(--foreground)/0.04)]"
             )}
           >
-            {/* Gradient border on focus */}
-            {isFocused && (
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 animate-gradient-rotate opacity-50 -z-10" />
-            )}
-
             {/* Input Area */}
             <div className="flex items-end gap-2 p-3 pt-4">
               <textarea
@@ -355,33 +350,25 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
                 </motion.span>
                 
                 {/* Send Button */}
-                <motion.button
+                <button
                   type="submit"
                   disabled={!input.trim() || isLoading || disabled}
-                  whileHover={{ scale: input.trim() && !isLoading ? 1.05 : 1 }}
-                  whileTap={input.trim() && !isLoading ? { 
-                    scale: 0.9, 
-                    rotate: -45,
-                  } : { scale: 1 }}
                   className={cn(
-                    "p-3 rounded-xl transition-all duration-300",
+                    "p-2.5 rounded-xl transition-all duration-200",
                     input.trim() && !isLoading
-                      ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40"
-                      : "bg-white/10 text-foreground/30 cursor-not-allowed"
+                      ? "bg-primary text-primary-foreground shadow-[0_6px_20px_-8px_hsl(var(--primary)/0.6)] hover:bg-primary/90"
+                      : "bg-muted/40 text-foreground/30 cursor-not-allowed"
                   )}
                 >
-                  <PaperPlaneTilt 
-                    weight="fill" 
-                    className="w-5 h-5 transition-transform duration-300"
-                  />
-                </motion.button>
+                  <PaperPlaneTilt weight="fill" className="w-5 h-5" />
+                </button>
               </div>
             </div>
           </div>
         </form>
 
         {/* Disclaimer */}
-        <p className="text-center text-xs text-foreground/30 mt-4">
+        <p className="text-center text-[11px] text-foreground/40 mt-3">
           VitaSync AI peut afficher des informations inexactes. Vérifiez les conseils importants.
         </p>
 

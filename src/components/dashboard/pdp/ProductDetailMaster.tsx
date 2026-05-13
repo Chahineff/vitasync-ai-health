@@ -337,8 +337,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
             {/* Accordion Sections */}
             <Accordion type="multiple" className="w-full">
-              <AccordionItem value="what-it-does" className="border-b border-border/30">
-                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+              <AccordionItem value="what-it-does" className="border-b border-border/40">
+                <AccordionTrigger className="py-5 text-[15px] font-medium tracking-tight text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
                     <span className="flex items-center gap-2">
                       <Sparkle weight="duotone" className="w-4 h-4 text-primary/60" />
@@ -359,8 +359,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="results-timeline" className="border-b border-border/30">
-                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+              <AccordionItem value="results-timeline" className="border-b border-border/40">
+                <AccordionTrigger className="py-5 text-[15px] font-medium tracking-tight text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
                     <span className="flex items-center gap-2">
                       <Timer weight="duotone" className="w-4 h-4 text-primary/60" />
@@ -373,8 +373,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="how-to-take" className="border-b border-border/30">
-                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+              <AccordionItem value="how-to-take" className="border-b border-border/40">
+                <AccordionTrigger className="py-5 text-[15px] font-medium tracking-tight text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
                     <span className="flex items-center gap-2">
                       <ListBullets weight="duotone" className="w-4 h-4 text-primary/60" />
@@ -391,8 +391,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="ingredients" className="border-b border-border/30">
-                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+              <AccordionItem value="ingredients" className="border-b border-border/40">
+                <AccordionTrigger className="py-5 text-[15px] font-medium tracking-tight text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
                     <span className="flex items-center gap-2">
                       <TestTube weight="duotone" className="w-4 h-4 text-primary/60" />
@@ -411,8 +411,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="science" className="border-b border-border/30">
-                <AccordionTrigger className="py-4 text-[15px] font-semibold text-foreground hover:no-underline [&>svg]:hidden">
+              <AccordionItem value="science" className="border-b border-border/40">
+                <AccordionTrigger className="py-5 text-[15px] font-medium tracking-tight text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center justify-between w-full pr-2">
                     <span className="flex items-center gap-2">
                       <Atom weight="duotone" className="w-4 h-4 text-primary/60" />

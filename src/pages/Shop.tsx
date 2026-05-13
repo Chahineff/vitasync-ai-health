@@ -27,26 +27,26 @@ export default function Shop() {
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8">
           {/* Public banner — invite to login for AI recommendations */}
           {!user && (
-            <div className="mb-6 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-secondary/5 to-accent/10 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
+            <div className="mb-8 rounded-3xl border border-border/40 bg-card/60 backdrop-blur-xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-[0_1px_0_hsl(var(--foreground)/0.04)]">
+              <div className="flex items-start gap-4">
+                <div className="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
                   <Sparkles className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm md:text-base font-semibold text-foreground">
+                  <p className="text-sm md:text-base font-medium text-foreground tracking-tight">
                     {t("publicShop.bannerTitle")}
                   </p>
-                  <p className="text-xs md:text-sm text-foreground/70 mt-0.5">
+                  <p className="text-xs md:text-sm text-foreground/60 mt-1 leading-relaxed">
                     {t("publicShop.bannerSubtitle")}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => navigate("/auth?mode=signup")}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors whitespace-nowrap shadow-md shadow-primary/20"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition-all whitespace-nowrap"
               >
                 {t("publicShop.bannerCta")}
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
           )}

@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, ReactNode } from "react";
+import { useRef, ReactNode, useMemo } from "react";
+import { useReducedMotion } from "framer-motion";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -15,38 +16,45 @@ export function ScrollReveal({
   direction = "up" 
 }: ScrollRevealProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  // Trigger a bit earlier so reveals feel consistent across viewport heights
+  const isInView = useInView(ref, { once: true, margin: "-10% 0px -10% 0px", amount: 0.15 });
+  const prefersReducedMotion = useReducedMotion();
 
-  const getInitialPosition = () => {
+  const initialPos = useMemo(() => {
     switch (direction) {
-      case "up": return { y: 40, x: 0 };
-      case "down": return { y: -40, x: 0 };
-      case "left": return { y: 0, x: 40 };
-      case "right": return { y: 0, x: -40 };
-      default: return { y: 40, x: 0 };
+      case "up": return { y: 24, x: 0 };
+      case "down": return { y: -24, x: 0 };
+      case "left": return { y: 0, x: 24 };
+      case "right": return { y: 0, x: -24 };
+      default: return { y: 24, x: 0 };
     }
-  };
+  }, [direction]);
 
-  const initialPos = getInitialPosition();
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <motion.div
       ref={ref}
-      initial={{ 
-        opacity: 0, 
-        filter: "blur(10px)",
-        ...initialPos
+      initial={{
+        opacity: 0,
+        ...initialPos,
       }}
-      animate={isInView ? { 
-        opacity: 1, 
-        filter: "blur(0px)",
+      animate={isInView ? {
+        opacity: 1,
         y: 0,
-        x: 0
-      } : {}}
-      transition={{ 
-        duration: 0.8, 
-        delay,
-        ease: [0.16, 1, 0.3, 1]
+        x: 0,
+      } : undefined}
+      transition={{
+        duration: 0.55,
+        delay: Math.min(delay, 0.25),
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      style={{
+        willChange: isInView ? "auto" : "transform, opacity",
+        transform: "translateZ(0)",
+        backfaceVisibility: "hidden",
       }}
       className={className}
     >

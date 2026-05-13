@@ -1318,12 +1318,10 @@ export function OnboardingFlow() {
                 size="lg"
               >
                 {isSubmitting ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Sparkles className="w-5 h-5" />
-                  </motion.div>
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Enregistrement…
+                  </span>
                 ) : currentStep === questions.length - 1 ? (
                   <>
                     <Check className="w-5 h-5 mr-2" />

@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useHealthProfile, HealthProfile } from "@/hooks/useHealthProfile";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle, Loader2, Lock as LockIcon } from "lucide-react";
 import { ArrowsClockwise } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useCartStore } from "@/stores/cartStore";
@@ -1225,51 +1225,58 @@ export function OnboardingFlow() {
       {/* Step timeline (desktop left) */}
       <StepTimeline currentStep={currentStep} totalSteps={questions.length} />
 
-      {/* Decorative floating orbs - intensity scales with progress */}
+      {/* Decorative floating orbs — softer, more editorial */}
       <motion.div
-        className="absolute top-1/4 -left-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-        style={{ background: `hsl(var(--primary) / ${0.08 + progress * 0.005})`, transition: 'background 1.8s ease' }}
-        animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/4 -left-40 w-80 h-80 rounded-full blur-[120px] pointer-events-none"
+        style={{ background: `hsl(var(--primary) / ${0.05 + progress * 0.003})`, transition: 'background 1.8s ease' }}
+        animate={{ y: [0, 20, 0], x: [0, 10, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-1/4 -right-32 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-        style={{ background: `hsl(var(--secondary) / ${0.08 + progress * 0.005})`, transition: 'background 1.8s ease' }}
-        animate={{ y: [0, -25, 0], x: [0, -10, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-1/4 -right-40 w-80 h-80 rounded-full blur-[120px] pointer-events-none"
+        style={{ background: `hsl(var(--secondary) / ${0.05 + progress * 0.003})`, transition: 'background 1.8s ease' }}
+        animate={{ y: [0, -18, 0], x: [0, -8, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Main container - 3/4 on desktop, full on mobile */}
-      <div className="w-full max-w-3xl mx-auto min-h-screen md:min-h-0 md:max-h-[90vh] flex flex-col md:rounded-3xl md:border md:border-white/10 md:shadow-2xl md:backdrop-blur-xl md:bg-card/50 relative z-10">
+      {/* Main container — Editorial Glass */}
+      <div className="w-full max-w-3xl mx-auto min-h-screen md:min-h-0 md:max-h-[92vh] flex flex-col md:rounded-[28px] md:border md:border-border/40 md:shadow-[0_30px_80px_-30px_hsl(var(--foreground)/0.25)] md:backdrop-blur-2xl md:bg-card/60 relative z-10">
         {/* Header */}
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="p-5 md:p-7 pb-4">
+          <div className="flex items-center justify-between mb-5">
             <motion.button
               onClick={handleBack}
               disabled={currentStep === 0}
               whileTap={{ scale: 0.9 }}
-              whileHover={{ scale: 1.1 }}
-              className="p-2 rounded-full hover:bg-muted/50 transition-colors disabled:opacity-30"
+              className="p-2 rounded-xl border border-border/40 bg-card/40 hover:bg-card hover:border-border transition-all disabled:opacity-30 disabled:hover:bg-card/40"
+              aria-label="Back"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </motion.button>
+            <span className="text-[11px] uppercase tracking-[0.16em] text-foreground/45 font-medium tabular-nums">
+              Étape {currentStep + 1} <span className="text-foreground/25">/</span> {questions.length}
+            </span>
             <button
               onClick={handleSkip}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors min-w-[48px] text-right"
             >
               {isEditMode ? "Annuler" : question.required === false ? "Passer" : ""}
             </button>
           </div>
-          <motion.div layoutId="onboarding-progress">
-            <Progress value={progress} className="h-1.5" />
+          <motion.div layoutId="onboarding-progress" className="relative">
+            <div className="h-1 rounded-full bg-muted/60 overflow-hidden">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                initial={false}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            </div>
           </motion.div>
-          <p className="text-xs text-muted-foreground mt-2 text-center tabular-nums">
-            {currentStep + 1} / {questions.length}
-          </p>
         </div>
 
         {/* Content */}
-        <div className="flex-1 px-6 pb-6 flex flex-col overflow-hidden">
+        <div className="flex-1 px-5 md:px-7 pb-5 md:pb-7 flex flex-col overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -1280,10 +1287,10 @@ export function OnboardingFlow() {
               className="flex-1 flex flex-col overflow-auto"
             >
               <div className="mb-6">
-                <h1 className="text-2xl font-light text-foreground mb-2">
+                <h1 className="text-2xl md:text-[28px] font-light text-foreground mb-2 tracking-tight leading-snug">
                   {question.title}
                 </h1>
-                <p className="text-muted-foreground font-light">
+                <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed">
                   {question.subtitle}
                 </p>
               </div>
@@ -1295,16 +1302,14 @@ export function OnboardingFlow() {
           </AnimatePresence>
 
           {/* Footer */}
-          <div className="mt-4 pt-4 border-t border-border/30">
-            <motion.div
-              whileTap={canProceed() ? { scale: 0.97 } : {}}
-            >
+          <div className="mt-4 pt-4 border-t border-border/30 space-y-3">
+            <motion.div whileTap={canProceed() ? { scale: 0.98 } : {}}>
               <Button
                 onClick={handleNext}
                 disabled={!canProceed() || isSubmitting}
                 className={cn(
-                  "w-full h-14 rounded-2xl text-base font-medium transition-all duration-300",
-                  canProceed() && !isSubmitting && "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
+                  "w-full h-13 md:h-14 rounded-2xl text-base font-medium tracking-tight transition-all duration-300",
+                  canProceed() && !isSubmitting && "shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-8px_hsl(var(--primary)/0.6)]"
                 )}
                 size="lg"
               >
@@ -1328,6 +1333,11 @@ export function OnboardingFlow() {
                 )}
               </Button>
             </motion.div>
+            {/* Trust microcopy — generic, no medical claim */}
+            <div className="flex items-center justify-center gap-1.5 text-[10.5px] text-foreground/45 tracking-tight">
+              <LockIcon className="w-3 h-3" />
+              <span>Données chiffrées · Strictement confidentielles</span>
+            </div>
           </div>
         </div>
       </div>

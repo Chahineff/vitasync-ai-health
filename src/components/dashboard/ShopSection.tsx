@@ -182,26 +182,26 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
 
   return (
     <div ref={ref} className="space-y-6">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl mb-6 p-6 md:p-8 bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 border border-border/30">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_60%)]" />
+      {/* Hero Header — Editorial Glass */}
+      <div className="relative overflow-hidden rounded-3xl mb-8 p-6 md:p-10 bg-card/40 backdrop-blur-xl border border-border/40">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent_55%),radial-gradient(ellipse_at_bottom_left,hsl(var(--accent)/0.05),transparent_55%)]" />
         <div className="relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-foreground/45 mb-3 font-medium">
+                {t('shop.heroSubtitle')}
+              </div>
+              <h2 className="text-3xl md:text-5xl font-light text-foreground tracking-tight leading-[1.05]">
                 {t('shop.heroTitle')}
               </h2>
-              <p className="text-foreground/60 font-light mt-1 text-sm md:text-base">
-                {t('shop.heroSubtitle')}
-              </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 self-start md:self-end">
               <SearchOverlay products={products} onProductSelect={onProductSelect || (() => {})} onSearch={setSearchQuery} />
               <CartDrawer>
-                <button className="relative p-3 rounded-xl bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-sm">
+                <button className="relative p-3 rounded-2xl bg-background/70 backdrop-blur-sm border border-border/50 hover:bg-background hover:border-border transition-all">
                   <ShoppingCart weight="light" className="w-5 h-5 text-foreground" />
                   {totalCartItems > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-primary text-primary-foreground text-[11px] flex items-center justify-center font-semibold">
                       {totalCartItems}
                     </span>
                   )}
@@ -245,7 +245,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
 
       {/* Category Pills with counts & icons */}
       <div className="overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-        <div className="flex gap-2 min-w-max">
+        <div className="flex gap-2 min-w-max items-center">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const isActive = selectedCategory === cat.key;
@@ -275,10 +275,10 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
           {/* Favorites filter */}
           <button
             onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-            className={`px-4 h-9 rounded-full text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+            className={`px-4 h-10 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 border ${
               showFavoritesOnly
-                ? 'bg-destructive/10 text-destructive border border-destructive/20'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                ? 'bg-destructive/10 text-destructive border-destructive/20'
+                : 'bg-card text-muted-foreground border-border/50 hover:border-destructive/30 hover:text-destructive'
             }`}
           >
             <Heart weight={showFavoritesOnly ? 'fill' : 'regular'} className="w-4 h-4" />

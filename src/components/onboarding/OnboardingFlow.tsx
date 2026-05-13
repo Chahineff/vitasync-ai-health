@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { ProgressRing } from "./ProgressRing";
 import { ProgressParticles } from "./ProgressParticles";
 import { StepTimeline } from "./StepTimeline";
+import { SavingOverlay } from "./SavingOverlay";
 import {
   Moon, Lightning, Crosshair, Leaf, Barbell,
   PersonSimpleRun, ShieldCheck, Sparkle, DotsThree,
@@ -1216,6 +1217,9 @@ export function OnboardingFlow() {
         transition: 'background 1.8s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
+      {/* Saving / validating progress overlay */}
+      <SavingOverlay open={isSubmitting} />
+
       {/* Reactive particles */}
       <ProgressParticles progress={progress} />
 
@@ -1314,12 +1318,10 @@ export function OnboardingFlow() {
                 size="lg"
               >
                 {isSubmitting ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Sparkles className="w-5 h-5" />
-                  </motion.div>
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Enregistrement…
+                  </span>
                 ) : currentStep === questions.length - 1 ? (
                   <>
                     <Check className="w-5 h-5 mr-2" />

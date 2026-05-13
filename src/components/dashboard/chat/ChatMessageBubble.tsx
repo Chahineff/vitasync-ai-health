@@ -256,19 +256,19 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate, on
   if (isUser) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
+        initial={{ opacity: 0, x: 30, scale: 0.95, filter: "blur(4px)" }}
+        animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+        exit={{ opacity: 0, x: 10 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
         className="flex gap-4 justify-end"
       >
-        <div className="max-w-[78%]">
-          <div className="rounded-2xl rounded-tr-md px-4 py-3 bg-primary/10 border border-primary/15">
-            <p className="text-[15px] leading-relaxed text-foreground/90 whitespace-pre-wrap">{content}</p>
+        <div className="max-w-[75%]">
+          <div className="rounded-2xl px-5 py-4 bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20">
+            <p className="text-sm font-light leading-relaxed">{content}</p>
           </div>
         </div>
-        <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0 border border-primary/20">
-          <UserIcon weight="fill" className="w-4 h-4 text-primary" />
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+          <UserIcon weight="fill" className="w-5 h-5 text-primary" />
         </div>
       </motion.div>
     );
@@ -276,36 +276,37 @@ export function ChatMessageBubble({ role, content, isStreaming, onRegenerate, on
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      initial={{ opacity: 0, x: -30, scale: 0.95, filter: "blur(4px)" }}
+      animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, x: -10 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
       className="flex items-start gap-4"
     >
       {/* AI Avatar */}
       <motion.div 
         className={cn(
-          "w-9 h-9 rounded-xl bg-card/70 backdrop-blur-sm p-1.5 flex-shrink-0 border border-border/40 relative"
+          "w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-2 flex-shrink-0 border border-white/20 relative"
         )}
-        animate={isStreaming ? { boxShadow: [
-          "0 0 0 0 hsl(var(--primary) / 0.0)",
-          "0 0 0 4px hsl(var(--primary) / 0.15)",
-          "0 0 0 0 hsl(var(--primary) / 0.0)",
-        ] } : {}}
-        transition={isStreaming ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" } : {}}
+      animate={isStreaming ? { 
+          scale: [1, 1.05, 1],
+          boxShadow: [
+            "0 0 10px 2px rgba(0, 240, 255, 0.2)",
+            "0 0 20px 4px rgba(0, 240, 255, 0.4)",
+            "0 0 10px 2px rgba(0, 240, 255, 0.2)"
+          ]
+        } : {}}
+        transition={isStreaming ? { 
+          scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
+          boxShadow: { duration: 1.5, repeat: Infinity }
+        } : {}}
       >
         <img src={vitasyncLogoUrl} alt="VitaSync" className="w-full h-full object-contain" />
       </motion.div>
       
       <div className="flex-1 space-y-2 pt-1">
-        <div className="flex items-center gap-2 mb-1.5">
-          <span className="text-[11px] uppercase tracking-[0.14em] font-medium text-foreground/50">VitaSync AI</span>
-          {isStreaming && (
-            <span className="inline-flex items-center gap-1 text-[10px] text-primary/70">
-              <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
-              en cours
-            </span>
-          )}
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkle weight="fill" className="w-3.5 h-3.5 text-primary" />
+          <span className="text-xs font-medium text-foreground/50">VitaSync AI</span>
         </div>
 
         <div className="text-foreground/90 relative">

@@ -17,39 +17,28 @@ function FAQItem({
 }) {
   return (
     <div
-      className={cn(
-        "rounded-2xl overflow-hidden relative border backdrop-blur-xl transition-colors duration-200",
-        "bg-card/80 border-border/60",
-        isOpen
-          ? "shadow-[0_8px_32px_-12px_hsl(var(--primary)/0.18)] border-primary/30"
-          : "shadow-[0_2px_12px_-4px_hsl(var(--foreground)/0.06)] hover:border-border"
-      )}
+      className="rounded-2xl overflow-hidden relative border bg-white/70 dark:bg-card/[0.92] backdrop-blur-xl border-border/60 dark:border-white/[0.06] shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_0_20px_rgba(0,240,255,0.04)]"
     >
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/40 to-primary/10" />
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-left group"
+        className="w-full flex items-center justify-between p-6 text-left"
         aria-expanded={isOpen}
       >
-        <span className={cn(
-          "text-foreground font-normal text-base md:text-lg leading-snug transition-colors",
-          isOpen ? "text-foreground" : "text-foreground/85 group-hover:text-foreground"
-        )}>
-          {question}
-        </span>
-        <span className={cn(
-          "flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300",
-          isOpen
-            ? "border-primary/40 bg-primary/10 text-primary rotate-180"
-            : "border-border/60 text-foreground/50 group-hover:border-foreground/40 group-hover:text-foreground/80"
-        )}>
-          <CaretDown size={14} weight="bold" />
-        </span>
+        <span className="text-foreground font-light pr-4">{question}</span>
+        <CaretDown 
+          size={20} 
+          weight="light"
+          className={cn(
+            "text-foreground/50 transition-transform duration-300 flex-shrink-0",
+            isOpen && "rotate-180"
+          )}
+        />
       </button>
       <div className={cn("grid transition-all duration-300 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
         <div className="overflow-hidden">
-          <div className="px-5 md:px-6 pb-6 pt-0">
-            <div className="h-px bg-border/40 mb-4" aria-hidden="true" />
-            <p className="text-sm md:text-base text-foreground/65 leading-relaxed font-light">{answer}</p>
+          <div className="px-6 pb-6 pt-0">
+            <p className="text-foreground/60">{answer}</p>
           </div>
         </div>
       </div>
@@ -73,23 +62,21 @@ export function FAQSection() {
     <section id="faq" className="section-padding bg-transparent section-parallax">
       <div className="container-custom">
         <ScrollReveal>
-          <div className="text-center mb-12 md:mb-16">
-            <span className="inline-block text-xs md:text-sm text-primary uppercase tracking-[0.3em] mb-4 font-medium">
+          <div className="text-center mb-16">
+            <span className="text-sm text-primary uppercase tracking-[0.3em] mb-4 block">
               {t("faq.title")}
             </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground mb-4">
               {t("faq.sectionTitle")}{" "}
-              <span className="gradient-text font-medium" style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-                {t("faq.sectionTitleHighlight")}
-              </span>
+              <span className="gradient-text">{t("faq.sectionTitleHighlight")}</span>
             </h2>
-            <p className="text-base md:text-lg text-foreground/55 max-w-2xl mx-auto font-light">
+            <p className="text-base md:text-lg lg:text-xl text-foreground/50 max-w-2xl mx-auto">
               {t("faq.sectionSubtitle")}
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="max-w-3xl mx-auto space-y-3 md:space-y-4">
+        <div className="max-w-3xl mx-auto space-y-4">
           {faqs.map((faq, index) => (
             <ScrollReveal key={index} delay={index * 0.05}>
               <FAQItem

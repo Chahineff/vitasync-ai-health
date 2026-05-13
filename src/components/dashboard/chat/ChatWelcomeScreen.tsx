@@ -38,12 +38,17 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.5 }}
-          className="relative mx-auto mb-8 w-24 h-24"
+          className="relative mx-auto mb-8 w-28 h-28"
         >
-          <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl" />
-          <div className="absolute inset-2 rounded-full bg-card/70 backdrop-blur-xl border border-border/40 flex items-center justify-center shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.3)]">
-            <img src={vitasyncLogoUrl} alt="VitaSync" className="w-11 h-11 object-contain" />
-          </div>
+          <div className="absolute inset-0 rounded-full animate-halo-pulse" />
+          <div className="absolute inset-2 rounded-full bg-gradient-to-br from-primary/30 via-secondary/20 to-primary/30 animate-gradient-rotate blur-md" />
+          <motion.div 
+            className="absolute inset-3 rounded-full bg-background/80 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-2xl"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <img src={vitasyncLogoUrl} alt="VitaSync" className="w-12 h-12 object-contain" />
+          </motion.div>
         </motion.div>
 
         {/* Greeting with shimmer effect */}
@@ -51,21 +56,25 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-3xl md:text-4xl font-light tracking-tight text-foreground mb-3"
+          className="text-4xl md:text-5xl font-light text-foreground mb-4"
         >
-          Bonjour{firstName !== 'toi' ? `, ${firstName}` : ''}
-          <span className="inline-block ml-2 align-middle">
-            <HandWaving weight="duotone" className="w-7 h-7 md:w-8 md:h-8 inline text-amber-400/80" />
-          </span>
+          Bonjour{firstName !== 'toi' ? `, ${firstName}` : ''}{' '}
+            <motion.span
+              className="inline-block"
+              animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
+              transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <HandWaving weight="duotone" className="w-10 h-10 inline text-amber-400" />
+            </motion.span>
         </motion.h2>
         
         <motion.p 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-base md:text-lg font-light text-foreground/60 mb-8"
+          className="text-xl md:text-2xl font-light mb-8"
         >
-          Comment puis-je t'aider aujourd'hui&nbsp;?
+          <span className="gradient-text-hero">Comment puis-je t'aider aujourd'hui ?</span>
         </motion.p>
 
         {/* Quiz CTA or Profile Summary */}
@@ -83,20 +92,25 @@ export function ChatWelcomeScreen({ firstName, healthProfile, onSubmitPrompt }: 
               onEdit={() => navigate("/onboarding?edit=true")}
             />
           ) : (
-            <button
+            <motion.button
               onClick={() => navigate("/onboarding")}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               className={cn(
-                "w-full px-5 py-4 rounded-2xl font-medium tracking-tight",
-                "bg-primary text-primary-foreground",
-                "shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)]",
-                "flex items-center justify-center gap-2.5",
-                "hover:bg-primary/90 transition-colors duration-200"
+                "w-full p-5 rounded-2xl font-medium",
+                "bg-gradient-to-r from-primary via-primary/90 to-secondary/80",
+                "text-primary-foreground shadow-xl shadow-primary/25",
+                "flex items-center justify-center gap-3",
+                "hover:shadow-2xl hover:shadow-primary/30",
+                "transition-shadow duration-300",
+                "border border-white/20"
               )}
             >
-              <ClipboardText weight="duotone" className="w-5 h-5" />
-              <span className="text-[15px]">{t('chat.personalizeMyPlan')}</span>
-              <Sparkle weight="fill" className="w-4 h-4 opacity-60" />
-            </button>
+              <ClipboardText weight="bold" className="w-6 h-6" />
+              <Target weight="bold" className="w-5 h-5" />
+              <span className="text-lg">{t('chat.personalizeMyPlan')}</span>
+              <Sparkle weight="fill" className="w-5 h-5 opacity-70 animate-pulse" />
+            </motion.button>
           )}
         </motion.div>
 

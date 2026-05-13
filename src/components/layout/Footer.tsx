@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { InstagramLogo } from "@phosphor-icons/react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Mail, ShieldCheck } from "lucide-react";
+import { Mail } from "lucide-react";
 import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
 import { openCookieSettings } from "@/lib/cookie-consent";
 
@@ -47,8 +47,6 @@ export function Footer() {
 
   return (
     <footer className="relative z-20 bg-background/80 backdrop-blur-sm overflow-hidden">
-      {/* Top accent line — subtle brand signature */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" aria-hidden="true" />
       <div className="container-custom py-16 md:py-20 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Column */}
@@ -115,29 +113,28 @@ export function Footer() {
           ))}
         </div>
 
-        {/* FDA Disclaimer — same content, tokenized styling */}
-        <div className="mt-12 pt-6 border-t border-border/60">
-          <div className="flex items-start gap-2.5 max-w-4xl">
-            <ShieldCheck className="w-4 h-4 mt-0.5 text-foreground/40 flex-shrink-0" aria-hidden="true" />
-            <p className="text-xs italic text-foreground/55 leading-relaxed">
-              {t("footer.fdaDisclaimerFr")}{" "}
-              <span lang="en">{t("footer.fdaDisclaimerEn")}</span>
-            </p>
-          </div>
+        {/* FDA Disclaimer */}
+        <div className="mt-12 pt-6 border-t" style={{ borderColor: "#E2E8F0" }}>
+          <p style={{ fontSize: 12, fontStyle: "italic", color: "#718096", lineHeight: 1.6 }}>
+            {t("footer.fdaDisclaimerFr")}{" "}
+            <span lang="en">{t("footer.fdaDisclaimerEn")}</span>
+          </p>
         </div>
 
         {/* Copyright */}
-        <div className="mt-6 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <p className="text-xs text-foreground/55">
+        <div className="mt-6 pt-6 border-t" style={{ borderColor: "#E2E8F0" }}>
+          <p className="text-center" style={{ fontSize: 12, color: "#718096" }}>
             {t("footer.copyright")}
           </p>
-          <button
-            type="button"
-            onClick={openCookieSettings}
-            className="text-xs text-foreground/60 underline-offset-4 hover:text-foreground hover:underline transition-colors"
-          >
-            {t("cookies.banner.manage")}
-          </button>
+          <div className="mt-3 text-center">
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="text-xs text-foreground/60 underline-offset-4 hover:text-foreground hover:underline transition-colors"
+            >
+              {t("cookies.banner.manage")}
+            </button>
+          </div>
         </div>
       </div>
 

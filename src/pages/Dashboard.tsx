@@ -315,14 +315,11 @@ const Dashboard = () => {
                   {isActive && (
                     <motion.div
                       layoutId="sidebarActiveIndicator"
-                      className="absolute inset-0 rounded-xl"
-                      style={{
-                        background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))",
-                      }}
+                      className="absolute inset-0 rounded-xl bg-primary/12 border border-primary/20"
                       transition={{ type: "spring", stiffness: 350, damping: 30, mass: 0.8 }}
                     />
                   )}
-                  <item.icon weight="light" className={`w-5 h-5 flex-shrink-0 relative z-10 ${isActive ? 'brightness-0 invert' : ''}`} />
+                  <item.icon weight={isActive ? "fill" : "light"} className={`w-5 h-5 flex-shrink-0 relative z-10 ${isActive ? 'text-primary' : ''}`} />
                   <span className={`transition-opacity duration-300 relative z-10 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
                     {item.label}
                   </span>
@@ -353,14 +350,11 @@ const Dashboard = () => {
                   {isActive && (
                     <motion.div
                       layoutId="sidebarActiveIndicatorGeneral"
-                      className="absolute inset-0 rounded-xl"
-                      style={{
-                        background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))",
-                      }}
+                      className="absolute inset-0 rounded-xl bg-primary/12 border border-primary/20"
                       transition={{ type: "spring", stiffness: 350, damping: 30, mass: 0.8 }}
                     />
                   )}
-                  <item.icon weight="light" className={`w-5 h-5 flex-shrink-0 relative z-10 ${isActive ? 'brightness-0 invert' : ''}`} />
+                  <item.icon weight={isActive ? "fill" : "light"} className={`w-5 h-5 flex-shrink-0 relative z-10 ${isActive ? 'text-primary' : ''}`} />
                   <span className={`transition-opacity duration-300 relative z-10 ${sidebarCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''}`}>
                     {item.label}
                   </span>

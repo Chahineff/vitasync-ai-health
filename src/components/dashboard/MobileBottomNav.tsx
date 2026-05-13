@@ -30,9 +30,9 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-white/10" />
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-xl border-t border-border/40" />
       
-      <div className="relative flex items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <div className="relative flex items-center justify-around px-1.5 py-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {navItems.map((item) => {
           const isActive = displaySection === item.id;
           const Icon = item.icon;
@@ -42,45 +42,33 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
             <button
               key={item.id}
               onClick={() => onSectionChange(item.id)}
-              className="relative flex flex-col items-center gap-1 px-3 py-2 min-w-[56px]"
+              className="relative flex flex-col items-center gap-1 px-2.5 py-1.5 min-w-[52px] rounded-xl"
             >
-              {/* Active indicator with spring bounce */}
+              {/* Active pill — subtle, clinical */}
               {isActive && (
                 <motion.div
                   layoutId="mobileNavIndicator"
-                  className="absolute inset-0 rounded-xl"
-                  style={{
-                    background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))",
-                    opacity: 0.15,
-                  }}
-                  transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                  className="absolute inset-0 rounded-xl bg-primary/10 border border-primary/15"
+                  transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                 />
               )}
               
-              {/* Icon with scale bounce */}
-              <motion.div
-                animate={isActive ? { scale: [1, 1.15, 1] } : { scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="relative z-10"
-              >
+              <div className="relative z-10">
                 <Icon 
                   weight={isActive ? "fill" : "light"} 
                   className={`w-5 h-5 transition-colors ${
-                    isActive ? 'text-primary' : 'text-foreground/60'
+                    isActive ? 'text-primary' : 'text-foreground/55'
                   }`}
                 />
-              </motion.div>
+              </div>
               
-              {/* Label with slide-up */}
-              <motion.span 
-                className={`text-[10px] font-medium relative z-10 transition-colors ${
+              <span
+                className={`text-[10px] font-medium relative z-10 transition-colors tracking-tight ${
                   isActive ? 'text-primary' : 'text-foreground/50'
                 }`}
-                animate={isActive ? { y: [4, 0], opacity: [0, 1] } : {}}
-                transition={{ duration: 0.2 }}
               >
                 {label}
-              </motion.span>
+              </span>
             </button>
           );
         })}

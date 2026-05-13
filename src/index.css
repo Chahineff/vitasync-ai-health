@@ -1236,6 +1236,76 @@
   @apply bg-white/[0.03];
 }
 
+/* Legal pages — typography polish, anchors, callouts */
+.legal-prose {
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* Anchor offset so #id links are not hidden under the navbar */
+.legal-prose :is(h2, h3, h4)[id] {
+  scroll-margin-top: 6rem;
+}
+
+/* First heading should not push content too far down */
+.legal-prose > :is(h2, h3):first-child {
+  margin-top: 0;
+}
+
+/* Callouts — harmonize the inline boxes already used in pages
+   (bg-primary/5, bg-destructive/10, bg-amber-*, etc.).
+   We only touch their typography & spacing, not the colors. */
+.legal-prose > div[class*="rounded-xl"],
+.legal-prose > div[class*="rounded-2xl"] {
+  @apply my-6 p-5 md:p-6;
+  border-radius: 16px;
+}
+
+.legal-prose > div[class*="rounded-xl"] p,
+.legal-prose > div[class*="rounded-2xl"] p {
+  @apply text-[14.5px] leading-[1.7] text-foreground/80 m-0;
+}
+
+.legal-prose > div[class*="rounded-xl"] p + p,
+.legal-prose > div[class*="rounded-2xl"] p + p {
+  @apply mt-2;
+}
+
+.legal-prose > div[class*="rounded-xl"] strong,
+.legal-prose > div[class*="rounded-2xl"] strong {
+  @apply text-foreground;
+}
+
+/* Lists — refined bullets */
+.legal-prose ul > li::marker {
+  color: hsl(var(--primary) / 0.6);
+}
+.legal-prose ol > li::marker {
+  color: hsl(var(--foreground) / 0.45);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tables — mobile horizontal scroll wrapper via responsive overflow */
+.legal-prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 768px) {
+  .legal-prose table {
+    display: table;
+  }
+}
+
+/* Print-friendly */
+@media print {
+  .legal-prose { color: #000; }
+  .legal-prose a { color: #000; text-decoration: underline; }
+}
+
 /* ================================
    Chat Markdown Styles
    ================================ */

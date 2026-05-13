@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { MorphingGradient } from "@/components/ui/v2/MorphingGradient";
+import { fadeInBlur, fadeInUp, stagger } from "@/lib/motion";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -40,116 +43,152 @@ export function HeroSection() {
   const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen md:min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-3 md:mx-5 mb-4 md:mb-6">
-      {/* Spline background — hidden on mobile, shown on tablet+ */}
+    <section
+      ref={sectionRef}
+      className="relative min-h-[100svh] md:min-h-screen overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] mx-3 md:mx-5 mb-4 md:mb-6"
+    >
+      {/* Ambient page background — soft, never overpowering text */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem]">
-        {/* Static gradient placeholder — always visible, replaced by Spline once idle */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
-        {splineReady && (
-          <div className="absolute inset-0 hidden md:block">
-            <spline-viewer
-              url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
-              style={{ width: "100%", height: "100%", pointerEvents: "none" }}
-            />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-background/70 dark:bg-background/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-background to-secondary/8" />
+        <MorphingGradient intensity="subtle" className="opacity-60 dark:opacity-90" />
+        <div className="absolute inset-0 bg-background/55 dark:bg-background/55" />
       </div>
 
-      <div className="relative z-10 flex items-center min-h-[100svh] md:min-h-[90vh]">
+      <motion.div
+        className="relative z-10 mx-auto flex min-h-[100svh] md:min-h-[90vh] w-full max-w-[90rem] items-center px-4 sm:px-6 lg:px-12 py-12 md:py-20"
+        style={{ opacity: contentOpacity, y: contentY }}
+      >
         <motion.div
-          className="w-full px-4 sm:px-6 lg:px-12 py-16 md:py-24"
-          style={{ opacity: contentOpacity, y: contentY }}
+          variants={stagger(0.05, 0.08)}
+          initial="hidden"
+          animate="visible"
+          className="grid w-full grid-cols-1 items-center gap-10 md:gap-12 lg:grid-cols-12 lg:gap-16"
         >
-          <div className="max-w-[90rem] mx-auto flex flex-col items-center">
-            {/* Centered text content */}
-            <div className="w-full text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          {/* LEFT — editorial text column */}
+          <div className="lg:col-span-7 xl:col-span-7 text-left">
+            <motion.div variants={fadeInUp}>
+              <span className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-background/40 px-4 py-2 text-xs sm:text-sm text-foreground/80 backdrop-blur-md shadow-sm dark:border-white/15 dark:bg-white/5">
+                <span className="h-2 w-2 rounded-full bg-secondary animate-pulse" aria-hidden="true" />
+                <span className="font-medium tracking-wide">{t("hero.badge")}</span>
+              </span>
+            </motion.div>
+
+            <motion.h1
+              variants={fadeInBlur}
+              className="mt-6 md:mt-8 text-[2.5rem] leading-[1.05] sm:text-5xl md:text-6xl lg:text-[5.25rem] xl:text-[5.75rem] font-light tracking-[-0.035em] text-foreground hero-text-shadow"
+            >
+              <span className="block">{t("hero.title")}</span>
+              <span
+                className="gradient-text-hero block mt-1 md:mt-2"
+                style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 600 }}
               >
-                <span className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-full bg-white/10 dark:bg-white/10 border border-border/40 dark:border-white/20 text-sm md:text-base text-primary mb-6 md:mb-8 backdrop-blur-md shadow-lg">
-                  <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-secondary animate-pulse" />
-                  {t("hero.badge")}
-                </span>
-              </motion.div>
+                {t("hero.titleHighlight")}
+              </span>
+            </motion.h1>
 
-              <motion.h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-[-0.04em] text-foreground mb-4 md:mb-6 leading-[1.1] hero-text-shadow">
-                {t("hero.title").split(" ").map((word, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                    className="inline-block mr-[0.3em]"
-                  >
-                    {word}
-                  </motion.span>
-                ))}{" "}
-                <motion.span
-                  initial={{ opacity: 0, scale: 0.8, filter: "blur(12px)" }}
-                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                  transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="gradient-text-hero inline-block"
-                  style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontStyle: 'italic' }}
-                >
-                  {t("hero.titleHighlight")}
-                </motion.span>
-              </motion.h1>
+            <motion.p
+              variants={fadeInUp}
+              className="mt-5 md:mt-7 max-w-xl text-base sm:text-lg md:text-xl text-foreground/75 leading-relaxed font-light"
+            >
+              {t("hero.subtitle")}
+            </motion.p>
 
-              <motion.p
-                initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-base md:text-xl lg:text-2xl text-foreground/70 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed"
-              >
-                {t("hero.subtitle")}
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center justify-center pointer-events-auto"
-              >
-                <Link
-                  to="/auth?mode=signup"
-                  className="btn-hero-glass text-white text-base md:text-lg lg:text-xl py-3.5 px-8 md:py-5 md:px-12 w-full sm:w-auto"
-                >
-                  {t("hero.cta")}
-                </Link>
-                <a
-                  href="#how-it-works"
-                  className="btn-hero-secondary text-foreground text-base md:text-lg lg:text-xl py-3.5 px-8 md:py-5 md:px-12 w-full sm:w-auto"
-                >
-                  {t("hero.secondary")}
-                </a>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 hidden sm:block"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-5 h-8 md:w-6 md:h-10 rounded-full border-2 border-foreground/20 flex items-start justify-center p-1.5 md:p-2"
-          >
+            {/* CTAs — primary dominant, secondary discreet */}
             <motion.div
-              animate={{ opacity: [0.5, 1, 0.5], y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary"
-            />
+              variants={fadeInUp}
+              className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center pointer-events-auto"
+            >
+              <Link
+                to="/auth?mode=signup"
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-7 py-3.5 md:px-9 md:py-4 text-base md:text-lg font-medium text-background shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.6)] transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-14px_hsl(var(--primary)/0.7)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+              >
+                <span>{t("hero.cta")}</span>
+                <ArrowRight className="h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+              </Link>
+
+              <a
+                href="#how-it-works"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-border/60 bg-background/30 px-6 py-3 md:px-7 md:py-3.5 text-sm md:text-base font-medium text-foreground/85 backdrop-blur-md transition-colors hover:bg-background/60 hover:text-foreground dark:border-white/15 dark:bg-white/5 dark:hover:bg-white/10"
+              >
+                {t("hero.secondary")}
+              </a>
+            </motion.div>
+
+            {/* Trust microcopy — non-medical positioning */}
+            <motion.p
+              variants={fadeInUp}
+              className="mt-6 md:mt-8 inline-flex items-center gap-2 text-xs md:text-sm text-foreground/55"
+            >
+              <ShieldCheck className="h-3.5 w-3.5 md:h-4 md:w-4 text-secondary" aria-hidden="true" />
+              <span>{t("hero.trust")}</span>
+            </motion.p>
+          </div>
+
+          {/* RIGHT — framed signature visual (Spline desktop, MorphingGradient fallback mobile) */}
+          <motion.div
+            variants={fadeInBlur}
+            className="lg:col-span-5 xl:col-span-5 relative"
+            aria-label={t("hero.visualLabel")}
+          >
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-[28rem] lg:max-w-none lg:aspect-[5/6]">
+              {/* Outer glow halo */}
+              <div className="absolute -inset-6 rounded-[2.5rem] bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.25),transparent_60%),radial-gradient(circle_at_70%_80%,hsl(var(--secondary)/0.2),transparent_60%)] blur-3xl" aria-hidden="true" />
+
+              {/* Frame */}
+              <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-border/40 bg-background/30 backdrop-blur-xl shadow-[0_30px_80px_-30px_hsl(var(--primary)/0.35)] dark:border-white/10 dark:bg-white/[0.03]">
+                {/* Mobile / no-Spline fallback */}
+                <div className="absolute inset-0 md:hidden">
+                  <MorphingGradient intensity="medium" />
+                </div>
+
+                {/* Desktop Spline (deferred) */}
+                {splineReady && (
+                  <div className="absolute inset-0 hidden md:block">
+                    <spline-viewer
+                      url="https://prod.spline.design/lp2LRzHKPG0tDDPn/scene.splinecode"
+                      style={{ width: "100%", height: "100%", pointerEvents: "none" }}
+                    />
+                  </div>
+                )}
+                {/* Pre-Spline placeholder for desktop */}
+                {!splineReady && (
+                  <div className="absolute inset-0 hidden md:block">
+                    <MorphingGradient intensity="medium" />
+                  </div>
+                )}
+
+                {/* Subtle inner vignette for visual depth */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" aria-hidden="true" />
+
+                {/* Corner accent line (clinical detail) */}
+                <div className="pointer-events-none absolute left-4 top-4 h-8 w-8 border-l border-t border-foreground/30 rounded-tl-lg" aria-hidden="true" />
+                <div className="pointer-events-none absolute bottom-4 right-4 h-8 w-8 border-r border-b border-foreground/30 rounded-br-lg" aria-hidden="true" />
+              </div>
+            </div>
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 1 }}
+        className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 hidden sm:block z-10"
+        aria-hidden="true"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-5 h-8 md:w-6 md:h-10 rounded-full border-2 border-foreground/20 flex items-start justify-center p-1.5 md:p-2"
+        >
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5], y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary"
+          />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

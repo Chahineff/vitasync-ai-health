@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { ProgressRing } from "./ProgressRing";
 import { ProgressParticles } from "./ProgressParticles";
 import { StepTimeline } from "./StepTimeline";
+import { SavingOverlay } from "./SavingOverlay";
 import {
   Moon, Lightning, Crosshair, Leaf, Barbell,
   PersonSimpleRun, ShieldCheck, Sparkle, DotsThree,
@@ -1216,6 +1217,9 @@ export function OnboardingFlow() {
         transition: 'background 1.8s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
+      {/* Saving / validating progress overlay */}
+      <SavingOverlay open={isSubmitting} />
+
       {/* Reactive particles */}
       <ProgressParticles progress={progress} />
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, forwardRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ShoppingCart, Heart, Flask, Leaf, ShieldCheck, Flag, Plus, CaretRight, Sparkle, Timer, ListBullets, TestTube, Atom } from '@phosphor-icons/react';
+import { ArrowLeft, ShoppingCart, Heart, Flask, Leaf, ShieldCheck, Flag, Plus, CaretRight, Sparkle, Timer, ListBullets, TestTube, Atom, Info } from '@phosphor-icons/react';
 import { fetchProductByHandle, fetchProducts, ProductDetail, ShopifyProduct } from '@/lib/shopify';
 import { parseProductDescription, ParsedProductData } from '@/lib/shopify-parser';
 import { toast } from 'sonner';
@@ -238,29 +238,30 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
   return (
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-[1200px] mx-auto px-4 lg:px-6 pb-24 lg:pb-8 overflow-visible">
-        {/* Header */}
-        <div className="z-30 bg-transparent backdrop-blur-md border-b border-border/10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-4 mb-2">
+        {/* Header — Editorial Glass */}
+        <div className="z-30 bg-background/40 backdrop-blur-xl border-b border-border/30 -mx-4 lg:-mx-6 px-4 lg:px-6 py-4 mb-4">
           <div className="flex items-center justify-between">
-            <button onClick={onBack} className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors">
-              <ArrowLeft weight="light" className="w-5 h-5" />
-              <span className="text-sm font-light">{t('pdp.backToShop')}</span>
+            <button onClick={onBack} className="group flex items-center gap-2 text-foreground/55 hover:text-foreground transition-colors">
+              <ArrowLeft weight="light" className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+              <span className="text-sm tracking-tight">{t('pdp.backToShop')}</span>
             </button>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <motion.button
                 onClick={() => { toggleWishlist(); toast.success(isWishlisted ? t('pdp.wishlistRemoved') : t('pdp.wishlistAdded')); }}
                 whileTap={{ scale: 0.85 }}
-                className="p-2 rounded-xl hover:bg-muted transition-colors"
+                className="p-2.5 rounded-xl border border-border/40 bg-card/40 hover:bg-card/80 hover:border-border transition-all"
+                aria-label={isWishlisted ? t('pdp.wishlistRemoved') : t('pdp.wishlistAdded')}
               >
                 <Heart
                   weight={isWishlisted ? 'fill' : 'light'}
-                  className={cn('w-5 h-5 transition-colors', isWishlisted ? 'text-red-500' : 'text-foreground/60')}
+                  className={cn('w-4 h-4 transition-colors', isWishlisted ? 'text-red-500' : 'text-foreground/60')}
                 />
               </motion.button>
               <CartDrawer>
-                <button className="relative p-2 rounded-xl hover:bg-muted transition-colors">
-                  <ShoppingCart weight="light" className="w-5 h-5 text-foreground/60" />
+                <button className="relative p-2.5 rounded-xl border border-border/40 bg-card/40 hover:bg-card/80 hover:border-border transition-all" aria-label="Cart">
+                  <ShoppingCart weight="light" className="w-4 h-4 text-foreground/70" />
                   {totalCartItems > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-semibold">
                       {totalCartItems}
                     </span>
                   )}
@@ -315,13 +316,23 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
             {/* Social Proof */}
             <SocialProofBar productTitle={product.title} />
-            <div className="flex items-center justify-between gap-3 py-4 border-t border-b border-border/30">
+
+            {/* Reassurance grid */}
+            <div className="grid grid-cols-4 gap-2 rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-4">
               {reassuranceKeys.map((item, i) => (
-                <div key={i} className="flex flex-col items-center gap-1.5 text-center flex-1">
-                  <item.icon weight="light" className="w-5 h-5 text-foreground/40" />
-                  <span className="text-[12px] text-foreground/50 font-light leading-tight">{t(item.key)}</span>
+                <div key={i} className="flex flex-col items-center gap-2 text-center px-1">
+                  <item.icon weight="duotone" className="w-5 h-5 text-primary/70" />
+                  <span className="text-[11px] text-foreground/65 leading-tight tracking-tight">{t(item.key)}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Responsible supplement notice — slim, never blocking conversion */}
+            <div className="flex items-start gap-2.5 px-3.5 py-3 rounded-xl bg-muted/40 border border-border/30">
+              <Info weight="duotone" className="w-4 h-4 text-foreground/50 flex-shrink-0 mt-0.5" />
+              <p className="text-[11.5px] leading-relaxed text-foreground/60">
+                {t('pdp.disclaimer')}
+              </p>
             </div>
 
             {/* Accordion Sections */}
@@ -472,9 +483,12 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
 
         {/* FDA Disclaimer */}
         <div className="max-w-[1200px] mx-auto px-4 lg:px-6 py-8">
-          <p style={{ fontSize: 12, fontStyle: "italic", color: "#718096", lineHeight: 1.6 }}>
-            * These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.
-          </p>
+          <div className="flex items-start gap-3 p-4 rounded-2xl border border-border/40 bg-muted/30">
+            <ShieldCheck weight="duotone" className="w-5 h-5 text-foreground/45 flex-shrink-0 mt-0.5" />
+            <p className="text-[11.5px] italic text-foreground/55 leading-relaxed">
+              * These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.
+            </p>
+          </div>
         </div>
       </motion.div>
 

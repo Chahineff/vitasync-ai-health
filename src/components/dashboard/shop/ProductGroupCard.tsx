@@ -86,11 +86,11 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
       <motion.div
         whileHover={{ y: -4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        className="rounded-2xl overflow-hidden bg-card border border-border shadow-sm hover:shadow-lg transition-shadow duration-300 group h-full flex flex-col"
+        className="rounded-3xl overflow-hidden bg-card/80 backdrop-blur-sm border border-border/60 shadow-[0_1px_0_hsl(var(--foreground)/0.03)] hover:border-border hover:shadow-[0_20px_40px_-20px_hsl(var(--foreground)/0.15)] transition-all duration-500 group h-full flex flex-col"
       >
         {/* Image */}
-        <div className="relative overflow-hidden rounded-t-2xl" style={{ aspectRatio: '3/4' }}>
-          <div className="absolute inset-0 dark:bg-white/5" style={{ background: "radial-gradient(circle at 50% 40%, hsl(var(--muted)) 0%, hsl(var(--background)) 100%)" }} />
+        <div className="relative overflow-hidden rounded-t-3xl" style={{ aspectRatio: '3/4' }}>
+          <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 35%, hsl(var(--muted)/0.6) 0%, hsl(var(--background)) 100%)" }} />
           <AnimatePresence mode="wait">
             {mainImage ? (
               <motion.img
@@ -101,7 +101,8 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                 transition={{ duration: 0.25 }}
                 src={mainImage.url}
                 alt={mainImage.altText || baseTitle}
-                className="relative w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+                className="relative w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.10))" }}
               />
             ) : (
@@ -165,12 +166,12 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
         </div>
 
         {/* Content */}
-        <div className="p-4 flex-1 flex flex-col gap-2">
-          <NoReviewsYet label={t('reviews.noneYet')} />
-          <h3 className="text-base font-bold text-foreground line-clamp-2 leading-snug">{baseTitle}</h3>
+        <div className="p-4 md:p-5 flex-1 flex flex-col gap-2">
           {displayProduct.node.productType && (
-            <p className="text-xs text-muted-foreground line-clamp-1">{displayProduct.node.productType}</p>
+            <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground/70 font-medium line-clamp-1">{displayProduct.node.productType}</p>
           )}
+          <h3 className="text-base md:text-[17px] font-medium text-foreground line-clamp-2 leading-snug tracking-tight">{baseTitle}</h3>
+          <NoReviewsYet label={t('reviews.noneYet')} />
 
           {/* Flavor Selector */}
           {hasMultipleFlavors && (

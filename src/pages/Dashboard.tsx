@@ -412,8 +412,28 @@ const Dashboard = () => {
 
       {/* Main - with margin-left to compensate for fixed sidebar */}
       <main id="main" className={`flex-1 flex flex-col h-screen max-h-screen transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-24' : 'lg:ml-80'}`}>
-        {/* Top bar with notifications */}
-        <div className="flex items-center justify-end px-4 pt-3 pb-1 lg:px-8">
+        {/* Top bar with contextual title + notifications */}
+        <div className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 pt-4 pb-3 lg:px-8 bg-background/60 backdrop-blur-xl border-b border-border/30">
+          <div className="min-w-0 flex items-center gap-2">
+            <span className="hidden sm:inline-block text-[11px] uppercase tracking-[0.16em] text-foreground/40">Dashboard</span>
+            <span className="hidden sm:inline-block text-foreground/20">/</span>
+            <h1 className="text-sm md:text-base font-medium tracking-tight text-foreground/90 truncate">
+              {(() => {
+                const map: Record<string, string> = {
+                  home: t("dashboard.home"),
+                  coach: t("dashboard.coach"),
+                  supplements: t("dashboard.supplements"),
+                  shop: t("dashboard.shop"),
+                  product: t("dashboard.shop"),
+                  mystack: "Mon Stack",
+                  analyses: "Mes Analyses",
+                  settings: t("dashboard.settings"),
+                  help: t("dashboard.help"),
+                };
+                return map[activeSection] ?? "";
+              })()}
+            </h1>
+          </div>
           <NotificationPanel />
         </div>
         {/* Add padding bottom on mobile for bottom nav */}

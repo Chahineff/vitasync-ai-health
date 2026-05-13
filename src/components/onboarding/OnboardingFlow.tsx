@@ -1308,7 +1308,7 @@ export function OnboardingFlow() {
                 onClick={handleNext}
                 disabled={!canProceed() || isSubmitting}
                 className={cn(
-                  "w-full h-13 md:h-14 rounded-2xl text-base font-medium tracking-tight transition-all duration-300",
+                  "w-full h-12 md:h-14 rounded-2xl text-base font-medium tracking-tight transition-all duration-300",
                   canProceed() && !isSubmitting && "shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-8px_hsl(var(--primary)/0.6)]"
                 )}
                 size="lg"

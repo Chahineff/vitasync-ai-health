@@ -740,7 +740,14 @@ export function OnboardingFlow() {
       const arr = answers[q.id];
       return Array.isArray(arr) && arr.length > 0;
     }
-    if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") return !!answers[q.id];
+    if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") {
+      if (!answers[q.id]) return false;
+      // Medication question: gate progression on warning acknowledgment when meds/prefer-not-say
+      if (q.id === "prescription_meds" && (answers[q.id] === "yes" || answers[q.id] === "prefer_not_say")) {
+        return !!answers.prescription_meds_ack;
+      }
+      return true;
+    }
     if (q.type === "sport-builder") return true; // optional
     if (q.type === "dual-slider") return true; // defaults are pre-set
     if (q.type === "budget") return !!answers.monthly_budget || !!answers.budget_range;

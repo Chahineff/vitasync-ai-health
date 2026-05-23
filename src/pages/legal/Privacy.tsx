@@ -172,10 +172,17 @@ export default function Privacy() {
       <h3>9.2 Autres États américains</h3>
       <p>Les résidents des États suivants bénéficient de droits équivalents en vertu de leurs lois respectives : Virginie (VCDPA), Colorado (CPA), Connecticut (CTDPA), Utah (UCPA), Texas (TDPSA), Oregon (OCPA), Montana (MCDPA), Delaware (DPDPA), Iowa (ICDPA), Tennessee (TIPA), New Jersey (NJDPA), New Hampshire (NHDPA), Maryland (MODPA), Minnesota (MCDPA), Nebraska (NEDPA). Ces droits incluent généralement l'accès, la correction, la suppression et le refus de la vente/profilage. Contact : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a>.</p>
 
-      <h2>10. Modifications de cette Politique</h2>
+      <h2>10. Consumer Health Data</h2>
+      <p>VitaSync may collect wellness information you voluntarily enter, including self-reported health metrics, wellness goals, and supplement preferences. This information is used solely to personalize your VitaSync experience.</p>
+      <p>We do not collect, store, or process medical records, clinical lab results, or Protected Health Information (PHI) as defined under HIPAA.</p>
+      <p>If you are a resident of Washington State, you have rights under the Washington My Health MY Data Act, including the right to access, correct, and delete your consumer health data. To exercise these rights, contact: <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a></p>
+      <p>If you are a resident of Nevada, you have rights under Nevada SB 370 regarding consumer health data.</p>
+      <p>VitaSync does not sell consumer health data to third parties.</p>
+
+      <h2>11. Modifications de cette Politique</h2>
       <p>Nous nous réservons le droit de modifier cette politique à tout moment. En cas de modification substantielle, vous serez informé par email ou notification in-app au moins 30 jours avant l'entrée en vigueur des modifications.</p>
 
-      <h2>11. Contact</h2>
+      <h2>12. Contact</h2>
       <p>Pour toute question relative à cette politique ou à vos données personnelles :</p>
       <p>Email : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />DPO : <a href="mailto:contact@vitasync.ai">contact@vitasync.ai</a><br />Site web : vitasync.ai</p>
     </LegalPageLayout>

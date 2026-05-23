@@ -117,6 +117,11 @@ const buildContent = (locale: "fr" | "en"): LegalContent => {
 
           <h2>11. Modifications des Présentes Conditions</h2>
           <p>VitaSync se réserve le droit de modifier les présentes Conditions à tout moment. Les modifications prennent effet dès leur publication. L'Utilisateur sera informé par e-mail ou par notification in-app en cas de changement substantiel. La poursuite de l'utilisation de la Plateforme après modification vaut acceptation des nouvelles Conditions.</p>
+
+          <h2>LIMITATION OF LIABILITY</h2>
+          <p>VitaSync is a general wellness information platform. It is not a medical device, and it does not provide medical diagnosis, treatment plans, or prescriptions. VitaSync's AI recommendations are for educational and informational purposes only.</p>
+          <p>VitaSync does not evaluate drug-supplement interactions. Users taking prescription medications are solely responsible for consulting a qualified healthcare professional before acting on any wellness information provided by VitaSync.</p>
+          <p>To the fullest extent permitted by applicable law, VitaSync shall not be liable for any health outcomes, adverse events, or damages resulting from the use of supplement recommendations, wellness scores, or any other information provided by the platform.</p>
         </>
       ),
     };
@@ -225,6 +230,11 @@ const buildContent = (locale: "fr" | "en"): LegalContent => {
 
         <h2>11. Changes to These Terms</h2>
         <p>VitaSync reserves the right to modify these Terms at any time. Changes take effect upon publication. The User will be notified by email or in-app notification in case of substantial changes. Continued use of the Platform after modification constitutes acceptance of the new Terms.</p>
+
+        <h2>LIMITATION OF LIABILITY</h2>
+        <p>VitaSync is a general wellness information platform. It is not a medical device, and it does not provide medical diagnosis, treatment plans, or prescriptions. VitaSync's AI recommendations are for educational and informational purposes only.</p>
+        <p>VitaSync does not evaluate drug-supplement interactions. Users taking prescription medications are solely responsible for consulting a qualified healthcare professional before acting on any wellness information provided by VitaSync.</p>
+        <p>To the fullest extent permitted by applicable law, VitaSync shall not be liable for any health outcomes, adverse events, or damages resulting from the use of supplement recommendations, wellness scores, or any other information provided by the platform.</p>
       </>
     ),
   };

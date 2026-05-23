@@ -39,6 +39,7 @@ const signUpSchema = z.object({
     return differenceInYears(new Date(), dob) >= 18;
   }, "Vous devez avoir au moins 18 ans pour créer un compte"),
   acceptTerms: z.literal(true, { errorMap: () => ({ message: "Vous devez accepter les conditions d'utilisation" }) }),
+  confirmAdult: z.literal(true, { errorMap: () => ({ message: "Vous devez confirmer avoir 18 ans ou plus" }) }),
 });
 
 const Auth = () => {
@@ -55,6 +56,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [confirmAdult, setConfirmAdult] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { signIn, signUp, user } = useAuth();
@@ -79,7 +81,7 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const result = signUpSchema.safeParse({ email, password, firstName, lastName, dateOfBirth, acceptTerms });
+        const result = signUpSchema.safeParse({ email, password, firstName, lastName, dateOfBirth, acceptTerms, confirmAdult });
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
           result.error.errors.forEach((err) => {
@@ -345,9 +347,29 @@ const Auth = () => {
             )}
             {errors.acceptTerms && <p className="text-sm text-destructive mt-1">{errors.acceptTerms}</p>}
 
+            {isSignUp && (
+              <div className="mt-2">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="confirmAdult"
+                    checked={confirmAdult}
+                    onCheckedChange={(checked) => setConfirmAdult(checked === true)}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="confirmAdult" className="text-sm text-foreground/70 leading-snug cursor-pointer">
+                    I confirm that I am 18 years of age or older. I understand that VitaSync is intended for adults only. <span className="text-destructive">*</span>
+                  </label>
+                </div>
+                <p className="text-xs text-foreground/50 mt-1.5 pl-7">
+                  Users under 18 should consult a healthcare professional before taking any supplement.
+                </p>
+                {errors.confirmAdult && <p className="text-sm text-destructive mt-1 pl-7">{errors.confirmAdult}</p>}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (isSignUp && (!confirmAdult || !acceptTerms))}
               className="btn-neumorphic text-primary-foreground w-full mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (

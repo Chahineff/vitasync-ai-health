@@ -511,6 +511,13 @@ export function ProductRecommendationCard({ product, onProductSelect }: ProductR
           </PopoverContent>
         </Popover>
       </div>
+
+      {/* Legal disclaimer */}
+      <div className="px-4 pb-3 -mt-1">
+        <p className="text-[10px] leading-snug text-foreground/50">
+          ⓘ Supplement suggestions are for general wellness purposes only. VitaSync does not screen for drug-supplement interactions. Consult your pharmacist or physician if you take prescription medications.
+        </p>
+      </div>
     </motion.div>
   );
 }

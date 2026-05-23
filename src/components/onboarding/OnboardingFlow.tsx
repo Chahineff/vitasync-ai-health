@@ -186,6 +186,22 @@ const questions: OnboardingQuestion[] = [
   },
 ];
 
+// Medication question (uses custom rendering in renderQuestion)
+const medicationQuestion: OnboardingQuestion = {
+  id: "prescription_meds",
+  title: "Are you currently taking any prescription medications?",
+  subtitle: "Important: this helps us flag potential interactions.",
+  type: "single",
+  options: [
+    { value: "yes", label: "Yes", icon: <CheckCircle weight="duotone" className="w-5 h-5 text-amber-400" />, iconBg: "bg-amber-500/15 border border-amber-500/20" },
+    { value: "no", label: "No", icon: <XCircle weight="duotone" className="w-5 h-5 text-emerald-400" />, iconBg: "bg-emerald-500/15 border border-emerald-500/20" },
+    { value: "prefer_not_say", label: "Prefer not to say", icon: <DotsThree weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
+  ],
+  required: true,
+};
+// Insert before medications_notes (last optional text step)
+questions.splice(questions.length - 1, 0, medicationQuestion);
+
 // Step transition with deblur
 const stepTransition = {
   initial: { opacity: 0, x: 60, filter: "blur(6px)" },
@@ -724,7 +740,14 @@ export function OnboardingFlow() {
       const arr = answers[q.id];
       return Array.isArray(arr) && arr.length > 0;
     }
-    if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") return !!answers[q.id];
+    if (q.type === "single" || q.type === "single-bonus" || q.type === "slider-single") {
+      if (!answers[q.id]) return false;
+      // Medication question: gate progression on warning acknowledgment when meds/prefer-not-say
+      if (q.id === "prescription_meds" && (answers[q.id] === "yes" || answers[q.id] === "prefer_not_say")) {
+        return !!answers.prescription_meds_ack;
+      }
+      return true;
+    }
     if (q.type === "sport-builder") return true; // optional
     if (q.type === "dual-slider") return true; // defaults are pre-set
     if (q.type === "budget") return !!answers.monthly_budget || !!answers.budget_range;
@@ -976,19 +999,56 @@ export function OnboardingFlow() {
 
     // Single select
     if (q.type === "single") {
+      const showMedWarning = q.id === "prescription_meds" && (answers[q.id] === "yes" || answers[q.id] === "prefer_not_say");
       return (
-        <div className="grid grid-cols-2 gap-3">
-          {q.options?.map((opt, index) => (
-            <OptionCard
-              key={opt.value}
-              selected={isOptionSelected(opt.value)}
-              icon={opt.icon}
-              iconBg={opt.iconBg}
-              label={opt.label}
-              onClick={() => handleSelect(opt.value)}
-              index={index}
-            />
-          ))}
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {q.options?.map((opt, index) => (
+              <OptionCard
+                key={opt.value}
+                selected={isOptionSelected(opt.value)}
+                icon={opt.icon}
+                iconBg={opt.iconBg}
+                label={opt.label}
+                onClick={() => {
+                  // Reset acknowledgment when changing answer on meds question
+                  if (q.id === "prescription_meds") {
+                    setAnswers({ ...answers, [q.id]: opt.value, prescription_meds_ack: false });
+                  } else {
+                    handleSelect(opt.value);
+                  }
+                }}
+                index={index}
+              />
+            ))}
+          </div>
+
+          {showMedWarning && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 rounded-xl bg-destructive/10 border border-destructive/30 space-y-3"
+            >
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-destructive leading-relaxed">
+                  <strong>Important:</strong> VitaSync's AI coach cannot evaluate interactions between supplements and prescription medications. Before starting any supplement recommended by VitaSync, please consult your physician or pharmacist to check for potential interactions.
+                </p>
+              </div>
+              <Button
+                onClick={() => setAnswers({ ...answers, prescription_meds_ack: true })}
+                disabled={!!answers.prescription_meds_ack}
+                size="sm"
+                className="w-full"
+              >
+                {answers.prescription_meds_ack ? (
+                  <><Check className="w-4 h-4 mr-1.5" /> Acknowledged</>
+                ) : (
+                  "I understand, continue"
+                )}
+              </Button>
+            </motion.div>
+          )}
         </div>
       );
     }

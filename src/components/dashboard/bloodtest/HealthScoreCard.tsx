@@ -76,6 +76,9 @@ export function HealthScoreCard({ score, previousScore, lastAnalysisDate, totalA
             {totalAnalyses} {t('bloodtest.analysesCount')}
           </span>
         </div>
+        <p className="text-[10px] text-muted-foreground/70 mt-2 leading-snug">
+          {t('bloodtest.healthScoreDisclaimer')}
+        </p>
       </div>
     </motion.div>
   );

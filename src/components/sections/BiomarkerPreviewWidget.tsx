@@ -18,8 +18,6 @@ const nutrients: Nutrient[] = [
 
 type Phase = "form" | "typing" | "thinking" | "results";
 
-const UNITS = ["ng/mL", "µg/L", "mg/dL", "other"];
-
 export function BiomarkerPreviewWidget() {
   const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("form");

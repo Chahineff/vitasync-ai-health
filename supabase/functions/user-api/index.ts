@@ -222,6 +222,14 @@ serve(async (req) => {
         let query = admin.from("supplement_logs").select("*");
         const trackingId = params.get("tracking_id");
         if (trackingId) {
+          // Verify ownership before filtering by tracking_id
+          const { data: track } = await admin
+            .from("supplement_tracking")
+            .select("id")
+            .eq("id", trackingId)
+            .eq("user_id", userId)
+            .maybeSingle();
+          if (!track) return err("tracking_id not found or not yours", 403);
           query = query.eq("tracking_id", trackingId);
         } else {
           // Only return logs belonging to user's supplements

@@ -347,9 +347,29 @@ const Auth = () => {
             )}
             {errors.acceptTerms && <p className="text-sm text-destructive mt-1">{errors.acceptTerms}</p>}
 
+            {isSignUp && (
+              <div className="mt-2">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="confirmAdult"
+                    checked={confirmAdult}
+                    onCheckedChange={(checked) => setConfirmAdult(checked === true)}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="confirmAdult" className="text-sm text-foreground/70 leading-snug cursor-pointer">
+                    I confirm that I am 18 years of age or older. I understand that VitaSync is intended for adults only. <span className="text-destructive">*</span>
+                  </label>
+                </div>
+                <p className="text-xs text-foreground/50 mt-1.5 pl-7">
+                  Users under 18 should consult a healthcare professional before taking any supplement.
+                </p>
+                {errors.confirmAdult && <p className="text-sm text-destructive mt-1 pl-7">{errors.confirmAdult}</p>}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (isSignUp && (!confirmAdult || !acceptTerms))}
               className="btn-neumorphic text-primary-foreground w-full mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (

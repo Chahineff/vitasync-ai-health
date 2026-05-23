@@ -359,21 +359,10 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
     
     const fetchRecommendations = async () => {
       try {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-        
-        const response = await fetch(`${supabaseUrl}/functions/v1/onboarding-recommendations`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${anonKey}`,
-          },
-          body: JSON.stringify({ answers }),
+        const { data, error } = await supabase.functions.invoke("onboarding-recommendations", {
+          body: { answers },
         });
-
-        if (!response.ok) throw new Error("AI error");
-        
-        const data = await response.json();
+        if (error) throw error;
         const recos = data.recommendations || [];
         setAiRecommendations(recos);
         setLoading(false);

@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { List, X, CaretDown } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Compass, Sparkles, ShoppingBag, Tag, HelpCircle, LayoutDashboard } from "lucide-react";
-import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 import { getAnchorId, scrollToHomeAnchor } from "@/lib/scrollAnchors";
@@ -247,9 +246,8 @@ export function Navbar() {
               })}
             </div>
 
-            {/* Right Side - Language, CTA */}
+            {/* Right Side - CTA */}
             <div className="hidden lg:flex items-center gap-3">
-              <LanguageSelector />
               <Link to="/auth?mode=signin" className="px-4 py-2 rounded-xl text-sm font-medium text-current opacity-70 hover:opacity-100 hover:bg-white/5 transition-all">
                 {t("nav.signin")}
               </Link>
@@ -314,9 +312,6 @@ export function Navbar() {
                 </div>
 
                 <div className="mt-auto space-y-3">
-                  <div className="flex justify-center mb-4">
-                    <LanguageSelector />
-                  </div>
                   <Link to="/auth?mode=signin" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center px-4 py-3 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all border border-border/50">
                     {t("nav.signin")}
                   </Link>

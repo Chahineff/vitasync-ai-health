@@ -15,6 +15,7 @@ export function FeaturesSection() {
       step: t("features.feature1.subtitle"),
       title: t("features.feature1.title"),
       content: t("features.feature1.description"),
+      note: "(ⓘ Our wellness suggestions reference publicly available nutritional research from sources including NIH, PubMed, and peer-reviewed nutrition journals. They are not personalized medical recommendations.)",
       preview: <ChatPreviewWidget />,
     },
     {

@@ -10,6 +10,7 @@ interface Feature {
   step: string;
   title?: string;
   content: string;
+  note?: React.ReactNode;
   preview: React.ReactNode;
 }
 
@@ -156,15 +157,21 @@ export function FeatureSteps({
                       </h3>
                       <AnimatePresence>
                         {index === currentFeature && (
-                          <motion.p
+                          <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.4 }}
-                            className="text-xs md:text-sm text-muted-foreground mt-2 leading-relaxed"
                           >
-                            {feature.content}
-                          </motion.p>
+                            <p className="text-xs md:text-sm text-muted-foreground mt-2 leading-relaxed">
+                              {feature.content}
+                            </p>
+                            {feature.note && (
+                              <p className="text-[10px] md:text-xs text-muted-foreground/70 mt-2 leading-relaxed">
+                                {feature.note}
+                              </p>
+                            )}
+                          </motion.div>
                         )}
                       </AnimatePresence>
                     </div>

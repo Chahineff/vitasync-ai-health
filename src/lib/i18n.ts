@@ -1675,7 +1675,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "features.title": "An AI that",
     "features.titleHighlight": "truly understands",
     "features.titleEnd": "your body",
-    "features.subtitle": "Discover the features that make VitaSync one of the most complete AI health coaches, powered by Google Gemini 3.",
+    "features.subtitle": "Discover the features that make VitaSync one of the most complete AI wellness coaches, powered by Google Gemini 3.",
     "footer.fdaDisclaimerFr": "* Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie. Consultez votre professionnel de santé avant de commencer toute supplémentation.",
     "footer.fdaDisclaimerEn": "* These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before starting any new supplement regimen.",
     "footer.copyright": "© 2026 VitaSync. All rights reserved. Ships to the US only via Supliful.",
@@ -1845,7 +1845,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "productPreview.cta": "Explore the dashboard",
 
     // Footer
-    "footer.description": "Your health, powered by artificial intelligence. Discover a personalized approach to nutrition.",
+    "footer.description": "Your wellness, powered by artificial intelligence. Discover a personalized approach to nutrition.",
     "footer.product": "Product",
     "footer.company": "Company",
     "footer.legal": "Legal",

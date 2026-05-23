@@ -12,25 +12,18 @@ interface I18nStore {
 export const useI18n = create<I18nStore>()(
   persist(
     (set, get) => ({
-      locale: 'en',
+      locale: 'en' as Locale,
       initialized: false,
-      setLocale: (locale) => set({ locale }),
+      setLocale: () => set({ locale: 'en' as Locale }),
       initialize: () => {
         if (!get().initialized) {
-          // Only detect browser locale on first visit (when no persisted locale)
-          const stored = localStorage.getItem('vitasync-locale');
-          if (!stored) {
-            const browserLocale = detectBrowserLocale();
-            set({ locale: browserLocale, initialized: true });
-          } else {
-            set({ initialized: true });
-          }
+          set({ locale: 'en' as Locale, initialized: true });
         }
       },
     }),
     { 
       name: 'vitasync-locale',
-      partialize: (state) => ({ locale: state.locale }),
+      partialize: (state) => ({ locale: 'en' as Locale }),
     }
   )
 );

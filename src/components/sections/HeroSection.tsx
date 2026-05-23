@@ -126,6 +126,15 @@ export function HeroSection() {
                   {t("hero.secondary")}
                 </a>
               </motion.div>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="text-xs md:text-sm text-foreground/60 mt-4 md:mt-6 max-w-xl mx-auto"
+              >
+                Wellness support tool — not a medical device. Always consult your doctor for medical decisions.
+              </motion.p>
             </div>
           </div>
         </motion.div>

@@ -2326,11 +2326,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "tier.basic.f3": "Text chat only",
     "tier.go.f1": "20 conversations/day",
     "tier.go.f2": "14-day history",
-    "tier.go.f3": "Document analysis (5/month)",
+    "tier.go.f3": "Wellness nutrient companion (5/month)",
     "tier.premium.f1": "Unlimited conversations",
     "tier.premium.f2": "90-day history",
     "tier.premium.f3": "Voice support + advanced models",
-    "tier.premium.f4": "Proactive tracking",
+    "tier.premium.f4": "Personalized wellness reminders & coaching nudges",
 
     // Daily Check-in
     "checkin.badge": "Daily check-in",
@@ -2446,7 +2446,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Blood Test Analyses
     "bloodtest.title": "My Analyses",
-    "bloodtest.healthScore": "Health Score",
+    "bloodtest.healthScore": "Wellness Score",
+    "bloodtest.healthScoreDisclaimer": "(Not a clinical health measurement — reflects your routine consistency and self-reported inputs)",
     "bloodtest.basedOnAnalysis": "Based on analysis from",
     "bloodtest.analysesCount": "analyses",
     "bloodtest.abnormalValues": "Abnormal Values",
@@ -2645,7 +2646,8 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     "shop.recommendationsAlreadyGenerated": "Recommendations already generated today",
 
-    "healthScore.title": "Health Score",
+    "healthScore.title": "Wellness Score",
+    "healthScore.disclaimer": "(Not a clinical health measurement — reflects your routine consistency and self-reported inputs)",
     "healthScore.excellent": "Excellent",
     "healthScore.good": "Good",
     "healthScore.average": "Average",
@@ -2653,7 +2655,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "healthScore.notEnoughData": "Not enough data (min. 2 days)",
     "healthScore.vsYesterday": "vs yesterday",
     "healthScore.stable": "Stable vs yesterday",
-    "healthScore.chartTitle": "Health Score Evolution",
+    "healthScore.chartTitle": "Wellness Score Evolution",
     "healthScore.chartDesc": "Weighted average over 7 days — recent days count more.",
 
     "cookie.title": "Cookies & Privacy",

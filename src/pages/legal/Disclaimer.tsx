@@ -34,6 +34,20 @@ export default function Disclaimer() {
       <h2>4. Disclaimer Compléments Alimentaires — Recommandations IA</h2>
       <p>Les suggestions de compléments alimentaires sont des informations générales de bien-être, pas des prescriptions médicales. Les compléments peuvent interagir avec des médicaments. Consultez votre médecin ou pharmacien avant tout nouveau complément, particulièrement en cas de grossesse, allaitement, traitement médicamenteux, pathologie chronique ou préparation d'une intervention chirurgicale. Les résultats individuels peuvent varier.</p>
 
+      <h2>SUPPLEMENT INTERACTIONS</h2>
+      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4 space-y-3">
+        <p className="text-foreground">
+          Supplements can interact with prescription and over-the-counter medications and may not be appropriate for everyone. VitaSync's AI coach does not evaluate drug-supplement interactions. If you take any medications, you must consult a qualified pharmacist or physician before starting any supplement regimen recommended by VitaSync.
+        </p>
+      </div>
+
+      <h2>AGE RESTRICTION</h2>
+      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4 space-y-3">
+        <p className="text-foreground">
+          VitaSync is intended for users aged 18 and older. The information and recommendations provided by VitaSync are not appropriate for minors. If you are under 18, please consult a healthcare professional before using any supplement.
+        </p>
+      </div>
+
       <h2>5. Disclaimer FDA / DSHEA (Marché américain)</h2>
       <div className="p-4 rounded-xl bg-muted/50 border border-border/50 my-4">
         <p className="text-foreground font-medium">

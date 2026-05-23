@@ -518,6 +518,9 @@ export const CinematicDashboardSection = () => {
                     <span className="text-white/60 text-xs">%</span>
                   </div>
                   <span className="text-white/50 text-[10px] md:text-xs">{t('cinema.healthScoreLabel')}</span>
+                  <span className="block text-white/35 text-[8px] md:text-[9px] leading-tight mt-0.5 max-w-[140px]">
+                    {t('cinema.healthScoreDisclaimer')}
+                  </span>
                 </div>
               </div>
             </div>

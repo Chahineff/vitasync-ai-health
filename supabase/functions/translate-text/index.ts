@@ -40,6 +40,24 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const sb = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsErr } = await sb.auth.getClaims(token);
+    if (claimsErr || !claimsData?.claims?.sub) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { texts, targetLocale, sourceLocale } = await req.json();
 
     if (!texts || typeof texts !== "object" || !targetLocale) {

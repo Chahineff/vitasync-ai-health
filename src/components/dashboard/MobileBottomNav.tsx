@@ -23,7 +23,7 @@ export function MobileBottomNav({ activeSection, onSectionChange, onSignOut }: M
     { id: "supplements", labelKey: "dashboard.supplements", icon: FirstAidKit },
     { id: "shop", labelKey: "dashboard.shop", icon: Storefront },
     { id: "mystack", labelKey: "dashboard.mystack", icon: Package },
-    { id: "analyses", label: "Analyses", icon: TestTube },
+    { id: "analyses", label: "Wellness Journal", icon: TestTube },
   ];
 
   const displaySection = activeSection === "product" ? "shop" : activeSection;

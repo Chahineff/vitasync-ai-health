@@ -13,6 +13,7 @@ import { CookieBanner } from "@/components/ui/CookieBanner";
 import "@/lib/cookie-consent";
 import { SkipToContent } from "@/components/a11y/SkipToContent";
 import { BlogPostSkeleton } from "@/components/blog/BlogPostSkeleton";
+import { GeoRestrictionOverlay } from "@/components/GeoRestrictionOverlay";
 // Eager: home + lightweight pages
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -133,6 +134,7 @@ const App = () => (
         <AuthProvider>
           <DailyCheckinProvider>
             <AppContent />
+            <GeoRestrictionOverlay />
           </DailyCheckinProvider>
         </AuthProvider>
       </TooltipProvider>

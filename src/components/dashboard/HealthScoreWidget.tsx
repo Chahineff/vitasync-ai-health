@@ -225,6 +225,9 @@ export function HealthScoreWidget({ embedded = false }: { embedded?: boolean }) 
                   </span>
                 </div>
               )}
+              <p className="text-[10px] text-foreground/40 mt-1.5 leading-snug">
+                {t("healthScore.disclaimer")}
+              </p>
             </div>
           </div>
         </button>

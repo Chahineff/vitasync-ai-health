@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight, Check, Sparkles, AlertTriangle, Loader2 } fr
 import { ArrowsClockwise } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useCartStore } from "@/stores/cartStore";
+import { supabase } from "@/integrations/supabase/client";
 import type { ShopifyProduct } from "@/lib/shopify";
 import { CountrySelect, Country } from "./CountrySelect";
 import { SportSelector, SelectedSport, allSports } from "./SportSelector";

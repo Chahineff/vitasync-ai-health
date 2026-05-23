@@ -999,19 +999,56 @@ export function OnboardingFlow() {
 
     // Single select
     if (q.type === "single") {
+      const showMedWarning = q.id === "prescription_meds" && (answers[q.id] === "yes" || answers[q.id] === "prefer_not_say");
       return (
-        <div className="grid grid-cols-2 gap-3">
-          {q.options?.map((opt, index) => (
-            <OptionCard
-              key={opt.value}
-              selected={isOptionSelected(opt.value)}
-              icon={opt.icon}
-              iconBg={opt.iconBg}
-              label={opt.label}
-              onClick={() => handleSelect(opt.value)}
-              index={index}
-            />
-          ))}
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {q.options?.map((opt, index) => (
+              <OptionCard
+                key={opt.value}
+                selected={isOptionSelected(opt.value)}
+                icon={opt.icon}
+                iconBg={opt.iconBg}
+                label={opt.label}
+                onClick={() => {
+                  // Reset acknowledgment when changing answer on meds question
+                  if (q.id === "prescription_meds") {
+                    setAnswers({ ...answers, [q.id]: opt.value, prescription_meds_ack: false });
+                  } else {
+                    handleSelect(opt.value);
+                  }
+                }}
+                index={index}
+              />
+            ))}
+          </div>
+
+          {showMedWarning && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 rounded-xl bg-destructive/10 border border-destructive/30 space-y-3"
+            >
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-destructive leading-relaxed">
+                  <strong>Important:</strong> VitaSync's AI coach cannot evaluate interactions between supplements and prescription medications. Before starting any supplement recommended by VitaSync, please consult your physician or pharmacist to check for potential interactions.
+                </p>
+              </div>
+              <Button
+                onClick={() => setAnswers({ ...answers, prescription_meds_ack: true })}
+                disabled={!!answers.prescription_meds_ack}
+                size="sm"
+                className="w-full"
+              >
+                {answers.prescription_meds_ack ? (
+                  <><Check className="w-4 h-4 mr-1.5" /> Acknowledged</>
+                ) : (
+                  "I understand, continue"
+                )}
+              </Button>
+            </motion.div>
+          )}
         </div>
       );
     }

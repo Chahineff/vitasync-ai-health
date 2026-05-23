@@ -1,194 +1,134 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Upload, Spinner, TestTube, Warning, Pill, Trash, Eye, CloudArrowUp, ArrowsClockwise, CaretDown, Scales, Fire, Info } from '@phosphor-icons/react';
+import { Spinner, Trash, Plus, X, NotePencil, Sparkle, Info } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
-import { BloodTestViewer } from './BloodTestViewer';
-import { AI_MODELS, type AIModel } from './chat/ChatModelSelector';
 import { useTranslation } from '@/hooks/useTranslation';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { HealthScoreCard, calculateHealthScore, StatCards, AnalysisTimeline, DeleteConfirmDialog, AnalysisComparison } from './bloodtest';
+import { DeleteConfirmDialog } from './bloodtest';
 
-interface BloodTestAnalysis {
+interface JournalEntry {
   id: string;
-  file_url: string;
   file_name: string;
   analysis_text: string | null;
-  suggested_supplements: Array<{ name: string; reason: string; dosage_suggestion?: string }>;
-  deficiencies: Array<{ name: string; severity: string; description: string }>;
-  abnormal_values: Array<{ name: string; value: string; unit: string; reference: string; status: string; interpretation: string }>;
   status: string;
   created_at: string;
   analyzed_at: string | null;
 }
 
-const BUCKET_NAME = 'blood-tests';
-const POLL_INTERVAL = 5000;
+interface NutrientInput {
+  name: string;
+  value: string;
+  unit: string;
+}
+
+const UNIT_OPTIONS = ['ng/mL', 'µg/L', 'mg/dL', 'mmol/L', 'IU/L', 'g/L', 'other'];
+
+const emptyNutrient = (): NutrientInput => ({ name: '', value: '', unit: 'ng/mL' });
 
 export function BloodTestSection() {
   const { user } = useAuth();
   const { t } = useTranslation();
-  const [analyses, setAnalyses] = useState<BloodTestAnalysis[]>([]);
-  const [selectedAnalysis, setSelectedAnalysis] = useState<BloodTestAnalysis | null>(null);
-  const [viewingAnalysis, setViewingAnalysis] = useState<BloodTestAnalysis | null>(null);
-  const [comparingMode, setComparingMode] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const [analyzing, setAnalyzing] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
-  const dropRef = useRef<HTMLDivElement>(null);
-  const dragCounter = useRef(0);
 
-  const fetchAnalyses = useCallback(async () => {
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [nutrients, setNutrients] = useState<NutrientInput[]>([emptyNutrient()]);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+
+  const fetchEntries = useCallback(async () => {
     if (!user) return;
     const { data, error } = await supabase
       .from('blood_test_analyses')
-      .select('*')
+      .select('id,file_name,analysis_text,status,created_at,analyzed_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching analyses:', error);
-    } else {
-      setAnalyses((data as unknown as BloodTestAnalysis[]) || []);
-      if (data && data.length > 0 && !selectedAnalysis) {
-        setSelectedAnalysis(data[0] as unknown as BloodTestAnalysis);
+    if (!error && data) {
+      setEntries(data as JournalEntry[]);
+      if (data.length > 0 && !selectedEntry) {
+        setSelectedEntry(data[0] as JournalEntry);
       }
     }
     setLoading(false);
-  }, [user, selectedAnalysis]);
+  }, [user, selectedEntry]);
 
-  useEffect(() => { fetchAnalyses(); }, [fetchAnalyses]);
+  useEffect(() => { fetchEntries(); }, [fetchEntries]);
 
-  // Auto-polling for pending analyses
-  useEffect(() => {
-    const hasPending = analyses.some(a => a.status === 'pending') || analyzing !== null;
-    if (!hasPending) return;
+  const updateNutrient = (idx: number, field: keyof NutrientInput, value: string) => {
+    setNutrients((curr) => curr.map((n, i) => (i === idx ? { ...n, [field]: value } : n)));
+  };
 
-    const interval = setInterval(fetchAnalyses, POLL_INTERVAL);
-    return () => clearInterval(interval);
-  }, [analyses, analyzing, fetchAnalyses]);
+  const addRow = () => setNutrients((c) => [...c, emptyNutrient()]);
+  const removeRow = (idx: number) =>
+    setNutrients((c) => (c.length > 1 ? c.filter((_, i) => i !== idx) : c));
 
-  // Core upload logic
-  const uploadFile = async (file: File) => {
-    if (!user) return;
-    if (!file.name.toLowerCase().endsWith('.pdf')) {
-      toast.error(t('bloodtest.pdfOnly'));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = nutrients
+      .map(n => ({ ...n, name: n.name.trim(), value: n.value.trim() }))
+      .filter(n => n.name);
+    if (!clean.length) {
+      toast.error(t('bloodtest.nameRequired'));
       return;
     }
-    if (file.size > 20 * 1024 * 1024) {
-      toast.error(t('bloodtest.fileTooLarge'));
-      return;
-    }
-
-    setUploading(true);
-    try {
-      const fileName = `${user.id}/${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET_NAME)
-        .upload(fileName, file, { contentType: 'application/pdf' });
-      if (uploadError) throw uploadError;
-
-      const storagePath = `${BUCKET_NAME}/${fileName}`;
-      const { data: record, error: insertError } = await supabase
-        .from('blood_test_analyses')
-        .insert({ user_id: user.id, file_url: storagePath, file_name: file.name, status: 'pending' })
-        .select()
-        .single();
-      if (insertError) throw insertError;
-
-      toast.success(t('bloodtest.uploadSuccess'));
-      await fetchAnalyses();
-      if (record) triggerAnalysis(record.id);
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error(t('bloodtest.uploadError'));
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    await uploadFile(file);
-    e.target.value = '';
-  };
-
-  const handleDragEnter = (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); dragCounter.current++; if (e.dataTransfer.items?.length) setIsDragging(true); };
-  const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); dragCounter.current--; if (dragCounter.current === 0) setIsDragging(false); };
-  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); };
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault(); e.stopPropagation(); setIsDragging(false); dragCounter.current = 0;
-    const file = e.dataTransfer.files?.[0];
-    if (file) await uploadFile(file);
-  };
-
-  const triggerAnalysis = async (analysisId: string, model?: string) => {
-    setAnalyzing(analysisId);
+    setSubmitting(true);
     try {
       const session = await supabase.auth.getSession();
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-blood-test`,
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/wellness-nutrient-info`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.data.session?.access_token}` },
-          body: JSON.stringify({ analysisId, model }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.data.session?.access_token}`,
+          },
+          body: JSON.stringify({ nutrients: clean }),
         }
       );
-      if (!response.ok) { const err = await response.json(); throw new Error(err.error || 'Analysis failed'); }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Request failed');
+      }
       toast.success(t('bloodtest.analysisComplete'));
-      await fetchAnalyses();
-    } catch (error) {
-      console.error('Analysis error:', error);
+      setNutrients([emptyNutrient()]);
+      // Re-fetch and select newest
+      const { data } = await supabase
+        .from('blood_test_analyses')
+        .select('id,file_name,analysis_text,status,created_at,analyzed_at')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false });
+      if (data) {
+        setEntries(data as JournalEntry[]);
+        setSelectedEntry((data[0] as JournalEntry) || null);
+      }
+    } catch (err) {
+      console.error(err);
       toast.error(t('bloodtest.analysisError'));
     } finally {
-      setAnalyzing(null);
+      setSubmitting(false);
     }
   };
 
-  const handleDeleteRequest = (id: string, name: string) => {
-    setDeleteTarget({ id, name });
-  };
+  const handleDeleteRequest = (id: string, name: string) => setDeleteTarget({ id, name });
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
-    const { error } = await supabase.from('blood_test_analyses').delete().eq('id', deleteTarget.id);
+    const { error } = await supabase
+      .from('blood_test_analyses')
+      .delete()
+      .eq('id', deleteTarget.id);
     if (error) {
       toast.error(t('bloodtest.deleteError'));
     } else {
       toast.success(t('bloodtest.deleteSuccess'));
-      if (selectedAnalysis?.id === deleteTarget.id) setSelectedAnalysis(null);
-      fetchAnalyses();
+      if (selectedEntry?.id === deleteTarget.id) setSelectedEntry(null);
+      fetchEntries();
     }
     setDeleteTarget(null);
-  };
-
-  const handleViewPdf = (analysis: BloodTestAnalysis) => { setViewingAnalysis(analysis); };
-
-  const severityIcon = (severity: string) => {
-    switch (severity) {
-      case 'important': case 'critique': return <Fire weight="fill" className="w-5 h-5 text-red-500" />;
-      case 'modéré': case 'élevé': return <Warning weight="fill" className="w-5 h-5 text-amber-500" />;
-      default: return <Info weight="fill" className="w-5 h-5 text-yellow-500" />;
-    }
-  };
-
-  const severityColor = (severity: string) => {
-    switch (severity) {
-      case 'important': case 'critique': return 'text-red-500';
-      case 'modéré': case 'élevé': return 'text-amber-500';
-      default: return 'text-yellow-500';
-    }
   };
 
   if (loading) {
@@ -199,30 +139,8 @@ export function BloodTestSection() {
     );
   }
 
-  if (viewingAnalysis) {
-    return <BloodTestViewer analysis={viewingAnalysis} onBack={() => setViewingAnalysis(null)} />;
-  }
-
-  if (comparingMode && analyses.length >= 2) {
-    return <AnalysisComparison analyses={analyses as any} onBack={() => setComparingMode(false)} />;
-  }
-
-  // Compute stats for selected analysis
-  const latestCompleted = analyses.find(a => a.status === 'completed' && a.analysis_text);
-  const previousCompleted = analyses.filter(a => a.status === 'completed' && a.analysis_text)[1];
-  const currentScore = latestCompleted ? calculateHealthScore(latestCompleted) : null;
-  const previousScore = previousCompleted ? calculateHealthScore(previousCompleted) : undefined;
-
   return (
-    <div
-      ref={dropRef}
-      className="space-y-6 relative"
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-    >
-      {/* Delete confirmation */}
+    <div className="space-y-6 relative">
       <DeleteConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
@@ -230,289 +148,228 @@ export function BloodTestSection() {
         fileName={deleteTarget?.name || ''}
       />
 
-      {/* Drag overlay */}
-      <AnimatePresence>
-        {isDragging && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-primary/10 border-2 border-dashed border-primary backdrop-blur-sm"
-          >
-            <div className="text-center">
-              <CloudArrowUp weight="duotone" className="w-16 h-16 text-primary mx-auto mb-3" />
-              <p className="text-lg font-medium text-primary">{t('bloodtest.dropHere')}</p>
-              <p className="text-sm text-muted-foreground">{t('bloodtest.acceptedFormats')}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-light tracking-tight text-foreground">{t('bloodtest.title')}</h2>
-        <div className="flex items-center gap-2">
-          {analyses.length >= 2 && (
-            <button
-              onClick={() => setComparingMode(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-muted/50 text-foreground hover:bg-muted transition-all border border-border/50"
-            >
-              <Scales weight="bold" className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('bloodtest.compare')}</span>
-            </button>
-          )}
-          <label className="cursor-pointer">
-            <input type="file" accept=".pdf" onChange={handleUpload} className="hidden" disabled={uploading} />
-            <div className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
-              uploading ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground hover:bg-primary/90'
-            )}>
-              {uploading ? <Spinner className="w-4 h-4 animate-spin" /> : <Upload weight="bold" className="w-4 h-4" />}
-              {uploading ? 'Upload...' : t('bloodtest.importPdf')}
-            </div>
-          </label>
-        </div>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h2 className="text-2xl font-light tracking-tight text-foreground">
+          {t('bloodtest.title')}
+        </h2>
       </div>
 
-      {analyses.length === 0 ? (
-        /* Enhanced empty state */
-        <label className="cursor-pointer block">
-          <input type="file" accept=".pdf" onChange={handleUpload} className="hidden" disabled={uploading} />
-          <div className={cn(
-            "bg-card rounded-[20px] border-2 border-dashed p-12 text-center transition-all",
-            isDragging ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30"
-          )}>
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            >
-              <CloudArrowUp weight="duotone" className="w-16 h-16 mx-auto mb-4 text-primary/40" />
-            </motion.div>
-            <h3 className="text-lg font-medium text-foreground mb-2">{t('bloodtest.emptyTitle')}</h3>
-            <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              {t('bloodtest.emptyDescription')}
-            </p>
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium">
-              <Upload weight="bold" className="w-4 h-4" />
-              {t('bloodtest.importPdf')}
-            </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              {t('bloodtest.dropHint')}
-            </p>
-          </div>
-        </label>
-      ) : (
-        <div className="space-y-6">
-          {/* Health Score Hero */}
-          {currentScore !== null && latestCompleted && (
-            <HealthScoreCard
-              score={currentScore}
-              previousScore={previousScore}
-              lastAnalysisDate={latestCompleted.created_at}
-              totalAnalyses={analyses.length}
-            />
-          )}
+      {/* Persistent disclaimer (always visible) */}
+      <div className="flex items-start gap-3 p-4 rounded-[16px] border border-amber-500/30 bg-amber-500/5">
+        <Info weight="fill" className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+        <p className="text-xs leading-relaxed text-foreground/80">
+          <strong>{t('bloodtest.title')}</strong> — {t('bloodtest.legalDisclaimer')}
+        </p>
+      </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Timeline */}
-            <div>
-              <AnalysisTimeline
-                analyses={analyses}
-                selectedId={selectedAnalysis?.id || null}
-                analyzingId={analyzing}
-                onSelect={(a) => setSelectedAnalysis(a as BloodTestAnalysis)}
-                onDelete={(id) => {
-                  const a = analyses.find(x => x.id === id);
-                  if (a) handleDeleteRequest(id, a.file_name);
-                }}
-                onUpload={handleUpload}
-                uploading={uploading}
-              />
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* LEFT: Manual entry form */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-card rounded-[20px] border border-border/50 p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <NotePencil weight="duotone" className="w-5 h-5 text-primary" />
+              <h3 className="text-base font-semibold text-foreground">
+                {t('bloodtest.logNutrients')}
+              </h3>
             </div>
 
-            {/* Right: Analysis details */}
-            <div className="lg:col-span-2">
-              <AnimatePresence mode="wait">
-                {selectedAnalysis ? (
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <AnimatePresence initial={false}>
+                {nutrients.map((n, idx) => (
                   <motion.div
-                    key={selectedAnalysis.id}
-                    initial={{ opacity: 0, y: 10 }}
+                    key={idx}
+                    initial={{ opacity: 0, y: -6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="space-y-6"
+                    exit={{ opacity: 0, y: -6 }}
+                    className="space-y-2 p-3 rounded-[14px] bg-muted/30 border border-border/40"
                   >
-                    {/* PDF preview + Réanalyser */}
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => handleViewPdf(selectedAnalysis)}
-                        className="flex-1 flex items-center gap-3 p-4 rounded-[16px] bg-card border border-border/50 hover:border-primary/30 transition-colors text-left"
-                      >
-                        <Eye weight="duotone" className="w-6 h-6 text-primary" />
-                        <div>
-                          <p className="text-sm font-medium text-foreground">{selectedAnalysis.file_name}</p>
-                          <p className="text-xs text-muted-foreground">{t('bloodtest.clickToOpen')}</p>
-                        </div>
-                      </button>
-
-                      {selectedAnalysis.status === 'completed' && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button
-                              disabled={analyzing === selectedAnalysis.id}
-                              className={cn(
-                                "flex items-center gap-2 px-4 py-3 rounded-[16px] border text-sm font-medium transition-all whitespace-nowrap",
-                                analyzing === selectedAnalysis.id
-                                  ? "bg-muted text-muted-foreground border-border/50"
-                                  : "bg-card border-border/50 hover:border-primary/30 text-foreground"
-                              )}
-                            >
-                              {analyzing === selectedAnalysis.id ? (
-                                <Spinner className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <ArrowsClockwise weight="bold" className="w-4 h-4" />
-                              )}
-                              {t('bloodtest.reanalyze')}
-                              <CaretDown weight="bold" className="w-3 h-3" />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border-border/50">
-                            {AI_MODELS.map((m) => (
-                              <DropdownMenuItem
-                                key={m.model}
-                                onClick={() => triggerAnalysis(selectedAnalysis.id, m.model)}
-                                className="cursor-pointer"
-                              >
-                                <div>
-                                  <p className="text-sm font-medium">{m.label}</p>
-                                  <p className="text-xs text-muted-foreground">{m.description}</p>
-                                </div>
-                              </DropdownMenuItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        #{idx + 1}
+                      </span>
+                      {nutrients.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeRow(idx)}
+                          className="p-1 rounded text-muted-foreground hover:text-destructive transition"
+                          aria-label="Remove nutrient"
+                        >
+                          <X weight="bold" className="w-3.5 h-3.5" />
+                        </button>
                       )}
                     </div>
-
-                    {selectedAnalysis.status === 'completed' && selectedAnalysis.analysis_text ? (
-                      <>
-                        {/* Stat cards */}
-                        <StatCards
-                          abnormalCount={selectedAnalysis.abnormal_values?.length || 0}
-                          deficiencyCount={selectedAnalysis.deficiencies?.length || 0}
-                          supplementCount={selectedAnalysis.suggested_supplements?.length || 0}
-                        />
-
-                        {/* Abnormal values with improved badges */}
-                        {selectedAnalysis.abnormal_values?.length > 0 && (
-                          <div className="bg-card rounded-[16px] border border-border/50 p-5">
-                            <h3 className="flex items-center gap-2 text-base font-semibold text-foreground mb-4">
-                              <Warning weight="fill" className="w-5 h-5 text-amber-500" />
-                              {t('bloodtest.abnormalValues')}
-                            </h3>
-                            <div className="space-y-3">
-                              {selectedAnalysis.abnormal_values.map((v, i) => (
-                                <div key={i} className={cn(
-                                  "flex items-start gap-3 p-3 rounded-xl bg-muted/30 border-l-3",
-                                  v.status === 'important' || v.status === 'critique' ? 'border-l-red-500' :
-                                  v.status === 'modéré' || v.status === 'élevé' ? 'border-l-amber-500' :
-                                  'border-l-yellow-500'
-                                )}>
-                                  {severityIcon(v.status)}
-                                  <div className="flex-1">
-                                    <div className="flex items-baseline gap-2 flex-wrap">
-                                      <span className="font-medium text-foreground">{v.name}</span>
-                                      <span className={`text-sm font-semibold ${severityColor(v.status)}`}>
-                                        {v.value} {v.unit}
-                                      </span>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">Réf: {v.reference}</p>
-                                    <p className="text-sm text-foreground/80 mt-1">{v.interpretation}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Deficiencies */}
-                        {selectedAnalysis.deficiencies?.length > 0 && (
-                          <div className="bg-card rounded-[16px] border border-border/50 p-5">
-                            <h3 className="flex items-center gap-2 text-base font-semibold text-foreground mb-4">
-                              <TestTube weight="fill" className="w-5 h-5 text-primary" />
-                              {t('bloodtest.deficiencies')}
-                            </h3>
-                            <div className="space-y-2">
-                              {selectedAnalysis.deficiencies.map((d, i) => (
-                                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/30">
-                                  <span className={cn(
-                                    "text-xs px-2 py-0.5 rounded-full font-medium",
-                                    d.severity === 'important' ? 'bg-red-500/10 text-red-500' :
-                                    d.severity === 'modéré' ? 'bg-amber-500/10 text-amber-500' :
-                                    'bg-yellow-500/10 text-yellow-500'
-                                  )}>{d.severity}</span>
-                                  <div>
-                                    <p className="font-medium text-foreground">{d.name}</p>
-                                    <p className="text-sm text-muted-foreground">{d.description}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Suggested supplements */}
-                        {selectedAnalysis.suggested_supplements?.length > 0 && (
-                          <div className="bg-card rounded-[16px] border border-border/50 p-5">
-                            <h3 className="flex items-center gap-2 text-base font-semibold text-foreground mb-4">
-                              <Pill weight="fill" className="w-5 h-5 text-green-500" />
-                              {t('bloodtest.suggestedSupplements')}
-                            </h3>
-                            <div className="space-y-2">
-                              {selectedAnalysis.suggested_supplements.map((s, i) => (
-                                <div key={i} className="p-3 rounded-xl bg-muted/30">
-                                  <p className="font-medium text-foreground">{s.name}</p>
-                                  <p className="text-sm text-muted-foreground">{s.reason}</p>
-                                  {s.dosage_suggestion && (
-                                    <p className="text-xs text-primary mt-1">💊 {s.dosage_suggestion}</p>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Full analysis text */}
-                        <div className="bg-card rounded-[16px] border border-border/50 p-5">
-                          <h3 className="text-base font-semibold text-foreground mb-4">{t('bloodtest.fullAnalysis')}</h3>
-                          <div className="prose prose-sm dark:prose-invert max-w-none font-light">
-                            <ReactMarkdown>{selectedAnalysis.analysis_text}</ReactMarkdown>
-                          </div>
-                        </div>
-
-                        {/* Disclaimer */}
-                        <p className="text-xs text-muted-foreground text-center italic">
-                          ⚠️ {t('bloodtest.disclaimer')}
-                        </p>
-                      </>
-                    ) : (
-                      <div className="bg-card rounded-[16px] border border-border/50 p-12 text-center">
-                        <Spinner className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
-                        <p className="text-foreground font-medium">{t('bloodtest.analyzing')}...</p>
-                        <p className="text-sm text-muted-foreground mt-2">{t('bloodtest.analyzingDescription')}</p>
-                      </div>
-                    )}
+                    <input
+                      type="text"
+                      placeholder={t('bloodtest.nutrientNamePlaceholder')}
+                      value={n.name}
+                      onChange={(e) => updateNutrient(idx, 'name', e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg bg-background border border-border/50 text-sm text-foreground focus:outline-none focus:border-primary/50"
+                      maxLength={80}
+                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        placeholder={t('bloodtest.valuePlaceholder')}
+                        value={n.value}
+                        onChange={(e) => updateNutrient(idx, 'value', e.target.value)}
+                        className="px-3 py-2 rounded-lg bg-background border border-border/50 text-sm text-foreground focus:outline-none focus:border-primary/50"
+                        maxLength={30}
+                      />
+                      <select
+                        value={n.unit}
+                        onChange={(e) => updateNutrient(idx, 'unit', e.target.value)}
+                        className="px-3 py-2 rounded-lg bg-background border border-border/50 text-sm text-foreground focus:outline-none focus:border-primary/50"
+                      >
+                        {UNIT_OPTIONS.map(u => (
+                          <option key={u} value={u}>{u}</option>
+                        ))}
+                      </select>
+                    </div>
                   </motion.div>
-                ) : (
-                  <div className="bg-card rounded-[16px] border border-border/50 p-12 text-center">
-                    <FileText weight="duotone" className="w-10 h-10 mx-auto mb-4 text-muted-foreground/40" />
-                    <p className="text-muted-foreground">{t('bloodtest.selectAnalysis')}</p>
-                  </div>
-                )}
+                ))}
               </AnimatePresence>
-            </div>
+
+              <button
+                type="button"
+                onClick={addRow}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground border border-dashed border-border/50 hover:border-primary/40 transition"
+              >
+                <Plus weight="bold" className="w-4 h-4" />
+                {t('bloodtest.addAnotherNutrient')}
+              </button>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className={cn(
+                  "w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition",
+                  submitting
+                    ? 'bg-muted text-muted-foreground cursor-wait'
+                    : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                )}
+              >
+                {submitting ? (
+                  <>
+                    <Spinner className="w-4 h-4 animate-spin" />
+                    {t('bloodtest.analyzing')}
+                  </>
+                ) : (
+                  <>
+                    <Sparkle weight="fill" className="w-4 h-4" />
+                    {t('bloodtest.saveAndGetInfo')}
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* History list */}
+          <div className="bg-card rounded-[20px] border border-border/50 p-4">
+            <h3 className="text-sm font-semibold text-foreground mb-3 px-1">
+              {t('bloodtest.wellnessHistory')}
+            </h3>
+            {entries.length === 0 ? (
+              <p className="text-xs text-muted-foreground px-1 py-6 text-center">
+                {t('bloodtest.emptyDescription')}
+              </p>
+            ) : (
+              <div className="space-y-1 max-h-[320px] overflow-y-auto">
+                {entries.map((entry) => {
+                  const isSelected = selectedEntry?.id === entry.id;
+                  return (
+                    <div
+                      key={entry.id}
+                      className={cn(
+                        "group flex items-start gap-2 p-2 rounded-lg cursor-pointer transition",
+                        isSelected ? 'bg-primary/10' : 'hover:bg-muted/40'
+                      )}
+                      onClick={() => setSelectedEntry(entry)}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {entry.file_name}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {new Date(entry.created_at).toLocaleDateString(undefined, {
+                            day: 'numeric', month: 'short', year: 'numeric',
+                          })}
+                        </p>
+                      </div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteRequest(entry.id, entry.file_name); }}
+                        className="p-1 rounded text-muted-foreground/50 hover:text-destructive opacity-0 group-hover:opacity-100 transition"
+                        aria-label="Delete entry"
+                      >
+                        <Trash weight="light" className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
-      )}
+
+        {/* RIGHT: Selected wellness info */}
+        <div className="lg:col-span-3">
+          <AnimatePresence mode="wait">
+            {selectedEntry ? (
+              <motion.div
+                key={selectedEntry.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="bg-card rounded-[20px] border border-border/50 p-6 space-y-4"
+              >
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                      {t('bloodtest.personalizedWellnessInfo')}
+                    </p>
+                    <h3 className="text-lg font-medium text-foreground">
+                      {selectedEntry.file_name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(selectedEntry.created_at).toLocaleDateString(undefined, {
+                        day: 'numeric', month: 'long', year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                {selectedEntry.status === 'completed' && selectedEntry.analysis_text ? (
+                  <>
+                    <div className="prose prose-sm dark:prose-invert max-w-none font-light chat-markdown">
+                      <ReactMarkdown>{selectedEntry.analysis_text}</ReactMarkdown>
+                    </div>
+                    <div className="pt-4 border-t border-border/30">
+                      <p className="text-[10px] text-muted-foreground/80 italic leading-snug">
+                        {t('bloodtest.legalDisclaimer')}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-10 text-center">
+                    <Spinner className="w-8 h-8 animate-spin text-primary mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">{t('bloodtest.analyzing')}</p>
+                  </div>
+                )}
+              </motion.div>
+            ) : (
+              <div className="bg-card rounded-[20px] border border-dashed border-border/50 p-10 text-center">
+                <NotePencil weight="duotone" className="w-12 h-12 text-primary/40 mx-auto mb-3" />
+                <h3 className="text-base font-medium text-foreground mb-1">
+                  {t('bloodtest.emptyTitle')}
+                </h3>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  {t('bloodtest.emptyDescription')}
+                </p>
+              </div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }

@@ -150,7 +150,7 @@ const Dashboard = () => {
     icon: Package
   }, {
     id: "analyses" as Section,
-    label: "Mes Analyses",
+    label: "My Wellness Journal",
     icon: TestTube
   }];
   const generalItems = [{

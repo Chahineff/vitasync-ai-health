@@ -186,6 +186,22 @@ const questions: OnboardingQuestion[] = [
   },
 ];
 
+// Medication question (uses custom rendering in renderQuestion)
+const medicationQuestion: OnboardingQuestion = {
+  id: "prescription_meds",
+  title: "Are you currently taking any prescription medications?",
+  subtitle: "Important: this helps us flag potential interactions.",
+  type: "single",
+  options: [
+    { value: "yes", label: "Yes", icon: <CheckCircle weight="duotone" className="w-5 h-5 text-amber-400" />, iconBg: "bg-amber-500/15 border border-amber-500/20" },
+    { value: "no", label: "No", icon: <XCircle weight="duotone" className="w-5 h-5 text-emerald-400" />, iconBg: "bg-emerald-500/15 border border-emerald-500/20" },
+    { value: "prefer_not_say", label: "Prefer not to say", icon: <DotsThree weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
+  ],
+  required: true,
+};
+// Insert before medications_notes (last optional text step)
+questions.splice(questions.length - 1, 0, medicationQuestion);
+
 // Step transition with deblur
 const stepTransition = {
   initial: { opacity: 0, x: 60, filter: "blur(6px)" },

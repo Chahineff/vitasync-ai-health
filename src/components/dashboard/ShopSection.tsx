@@ -20,6 +20,10 @@ import {
 import { ShopSkeletonGrid } from './shop/ShopSkeletonGrid';
 import { QuickViewModal } from './shop/QuickViewModal';
 import { BackToTopButton } from './shop/BackToTopButton';
+import { useAuth } from '@/hooks/useAuth';
+import { useHealthProfile } from '@/hooks/useHealthProfile';
+import { supabase } from '@/integrations/supabase/client';
+import { Sparkle as SparkleIcon } from '@phosphor-icons/react';
 
 interface ShopSectionProps {
   onProductSelect?: (handle: string) => void;
@@ -43,23 +47,71 @@ function toggleWishlistItem(title: string): string[] {
 
 export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function ShopSection({ onProductSelect }, ref) {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { healthProfile } = useHealthProfile();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
-  const [sortOption, setSortOption] = useState<SortOption>('az');
+  const [sortOption, setSortOption] = useState<SortOption>('ai');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
   const [showPriceSlider, setShowPriceSlider] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [quickViewGroup, setQuickViewGroup] = useState<ProductGroup | null>(null);
   const [wishlist, setWishlist] = useState<string[]>(getWishlist);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [aiRanking, setAiRanking] = useState<string[] | null>(null);
+  const [aiRankingLoading, setAiRankingLoading] = useState(false);
+  const aiRankingFetchedRef = useRef(false);
   const shopContainerRef = useRef<HTMLDivElement>(null);
   const cartItems = useCartStore(state => state.items);
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalCartPrice = cartItems.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
   const productGroups = useProductGroups(products);
+
+  const onboardingDone = !!healthProfile?.onboarding_completed;
+  const isPersonalized = sortOption === 'ai' && onboardingDone && !!user;
+
+  // Fetch AI ranking once when needed
+  useEffect(() => {
+    if (!isPersonalized) return;
+    if (aiRankingFetchedRef.current) return;
+    if (products.length === 0) return;
+    aiRankingFetchedRef.current = true;
+    setAiRankingLoading(true);
+
+    const cacheKey = `vitasync-ai-ranking-${user!.id}`;
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.ts && Date.now() - parsed.ts < 24 * 60 * 60 * 1000 && Array.isArray(parsed.ranking)) {
+          setAiRanking(parsed.ranking);
+          setAiRankingLoading(false);
+          return;
+        }
+      }
+    } catch { /* ignore */ }
+
+    const payload = {
+      products: products.map(p => ({
+        handle: p.node.handle,
+        title: p.node.title,
+        productType: p.node.productType,
+        tags: (p.node as unknown as { tags?: string[] }).tags || [],
+      })),
+    };
+
+    supabase.functions.invoke('ai-shop-personalization', { body: payload })
+      .then(({ data, error }) => {
+        if (error) { console.error('AI personalization error:', error); return; }
+        const ranking: string[] = data?.ranking || [];
+        setAiRanking(ranking);
+        try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), ranking })); } catch { /* ignore */ }
+      })
+      .finally(() => setAiRankingLoading(false));
+  }, [isPersonalized, products, user]);
 
   const maxPrice = useMemo(() => {
     const prices = products.map(p => parseFloat(p.node.priceRange.minVariantPrice.amount));
@@ -136,6 +188,21 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
     filtered = filtered.filter(g => g.minPrice >= priceRange[0] && g.minPrice <= priceRange[1]);
 
     switch (sortOption) {
+      case 'ai': {
+        if (aiRanking && aiRanking.length > 0) {
+          const order = new Map<string, number>();
+          aiRanking.forEach((h, i) => order.set(h, i));
+          filtered.sort((a, b) => {
+            const ai = order.has(a.primaryProduct.node.handle) ? order.get(a.primaryProduct.node.handle)! : Number.MAX_SAFE_INTEGER;
+            const bi = order.has(b.primaryProduct.node.handle) ? order.get(b.primaryProduct.node.handle)! : Number.MAX_SAFE_INTEGER;
+            if (ai !== bi) return ai - bi;
+            return a.baseTitle.localeCompare(b.baseTitle);
+          });
+        } else {
+          filtered.sort((a, b) => a.baseTitle.localeCompare(b.baseTitle));
+        }
+        break;
+      }
       case 'az': filtered.sort((a, b) => a.baseTitle.localeCompare(b.baseTitle)); break;
       case 'za': filtered.sort((a, b) => b.baseTitle.localeCompare(a.baseTitle)); break;
       case 'price-low': filtered.sort((a, b) => a.minPrice - b.minPrice); break;
@@ -143,17 +210,18 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
     }
 
     return filtered;
-  }, [productGroups, searchQuery, selectedCategory, sortOption, priceRange, showFavoritesOnly, wishlist]);
+  }, [productGroups, searchQuery, selectedCategory, sortOption, priceRange, showFavoritesOnly, wishlist, aiRanking]);
 
 
   const totalPages = Math.ceil(filteredGroups.length / ITEMS_PER_PAGE);
   const paginatedGroups = filteredGroups.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  const hasActiveFilters = selectedCategory !== 'all' || sortOption !== 'az' || priceRange[0] > 0 || priceRange[1] < maxPrice || searchQuery.trim().length > 0 || showFavoritesOnly;
+  const defaultSort: SortOption = onboardingDone ? 'ai' : 'az';
+  const hasActiveFilters = selectedCategory !== 'all' || sortOption !== defaultSort || priceRange[0] > 0 || priceRange[1] < maxPrice || searchQuery.trim().length > 0 || showFavoritesOnly;
 
   const handleReset = () => {
     setSelectedCategory('all');
-    setSortOption('az');
+    setSortOption(defaultSort);
     setPriceRange([0, maxPrice]);
     setSearchQuery('');
     setShowFavoritesOnly(false);
@@ -302,6 +370,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
           className="appearance-none pl-3 pr-8 py-2 rounded-lg bg-muted border border-border focus:border-primary/50 focus:outline-none text-sm text-foreground cursor-pointer"
         >
           {[
+            ...(onboardingDone ? [{ value: 'ai' as SortOption, label: t('shop.sortAI') }] : []),
             { value: 'az' as SortOption, label: t('shop.sortAZ') },
             { value: 'za' as SortOption, label: t('shop.sortZA') },
             { value: 'price-low' as SortOption, label: t('shop.sortPriceLow') },
@@ -310,6 +379,13 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
+
+        {isPersonalized && (
+          <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+            <SparkleIcon weight="fill" className="w-3.5 h-3.5" />
+            {aiRankingLoading ? t('shop.aiPersonalizing') : t('shop.aiPersonalized')}
+          </span>
+        )}
 
         {/* Price slider toggle */}
         <button

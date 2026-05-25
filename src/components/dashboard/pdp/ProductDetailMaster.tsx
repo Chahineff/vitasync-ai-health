@@ -28,6 +28,7 @@ import { IngredientsLabel } from './IngredientsLabel';
 import { QualitySourcing } from './QualitySourcing';
 import { SafetyCautions } from './SafetyCautions';
 import { ScienceSection } from './ScienceSection';
+import { ScienceSafetySection } from './ScienceSafetySection';
 import { ProductFAQ } from './ProductFAQ';
 import { ProductReviews } from './ProductReviews';
 import { BuildYourStack } from './BuildYourStack';

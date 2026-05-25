@@ -119,6 +119,43 @@ async function fetchEnrichedProductData(supabase: any) {
 }
 
 // deno-lint-ignore no-explicit-any
+async function fetchProductResearch(supabase: any) {
+  const { data } = await supabase
+    .from("product_research")
+    .select("product_id, name, product_handle, data");
+  return data || [];
+}
+
+// deno-lint-ignore no-explicit-any
+function formatProductResearch(records: any[]): string {
+  if (!records.length) return "";
+  const blocks: string[] = [];
+  for (const r of records) {
+    const d = r.data || {};
+    const eff = d.efficacy || {};
+    const safe = d.safety || {};
+    const reg = d.regulation || {};
+    const fit = d.vitasync_fit || {};
+    const lines = [
+      `### ${r.name} (handle:${r.product_handle} | id:${r.product_id})`,
+      `evidence_level: ${eff.evidence_level || 'n/a'}`,
+      `effective_dose: ${eff.effective_dose || 'n/a'}`,
+      `onset: ${eff.onset || 'n/a'}`,
+      `key_benefits: ${(eff.key_benefits || []).join(' | ')}`,
+      `FDA_ALLOWED_CLAIMS (ONLY use these phrasings): ${(reg.fda_claims_allowed || []).join(' | ')}`,
+      `PROHIBITED_CLAIMS (NEVER use): ${(reg.prohibited_claims || []).join(' | ')}`,
+      `contraindications: ${(safe.contraindications || []).join(' | ') || 'none listed'}`,
+      `drug_interactions: ${(safe.drug_interactions || []).join(' | ') || 'none listed'}`,
+      `at_risk_populations: ${(safe.at_risk_populations || []).join(' | ') || 'none'}`,
+      `do_not_recommend_when: ${(fit.do_not_recommend_when || []).join(' | ') || 'none'}`,
+      `target_personas: ${(fit.target_personas || []).join(' | ')}`,
+    ];
+    blocks.push(lines.join('\n'));
+  }
+  return blocks.join('\n\n');
+}
+
+// deno-lint-ignore no-explicit-any
 async function fetchRecentCheckins(supabase: any, userId: string, historyDays: number = 7) {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - historyDays);

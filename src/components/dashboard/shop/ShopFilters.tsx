@@ -5,7 +5,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { Slider } from '@/components/ui/slider';
 import { formatPriceUSD } from '@/lib/utils';
 
-export type SortOption = 'az' | 'za' | 'price-low' | 'price-high';
+export type SortOption = 'ai' | 'az' | 'za' | 'price-low' | 'price-high';
 export type CategoryKey = 'all' | 'sport' | 'wellness' | 'digestive' | 'vitamins' | 'brain' | 'weight' | 'mushrooms' | 'bones' | 'other';
 
 // Mapping from mega-categories to Shopify productType values

@@ -119,6 +119,43 @@ async function fetchEnrichedProductData(supabase: any) {
 }
 
 // deno-lint-ignore no-explicit-any
+async function fetchProductResearch(supabase: any) {
+  const { data } = await supabase
+    .from("product_research")
+    .select("product_id, name, product_handle, data");
+  return data || [];
+}
+
+// deno-lint-ignore no-explicit-any
+function formatProductResearch(records: any[]): string {
+  if (!records.length) return "";
+  const blocks: string[] = [];
+  for (const r of records) {
+    const d = r.data || {};
+    const eff = d.efficacy || {};
+    const safe = d.safety || {};
+    const reg = d.regulation || {};
+    const fit = d.vitasync_fit || {};
+    const lines = [
+      `### ${r.name} (handle:${r.product_handle} | id:${r.product_id})`,
+      `evidence_level: ${eff.evidence_level || 'n/a'}`,
+      `effective_dose: ${eff.effective_dose || 'n/a'}`,
+      `onset: ${eff.onset || 'n/a'}`,
+      `key_benefits: ${(eff.key_benefits || []).join(' | ')}`,
+      `FDA_ALLOWED_CLAIMS (ONLY use these phrasings): ${(reg.fda_claims_allowed || []).join(' | ')}`,
+      `PROHIBITED_CLAIMS (NEVER use): ${(reg.prohibited_claims || []).join(' | ')}`,
+      `contraindications: ${(safe.contraindications || []).join(' | ') || 'none listed'}`,
+      `drug_interactions: ${(safe.drug_interactions || []).join(' | ') || 'none listed'}`,
+      `at_risk_populations: ${(safe.at_risk_populations || []).join(' | ') || 'none'}`,
+      `do_not_recommend_when: ${(fit.do_not_recommend_when || []).join(' | ') || 'none'}`,
+      `target_personas: ${(fit.target_personas || []).join(' | ')}`,
+    ];
+    blocks.push(lines.join('\n'));
+  }
+  return blocks.join('\n\n');
+}
+
+// deno-lint-ignore no-explicit-any
 async function fetchRecentCheckins(supabase: any, userId: string, historyDays: number = 7) {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - historyDays);
@@ -243,6 +280,23 @@ EVERY response MUST end with this exact disclaimer:
 "As always, consult your healthcare provider before starting any new supplement, especially if you have a medical condition or take medications."
 
 ═══════════════════════════════════════════════
+RULE 4B — VITASYNC PRODUCT RESEARCH (ABSOLUTE — READ BEFORE RECOMMENDING)
+═══════════════════════════════════════════════
+Before recommending, describing, or answering ANY question about a specific VitaSync supplement, you MUST consult that product's research record in the "PRODUCT RESEARCH" section below (the 8-dimension JSON, summarized).
+
+Guardrails sourced from each record:
+1. CLAIMS: Base EVERY benefit statement ONLY on that product's regulation.fda_claims_allowed list. Use those approved phrasings verbatim or close to verbatim. NEVER use any phrasing from regulation.prohibited_claims. NEVER claim to diagnose, treat, cure, or prevent any disease (DSHEA/FDA/FTC).
+2. SAFETY (HARD STOP): Always cross-check the user against safety.contraindications, safety.drug_interactions, safety.at_risk_populations, and vitasync_fit.do_not_recommend_when. If the user matches ANY do-not-recommend condition (e.g. pregnant/breastfeeding, on warfarin, severe kidney disease, under 18 for stimulants, on levothyroxine, on antidiabetics, etc.), you MUST:
+   - Refuse to recommend the product
+   - State clearly which condition makes it unsuitable
+   - Suggest the user speak with their healthcare provider
+3. EVIDENCE HONESTY: When mentioning benefits, reflect the efficacy.evidence_level honestly (e.g. "moderate evidence", "strong evidence for heart health, moderate for migraine"). Never overstate.
+4. DOSE & ONSET: Use efficacy.effective_dose and efficacy.onset when explaining how to take it and how long results take.
+5. NO RECORD = NO CLAIMS: If a product the user asks about does NOT appear in the PRODUCT RESEARCH section below, do NOT improvise any specific health claims, dose, or benefit. Say the product has not yet been fully reviewed by our research team and keep guidance general.
+
+US market only (FDA/FTC/DSHEA compliance).
+
+═══════════════════════════════════════════════
 RULE 5 — RESPONSE FORMAT (TEMPLATE — STRICT LENGTH)
 ═══════════════════════════════════════════════
 Every response MUST follow this structure:
@@ -334,11 +388,16 @@ MONTHLY STACK (side panel):
 }
 
 // deno-lint-ignore no-explicit-any
-function buildSystemPrompt(tier: ModelTier, userProfile: any, healthProfile: any, catalog: string, trends: any, supplements: any[], enrichedProducts: any[], checkins: any[], bloodTests: any[]): string {
+function buildSystemPrompt(tier: ModelTier, userProfile: any, healthProfile: any, catalog: string, trends: any, supplements: any[], enrichedProducts: any[], checkins: any[], bloodTests: any[], productResearch: any[] = []): string {
   const parts: string[] = [getBaseSystemPrompt(tier)];
 
   // Catalog — all tiers get it
   parts.push(`\n\nCATALOG:\n${catalog}`);
+
+  // Product research — all tiers (this is the regulatory ground truth)
+  if (productResearch.length > 0) {
+    parts.push(`\n\nPRODUCT RESEARCH (Rule 4B — READ BEFORE RECOMMENDING):\n${formatProductResearch(productResearch)}`);
+  }
 
   // User context — all tiers get full profile
   const ctx: string[] = [];
@@ -539,9 +598,11 @@ Deno.serve(async (req) => {
       fetchPromises.push(Promise.resolve([]));
     }
 
-    const [profileRes, healthRes, checkins, catalog, supplements, enriched, bloodTests] = await Promise.all(fetchPromises) as [
+    fetchPromises.push(fetchProductResearch(serviceClient));
+
+    const [profileRes, healthRes, checkins, catalog, supplements, enriched, bloodTests, productResearch] = await Promise.all(fetchPromises) as [
       // deno-lint-ignore no-explicit-any
-      any, any, any[], string, any[], any[], any[]
+      any, any, any[], string, any[], any[], any[], any[]
     ];
 
     console.log("Data loaded. Tier:", tier, "Supplements:", supplements.length);
@@ -556,7 +617,8 @@ Deno.serve(async (req) => {
       supplements,
       enriched,
       checkins,
-      bloodTests
+      bloodTests,
+      productResearch
     );
 
     console.log("System prompt:", systemPrompt.length, "chars. Model:", model, "Tier:", tier);

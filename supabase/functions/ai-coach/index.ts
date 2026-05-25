@@ -598,9 +598,11 @@ Deno.serve(async (req) => {
       fetchPromises.push(Promise.resolve([]));
     }
 
-    const [profileRes, healthRes, checkins, catalog, supplements, enriched, bloodTests] = await Promise.all(fetchPromises) as [
+    fetchPromises.push(fetchProductResearch(serviceClient));
+
+    const [profileRes, healthRes, checkins, catalog, supplements, enriched, bloodTests, productResearch] = await Promise.all(fetchPromises) as [
       // deno-lint-ignore no-explicit-any
-      any, any, any[], string, any[], any[], any[]
+      any, any, any[], string, any[], any[], any[], any[]
     ];
 
     console.log("Data loaded. Tier:", tier, "Supplements:", supplements.length);
@@ -615,7 +617,8 @@ Deno.serve(async (req) => {
       supplements,
       enriched,
       checkins,
-      bloodTests
+      bloodTests,
+      productResearch
     );
 
     console.log("System prompt:", systemPrompt.length, "chars. Model:", model, "Tier:", tier);

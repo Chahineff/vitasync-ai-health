@@ -23,7 +23,6 @@ import { BackToTopButton } from './shop/BackToTopButton';
 import { useAuth } from '@/hooks/useAuth';
 import { useHealthProfile } from '@/hooks/useHealthProfile';
 import { supabase } from '@/integrations/supabase/client';
-import { Sparkle as SparkleIcon } from '@phosphor-icons/react';
 
 interface ShopSectionProps {
   onProductSelect?: (handle: string) => void;
@@ -382,7 +381,7 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
 
         {isPersonalized && (
           <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-            <SparkleIcon weight="fill" className="w-3.5 h-3.5" />
+            <Sparkle weight="fill" className="w-3.5 h-3.5" />
             {aiRankingLoading ? t('shop.aiPersonalizing') : t('shop.aiPersonalized')}
           </span>
         )}

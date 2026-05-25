@@ -256,10 +256,24 @@ export function Navbar() {
               </Link>
             </div>
 
-            {/* Mobile Menu Button */}
-           <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 min-w-[24px] min-h-[24px] inline-flex items-center justify-center text-current opacity-70 hover:opacity-100 transition-colors" aria-label="Open menu">
-              <List size={24} weight="light" />
-            </button>
+            {/* Mobile Right Cluster */}
+            <div className="lg:hidden flex items-center gap-2">
+              <Link
+                to="/auth?mode=signup"
+                className="relative inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold text-primary-foreground shadow-[0_4px_18px_-4px_hsl(var(--primary)/0.55)] active:scale-95 transition-transform"
+                style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))" }}
+              >
+                <span className="absolute inset-0 rounded-full opacity-60 blur-[10px] -z-10" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))" }} />
+                {t("nav.start")}
+              </Link>
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2 rounded-xl border border-white/10 bg-white/5 text-current opacity-90 hover:opacity-100 transition-colors"
+                aria-label="Open menu"
+              >
+                <List size={22} weight="light" />
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -268,42 +282,77 @@ export function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
-            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }} className="fixed top-0 right-0 h-full w-80 bg-background shadow-2xl z-50 lg:hidden">
-              <div className="flex flex-col h-full p-6">
-                <div className="flex justify-end mb-8">
-                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-foreground/70 hover:text-foreground transition-colors" aria-label="Close menu">
-                    <X size={28} weight="light" />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 h-full w-[88%] max-w-sm z-50 lg:hidden bg-background/95 backdrop-blur-2xl border-l border-white/10 shadow-2xl overflow-hidden"
+            >
+              {/* Brand glow accents */}
+              <div className="pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full blur-3xl opacity-40" style={{ background: "radial-gradient(circle, hsl(var(--primary)/0.5), transparent 70%)" }} />
+              <div className="pointer-events-none absolute bottom-0 -left-20 w-64 h-64 rounded-full blur-3xl opacity-30" style={{ background: "radial-gradient(circle, hsl(var(--secondary)/0.5), transparent 70%)" }} />
+
+              <div className="relative flex flex-col h-full px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] overflow-y-auto">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <img src="/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png" alt="VitaSync" className="w-9 h-9" />
+                    <span className="text-lg font-semibold tracking-tight text-foreground">VitaSync</span>
+                  </div>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="p-2 rounded-xl border border-white/10 bg-white/5 text-foreground/70 hover:text-foreground transition-colors"
+                    aria-label="Close menu"
+                  >
+                    <X size={22} weight="light" />
                   </button>
                 </div>
-                
-                <div className="flex flex-col gap-4">
-                  {navLinks.map((link, index) => (
-                    <motion.a 
-                      key={link.href} 
-                      href={link.href} 
-                      initial={{ opacity: 0, x: 20 }} 
-                      animate={{ opacity: 1, x: 0 }} 
-                      transition={{ delay: index * 0.05 }} 
-                      onClick={e => handleAnchorClick(e, link.href)} 
-                      className="text-lg text-foreground/70 hover:text-foreground transition-colors py-2 border-b border-border/50"
-                    >
-                      {t(link.labelKey)}
-                    </motion.a>
-                  ))}
-                  
-                  <div className="my-4" />
-                  
+
+                {/* Section: Explore home */}
+                <p className="text-[10px] uppercase tracking-[0.18em] text-foreground/40 font-medium mb-2.5 px-1">{t("nav.home")}</p>
+                <div className="space-y-1.5 mb-6">
+                  {navLinks.map((link, index) => {
+                    const Icon = link.icon;
+                    return (
+                      <motion.a
+                        key={link.href}
+                        href={link.href}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.04 }}
+                        onClick={(e) => handleAnchorClick(e, link.href)}
+                        className="group flex items-center gap-3 px-3 py-2.5 rounded-2xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] transition-colors"
+                      >
+                        <span
+                          className="w-9 h-9 rounded-xl flex items-center justify-center"
+                          style={{ background: "linear-gradient(135deg, hsl(var(--primary)/0.18), hsl(var(--secondary)/0.18))" }}
+                        >
+                          <Icon className="w-4.5 h-4.5 text-primary" strokeWidth={2.25} />
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-sm font-medium text-foreground leading-tight">{t(link.labelKey)}</span>
+                          <span className="block text-[11px] text-foreground/50 leading-snug mt-0.5 truncate">{t(link.descKey)}</span>
+                        </span>
+                      </motion.a>
+                    );
+                  })}
+                </div>
+
+                {/* Section: Pages */}
+                <p className="text-[10px] uppercase tracking-[0.18em] text-foreground/40 font-medium mb-2.5 px-1">Pages</p>
+                <div className="grid grid-cols-2 gap-2 mb-6">
                   {pageLinks.map((link, index) => (
-                    <motion.div 
-                      key={link.href} 
-                      initial={{ opacity: 0, x: 20 }} 
-                      animate={{ opacity: 1, x: 0 }} 
-                      transition={{ delay: (navLinks.length + index) * 0.05 }}
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: (navLinks.length + index) * 0.04 }}
                     >
-                      <Link 
-                        to={link.href} 
-                        onClick={() => setIsMobileMenuOpen(false)} 
-                        className="text-lg text-foreground/70 hover:text-foreground transition-colors py-2 block border-b border-border/50"
+                      <Link
+                        to={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block text-center py-3 rounded-2xl text-sm font-medium text-foreground/80 hover:text-foreground bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 transition-colors"
                       >
                         {t(link.labelKey)}
                       </Link>
@@ -311,11 +360,21 @@ export function Navbar() {
                   ))}
                 </div>
 
-                <div className="mt-auto space-y-3">
-                  <Link to="/auth?mode=signin" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center px-4 py-3 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-all border border-border/50">
+                {/* CTAs */}
+                <div className="mt-auto space-y-2.5">
+                  <Link
+                    to="/auth?mode=signin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block w-full text-center px-4 py-3 rounded-2xl text-sm text-foreground/80 hover:text-foreground bg-white/[0.04] border border-white/10 transition-colors"
+                  >
                     {t("nav.signin")}
                   </Link>
-                  <Link to="/auth?mode=signup" onClick={() => setIsMobileMenuOpen(false)} className="btn-neumorphic text-primary-foreground w-full text-center block">
+                  <Link
+                    to="/auth?mode=signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="relative block w-full text-center px-4 py-3 rounded-2xl text-sm font-semibold text-primary-foreground shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.7)] active:scale-[0.98] transition-transform"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))" }}
+                  >
                     {t("nav.startFree")}
                   </Link>
                 </div>

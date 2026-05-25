@@ -448,6 +448,8 @@ export const ProductDetailMaster = forwardRef<HTMLDivElement, ProductDetailMaste
               enrichedSafety={enrichedData?.safety_warnings}
             />
 
+            <ScienceSafetySection handle={product.handle} productTitle={product.title} />
+
             <div id="product-reviews">
               <ProductReviews 
                 productTitle={product.title}

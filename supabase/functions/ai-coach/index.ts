@@ -388,11 +388,16 @@ MONTHLY STACK (side panel):
 }
 
 // deno-lint-ignore no-explicit-any
-function buildSystemPrompt(tier: ModelTier, userProfile: any, healthProfile: any, catalog: string, trends: any, supplements: any[], enrichedProducts: any[], checkins: any[], bloodTests: any[]): string {
+function buildSystemPrompt(tier: ModelTier, userProfile: any, healthProfile: any, catalog: string, trends: any, supplements: any[], enrichedProducts: any[], checkins: any[], bloodTests: any[], productResearch: any[] = []): string {
   const parts: string[] = [getBaseSystemPrompt(tier)];
 
   // Catalog — all tiers get it
   parts.push(`\n\nCATALOG:\n${catalog}`);
+
+  // Product research — all tiers (this is the regulatory ground truth)
+  if (productResearch.length > 0) {
+    parts.push(`\n\nPRODUCT RESEARCH (Rule 4B — READ BEFORE RECOMMENDING):\n${formatProductResearch(productResearch)}`);
+  }
 
   // User context — all tiers get full profile
   const ctx: string[] = [];

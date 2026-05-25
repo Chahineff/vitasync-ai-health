@@ -283,6 +283,39 @@ export type Database = {
         }
         Relationships: []
       }
+      product_research: {
+        Row: {
+          category: string | null
+          created_at: string
+          data: Json
+          name: string
+          product_handle: string | null
+          product_id: string
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          data?: Json
+          name: string
+          product_handle?: string | null
+          product_id: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          data?: Json
+          name?: string
+          product_handle?: string | null
+          product_id?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

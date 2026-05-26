@@ -82,7 +82,8 @@ export function SearchOverlay({ products, onProductSelect, onSearch }: SearchOve
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-background/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 min-w-[300px] md:min-w-[320px]"
+            style={{ width: 'min(360px, calc(100vw - 2rem))' }}
+            className="absolute top-full right-0 mt-2 bg-background/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[60]"
           >
             {query.trim().length === 0 ? (
               /* Popular search tags */

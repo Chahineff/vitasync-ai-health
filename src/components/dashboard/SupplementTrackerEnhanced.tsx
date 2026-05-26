@@ -298,6 +298,34 @@ export function SupplementTrackerEnhanced() {
                   </div>
                 )}
 
+                {/* AI → Tracking bridge: import recommended supplements into the daily tracker. */}
+                {recommendedNotTracked.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-4 flex items-center gap-3 p-3 rounded-2xl bg-primary/5 border border-primary/20"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
+                      <Sparkle weight="fill" className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        {recommendedNotTracked.length} recommandation{recommendedNotTracked.length > 1 ? 's' : ''} IA non suivie{recommendedNotTracked.length > 1 ? 's' : ''}
+                      </p>
+                      <p className="text-[11px] text-foreground/50 font-light truncate">
+                        Ajoute-les à ton suivi quotidien en un clic.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowImportDialog(true)}
+                      className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:shadow-md hover:shadow-primary/20 transition-all flex items-center gap-1.5"
+                    >
+                      <Plus weight="bold" className="w-3.5 h-3.5" />
+                      Ajouter au suivi
+                    </button>
+                  </motion.div>
+                )}
+
                 {supplements.length === 0 ? (
                   <AnimatedEmptyState onAdd={() => setShowAddModal(true)} />
                 ) : (

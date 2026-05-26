@@ -70,12 +70,17 @@ Deno.serve(async (req) => {
 
     // If no supplements, return friendly message
     if (supplements.length === 0) {
+      const isEn = locale === "en";
       return new Response(JSON.stringify({
         insights: {
           regularity_score: 0,
-          regularity_comment: "Aucun complément suivi. Ajoutez des compléments à votre suivi pour obtenir une analyse personnalisée.",
+          regularity_comment: isEn
+            ? "No supplements tracked. Add supplements to your tracker to get a personalized analysis."
+            : "Aucun complément suivi. Ajoutez des compléments à votre suivi pour obtenir une analyse personnalisée.",
           supplement_reviews: [],
-          recommendations: "Commencez par ajouter vos compléments au suivi quotidien pour que l'IA puisse analyser votre régularité et vous donner des conseils personnalisés."
+          recommendations: isEn
+            ? "Start by adding your supplements to daily tracking so the AI can analyze your consistency and give personalized advice."
+            : "Commencez par ajouter vos compléments au suivi quotidien pour que l'IA puisse analyser votre régularité et vous donner des conseils personnalisés."
         }
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

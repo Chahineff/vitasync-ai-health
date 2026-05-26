@@ -1,5 +1,58 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// Light QA pass on AI output:
+// - swap forbidden disease-claim verbs for compliant structure/function phrasing
+// - replace common untranslated English wellness terms when the locale isn't English
+function sanitizeInsight(text: string, locale: string): string {
+  if (!text) return text;
+  let out = text;
+
+  // Regulatory: forbidden -> compliant. Order matters (longest first).
+  const enClaims: Array<[RegExp, string]> = [
+    [/\bcures?\b/gi, "supports"],
+    [/\bcured\b/gi, "supported"],
+    [/\btreats?\b/gi, "helps support"],
+    [/\btreated\b/gi, "supported"],
+    [/\bprevents?\b/gi, "helps maintain"],
+    [/\bdiagnoses?\b/gi, "helps you understand"],
+    [/\bheals?\b/gi, "supports"],
+  ];
+  const frClaims: Array<[RegExp, string]> = [
+    [/\bgu[ée]rit\b/gi, "soutient"],
+    [/\bgu[ée]rir\b/gi, "soutenir"],
+    [/\btraite\b/gi, "aide à soutenir"],
+    [/\btraiter\b/gi, "aider à soutenir"],
+    [/\bpr[ée]vient\b/gi, "aide à maintenir"],
+    [/\bpr[ée]venir\b/gi, "aider à maintenir"],
+    [/\bdiagnostique\b/gi, "aide à comprendre"],
+    [/\bsoigne\b/gi, "soutient"],
+  ];
+  for (const [re, rep] of enClaims) out = out.replace(re, rep);
+  if (locale === "fr") for (const [re, rep] of frClaims) out = out.replace(re, rep);
+
+  // Untranslated English wellness terms when target isn't English.
+  if (locale !== "en") {
+    const dict: Record<string, Record<string, string>> = {
+      fr: {
+        sleep: "sommeil", energy: "énergie", stress: "stress", focus: "concentration",
+        recovery: "récupération", strength: "force", immunity: "immunité",
+        mood: "humeur", "gut health": "santé digestive", digestion: "digestion",
+        skin: "peau", hair: "cheveux", "weight loss": "perte de poids",
+        performance: "performance", workout: "entraînement", stack: "routine",
+      },
+    };
+    const d = dict[locale];
+    if (d) {
+      for (const [en, tr] of Object.entries(d)) {
+        const re = new RegExp(`\\b${en}\\b`, "gi");
+        out = out.replace(re, tr);
+      }
+    }
+  }
+
+  return out.replace(/\s{2,}/g, " ").trim();
+}
+
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/vitasyncai\.lovable\.app$/,
   /^https:\/\/.*\.lovable\.app$/,

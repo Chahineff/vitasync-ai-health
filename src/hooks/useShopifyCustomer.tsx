@@ -2,6 +2,34 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
+/**
+ * SOURCES OF TRUTH FOR "STACK"-LIKE DATA — read this before adding new readers.
+ *
+ * The app distinguishes FOUR separate states. Each lives in its own store and
+ * must NOT be confused for another:
+ *
+ * (a) AI recommendations
+ *     → ephemeral suggestions surfaced by the AI Coach in chat.
+ *     → src/stores/aiStackStore.ts (in-memory side-panel draft).
+ *     → Never claim these are "subscribed" or "tracked".
+ *
+ * (b) Cart draft
+ *     → items the user is about to check out; not yet paid for.
+ *     → src/stores/cartStore.ts → Shopify Storefront cart.
+ *     → Lives until checkout completes or the user abandons the cart.
+ *
+ * (c) Confirmed subscription stack ("My Monthly Stack" / "Next Box")
+ *     → THIS HOOK. Read from Shopify Customer Account API via
+ *       supabase/functions/shopify-customer-api → `customer.subscriptionContracts`.
+ *     → This is the only legitimate source for MyStackSection / NextDeliveryHero
+ *       / CurrentStackList. NEVER feed those components from the cart store.
+ *
+ * (d) Daily Supplement Tracking
+ *     → user's reminder/adherence rows in Supabase `supplement_tracking`.
+ *     → src/hooks/useSupplementTracking.tsx.
+ *     → Independent of Shopify; the user may track supplements they buy elsewhere.
+ */
+
 // ═══════════════ Types ═══════════════
 
 export interface ShopifySubscriptionLine {
@@ -98,31 +126,41 @@ const CUSTOMER_DATA_QUERY = `
   }
 `;
 
+/**
+ * Source of truth for "My Monthly Stack" / "Next Box".
+ * Hits the Shopify Customer Account API field `customer.subscriptionContracts`
+ * (the actual contract, not order line items). If the shop does not expose this
+ * field (no subscription app installed), the query returns an empty array and
+ * the UI shows an explicit "no active subscription" CTA — we DO NOT silently
+ * fall back to the cart or the last order, which would lie about the state.
+ */
 const SUBSCRIPTION_CONTRACTS_QUERY = `
   query {
     customer {
-      orders(first: 10, sortKey: PROCESSED_AT, reverse: true) {
+      subscriptionContracts(first: 10) {
         edges {
           node {
             id
-            name
-            processedAt
-            totalPrice {
-              amount
-              currencyCode
+            status
+            nextBillingDate
+            deliveryPolicy {
+              interval
+              intervalCount
             }
-            lineItems(first: 20) {
+            lines(first: 20) {
               edges {
                 node {
+                  id
+                  productId
                   title
                   quantity
-                  image {
-                    url
-                    altText
-                  }
-                  discountedTotalPrice {
+                  currentPrice {
                     amount
                     currencyCode
+                  }
+                  variantImage {
+                    url
+                    altText
                   }
                 }
               }
@@ -251,6 +289,54 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     }
   }, [isConnected, invokeWithRetry]);
 
+  // Fetch subscription contracts — the single source of truth for "My Monthly Stack".
+  const subsFetchingRef = useRef(false);
+  const fetchSubscriptions = useCallback(async () => {
+    if (!isConnected || subsFetchingRef.current) return;
+    subsFetchingRef.current = true;
+
+    try {
+      const data = await invokeWithRetry(SUBSCRIPTION_CONTRACTS_QUERY) as any;
+      if (!data) {
+        setSubscriptions([]);
+        return;
+      }
+      const edges = data?.data?.customer?.subscriptionContracts?.edges ?? [];
+      const contracts: ShopifySubscriptionContract[] = edges.map((e: any) => {
+        const n = e.node;
+        return {
+          id: n.id,
+          status: n.status,
+          nextBillingDate: n.nextBillingDate ?? null,
+          deliveryPolicy: n.deliveryPolicy
+            ? { interval: n.deliveryPolicy.interval, intervalCount: n.deliveryPolicy.intervalCount }
+            : null,
+          lines: {
+            edges: (n.lines?.edges ?? []).map((le: any) => ({
+              node: {
+                id: le.node.id,
+                productId: le.node.productId,
+                title: le.node.title,
+                quantity: le.node.quantity,
+                currentPrice: le.node.currentPrice,
+                variantImage: le.node.variantImage ?? null,
+              },
+            })),
+          },
+        };
+      });
+      setSubscriptions(contracts);
+    } catch (err) {
+      // If the shop doesn't expose subscriptionContracts (no sub app installed)
+      // the API returns an error — treat as "no subscriptions" rather than
+      // showing a hard failure, so the empty-state CTA is what the user sees.
+      console.warn('subscriptionContracts unavailable — showing empty state:', err);
+      setSubscriptions([]);
+    } finally {
+      subsFetchingRef.current = false;
+    }
+  }, [isConnected, invokeWithRetry]);
+
   // Execute arbitrary GraphQL query (with auto-retry)
   const executeQuery = useCallback(async (query: string, variables?: Record<string, unknown>) => {
     return invokeWithRetry(query, variables);
@@ -359,9 +445,10 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
     await checkStatus();
     if (isConnected) {
       await fetchCustomerData();
+      await fetchSubscriptions();
     }
     setIsLoading(false);
-  }, [checkStatus, fetchCustomerData, isConnected]);
+  }, [checkStatus, fetchCustomerData, fetchSubscriptions, isConnected]);
 
   // Check status on mount
   useEffect(() => {
@@ -372,8 +459,9 @@ export function useShopifyCustomer(): UseShopifyCustomerReturn {
   useEffect(() => {
     if (isConnected) {
       fetchCustomerData();
+      fetchSubscriptions();
     }
-  }, [isConnected, fetchCustomerData]);
+  }, [isConnected, fetchCustomerData, fetchSubscriptions]);
 
   // Expose handleCallback for ShopifyCallback page
   const processCallback = useCallback(async () => {

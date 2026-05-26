@@ -755,3 +755,41 @@ export async function createSubscriptionCart(
     checkoutUrl: formatCheckoutUrl(cart.checkoutUrl)
   };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Stack data-flow states (single source of truth for which items are in play)
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. RECOMMENDATION PREVIEW — AI Coach suggestions shown to the user. Read-only,
+//    never sent to Shopify. Lives in chat state (AIStackPanel / parsed blocks).
+// 2. CART DRAFT — items the user added ad-hoc while browsing (Add to cart, PDP,
+//    onboarding). Persisted in `useCartStore` (Shopify cart id + lines). Used
+//    ONLY for one-off Shopify cart drawer checkout.
+// 3. CONFIRMED MONTHLY STACK — the final, user-validated subscription stack
+//    (from SubscriptionBuilder / SubscriptionCard). MUST be checked out via a
+//    FRESH Shopify cart that contains ONLY these lines — never reuse the draft.
+// 4. DAILY SUPPLEMENT TRACKING — separate table, append-only, unrelated to
+//    checkout (see useSupplementTracking).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Build a checkout for the CONFIRMED monthly stack.
+ *
+ * Guarantees:
+ *  - Creates a brand-new Shopify cart with exactly the provided line items.
+ *  - Does NOT inherit any item from the draft cart (`useCartStore`).
+ *  - Clears the local draft cart so the user is not confused by stale lines
+ *    after returning from Shopify checkout.
+ */
+export async function checkoutConfirmedStack(
+  items: SubscriptionCartItem[],
+  options?: { clearDraftCart?: () => void }
+): Promise<{ cartId: string; checkoutUrl: string } | null> {
+  if (!items || items.length === 0) return null;
+  const result = await createSubscriptionCart(items);
+  if (result?.checkoutUrl) {
+    // Drop the ad-hoc draft cart so confirmed-stack checkout is the only
+    // source of truth for what the user is about to pay for.
+    try { options?.clearDraftCart?.(); } catch (e) { console.warn('clearDraftCart failed', e); }
+  }
+  return result;
+}

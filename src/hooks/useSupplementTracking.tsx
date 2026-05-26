@@ -79,6 +79,14 @@ export function useSupplementTracking() {
     fetchSupplements();
   }, [fetchSupplements]);
 
+  // Re-fetch when another part of the app (chat confirmation card,
+  // stack subscribe) reports a verified DB change.
+  useEffect(() => {
+    const handler = () => fetchSupplements();
+    window.addEventListener('supplement-tracking-changed', handler);
+    return () => window.removeEventListener('supplement-tracking-changed', handler);
+  }, [fetchSupplements]);
+
   const addSupplement = async (supplement: Omit<SupplementTracking, "id" | "user_id" | "created_at" | "updated_at">) => {
     if (!user) return { error: new Error("Not authenticated") };
 

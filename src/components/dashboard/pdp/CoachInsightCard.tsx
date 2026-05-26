@@ -1,4 +1,4 @@
-import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise, SignIn, Lock } from '@phosphor-icons/react';
+import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise, SignIn, Lock, Crown } from '@phosphor-icons/react';
 import { EnrichedProductData } from './types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -6,6 +6,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { useSubscription } from '@/hooks/useSubscription';
+import { canUseVitaSyncInsight } from '@/lib/subscription-tier';
 
 interface CoachInsightCardProps {
   enrichedData: EnrichedProductData | null;
@@ -39,6 +41,7 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { tier } = useSubscription();
   const [analysisState, setAnalysisState] = useState<'idle' | 'loading' | 'done'>('idle');
   const [score, setScore] = useState<number | null>(null);
   const [insight, setInsight] = useState<string | null>(null);
@@ -67,6 +70,10 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
       toast.error(t('pdp.loginRequired'));
       return;
     }
+    if (!canUseVitaSyncInsight(tier)) {
+      toast.error("VitaSync Insight est réservé aux abonnements Go AI et Premium AI");
+      return;
+    }
     setAnalysisState('loading');
     try {
       const res = await supabase.functions.invoke('product-compatibility', {
@@ -90,7 +97,7 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
       setAnalysisState('idle');
       toast.error(t('pdp.analysisError'));
     }
-  }, [user, productHandle, productTitle, enrichedData, t]);
+  }, [user, productHandle, productTitle, enrichedData, t, tier]);
 
   const isAnalyzed = analysisState === 'done' && score !== null;
   const isLoading = analysisState === 'loading';
@@ -133,6 +140,44 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
                 className="text-xs text-foreground/60 hover:text-foreground transition-colors underline-offset-4 hover:underline"
               >
                 {t('pdp.guestInsightCtaSignUp')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Free tier: show upgrade gate
+  if (!canUseVitaSyncInsight(tier)) {
+    return (
+      <section className="py-6">
+        <div className="relative rounded-2xl bg-background border border-border/30 overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-secondary to-primary" />
+          <div className="p-6 pl-7 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkle weight="fill" className="w-5 h-5 text-secondary" />
+                <h3 className="text-sm font-semibold text-foreground tracking-wide">{t('pdp.vitaSyncInsight')}</h3>
+              </div>
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-secondary/20 to-primary/20 border border-primary/30">
+                <Crown weight="fill" className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+            <p className="text-sm font-medium text-foreground/80 leading-relaxed">
+              Débloque l'analyse de compatibilité personnalisée
+            </p>
+            <p className="text-xs text-foreground/60 font-light leading-relaxed">
+              VitaSync Insight croise ton profil santé avec ce produit pour te dire s'il est fait pour toi. Disponible avec Go AI et Premium AI.
+            </p>
+            <div className="flex items-center gap-3 pt-2 flex-wrap">
+              <button
+                onClick={() => navigate('/dashboard', { state: { activeTab: 'mystack' } })}
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-primary-foreground rounded-full bg-gradient-to-r from-secondary to-primary shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
+              >
+                <Crown weight="fill" className="w-4 h-4" />
+                Passer à Go AI
+                <ArrowRight weight="bold" className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>

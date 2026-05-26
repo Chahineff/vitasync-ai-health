@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Brain, ArrowClockwise, SpinnerGap, TrendUp, Star, Lightning } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
 
 interface SupplementReview {
@@ -22,6 +23,7 @@ const CACHE_KEY = 'vitasync_supplement_insights';
 
 export function SupplementAIInsights() {
   const { user } = useAuth();
+  const { locale } = useTranslation();
   const [insights, setInsights] = useState<InsightsData | null>(null);
   const [loading, setLoading] = useState(false);
   const [hasLoadedToday, setHasLoadedToday] = useState(false);
@@ -49,7 +51,7 @@ export function SupplementAIInsights() {
     if (!user) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('supplement-insights', { body: {} });
+      const { data, error } = await supabase.functions.invoke('supplement-insights', { body: { locale } });
       if (error) throw error;
       if (data?.insights) {
         setInsights(data.insights);

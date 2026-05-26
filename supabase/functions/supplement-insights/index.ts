@@ -35,6 +35,17 @@ Deno.serve(async (req) => {
 
     console.log("Authenticated user:", user.id);
 
+    // Locale from client
+    let locale = "fr";
+    try {
+      const body = await req.json();
+      if (body && typeof body.locale === "string") locale = body.locale;
+    } catch { /* no body */ }
+    const LOCALE_NAMES: Record<string, string> = {
+      en: "English", fr: "French", es: "Spanish", de: "German", it: "Italian", pt: "Portuguese",
+    };
+    const localeName = LOCALE_NAMES[locale] || "French";
+
     // Fetch all data in parallel
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -59,12 +70,17 @@ Deno.serve(async (req) => {
 
     // If no supplements, return friendly message
     if (supplements.length === 0) {
+      const isEn = locale === "en";
       return new Response(JSON.stringify({
         insights: {
           regularity_score: 0,
-          regularity_comment: "Aucun complément suivi. Ajoutez des compléments à votre suivi pour obtenir une analyse personnalisée.",
+          regularity_comment: isEn
+            ? "No supplements tracked. Add supplements to your tracker to get a personalized analysis."
+            : "Aucun complément suivi. Ajoutez des compléments à votre suivi pour obtenir une analyse personnalisée.",
           supplement_reviews: [],
-          recommendations: "Commencez par ajouter vos compléments au suivi quotidien pour que l'IA puisse analyser votre régularité et vous donner des conseils personnalisés."
+          recommendations: isEn
+            ? "Start by adding your supplements to daily tracking so the AI can analyze your consistency and give personalized advice."
+            : "Commencez par ajouter vos compléments au suivi quotidien pour que l'IA puisse analyser votre régularité et vous donner des conseils personnalisés."
         }
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -146,7 +162,9 @@ ${supplementDetails.map((s: { name: string; time_of_day: string; dosage: string 
 
 ${conversationContext ? `═══ HISTORIQUE COACH IA ═══\n${conversationContext}\n` : ""}
 
-INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse structurée.`;
+INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse structurée.
+
+LANGUAGE: Respond strictly in ${localeName} (locale code: ${locale}). All text fields (regularity_comment, supplement_reviews[].utility, supplement_reviews[].comment, recommendations) MUST be written in ${localeName}.`;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {

@@ -38,7 +38,7 @@ function CompatibilityRing({ score, analyzed }: { score: number; analyzed: boole
 }
 
 export function CoachInsightCard({ enrichedData, productTitle, productHandle, onAskCoach }: CoachInsightCardProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { tier } = useSubscription();
@@ -83,6 +83,7 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
           product_summary: enrichedData?.summary || '',
           product_best_for_tags: enrichedData?.best_for_tags || [],
           product_coach_tip: enrichedData?.coach_tip || '',
+          locale,
         },
       });
 

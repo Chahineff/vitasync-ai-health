@@ -28,7 +28,15 @@ export function PostCard({ post }: Props) {
           className={`h-44 bg-gradient-to-br ${accent.gradient} relative overflow-hidden`}
           transition={{ type: "spring", stiffness: 260, damping: 32 }}
         >
-          <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[radial-gradient(circle_at_30%_30%,white_0%,transparent_60%)]" />
+          <img
+            src={post.coverImage}
+            alt=""
+            loading="lazy"
+            width={1280}
+            height={720}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         </motion.div>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-3">

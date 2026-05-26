@@ -212,10 +212,17 @@ const BlogPost = () => {
             <motion.div
               layoutId={`blog-cover-${post.slug}`}
               aria-hidden="true"
-              className={`h-40 md:h-56 rounded-xl bg-gradient-to-br ${accent.gradient} relative overflow-hidden mb-8`}
+              className={`h-48 md:h-72 rounded-xl bg-gradient-to-br ${accent.gradient} relative overflow-hidden mb-8`}
               transition={{ type: "spring", stiffness: 260, damping: 32 }}
             >
-              <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[radial-gradient(circle_at_30%_30%,white_0%,transparent_60%)]" />
+              <img
+                src={post.coverImage}
+                alt={post.title}
+                width={1280}
+                height={720}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             </motion.div>
 
             <motion.header

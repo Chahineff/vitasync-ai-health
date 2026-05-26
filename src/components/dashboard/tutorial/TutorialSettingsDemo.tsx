@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 const LANGUAGES = [
   { code: "fr", flag: "🇫🇷", label: "Français" },
   { code: "en", flag: "🇬🇧", label: "English" },
-  { code: "es", flag: "🇪🇸", label: "Español" },
 ];
 
 const HEALTH_GOALS = ["Muscle", "Sommeil", "Énergie", "Immunité", "Focus"];

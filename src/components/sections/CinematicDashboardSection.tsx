@@ -12,6 +12,8 @@ import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 
 import dashboardLight from "@/assets/dashboard-preview-light.png";
 import dashboardDark from "@/assets/dashboard-preview-dark.png";
+import dashboardMobileLight from "@/assets/dashboard-mobile-light.png";
+import dashboardMobileDark from "@/assets/dashboard-mobile-dark.png";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -217,6 +219,7 @@ export const CinematicDashboardSection = () => {
   const { resolvedTheme } = useTheme();
   const isMobile = useIsMobile();
   const dashboardSrc = resolvedTheme === "dark" ? dashboardDark : dashboardLight;
+  const dashboardMobileSrc = resolvedTheme === "dark" ? dashboardMobileDark : dashboardMobileLight;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mainCardRef = useRef<HTMLDivElement>(null);
@@ -496,9 +499,10 @@ export const CinematicDashboardSection = () => {
                 <div className="hardware-btn absolute -left-[3px] top-[30%] w-[3px] h-[55px] rounded-l-sm" />
                 <div className="relative w-full h-full rounded-[2.2rem] overflow-hidden bg-black">
                   <img
-                    src={dashboardSrc}
-                    alt="VitaSync Dashboard"
-                    className="w-full h-full object-cover object-left-top"
+                    src={dashboardMobileSrc}
+                    alt="VitaSync mobile dashboard"
+                    className="w-full h-full object-cover object-top"
+                    loading="lazy"
                   />
                   <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
                 </div>

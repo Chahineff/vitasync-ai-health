@@ -32,6 +32,11 @@ export interface HealthProfile {
   budget_range_max: number | null;
   medications_notes: string | null;
   tutorial_completed: boolean | null;
+  // Optional personalization (sensitive health data — user-consented)
+  height_cm: number | null;
+  weight_kg: number | null;
+  biological_sex: string | null;
+  medical_constraints: string[];
 }
 
 export function useHealthProfile() {

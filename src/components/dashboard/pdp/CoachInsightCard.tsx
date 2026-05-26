@@ -1,4 +1,4 @@
-import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise, SignIn, Lock, Crown } from '@phosphor-icons/react';
+import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise, SignIn, Lock, Crown, CaretDown, CaretUp } from '@phosphor-icons/react';
 import { EnrichedProductData } from './types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -45,10 +45,12 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
   const [analysisState, setAnalysisState] = useState<'idle' | 'loading' | 'done'>('idle');
   const [score, setScore] = useState<number | null>(null);
   const [insight, setInsight] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   // Check if analysis already exists
   useEffect(() => {
     if (!user || !productHandle) return;
+    setExpanded(false);
     const fetchExisting = async () => {
       const { data } = await supabase
         .from('product_compatibility_analyses' as any)
@@ -60,6 +62,10 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
         setScore((data as any).compatibility_score);
         setInsight((data as any).insight_text);
         setAnalysisState('done');
+      } else {
+        setScore(null);
+        setInsight(null);
+        setAnalysisState('idle');
       }
     };
     fetchExisting();
@@ -74,6 +80,7 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
       toast.error("VitaSync Insight est réservé aux abonnements Go AI et Premium AI");
       return;
     }
+    setExpanded(false);
     setAnalysisState('loading');
     try {
       const res = await supabase.functions.invoke('product-compatibility', {
@@ -211,7 +218,25 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
           )}
 
           {isAnalyzed && insight && (
-            <p className="text-sm text-foreground/60 font-light leading-relaxed line-clamp-3">{insight}</p>
+            <div className="space-y-2">
+              <p className={`text-sm text-foreground/60 font-light leading-relaxed ${expanded ? '' : 'line-clamp-3'}`}>{insight}</p>
+              <button
+                onClick={() => setExpanded(v => !v)}
+                className="flex items-center gap-1 text-xs font-medium text-secondary hover:text-primary transition-colors"
+              >
+                {expanded ? (
+                  <>
+                    {t('common.showLess')}
+                    <CaretUp weight="bold" className="w-3 h-3" />
+                  </>
+                ) : (
+                  <>
+                    {t('common.readMore')}
+                    <CaretDown weight="bold" className="w-3 h-3" />
+                  </>
+                )}
+              </button>
+            </div>
           )}
 
           <div className="flex items-center gap-3 pt-2">

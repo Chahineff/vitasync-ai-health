@@ -9298,6 +9298,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 };
 
 export function getTranslation(locale: Locale, key: string): string {
+  // Fallback chain: active locale → English. Never falls back to another
+  // language. If the key is missing in English too, returns "" rather
+  // than leaking a raw key into the UI.
   return translations[locale]?.[key] ?? translations['en']?.[key] ?? "";
 }
 

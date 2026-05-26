@@ -1274,6 +1274,141 @@ export function OnboardingFlow() {
       );
     }
 
+    // Optional personalization: height, weight, biological sex, medical constraints
+    if (q.type === "personal-info") {
+      const sexOptions = [
+        { value: "female", label: "Femme" },
+        { value: "male", label: "Homme" },
+        { value: "intersex", label: "Intersexe" },
+        { value: "prefer_not_say", label: "Préfère ne pas dire" },
+      ];
+      const constraintOptions = [
+        { value: "pregnant", label: "Enceinte / allaitante" },
+        { value: "hypertension", label: "Hypertension" },
+        { value: "diabetes", label: "Diabète" },
+        { value: "thyroid", label: "Trouble thyroïdien" },
+        { value: "kidney", label: "Trouble rénal" },
+        { value: "liver", label: "Trouble hépatique" },
+        { value: "cardiac", label: "Trouble cardiaque" },
+        { value: "anticoagulant", label: "Sous anticoagulants" },
+      ];
+      const selectedConstraints: string[] = answers.medical_constraints || [];
+      const toggleConstraint = (v: string) => {
+        const set = new Set(selectedConstraints);
+        set.has(v) ? set.delete(v) : set.add(v);
+        setAnswers({ ...answers, medical_constraints: Array.from(set) });
+      };
+      return (
+        <div className="space-y-6">
+          {/* Consent banner */}
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-primary/5 border border-primary/20">
+            <Lock weight="duotone" className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Ces informations sont des <span className="text-foreground font-medium">données de santé sensibles</span>. Elles sont stockées de manière chiffrée, visibles uniquement par toi et ton coach IA, et tu peux les modifier ou les supprimer à tout moment dans ton profil.
+            </p>
+          </div>
+
+          {/* Height + Weight */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-sm text-muted-foreground flex items-center justify-between">
+                <span>Taille (cm)</span>
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground/70">Optionnel</span>
+              </label>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={120}
+                max={230}
+                placeholder="175"
+                value={answers.height_cm ?? ""}
+                onChange={(e) => setAnswers({ ...answers, height_cm: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm text-muted-foreground flex items-center justify-between">
+                <span>Poids (kg)</span>
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground/70">Optionnel</span>
+              </label>
+              <input
+                type="number"
+                inputMode="decimal"
+                min={30}
+                max={250}
+                step="0.1"
+                placeholder="70"
+                value={answers.weight_kg ?? ""}
+                onChange={(e) => setAnswers({ ...answers, weight_kg: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+          </div>
+
+          {/* Biological sex */}
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground flex items-center justify-between">
+              <span>Sexe biologique</span>
+              <span className="text-[10px] uppercase tracking-wide text-muted-foreground/70">Optionnel</span>
+            </label>
+            <p className="text-xs text-muted-foreground/80">
+              Certains besoins (fer, vitamine D, oméga-3) varient selon le sexe biologique. Cela n'a aucun lien avec ton identité de genre.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {sexOptions.map((opt) => (
+                <motion.button
+                  key={opt.value}
+                  onClick={() => setAnswers({ ...answers, biological_sex: opt.value })}
+                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.03 }}
+                  className={cn(
+                    "px-4 py-2 rounded-full text-sm transition-all",
+                    answers.biological_sex === opt.value
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card border border-border hover:border-primary/50"
+                  )}
+                >
+                  {opt.label}
+                </motion.button>
+              ))}
+            </div>
+          </div>
+
+          {/* Medical constraints */}
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground flex items-center justify-between">
+              <span>Contraintes médicales à signaler</span>
+              <span className="text-[10px] uppercase tracking-wide text-muted-foreground/70">Optionnel</span>
+            </label>
+            <p className="text-xs text-muted-foreground/80">
+              Sert uniquement à éviter des recommandations incompatibles. Ne remplace pas un avis médical.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {constraintOptions.map((opt) => {
+                const active = selectedConstraints.includes(opt.value);
+                return (
+                  <motion.button
+                    key={opt.value}
+                    onClick={() => toggleConstraint(opt.value)}
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.03 }}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs transition-all",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card border border-border hover:border-primary/50"
+                    )}
+                  >
+                    {opt.label}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return null;
   };
 

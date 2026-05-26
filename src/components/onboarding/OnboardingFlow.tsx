@@ -150,6 +150,8 @@ const questions: OnboardingQuestion[] = [
       { value: "other", label: "Autre", icon: <DotsThree weight="duotone" className="w-5 h-5 text-muted-foreground" />, iconBg: "bg-muted/50 border border-border/50" },
     ],
     required: false,
+    why: "Utilisé uniquement pour filtrer les compléments incompatibles avec ton profil.",
+    sensitive: true,
   },
   {
     id: "preferred_forms",

@@ -521,15 +521,15 @@ export function ProfileSection({ onNavigateToHelp, onSignOut }: ProfileSectionPr
       {/* Notification Preferences */}
       <NotificationPreferences />
 
-      {/* GDPR: Data Export & Account Deletion */}
+      {/* US Privacy Rights: Data Export & Account Deletion */}
       <div className="glass-card rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <DownloadSimple weight="light" className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h3 className="font-medium text-foreground">Vos données personnelles</h3>
-            <p className="text-sm text-foreground/50">RGPD — Art. 15 & 17</p>
+            <h3 className="font-medium text-foreground">Your privacy rights</h3>
+            <p className="text-sm text-foreground/50">CCPA/CPRA: access, delete, and export your data</p>
           </div>
         </div>
 

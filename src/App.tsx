@@ -35,6 +35,7 @@ const CookiesPage = lazy(() => import("./pages/legal/Cookies"));
 const CGV = lazy(() => import("./pages/legal/CGV"));
 const Disclaimer = lazy(() => import("./pages/legal/Disclaimer"));
 const Shipping = lazy(() => import("./pages/legal/Shipping"));
+const AdminImportResearch = lazy(() => import("./pages/AdminImportResearch"));
 
 const queryClient = new QueryClient();
 
@@ -116,6 +117,7 @@ function AppContent() {
         <Route path="/terms-of-service" element={<Terms />} />
         <Route path="/refund-policy" element={<Shipping />} />
         <Route path="/shipping-policy" element={<Shipping />} />
+        <Route path="/admin/import-research" element={<AdminImportResearch />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

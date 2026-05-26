@@ -42,7 +42,12 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { product_handle, product_title, product_summary, product_best_for_tags, product_coach_tip } = body;
+    const { product_handle, product_title, product_summary, product_best_for_tags, product_coach_tip, locale } = body;
+    const LOCALE_NAMES: Record<string, string> = {
+      en: "English", fr: "French", es: "Spanish", de: "German", it: "Italian", pt: "Portuguese",
+    };
+    const localeCode = typeof locale === "string" && LOCALE_NAMES[locale] ? locale : "en";
+    const localeName = LOCALE_NAMES[localeCode];
 
     if (!product_handle || !product_title) {
       return new Response(JSON.stringify({ error: "product_handle and product_title required" }), { status: 400, headers: { ...cors, "Content-Type": "application/json" } });
@@ -108,6 +113,8 @@ Consider:
 - Allergies and medical conditions
 - Activity level and lifestyle fit
 - Whether user already takes similar supplements
+
+LANGUAGE: Respond strictly in ${localeName} (locale code: ${localeCode}). The "insight" field MUST be written in ${localeName}.
 
 IMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks. Example:
 {"score": 75, "insight": "This product aligns well with your sleep improvement goals, though you may want to start with a lower dose given your current stack."}`;

@@ -2307,6 +2307,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shopify.connectBtn": "Connect my account",
     "shopify.connecting": "Connecting…",
     "shopify.disconnect": "Disconnect my Shopify account",
+    "shopify.confirmTitle": "Before continuing to Shopify",
+    "shopify.confirmIntro": "VitaSync uses your Shopify account to keep your orders and next box in sync. You'll be redirected to Shopify to authorize access.",
+    "shopify.confirmSyncedTitle": "What will be synced:",
+    "shopify.confirmPrivacy": "No payment details are shared with VitaSync. You can revoke access at any time from your settings.",
+    "shopify.confirmCancel": "Cancel",
+    "shopify.confirmContinue": "Continue to Shopify",
 
     // Settings Danger Zone
     "settingsDanger.paymentTitle": "Payment method",

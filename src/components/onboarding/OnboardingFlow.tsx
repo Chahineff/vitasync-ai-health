@@ -810,6 +810,11 @@ export function OnboardingFlow() {
           budget_range_min: answers.budget_range?.min,
           budget_range_max: answers.budget_range?.max,
           medications_notes: answers.medications_notes,
+          // Optional personalization (sensitive — only saved if user filled them in)
+          height_cm: answers.height_cm ? Number(answers.height_cm) : null,
+          weight_kg: answers.weight_kg ? Number(answers.weight_kg) : null,
+          biological_sex: answers.biological_sex || null,
+          medical_constraints: answers.medical_constraints || [],
         };
 
         const { error } = await completeOnboarding(formattedAnswers);

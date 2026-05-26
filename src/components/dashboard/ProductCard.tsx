@@ -104,11 +104,11 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-3">
+        <div className="p-5 sm:p-4 space-y-4 sm:space-y-3">
           <div>
-            <h3 className="font-medium text-foreground truncate">{node.title}</h3>
+            <h3 className="font-medium text-base sm:text-sm text-foreground truncate">{node.title}</h3>
             {node.description && (
-              <p className="text-sm text-foreground/60 font-light line-clamp-2 mt-1">
+              <p className="text-sm text-foreground/60 font-light line-clamp-2 mt-1.5">
                 {node.description}
               </p>
             )}
@@ -121,7 +121,7 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
                 <button
                   key={variant.node.id}
                   onClick={(e) => handleVariantClick(e, index)}
-                  className={`px-2 py-1 text-xs rounded-lg transition-colors ${
+                  className={`min-h-[36px] px-3 py-1.5 text-xs rounded-lg transition-colors ${
                     selectedVariantIndex === index
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-white/5 text-foreground/60 hover:bg-white/10'
@@ -139,16 +139,16 @@ export function ProductCard({ product, recommendedByAI = false, onProductClick }
           )}
 
           {/* Price & Add to Cart */}
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between gap-3 pt-3 sm:pt-2">
             <div>
-              <span className="text-lg font-semibold text-foreground">
+              <span className="text-xl sm:text-lg font-semibold text-foreground">
                 {formatPriceUSD(price.amount)}
               </span>
             </div>
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !selectedVariant?.availableForSale}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 justAdded
                   ? 'bg-green-500/20 text-green-500'
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'

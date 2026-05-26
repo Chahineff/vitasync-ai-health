@@ -1,6 +1,11 @@
 // Native blog content extracted from the four founding VitaSync magazine PDFs.
 // PDFs available under /blog/<slug>.pdf — chart images under /blog/<slug>/chart-N.png.
 
+import vitaminDCover from "@/assets/blog/vitamin-d-cover.jpg";
+import magnesiumCover from "@/assets/blog/magnesium-cover.jpg";
+import omega3Cover from "@/assets/blog/omega3-cover.jpg";
+import creatineCover from "@/assets/blog/creatine-cover.jpg";
+
 export type AccentColor = "primary" | "accent" | "emerald" | "orange";
 export type BlogCategory = "Vitamines" | "Minéraux" | "Lipides" | "Cognition & Sport";
 
@@ -77,6 +82,7 @@ export interface BlogPost {
   readingMinutes: number;
   pdfPath: string;           // /blog/<slug>.pdf
   ogImage: string;           // first chart, used for OG
+  coverImage: string;        // editorial cover (imported asset)
   lead: string;              // italic intro paragraph
   stats: [StatItem, StatItem, StatItem];
   body: ContentBlock[];
@@ -105,6 +111,7 @@ const vitamineD: BlogPost = {
   slug: "vitamine-d-carence-silencieuse",
   category: "Vitamines",
   accent: "primary",
+  coverImage: vitaminDCover,
   title: "Vitamine D : la carence silencieuse",
   subtitle: "Pourquoi 4 Américains sur 10 manquent de la vitamine la plus essentielle — et ce que dit vraiment la science.",
   metaDescription: "40 % des adultes américains sont insuffisants en vitamine D. Méta-analyses 2022-2024 sur cancer, immunité et mortalité. Posologie, formes et cible 25(OH)D recommandée.",
@@ -168,6 +175,7 @@ const magnesium: BlogPost = {
   slug: "magnesium-pourquoi-1-americain-sur-2-en-manque",
   category: "Minéraux",
   accent: "accent",
+  coverImage: magnesiumCover,
   title: "Magnésium : pourquoi 1 Américain sur 2 en manque",
   subtitle: "Le minéral le plus sous-estimé du 21ᵉ siècle. Quelle forme choisir et pour quel objectif.",
   metaDescription: "48 % des Américains n'atteignent pas le RDA en magnésium. Glycinate, L-thréonate, citrate : quelle forme pour le sommeil, la cognition ou l'énergie. Posologie pratique 200-400 mg/j.",
@@ -229,6 +237,7 @@ const omega3: BlogPost = {
   slug: "omega-3-epa-dha-cerveau-et-coeur",
   category: "Lipides",
   accent: "emerald",
+  coverImage: omega3Cover,
   title: "Oméga-3 EPA + DHA : votre cerveau en réclame 4 fois plus",
   subtitle: "Le déficit nutritionnel le plus invisible des pays développés. Méta-analyses 2024 sur cœur et cerveau.",
   metaDescription: "L'Américain moyen consomme 86 mg d'EPA + DHA par jour, 6 à 12 fois moins que recommandé. Méta-analyse 2024 sur 134 144 participants : effets cardiovasculaires et cognitifs.",
@@ -291,6 +300,7 @@ const creatine: BlogPost = {
   slug: "creatine-pas-que-pour-la-salle",
   category: "Cognition & Sport",
   accent: "orange",
+  coverImage: creatineCover,
   title: "Créatine : pas (que) pour la salle",
   subtitle: "25 ans de recherche clinique, méta-analyse cognitive 2024 : ce que la science nous apprend sur le complément le plus étudié de l'histoire.",
   metaDescription: "Plus de 1 000 essais publiés. Méta-analyse 2024 sur la cognition. Sécurité rénale 25 ans. Pourquoi 3-5 g/j de créatine monohydrate (Creapure®) en continu suffisent.",

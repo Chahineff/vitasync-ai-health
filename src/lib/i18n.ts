@@ -698,6 +698,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shopify.connectBtn": "Connecter mon compte",
     "shopify.connecting": "Connexion en cours…",
     "shopify.disconnect": "Déconnecter mon compte Shopify",
+    "shopify.confirmTitle": "Avant de continuer vers Shopify",
+    "shopify.confirmIntro": "VitaSync utilise votre compte Shopify pour synchroniser ce qui touche à vos commandes et à votre prochaine box. Vous allez être redirigé vers Shopify pour autoriser l'accès.",
+    "shopify.confirmSyncedTitle": "Ce qui sera synchronisé :",
+    "shopify.confirmPrivacy": "Aucun paiement n'est partagé avec VitaSync. Vous pouvez révoquer l'accès à tout moment depuis les paramètres.",
+    "shopify.confirmCancel": "Annuler",
+    "shopify.confirmContinue": "Continuer vers Shopify",
 
     // Settings Danger Zone
     "settingsDanger.paymentTitle": "Moyen de paiement",
@@ -2301,6 +2307,12 @@ export const translations: Record<Locale, Record<string, string>> = {
     "shopify.connectBtn": "Connect my account",
     "shopify.connecting": "Connecting…",
     "shopify.disconnect": "Disconnect my Shopify account",
+    "shopify.confirmTitle": "Before continuing to Shopify",
+    "shopify.confirmIntro": "VitaSync uses your Shopify account to keep your orders and next box in sync. You'll be redirected to Shopify to authorize access.",
+    "shopify.confirmSyncedTitle": "What will be synced:",
+    "shopify.confirmPrivacy": "No payment details are shared with VitaSync. You can revoke access at any time from your settings.",
+    "shopify.confirmCancel": "Cancel",
+    "shopify.confirmContinue": "Continue to Shopify",
 
     // Settings Danger Zone
     "settingsDanger.paymentTitle": "Payment method",

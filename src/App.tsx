@@ -35,6 +35,7 @@ const CookiesPage = lazy(() => import("./pages/legal/Cookies"));
 const Disclaimer = lazy(() => import("./pages/legal/Disclaimer"));
 const Shipping = lazy(() => import("./pages/legal/Shipping"));
 const AdminImportResearch = lazy(() => import("./pages/AdminImportResearch"));
+const Availability = lazy(() => import("./pages/Availability"));
 
 const queryClient = new QueryClient();
 
@@ -117,6 +118,8 @@ function AppContent() {
         <Route path="/refund-policy" element={<Shipping />} />
         <Route path="/shipping-policy" element={<Shipping />} />
         <Route path="/admin/import-research" element={<AdminImportResearch />} />
+        <Route path="/availability" element={<Availability />} />
+        <Route path="/waitlist" element={<Availability />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

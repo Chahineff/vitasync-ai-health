@@ -1497,12 +1497,31 @@ export function OnboardingFlow() {
               className="flex-1 flex flex-col overflow-auto"
             >
               <div className="mb-6">
-                <h1 className="text-2xl font-light text-foreground mb-2">
-                  {question.title}
-                </h1>
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <h1 className="text-2xl font-light text-foreground">
+                    {question.title}
+                  </h1>
+                  {question.required === false && (
+                    <span className="text-[10px] uppercase tracking-wide font-medium px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground border border-border/60">
+                      Optionnel
+                    </span>
+                  )}
+                  {question.sensitive && (
+                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                      <Lock weight="duotone" className="w-3 h-3" />
+                      Données sensibles
+                    </span>
+                  )}
+                </div>
                 <p className="text-muted-foreground font-light">
                   {question.subtitle}
                 </p>
+                {question.why && (
+                  <p className="mt-2 text-xs text-muted-foreground/80 leading-relaxed">
+                    <span className="text-foreground/70 font-medium">Pourquoi&nbsp;: </span>
+                    {question.why}
+                  </p>
+                )}
               </div>
 
               <div className="flex-1 overflow-auto pb-4">

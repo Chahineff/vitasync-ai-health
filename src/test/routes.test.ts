@@ -9,8 +9,12 @@ function walk(dir: string): string[] {
   for (const entry of readdirSync(dir)) {
     const p = join(dir, entry);
     const s = statSync(p);
-    if (s.isDirectory()) out.push(...walk(p));
-    else if (/\.(tsx?|jsx?)$/.test(entry)) out.push(p);
+    if (s.isDirectory()) {
+      if (entry === "test" || entry === "__tests__") continue;
+      out.push(...walk(p));
+    } else if (/\.(tsx?|jsx?)$/.test(entry) && !/\.test\.(t|j)sx?$/.test(entry)) {
+      out.push(p);
+    }
   }
   return out;
 }

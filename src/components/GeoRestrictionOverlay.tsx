@@ -37,13 +37,16 @@ export function GeoRestrictionOverlay() {
         >
           Learn more & join waitlist
         </a>
-        <div className="mt-6">
+        <div className="mt-6 pt-6 border-t border-border">
           <button
             onClick={confirmUS}
-            className="text-xs text-muted-foreground underline hover:text-foreground transition"
+            className="btn-neumorphic text-primary-foreground w-full"
           >
-            I am a US resident
+            I live in the United States
           </button>
+          <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
+            By continuing, you confirm you are a U.S. resident eligible for supplement shipping via Supliful.
+          </p>
         </div>
       </div>
     </div>

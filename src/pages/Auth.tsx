@@ -273,8 +273,9 @@ const Auth = () => {
                 </button>
               </div>
               {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
-              {/* Password strength indicator (signup only) */}
-              {isSignUp && password.length > 0 && (
+
+              {/* Password requirements helper (signup only) */}
+              {isSignUp && (
                 <div className="mt-2 space-y-1">
                   {(() => {
                     const checks = [

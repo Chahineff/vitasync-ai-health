@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/hooks/useTranslation";
 
 interface Profile {
   id: string;
@@ -9,6 +10,7 @@ interface Profile {
   last_name: string | null;
   date_of_birth: string | null;
   avatar_url: string | null;
+  locale: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -44,7 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Error fetching profile:", error);
       return null;
     }
-    return data as Profile | null;
+    const profile = data as Profile | null;
+    // Hydrate locale store from the user's saved preference (cross-device).
+    if (profile?.locale) {
+      useI18n.getState().hydrateFromProfile(profile.locale as never);
+    }
+    return profile;
   };
 
   useEffect(() => {

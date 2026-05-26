@@ -3,95 +3,54 @@ import { LegalPageLayout } from "@/components/layout/LegalPageLayout";
 export default function Disclaimer() {
   return (
     <LegalPageLayout
-      title="Disclaimer Santé et Médical"
-      subtitle="Avertissements réglementaires — FDA, UE, EU AI Act, Directive 2002/46/CE"
-      date="8 avril 2026"
+      title="Health & AI Disclaimer"
+      subtitle="Important notices about VitaSync, its AI features, and dietary supplements — United States"
+      date="June 1, 2026"
     >
-      <p>Ce document regroupe l'ensemble des avertissements réglementaires applicables à la plateforme VitaSync, à ses services d'intelligence artificielle et aux compléments alimentaires commercialisés.</p>
-
-      <h2>1. Disclaimer Général — VitaSync n'est pas un Service Médical</h2>
+      <h2>1. Not a Medical Service</h2>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground font-medium">
-          ⚠️ VitaSync est une plateforme d'information sur le bien-être et le mode de vie. Les informations et recommandations fournies ne constituent PAS un avis médical, un diagnostic ou un traitement. VitaSync n'est PAS un dispositif médical au sens du Règlement (UE) 2017/745 (MDR), ni au sens du FD&C Act américain. Consultez toujours un professionnel de santé qualifié avant toute décision concernant votre santé ou votre alimentation.
+          VitaSync is a wellness and lifestyle information platform. The information and recommendations it provides are NOT medical advice, diagnosis, or treatment, and VitaSync is NOT a medical device under the U.S. Federal Food, Drug, and Cosmetic Act. Always consult a qualified healthcare professional before making any decision about your health or diet.
         </p>
       </div>
 
-      <h2>2. Disclaimer Intelligence Artificielle (EU AI Act, Art. 50)</h2>
+      <h2>2. AI Transparency</h2>
       <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 my-4">
         <p className="text-foreground">
-          <strong>Disclosure IA obligatoire :</strong> Vous interagissez avec un système d'intelligence artificielle propulsé par Google Gemini. Il ne s'agit pas d'un professionnel de santé humain. Toutes les réponses sont générées par une technologie IA. Les recommandations du Coach IA sont des informations générales de bien-être, pas des prescriptions médicales.
+          You are interacting with an artificial-intelligence system (powered by Google Gemini), not a human healthcare professional. All responses are AI-generated and are general wellness information, not prescriptions.
         </p>
       </div>
-      <p>Ce disclaimer est requis par le Règlement (UE) 2024/1689 (EU AI Act) qui impose aux fournisseurs de systèmes IA une obligation de transparence (Art. 50) envers les utilisateurs. L'obligation de littératie en IA (Art. 4) est applicable depuis le 2 février 2025.</p>
 
-      <h2>3. Disclaimer Analyses Sanguines</h2>
+      <h2>3. Blood-Test Information</h2>
       <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
-          <strong>IMPORTANT :</strong> L'analyse de vos résultats sanguins par l'IA VitaSync est fournie à titre informatif et éducatif uniquement. Elle ne constitue PAS une interprétation médicale, un diagnostic ou une évaluation clinique. Seul un professionnel de santé agréé peut interpréter correctement vos résultats dans le contexte de votre historique médical complet. Si des valeurs semblent hors normes, consultez immédiatement votre médecin. Ne retardez jamais une consultation médicale sur la base des informations fournies par VitaSync.
+          Any AI commentary on blood-test values you enter is for educational purposes only. It is NOT a clinical interpretation, diagnosis, or medical evaluation. Only a licensed healthcare professional can correctly interpret your results in the context of your full medical history. If any value appears abnormal, consult your doctor promptly. Never delay seeking medical care based on information provided by VitaSync.
         </p>
       </div>
 
-      <h2>4. Disclaimer Compléments Alimentaires — Recommandations IA</h2>
-      <p>Les suggestions de compléments alimentaires sont des informations générales de bien-être, pas des prescriptions médicales. Les compléments peuvent interagir avec des médicaments. Consultez votre médecin ou pharmacien avant tout nouveau complément, particulièrement en cas de grossesse, allaitement, traitement médicamenteux, pathologie chronique ou préparation d'une intervention chirurgicale. Les résultats individuels peuvent varier.</p>
-
-      <h2>SUPPLEMENT INTERACTIONS</h2>
-      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4 space-y-3">
+      <h2>4. Supplement Interactions</h2>
+      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
-          Supplements can interact with prescription and over-the-counter medications and may not be appropriate for everyone. VitaSync's AI coach does not evaluate drug-supplement interactions. If you take any medications, you must consult a qualified pharmacist or physician before starting any supplement regimen recommended by VitaSync.
+          Supplements can interact with prescription and over-the-counter medications and may not be appropriate for everyone. VitaSync's AI coach does not evaluate drug-supplement interactions. If you take any medication, you must consult a qualified pharmacist or physician before starting any supplement regimen recommended by VitaSync.
         </p>
       </div>
 
-      <h2>AGE RESTRICTION</h2>
-      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4 space-y-3">
+      <h2>5. Age Restriction</h2>
+      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 my-4">
         <p className="text-foreground">
           VitaSync is intended for users aged 18 and older. The information and recommendations provided by VitaSync are not appropriate for minors. If you are under 18, please consult a healthcare professional before using any supplement.
         </p>
       </div>
 
-      <h2>5. Disclaimer FDA / DSHEA (Marché américain)</h2>
+      <h2>6. FDA / DSHEA Notice (21 CFR 101.93)</h2>
       <div className="p-4 rounded-xl bg-muted/50 border border-border/50 my-4">
         <p className="text-foreground font-medium">
-          FDA DISCLAIMER (21 CFR 101.93) : These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
+          These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
         </p>
       </div>
-      <p>Ce disclaimer est obligatoire en vertu du Dietary Supplement Health and Education Act (DSHEA) de 1994 pour tout complément alimentaire portant une allégation de type structure/fonction. Il doit apparaître sur chaque page produit, chaque étiquette et chaque communication marketing aux États-Unis.</p>
 
-      <h2>6. Disclaimer UE — Directive 2002/46/CE</h2>
-      <p>Les compléments alimentaires ne doivent pas être utilisés comme substituts d'un régime alimentaire varié et équilibré et d'un mode de vie sain. Ne pas dépasser la dose journalière recommandée. Tenir hors de la portée des jeunes enfants.</p>
-      <p>Ces mentions sont imposées par l'article 6(2) de la Directive 2002/46/CE. Il est formellement INTERDIT d'attribuer aux compléments des propriétés de prévention, de traitement ou de guérison de maladies humaines.</p>
-
-      <h2>7. Disclaimer Combiné International (Pages Produit)</h2>
-      <div className="p-4 rounded-xl bg-muted/50 border border-border/50 my-4 space-y-3">
-        <p className="font-medium text-foreground">INFORMATIONS RÉGLEMENTAIRES</p>
-        <ul>
-          <li>Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie.</li>
-          <li>Les compléments alimentaires ne doivent pas être utilisés comme substituts d'un régime alimentaire varié et équilibré et d'un mode de vie sain. Ne pas dépasser la dose journalière recommandée. Tenir hors de la portée des jeunes enfants.</li>
-          <li>Les informations fournies sur ce site le sont à titre informatif uniquement et ne constituent pas un avis médical. Consultez un professionnel de santé avant de commencer tout programme de complémentation.</li>
-        </ul>
-      </div>
-
-      <h2>8. Disclaimer Footer (Version Condensée)</h2>
-      <p>VitaSync est une plateforme d'information sur le bien-être. Les produits proposés sont des compléments alimentaires et non des médicaments. Les recommandations IA ne constituent pas un avis médical. Consultez un professionnel de santé avant toute décision concernant votre santé. — These statements have not been evaluated by the FDA. Not intended to diagnose, treat, cure, or prevent any disease.</p>
-
-      <h2>9. Responsabilité Civile et Directive Produits Défectueux</h2>
-      <p>La Directive (UE) 2024/2853 sur la responsabilité du fait des produits (applicable aux produits mis sur le marché à partir du 9 décembre 2026) inclut explicitement les logiciels et systèmes IA dans la définition de « produit ». VitaSync sera soumis à un régime de responsabilité stricte pour les défauts IA vis-à-vis des utilisateurs UE. Les clauses de limitation de responsabilité dans les CGU/CGV ne peuvent pas exclure cette responsabilité légale. Pour le marché américain, les règles de product liability applicables au niveau fédéral et étatique s'appliquent.</p>
-
-      <h2>10. Tableau de Synthèse — Où Placer Chaque Disclaimer</h2>
-      <table>
-        <thead>
-          <tr><th>Disclaimer</th><th>Emplacement</th><th>Obligatoire</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Général (pas un service médical)</td><td>Footer toutes pages + landing + dashboard</td><td>Oui</td></tr>
-          <tr><td>Transparence IA (EU AI Act)</td><td>Chaque interaction Coach IA</td><td>Oui (depuis 02/2025)</td></tr>
-          <tr><td>Analyses sanguines</td><td>Écran upload + page résultats</td><td>Oui (évite MDR)</td></tr>
-          <tr><td>Recommandation compléments</td><td>Avec chaque reco IA</td><td>Oui</td></tr>
-          <tr><td>FDA / DSHEA</td><td>Chaque page produit (près des allégations)</td><td>Oui (marché USA)</td></tr>
-          <tr><td>UE Directive 2002/46</td><td>Chaque page produit</td><td>Oui (marché UE)</td></tr>
-          <tr><td>Combiné international</td><td>Pages produit (bloc complet)</td><td>Recommandé</td></tr>
-          <tr><td>Footer condensé</td><td>Footer site (toutes pages)</td><td>Recommandé</td></tr>
-        </tbody>
-      </table>
+      <h2>7. Results May Vary</h2>
+      <p>Dietary supplements do not replace a balanced diet and a healthy lifestyle. Individual results may vary. Do not exceed the recommended daily dose. Keep out of reach of children.</p>
     </LegalPageLayout>
   );
 }

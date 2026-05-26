@@ -10,7 +10,8 @@ import {
   ArrowRight
 } from '@phosphor-icons/react';
 import { ParsedSubscriptionBlock, formatPrice, SUBSCRIPTION_DISCOUNT_RATE } from '@/lib/subscription-calculator';
-import { createSubscriptionCart } from '@/lib/shopify';
+import { checkoutConfirmedStack } from '@/lib/shopify';
+import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 
 interface SubscriptionCardProps {
@@ -21,6 +22,7 @@ interface SubscriptionCardProps {
 export function SubscriptionCard({ subscription, onModify }: SubscriptionCardProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
+  const clearDraftCart = useCartStore(state => state.clearCart);
 
   const handleCreateSubscription = async () => {
     // Check if we have valid variant IDs
@@ -43,9 +45,12 @@ export function SubscriptionCard({ subscription, onModify }: SubscriptionCardPro
         quantity: item.packsPerMonth,
       }));
 
-      console.log('Creating subscription cart with items:', cartItems);
+      // CONFIRMED STACK checkout: fresh Shopify cart, confirmed items only.
+      // The ad-hoc cart draft (useCartStore) is wiped so it can't contaminate
+      // the checkout the user is about to pay for.
+      console.log('Creating confirmed-stack cart with items:', cartItems);
 
-      const result = await createSubscriptionCart(cartItems);
+      const result = await checkoutConfirmedStack(cartItems, { clearDraftCart });
       
       if (result?.checkoutUrl) {
         toast.success("Panier créé !", {

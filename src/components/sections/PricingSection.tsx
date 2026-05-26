@@ -1,5 +1,5 @@
 import { Check, X, Star, Lightning } from "@phosphor-icons/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import { motion } from "framer-motion";
@@ -13,6 +13,10 @@ import confetti from "canvas-confetti";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { startCheckout } from "@/hooks/useSubscription";
+import { PRICE_IDS } from "@/lib/stripe";
+import { toast } from "sonner";
 
 function FeatureValue({ value }: { value: boolean | string }) {
   if (typeof value === "boolean") {
@@ -29,6 +33,28 @@ export function PricingSection() {
   const { t } = useTranslation();
   const [isMonthly, setIsMonthly] = useState(true);
   const switchRef = useRef<HTMLButtonElement>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  const handleSubscribe = async (priceId: string) => {
+    if (!user) {
+      // Persist intent so we can resume after login
+      try {
+        sessionStorage.setItem("pending_subscription_price", priceId);
+      } catch {}
+      navigate("/auth?mode=signup&next=subscribe");
+      return;
+    }
+    try {
+      setCheckoutLoading(priceId);
+      await startCheckout(priceId, `${window.location.origin}/dashboard`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Unable to start checkout. Please try again.");
+      setCheckoutLoading(null);
+    }
+  };
 
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);
@@ -71,6 +97,7 @@ export function PricingSection() {
       popular: false,
       glowColor: "cyan" as const,
       shineColors: null as string[] | null,
+      priceId: null as string | null,
     },
     {
       name: t("pricing.plan2.name"),
@@ -90,6 +117,7 @@ export function PricingSection() {
       popular: false,
       glowColor: "green" as const,
       shineColors: ["#00D787", "#00F0FF", "#00D787"],
+      priceId: PRICE_IDS.goAiMonthly,
     },
     {
       name: t("pricing.plan3.name"),
@@ -110,6 +138,7 @@ export function PricingSection() {
       popular: true,
       glowColor: "blue" as const,
       shineColors: ["#3B82F6", "#00F0FF", "#3B82F6"],
+      priceId: PRICE_IDS.premiumAiMonthly,
     },
   ];
 
@@ -212,7 +241,18 @@ export function PricingSection() {
                         ))}
                       </ul>
                       <div className="h-px bg-border/50 mb-6" />
-                      <Link to="/auth?mode=signup" className={cn("w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300", plan.popular ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110" : "bg-muted hover:bg-muted/80 text-foreground border border-border/50")}>{plan.cta}</Link>
+                      {plan.priceId ? (
+                        <button
+                          type="button"
+                          disabled={checkoutLoading === plan.priceId}
+                          onClick={() => handleSubscribe(plan.priceId!)}
+                          className={cn("w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 disabled:opacity-70", plan.popular ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110" : "bg-muted hover:bg-muted/80 text-foreground border border-border/50")}
+                        >
+                          {checkoutLoading === plan.priceId ? "…" : plan.cta}
+                        </button>
+                      ) : (
+                        <Link to="/auth?mode=signup" className={cn("w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300", plan.popular ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110" : "bg-muted hover:bg-muted/80 text-foreground border border-border/50")}>{plan.cta}</Link>
+                      )}
                       <p className="text-[11px] text-muted-foreground/50 text-center mt-3">{plan.description}</p>
                     </div>
                   </GlowCard>
@@ -236,7 +276,18 @@ export function PricingSection() {
                       ))}
                     </ul>
                     <div className="h-px bg-border/50 mb-6" />
-                    <Link to="/auth?mode=signup" className="w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 bg-muted hover:bg-muted/80 text-foreground border border-border/50">{plan.cta}</Link>
+                    {plan.priceId ? (
+                      <button
+                        type="button"
+                        disabled={checkoutLoading === plan.priceId}
+                        onClick={() => handleSubscribe(plan.priceId!)}
+                        className="w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 bg-muted hover:bg-muted/80 text-foreground border border-border/50 disabled:opacity-70"
+                      >
+                        {checkoutLoading === plan.priceId ? "…" : plan.cta}
+                      </button>
+                    ) : (
+                      <Link to="/auth?mode=signup" className="w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 bg-muted hover:bg-muted/80 text-foreground border border-border/50">{plan.cta}</Link>
+                    )}
                     <p className="text-[11px] text-muted-foreground/50 text-center mt-3">{plan.description}</p>
                   </div>
                 </GlowCard>

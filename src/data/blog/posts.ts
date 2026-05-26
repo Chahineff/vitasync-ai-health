@@ -1,6 +1,11 @@
 // Native blog content extracted from the four founding VitaSync magazine PDFs.
 // PDFs available under /blog/<slug>.pdf — chart images under /blog/<slug>/chart-N.png.
 
+import vitaminDCover from "@/assets/blog/vitamin-d-cover.jpg";
+import magnesiumCover from "@/assets/blog/magnesium-cover.jpg";
+import omega3Cover from "@/assets/blog/omega3-cover.jpg";
+import creatineCover from "@/assets/blog/creatine-cover.jpg";
+
 export type AccentColor = "primary" | "accent" | "emerald" | "orange";
 export type BlogCategory = "Vitamines" | "Minéraux" | "Lipides" | "Cognition & Sport";
 
@@ -77,6 +82,7 @@ export interface BlogPost {
   readingMinutes: number;
   pdfPath: string;           // /blog/<slug>.pdf
   ogImage: string;           // first chart, used for OG
+  coverImage: string;        // editorial cover (imported asset)
   lead: string;              // italic intro paragraph
   stats: [StatItem, StatItem, StatItem];
   body: ContentBlock[];

@@ -1,4 +1,4 @@
-import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise, SignIn, Lock, Crown } from '@phosphor-icons/react';
+import { Sparkle, PencilSimple, ChatCircleDots, ArrowRight, CircleNotch, ArrowClockwise, SignIn, Lock, Crown, CaretDown, CaretUp } from '@phosphor-icons/react';
 import { EnrichedProductData } from './types';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';

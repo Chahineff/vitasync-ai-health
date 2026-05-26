@@ -50,6 +50,7 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
   // Check if analysis already exists
   useEffect(() => {
     if (!user || !productHandle) return;
+    setExpanded(false);
     const fetchExisting = async () => {
       const { data } = await supabase
         .from('product_compatibility_analyses' as any)
@@ -61,6 +62,10 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
         setScore((data as any).compatibility_score);
         setInsight((data as any).insight_text);
         setAnalysisState('done');
+      } else {
+        setScore(null);
+        setInsight(null);
+        setAnalysisState('idle');
       }
     };
     fetchExisting();

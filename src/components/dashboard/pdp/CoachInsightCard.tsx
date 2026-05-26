@@ -80,6 +80,7 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
       toast.error("VitaSync Insight est réservé aux abonnements Go AI et Premium AI");
       return;
     }
+    setExpanded(false);
     setAnalysisState('loading');
     try {
       const res = await supabase.functions.invoke('product-compatibility', {

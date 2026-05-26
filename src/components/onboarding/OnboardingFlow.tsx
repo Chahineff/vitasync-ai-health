@@ -53,7 +53,7 @@ const questions: OnboardingQuestion[] = [
   {
     id: "shipping_country",
     title: "Où souhaites-tu recevoir tes compléments ?",
-    subtitle: "Nous livrons dans le monde entier. Sélectionne ton pays pour adapter le catalogue et les frais de livraison.",
+    subtitle: "VitaSync livre uniquement aux États-Unis (Supliful, 48 États contigus + AK/HI). Sélectionne ton État.",
     type: "country",
     required: true,
   },
@@ -707,8 +707,11 @@ export function OnboardingFlow() {
   };
 
   const handleCountryChange = (code: string, country: Country) => {
+    // The selector only emits US states. Persist shipping_country as the
+    // ISO country code "US" (Supliful ships to the US only) and keep the
+    // chosen state in shipping_state for UX / future shipping logic.
     setSelectedCountry(country);
-    setAnswers({ ...answers, shipping_country: code });
+    setAnswers({ ...answers, shipping_country: "US", shipping_state: code });
   };
 
   const handleBudgetPresetChange = (preset: string) => {
@@ -735,7 +738,7 @@ export function OnboardingFlow() {
     const q = question;
     if (!q.required) return true;
     if (q.type === "yesno") return answers[q.id] === "yes" || answers[q.id] === "no";
-    if (q.type === "country") return !!answers.shipping_country;
+    if (q.type === "country") return !!answers.shipping_state;
     if (q.type === "multi" || q.type === "multi-doses") {
       const arr = answers[q.id];
       return Array.isArray(arr) && arr.length > 0;
@@ -768,7 +771,8 @@ export function OnboardingFlow() {
 
         const formattedAnswers: Partial<HealthProfile> = {
           is_adult: true,
-          shipping_country: answers.shipping_country,
+          // US-only market: always persist "US" regardless of selector state.
+          shipping_country: "US",
           health_goals: answers.health_goals || [],
           activity_level: derivedActivityLevel,
           sport_types: derivedSportTypes,
@@ -1209,7 +1213,8 @@ export function OnboardingFlow() {
 
     // Budget
     if (q.type === "budget") {
-      const currency = selectedCountry?.currency || "EUR";
+      // US-only market: budget UI is always in USD.
+      const currency = "USD";
       return (
         <BudgetSlider
           currency={currency}

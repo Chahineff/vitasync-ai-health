@@ -77,7 +77,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Qualité Certifiée",
     "hero.card4Sub": "Transparence totale",
     "hero.card4Desc": "Chaque complément recommandé est testé en laboratoire indépendant. Formules clean, sans additifs inutiles.",
-    "hero.card4Date": "Garanti sans risque",
+    "hero.card4Date": "Annulable à tout moment",
 
     "features.title": "Une IA qui",
     "features.titleHighlight": "comprend vraiment",
@@ -117,11 +117,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "Comment fonctionne le Journal Nutriments ?",
     "faq.a2": "Entrez le nom et la valeur des nutriments qui vous intéressent. Le coach IA de VitaSync partage des informations wellness générales sur ce nutriment — ce qu'il soutient, les facteurs de style de vie courants, et les compléments que des personnes avec des objectifs similaires explorent souvent. Ces informations sont éducatives uniquement. VitaSync n'analyse pas les documents médicaux et ne pose pas de diagnostic. Consultez toujours un professionnel de santé.",
     "faq.q3": "D'où viennent les compléments alimentaires ?",
-    "faq.a3": "Nos compléments sont fabriqués aux États-Unis dans des installations certifiées GMP (Bonnes Pratiques de Fabrication) via notre partenaire Supliful. Chaque lot est testé pour garantir pureté et efficacité. Nous privilégions les formes bioactives pour une absorption optimale.",
+    "faq.a3": "Nos compléments sont fabriqués aux États-Unis dans des installations certifiées GMP (Bonnes Pratiques de Fabrication) via notre partenaire Supliful. Chaque lot est testé pour la pureté et la qualité. Nous privilégions les formes bioactives pour une meilleure absorption.",
     "faq.q4": "Puis-je annuler mon abonnement à tout moment ?",
     "faq.a4": "Absolument. Vous pouvez annuler votre abonnement Premium IA ou votre abonnement compléments à tout moment depuis votre espace personnel. Aucun engagement, aucun frais caché.",
     "faq.q5": "L'IA peut-elle remplacer mon médecin ?",
-    "faq.a5": "Non. VitaSync est un outil d'accompagnement et de prévention, pas un substitut médical. Notre IA vous aide à mieux comprendre votre corps et à optimiser votre nutrition, mais elle ne pose pas de diagnostic. Pour toute question médicale, consultez un professionnel de santé.",
+    "faq.a5": "Non. VitaSync est un outil de soutien et d'éducation au bien-être, pas un substitut médical. Notre IA vous aide à mieux comprendre votre corps et à optimiser votre nutrition, mais elle ne pose pas de diagnostic. Pour toute question médicale, consultez un professionnel de santé.",
 
     // Features Section - Details
     "features.feature1.title": "Coach IA disponible 24/7",
@@ -1677,7 +1677,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Certified Quality",
     "hero.card4Sub": "Total transparency",
     "hero.card4Desc": "Every recommended supplement is independently lab-tested. Clean formulas, no unnecessary additives.",
-    "hero.card4Date": "Risk-free guaranteed",
+    "hero.card4Date": "Cancel anytime",
 
     "features.title": "An AI that",
     "features.titleHighlight": "truly understands",
@@ -1717,11 +1717,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "How does the wellness nutrient companion work?",
     "faq.a2": "Enter the name and value of nutrients you want to learn more about (e.g., Vitamin D: 25 ng/mL). VitaSync's AI will share general wellness information about that nutrient — what it supports, common lifestyle factors, and supplements people with similar wellness goals often explore. This is general educational information only. VitaSync does not read, interpret, or analyze medical documents, and does not provide medical diagnosis or treatment recommendations. Always consult a licensed healthcare professional for medical decisions.",
     "faq.q3": "Where do the supplements come from?",
-    "faq.a3": "Our supplements are manufactured in the United States in GMP-certified facilities through our partner Supliful. Each batch is tested to guarantee purity and efficacy. We favor bioactive forms for optimal absorption.",
+    "faq.a3": "Our supplements are manufactured in the United States in GMP-certified facilities through our partner Supliful. Each batch is tested for purity and quality. We favor bioactive forms to support absorption.",
     "faq.q4": "Can I cancel my subscription at any time?",
     "faq.a4": "Absolutely. You can cancel your AI Premium subscription or your supplement subscription at any time from your personal space. No commitment, no hidden fees.",
     "faq.q5": "Can the AI replace my doctor?",
-    "faq.a5": "No. VitaSync is a support and prevention tool, not a medical substitute. Our AI helps you better understand your body and optimize your nutrition, but it does not diagnose. For any medical questions, consult a healthcare professional.",
+    "faq.a5": "No. VitaSync is a wellness support and education tool, not a medical substitute. Our AI helps you better understand your body and optimize your nutrition, but it does not diagnose. For any medical questions, consult a healthcare professional.",
 
     // Features Section - Details
     "features.feature1.title": "AI Coach available 24/7",
@@ -3274,7 +3274,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Calidad Certificada",
     "hero.card4Sub": "Transparencia total",
     "hero.card4Desc": "Cada suplemento recomendado es probado en laboratorio independiente. Fórmulas limpias, sin aditivos innecesarios.",
-    "hero.card4Date": "Garantizado sin riesgo",
+    "hero.card4Date": "Cancela cuando quieras",
 
     "features.title": "Una IA que",
     "features.titleHighlight": "realmente entiende",
@@ -3314,11 +3314,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "¿Cómo funciona el Diario de Nutrientes de Bienestar?",
     "faq.a2": "Introduce el nombre y el valor de los nutrientes sobre los que quieres aprender más. La IA de VitaSync compartirá información general de bienestar sobre ese nutriente — qué apoya, factores comunes del estilo de vida y suplementos que personas con objetivos similares suelen explorar. Esta es información educativa general únicamente. VitaSync no lee, interpreta ni analiza documentos médicos, y no proporciona diagnóstico ni recomendaciones de tratamiento médico. Consulta siempre a un profesional de la salud autorizado para tomar decisiones médicas.",
     "faq.q3": "¿De dónde vienen los suplementos?",
-    "faq.a3": "Nuestros suplementos se fabrican en Estados Unidos en instalaciones certificadas GMP a través de nuestro socio Supliful. Cada lote es probado para garantizar pureza y eficacia.",
+    "faq.a3": "Nuestros suplementos se fabrican en Estados Unidos en instalaciones certificadas GMP a través de nuestro socio Supliful. Cada lote es probado para verificar su pureza y calidad.",
     "faq.q4": "¿Puedo cancelar mi suscripción en cualquier momento?",
     "faq.a4": "Absolutamente. Puedes cancelar tu suscripción en cualquier momento desde tu espacio personal. Sin compromiso, sin cargos ocultos.",
     "faq.q5": "¿Puede la IA reemplazar a mi médico?",
-    "faq.a5": "No. VitaSync es una herramienta de apoyo y prevención, no un sustituto médico. Para cualquier pregunta médica, consulta a un profesional de la salud.",
+    "faq.a5": "No. VitaSync es una herramienta de apoyo y educación al bienestar, no un sustituto médico. Para cualquier pregunta médica, consulta a un profesional de la salud.",
 
     // Features Details
     "features.feature1.title": "Coach IA disponible 24/7",
@@ -4797,7 +4797,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "جودة معتمدة",
     "hero.card4Sub": "شفافية كاملة",
     "hero.card4Desc": "كل مكمل موصى به يتم اختباره في مختبر مستقل. تركيبات نظيفة بدون إضافات غير ضرورية.",
-    "hero.card4Date": "مضمونة بدون مخاطر",
+    "hero.card4Date": "إلغاء في أي وقت",
 
     "features.title": "ذكاء اصطناعي",
     "features.titleHighlight": "يفهم حقاً",
@@ -4837,11 +4837,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "كيف يعمل مرافق المغذيات للعافية؟",
     "faq.a2": "أدخل اسم وقيمة المغذيات التي تريد معرفة المزيد عنها. سيشارك الذكاء الاصطناعي من VitaSync معلومات عافية عامة حول ذلك المغذي — ما الذي يدعمه، وعوامل نمط الحياة الشائعة، والمكملات التي يستكشفها الأشخاص ذوو الأهداف الصحية المماثلة. هذه معلومات تعليمية عامة فقط. لا يقرأ VitaSync أو يفسر أو يحلل الوثائق الطبية، ولا يقدم تشخيصاً طبياً أو توصيات علاجية. استشر دائماً متخصصاً مرخصاً في الرعاية الصحية لاتخاذ القرارات الطبية.",
     "faq.q3": "من أين تأتي المكملات؟",
-    "faq.a3": "مكملاتنا مصنوعة في الولايات المتحدة في مرافق معتمدة GMP عبر شريكنا Supliful. كل دفعة يتم اختبارها لضمان النقاء والفعالية.",
+    "faq.a3": "مكملاتنا مصنوعة في الولايات المتحدة في مرافق معتمدة GMP عبر شريكنا Supliful. كل دفعة يتم اختبارها للتحقق من النقاء والجودة.",
     "faq.q4": "هل يمكنني إلغاء اشتراكي في أي وقت؟",
     "faq.a4": "بالطبع. يمكنك إلغاء اشتراكك في أي وقت من مساحتك الشخصية. بدون التزام، بدون رسوم خفية.",
     "faq.q5": "هل يمكن للذكاء الاصطناعي أن يحل محل طبيبي؟",
-    "faq.a5": "لا. VitaSync أداة دعم ووقاية وليس بديلاً طبياً. لأي سؤال طبي، استشر أخصائي رعاية صحية.",
+    "faq.a5": "لا. VitaSync أداة دعم وتثقيف بشأن العافية، وليس بديلاً طبياً. لأي سؤال طبي، استشر أخصائي رعاية صحية.",
 
     // Features Details
     "features.feature1.title": "مدرب ذكاء اصطناعي متاح 24/7",
@@ -6319,7 +6319,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "认证质量",
     "hero.card4Sub": "完全透明",
     "hero.card4Desc": "每种推荐的补充剂均经独立实验室检测。纯净配方，无不必要添加剂。",
-    "hero.card4Date": "零风险保证",
+    "hero.card4Date": "随时取消",
 
     "features.title": "真正",
     "features.titleHighlight": "理解",
@@ -6359,11 +6359,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "健康营养素助手如何工作？",
     "faq.a2": "输入您想了解的营养素的名称和数值。VitaSync的AI将分享有关该营养素的一般健康信息——它支持什么、常见的生活方式因素，以及具有相似健康目标的人们常常探索的补充剂。这仅是一般教育信息。VitaSync不会读取、解读或分析医疗文件，也不提供医疗诊断或治疗建议。如需做出医疗决策，请始终咨询持证医疗专业人士。",
     "faq.q3": "补充剂来自哪里？",
-    "faq.a3": "我们的补充剂在美国GMP认证设施中通过合作伙伴Supliful生产。每批次都经过测试以保证纯度和功效。",
+    "faq.a3": "我们的补充剂在美国GMP认证设施中通过合作伙伴Supliful生产。每批次都经过纯度和质量测试。",
     "faq.q4": "我可以随时取消订阅吗？",
     "faq.a4": "当然。您可以随时从个人空间取消订阅。无承诺，无隐藏费用。",
     "faq.q5": "AI能替代我的医生吗？",
-    "faq.a5": "不能。VitaSync是支持和预防工具，不是医疗替代品。如有医疗问题，请咨询医疗专业人员。",
+    "faq.a5": "不能。VitaSync 是健康支持和教育工具，不是医疗替代品。如有医疗问题，请咨询医疗专业人员。",
 
     // Features Details
     "features.feature1.title": "AI教练全天候在线",
@@ -7841,7 +7841,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Qualidade Certificada",
     "hero.card4Sub": "Transparência total",
     "hero.card4Desc": "Cada suplemento recomendado é testado em laboratório independente. Fórmulas limpas, sem aditivos desnecessários.",
-    "hero.card4Date": "Garantido sem risco",
+    "hero.card4Date": "Cancele a qualquer momento",
 
     "features.title": "Uma IA que",
     "features.titleHighlight": "realmente entende",
@@ -7881,11 +7881,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q2": "Como funciona o Diário de Nutrientes de Bem-Estar?",
     "faq.a2": "Digite o nome e o valor dos nutrientes sobre os quais você quer aprender mais. A IA da VitaSync compartilhará informações gerais de bem-estar sobre esse nutriente — o que ele apoia, fatores comuns de estilo de vida, e suplementos que pessoas com objetivos semelhantes costumam explorar. Estas são informações educativas gerais apenas. A VitaSync não lê, interpreta ou analisa documentos médicos, e não fornece diagnóstico ou recomendações de tratamento médico. Sempre consulte um profissional de saúde licenciado para decisões médicas.",
     "faq.q3": "De onde vêm os suplementos?",
-    "faq.a3": "Nossos suplementos são fabricados nos Estados Unidos em instalações certificadas GMP através do nosso parceiro Supliful. Cada lote é testado para garantir pureza e eficácia.",
+    "faq.a3": "Nossos suplementos são fabricados nos Estados Unidos em instalações certificadas GMP através do nosso parceiro Supliful. Cada lote é testado quanto à pureza e qualidade.",
     "faq.q4": "Posso cancelar minha assinatura a qualquer momento?",
     "faq.a4": "Absolutamente. Você pode cancelar sua assinatura a qualquer momento no seu espaço pessoal. Sem compromisso, sem taxas ocultas.",
     "faq.q5": "A IA pode substituir meu médico?",
-    "faq.a5": "Não. O VitaSync é uma ferramenta de apoio e prevenção, não um substituto médico. Para qualquer questão médica, consulte um profissional de saúde.",
+    "faq.a5": "Não. O VitaSync é uma ferramenta de apoio e educação ao bem-estar, não um substituto médico. Para qualquer questão médica, consulte um profissional de saúde.",
 
     // Features Details
     "features.feature1.title": "Coach IA disponível 24/7",

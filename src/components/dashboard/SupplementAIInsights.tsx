@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Brain, ArrowClockwise, SpinnerGap, TrendUp, Star, Lightning } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
 
 interface SupplementReview {

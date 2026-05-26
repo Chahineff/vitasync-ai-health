@@ -1,7 +1,15 @@
 import { useState, useMemo } from "react";
 import { Check, MagnifyingGlass } from "@phosphor-icons/react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
+/**
+ * VitaSync ships to the United States only (Supliful, 48 contiguous states).
+ * The onboarding "Where do you want to receive your supplements?" step is
+ * therefore locked to US: this component is a US-state selector, not a
+ * worldwide country picker. The `Country` type and `countries` export are
+ * kept for backwards compatibility with callers that destructure them.
+ */
 interface Country {
   code: string;
   name: string;

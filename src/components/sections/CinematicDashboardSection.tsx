@@ -12,6 +12,8 @@ import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 
 import dashboardLight from "@/assets/dashboard-preview-light.png";
 import dashboardDark from "@/assets/dashboard-preview-dark.png";
+import dashboardMobileLight from "@/assets/dashboard-mobile-light.png";
+import dashboardMobileDark from "@/assets/dashboard-mobile-dark.png";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -217,6 +219,7 @@ export const CinematicDashboardSection = () => {
   const { resolvedTheme } = useTheme();
   const isMobile = useIsMobile();
   const dashboardSrc = resolvedTheme === "dark" ? dashboardDark : dashboardLight;
+  const dashboardMobileSrc = resolvedTheme === "dark" ? dashboardMobileDark : dashboardMobileLight;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mainCardRef = useRef<HTMLDivElement>(null);

@@ -32,10 +32,10 @@ export function GeoRestrictionOverlay() {
           VitaSync currently ships supplements to the United States only. Our services are not yet available in your region.
         </p>
         <a
-          href="mailto:contact@vitasync.ai"
+          href="/availability"
           className="inline-flex items-center justify-center rounded-lg bg-primary text-primary-foreground px-6 py-2.5 font-medium hover:opacity-90 transition"
         >
-          Learn more
+          Learn more & join waitlist
         </a>
         <div className="mt-6">
           <button

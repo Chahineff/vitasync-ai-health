@@ -46,6 +46,10 @@ export function DailyCheckin({ onComplete }: DailyCheckinProps) {
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
+    if (showCheckinModal) {
+      // Always restart from step 0 when opening (edit or new)
+      setStep(0);
+    }
     if (todayCheckin && showCheckinModal) {
       setSleepQuality(todayCheckin.sleep_quality || 3);
       setEnergyLevel(todayCheckin.energy_level || 3);

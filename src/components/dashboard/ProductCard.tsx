@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCartSimple, Star, Check, SpinnerGap } from '@phosphor-icons/react';
 import { ShopifyProduct } from '@/lib/shopify';
@@ -15,13 +15,18 @@ interface ProductCardProps {
 
 export function ProductCard({ product, recommendedByAI = false, onProductClick }: ProductCardProps) {
   const { t } = useTranslation();
-  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const { node } = product;
+  const variants = node.variants.edges;
+  // Preselect first AVAILABLE variant (fall back to 0 if none available)
+  const initialIdx = useMemo(() => {
+    const idx = variants.findIndex(v => v.node.availableForSale);
+    return idx >= 0 ? idx : 0;
+  }, [variants]);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(initialIdx);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const addItem = useCartStore(state => state.addItem);
 
-  const { node } = product;
-  const variants = node.variants.edges;
   const selectedVariant = variants[selectedVariantIndex]?.node;
   const mainImage = node.images.edges[0]?.node;
   const price = selectedVariant?.price || node.priceRange.minVariantPrice;

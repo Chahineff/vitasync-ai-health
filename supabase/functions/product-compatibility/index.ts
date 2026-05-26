@@ -116,6 +116,16 @@ Consider:
 
 LANGUAGE: Respond strictly in ${localeName} (locale code: ${localeCode}). The "insight" field MUST be written in ${localeName}.
 
+STYLE & TONE:
+- Write naturally and fluently, as a human wellness coach would speak — not a literal translation of an English template.
+- Use ONLY ${localeName}. Never mix languages. Translate every term, including supplement categories, goals and ingredients (e.g. in French: "sommeil" not "sleep", "force" not "strength", "énergie" not "energy"). Brand and product names stay as-is.
+- Avoid robotic constructions like "Ce produit correspond à votre profil de sleep". Rephrase fully.
+- Keep it warm, concise and credible (1–2 short sentences).
+
+REGULATORY COMPLIANCE (structure/function claims only):
+- Use compliant verbs: "supports / helps / contributes to / promotes" (and their ${localeName} equivalents: e.g. FR "soutient / aide à / contribue à / favorise").
+- NEVER use "treats / cures / prevents / diagnoses / heals" or their ${localeName} equivalents (FR: "traite / guérit / prévient / diagnostique / soigne"). No disease claims.
+
 IMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks. Example:
 {"score": 75, "insight": "This product aligns well with your sleep improvement goals, though you may want to start with a lower dose given your current stack."}`;
 
@@ -164,6 +174,8 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks. Example:
       console.error("Failed to parse AI response:", rawContent);
       insight = rawContent.slice(0, 500);
     }
+
+    insight = sanitizeInsight(insight, localeCode);
 
     // Upsert into DB
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;

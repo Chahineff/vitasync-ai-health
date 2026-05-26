@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingCartSimple, SpinnerGap, Check, Repeat, CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
@@ -15,7 +15,13 @@ interface QuickViewModalProps {
 
 export function QuickViewModal({ group, onClose, onViewFull }: QuickViewModalProps) {
   const { t } = useTranslation();
-  const [selectedIdx, setSelectedIdx] = useState(0);
+  // Preselect first AVAILABLE flavor
+  const initialIdx = useMemo(() => {
+    if (!group) return 0;
+    const idx = group.products.findIndex(p => p.node.variants.edges[0]?.node.availableForSale);
+    return idx >= 0 ? idx : 0;
+  }, [group]);
+  const [selectedIdx, setSelectedIdx] = useState(initialIdx);
   const [imageIdx, setImageIdx] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);

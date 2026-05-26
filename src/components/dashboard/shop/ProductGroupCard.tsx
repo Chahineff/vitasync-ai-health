@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCartSimple, Star, Check, SpinnerGap, Repeat, Eye, Heart, Tag } from '@phosphor-icons/react';
 import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
@@ -24,20 +24,26 @@ function NoReviewsYet({ label }: { label: string }) {
 
 export function ProductGroupCard({ group, recommendedByAI = false, onProductClick, onQuickView, isFavorite = false, onToggleFavorite }: ProductGroupCardProps) {
   const { t } = useTranslation();
-  const [selectedProductIndex, setSelectedProductIndex] = useState(0);
+  const { products, baseTitle, flavors } = group;
+  // Preselect first AVAILABLE flavor (fall back to 0 if none available)
+  const initialIdx = useMemo(() => {
+    const idx = products.findIndex(p => p.node.variants.edges[0]?.node.availableForSale);
+    return idx >= 0 ? idx : 0;
+  }, [products]);
+  const [selectedProductIndex, setSelectedProductIndex] = useState(initialIdx);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [addingMode, setAddingMode] = useState<'sub' | 'once' | null>(null);
   const [justAdded, setJustAdded] = useState<'sub' | 'once' | null>(null);
   const [hoveredBtn, setHoveredBtn] = useState<'sub' | 'once' | null>(null);
   const addItem = useCartStore(state => state.addItem);
 
-  const { products, baseTitle, flavors } = group;
   const hasMultipleFlavors = flavors.length > 1;
   const displayIndex = hoveredIndex !== null ? hoveredIndex : selectedProductIndex;
   const displayProduct = products[displayIndex];
   const mainImage = displayProduct.node.images.edges[0]?.node;
   const selectedVariant = displayProduct.node.variants.edges[0]?.node;
   const price = selectedVariant?.price || displayProduct.node.priceRange.minVariantPrice;
+  const canPurchase = !!selectedVariant?.availableForSale;
 
   // Subscription info
   const plan = getFirstSellingPlan(displayProduct);

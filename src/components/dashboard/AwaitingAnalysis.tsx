@@ -29,7 +29,7 @@ export const AwaitingAnalysis = ({ title, onStartDiagnostic }: AwaitingAnalysisP
         <div>
           <h3 className="text-base font-medium tracking-tight text-foreground">{title}</h3>
           <p className="text-xs text-foreground/50 font-light">
-            Discutez avec le Coach IA pour des recommandations
+            Sélection éditoriale — non personnalisée
           </p>
         </div>
       </div>

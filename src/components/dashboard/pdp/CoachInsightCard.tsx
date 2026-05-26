@@ -45,6 +45,7 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
   const [analysisState, setAnalysisState] = useState<'idle' | 'loading' | 'done'>('idle');
   const [score, setScore] = useState<number | null>(null);
   const [insight, setInsight] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   // Check if analysis already exists
   useEffect(() => {

@@ -218,7 +218,25 @@ export function CoachInsightCard({ enrichedData, productTitle, productHandle, on
           )}
 
           {isAnalyzed && insight && (
-            <p className="text-sm text-foreground/60 font-light leading-relaxed line-clamp-3">{insight}</p>
+            <div className="space-y-2">
+              <p className={`text-sm text-foreground/60 font-light leading-relaxed ${expanded ? '' : 'line-clamp-3'}`}>{insight}</p>
+              <button
+                onClick={() => setExpanded(v => !v)}
+                className="flex items-center gap-1 text-xs font-medium text-secondary hover:text-primary transition-colors"
+              >
+                {expanded ? (
+                  <>
+                    {t('common.showLess')}
+                    <CaretUp weight="bold" className="w-3 h-3" />
+                  </>
+                ) : (
+                  <>
+                    {t('common.readMore')}
+                    <CaretDown weight="bold" className="w-3 h-3" />
+                  </>
+                )}
+              </button>
+            </div>
           )}
 
           <div className="flex items-center gap-3 pt-2">

@@ -144,6 +144,8 @@ export function SupplementTrackerEnhanced() {
   const [prevTab, setPrevTab] = useState('day');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importing, setImporting] = useState(false);
   const prevProgressRef = useRef(0);
   const { 
     supplements, loading, toggleSupplementTaken, isSupplementTakenToday,
@@ -153,6 +155,53 @@ export function SupplementTrackerEnhanced() {
 
   const shopifyIds = supplements.map(s => s.shopify_product_id);
   const { getProduct, loading: resolving } = useShopifyProductResolver(shopifyIds);
+
+  // ─── Recommended (from AI cache) not yet in tracking ───
+  type CachedReco = { handle: string; title: string; productType?: string };
+  const recommendedNotTracked = useMemo<CachedReco[]>(() => {
+    if (loading) return [];
+    try {
+      const raw = localStorage.getItem('vitasync_ai_recommendations');
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as { products?: CachedReco[] } | null;
+      const cached = parsed?.products || [];
+      if (!cached.length) return [];
+      const trackedNames = new Set(
+        supplements.map((s) => (s.product_name || '').toLowerCase().trim())
+      );
+      return cached.filter(
+        (p) => p?.title && !trackedNames.has(p.title.toLowerCase().trim())
+      );
+    } catch {
+      return [];
+    }
+  }, [supplements, loading]);
+
+  const handleImportRecommended = async () => {
+    if (recommendedNotTracked.length === 0) return;
+    setImporting(true);
+    let added = 0;
+    for (const reco of recommendedNotTracked) {
+      const { error } = await addSupplement({
+        product_name: reco.title,
+        shopify_product_id: reco.handle, // handle used as identifier — resolver tolerates
+        dosage: null,
+        time_of_day: 'morning',
+        recommended_by_ai: true,
+        active: true,
+      });
+      if (!error) added += 1;
+    }
+    setImporting(false);
+    setShowImportDialog(false);
+    toast({
+      title: added > 0 ? '✅ Compléments ajoutés au suivi' : 'Aucun complément ajouté',
+      description:
+        added > 0
+          ? `${added} recommandation${added > 1 ? 's' : ''} ajoutée${added > 1 ? 's' : ''} à ton suivi quotidien.`
+          : "Une erreur s'est produite. Réessaie plus tard.",
+    });
+  };
 
   // Trigger confetti when reaching 100%
   useEffect(() => {

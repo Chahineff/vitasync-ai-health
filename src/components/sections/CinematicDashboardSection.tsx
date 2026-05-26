@@ -496,9 +496,10 @@ export const CinematicDashboardSection = () => {
                 <div className="hardware-btn absolute -left-[3px] top-[30%] w-[3px] h-[55px] rounded-l-sm" />
                 <div className="relative w-full h-full rounded-[2.2rem] overflow-hidden bg-black">
                   <img
-                    src={dashboardSrc}
-                    alt="VitaSync Dashboard"
-                    className="w-full h-full object-cover object-left-top"
+                    src={dashboardMobileSrc}
+                    alt="VitaSync mobile dashboard"
+                    className="w-full h-full object-cover object-top"
+                    loading="lazy"
                   />
                   <div className="screen-glare absolute inset-0 z-20 pointer-events-none" />
                 </div>

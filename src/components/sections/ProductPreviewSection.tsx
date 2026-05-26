@@ -9,6 +9,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 import dashboardLight from "@/assets/dashboard-preview-light.png";
 import dashboardDark from "@/assets/dashboard-preview-dark.png";
+import dashboardMobileLight from "@/assets/dashboard-mobile-light.png";
+import dashboardMobileDark from "@/assets/dashboard-mobile-dark.png";
 
 export const ProductPreviewSection = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -17,6 +19,7 @@ export const ProductPreviewSection = () => {
   const isMobile = useIsMobile();
 
   const dashboardSrc = resolvedTheme === "dark" ? dashboardDark : dashboardLight;
+  const dashboardMobileSrc = resolvedTheme === "dark" ? dashboardMobileDark : dashboardMobileLight;
 
   return (
     <section className="relative overflow-hidden bg-transparent mt-8 md:mt-16 lg:mt-24">
@@ -49,9 +52,10 @@ export const ProductPreviewSection = () => {
               {/* Notch */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-foreground/10 rounded-b-2xl z-10" />
               <img
-                src={dashboardSrc}
-                alt="Dashboard VitaSync mobile"
-                className="w-full h-full object-cover object-left-top"
+                src={dashboardMobileSrc}
+                alt="VitaSync mobile dashboard"
+                className="w-full h-full object-cover object-top"
+                loading="lazy"
               />
             </div>
             {/* CTA */}

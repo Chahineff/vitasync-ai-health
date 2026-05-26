@@ -354,6 +354,23 @@ CONFORMITÉ RÉGLEMENTAIRE (allégations structure/fonction uniquement):
       });
     }
 
+    // Post-process: enforce single-language + structure/function compliance.
+    if (insights && typeof insights === "object") {
+      if (typeof insights.regularity_comment === "string") {
+        insights.regularity_comment = sanitizeText(insights.regularity_comment, locale);
+      }
+      if (typeof insights.recommendations === "string") {
+        insights.recommendations = sanitizeText(insights.recommendations, locale);
+      }
+      if (Array.isArray(insights.supplement_reviews)) {
+        insights.supplement_reviews = insights.supplement_reviews.map((r: { name?: string; utility?: string; comment?: string }) => ({
+          ...r,
+          utility: typeof r.utility === "string" ? sanitizeText(r.utility, locale) : r.utility,
+          comment: typeof r.comment === "string" ? sanitizeText(r.comment, locale) : r.comment,
+        }));
+      }
+    }
+
     console.log("Returning insights successfully");
     return new Response(JSON.stringify({ insights }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

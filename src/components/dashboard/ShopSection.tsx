@@ -250,8 +250,11 @@ export const ShopSection = forwardRef<HTMLDivElement, ShopSectionProps>(function
   return (
     <div ref={ref} className="space-y-6">
       {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl mb-6 p-6 md:p-8 bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 border border-border/30">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_60%)]" />
+      <div className="relative rounded-2xl mb-6 p-6 md:p-8 bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 border border-border/30">
+        {/* Decorative bg — clipped to rounded corners without clipping dropdowns */}
+        <div className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_60%)]" />
+        </div>
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>

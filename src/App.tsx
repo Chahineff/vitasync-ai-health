@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { DailyCheckinProvider } from "@/hooks/useDailyCheckin";
 import { ThemeProvider } from "next-themes";
@@ -30,9 +31,7 @@ const Shop = lazy(() => import("./pages/Shop"));
 const ShopifyCallback = lazy(() => import("./pages/ShopifyCallback"));
 const Privacy = lazy(() => import("./pages/legal/Privacy"));
 const Terms = lazy(() => import("./pages/legal/Terms"));
-const LegalNotice = lazy(() => import("./pages/legal/LegalNotice"));
 const CookiesPage = lazy(() => import("./pages/legal/Cookies"));
-const CGV = lazy(() => import("./pages/legal/CGV"));
 const Disclaimer = lazy(() => import("./pages/legal/Disclaimer"));
 const Shipping = lazy(() => import("./pages/legal/Shipping"));
 const AdminImportResearch = lazy(() => import("./pages/AdminImportResearch"));
@@ -108,9 +107,9 @@ function AppContent() {
         <Route path="/shopify-callback" element={<ShopifyCallback />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
-        <Route path="/legal-notice" element={<LegalNotice />} />
+        <Route path="/legal-notice" element={<Navigate to="/terms" replace />} />
         <Route path="/cookies" element={<CookiesPage />} />
-        <Route path="/cgv" element={<CGV />} />
+        <Route path="/cgv" element={<Navigate to="/terms" replace />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/privacy-policy" element={<Privacy />} />

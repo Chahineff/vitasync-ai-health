@@ -1,5 +1,56 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.90.1";
 
+// Light QA pass on AI text:
+// - swap forbidden disease-claim verbs for compliant structure/function phrasing
+// - replace common untranslated English wellness terms when target locale isn't English
+function sanitizeText(text: string, locale: string): string {
+  if (!text || typeof text !== "string") return text;
+  let out = text;
+
+  const enClaims: Array<[RegExp, string]> = [
+    [/\bcures?\b/gi, "supports"],
+    [/\btreats?\b/gi, "helps support"],
+    [/\bprevents?\b/gi, "helps maintain"],
+    [/\bdiagnoses?\b/gi, "helps you understand"],
+    [/\bheals?\b/gi, "supports"],
+  ];
+  const frClaims: Array<[RegExp, string]> = [
+    [/\bgu[ée]rit\b/gi, "soutient"],
+    [/\bgu[ée]rir\b/gi, "soutenir"],
+    [/\btraite\b/gi, "aide à soutenir"],
+    [/\btraiter\b/gi, "aider à soutenir"],
+    [/\bpr[ée]vient\b/gi, "aide à maintenir"],
+    [/\bpr[ée]venir\b/gi, "aider à maintenir"],
+    [/\bdiagnostique\b/gi, "aide à comprendre"],
+    [/\bsoigne\b/gi, "soutient"],
+  ];
+  for (const [re, rep] of enClaims) out = out.replace(re, rep);
+  if (locale === "fr") for (const [re, rep] of frClaims) out = out.replace(re, rep);
+
+  if (locale !== "en") {
+    const dict: Record<string, Record<string, string>> = {
+      fr: {
+        sleep: "sommeil", energy: "énergie", stress: "stress", focus: "concentration",
+        recovery: "récupération", strength: "force", immunity: "immunité",
+        mood: "humeur", "gut health": "santé digestive", digestion: "digestion",
+        skin: "peau", hair: "cheveux", "weight loss": "perte de poids",
+        performance: "performance", workout: "entraînement", stack: "routine",
+        "very useful": "très utile", useful: "utile", moderate: "modéré",
+        "to reconsider": "à reconsidérer",
+      },
+    };
+    const d = dict[locale];
+    if (d) {
+      for (const [en, tr] of Object.entries(d)) {
+        const re = new RegExp(`\\b${en}\\b`, "gi");
+        out = out.replace(re, tr);
+      }
+    }
+  }
+
+  return out.replace(/\s{2,}/g, " ").trim();
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
@@ -166,6 +217,19 @@ INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse stru
 
 LANGUAGE: Respond strictly in ${localeName} (locale code: ${locale}). All text fields (regularity_comment, supplement_reviews[].utility, supplement_reviews[].comment, recommendations) MUST be written in ${localeName}.`;
 
+    const styleAddendum = `
+
+STYLE & TONE:
+- Écris de façon naturelle, fluide et humaine — pas une traduction littérale d'un template anglais.
+- Utilise UNIQUEMENT ${localeName}. Ne mélange jamais les langues. Traduis chaque terme (objectifs, catégories, ingrédients génériques). Garde uniquement les noms de marques/produits tels quels.
+- Reste chaleureux, crédible et concis.
+
+CONFORMITÉ RÉGLEMENTAIRE (allégations structure/fonction uniquement):
+- Utilise des verbes conformes : "soutient / aide à / contribue à / favorise" (ou leurs équivalents en ${localeName}).
+- N'utilise JAMAIS "traite / guérit / prévient / diagnostique / soigne" ni leurs équivalents. Pas d'allégation de maladie.`;
+
+    const finalSystemPrompt = systemPrompt + styleAddendum;
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       console.error("LOVABLE_API_KEY not configured");
@@ -186,7 +250,7 @@ LANGUAGE: Respond strictly in ${localeName} (locale code: ${locale}). All text f
       body: JSON.stringify({
         model: "google/gemini-2.5-flash-lite",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: finalSystemPrompt },
           { role: "user", content: "Analyse mes compléments et ma régularité de prise." },
         ],
         tools: [
@@ -288,6 +352,23 @@ LANGUAGE: Respond strictly in ${localeName} (locale code: ${locale}). All text f
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Post-process: enforce single-language + structure/function compliance.
+    if (insights && typeof insights === "object") {
+      if (typeof insights.regularity_comment === "string") {
+        insights.regularity_comment = sanitizeText(insights.regularity_comment, locale);
+      }
+      if (typeof insights.recommendations === "string") {
+        insights.recommendations = sanitizeText(insights.recommendations, locale);
+      }
+      if (Array.isArray(insights.supplement_reviews)) {
+        insights.supplement_reviews = insights.supplement_reviews.map((r: { name?: string; utility?: string; comment?: string }) => ({
+          ...r,
+          utility: typeof r.utility === "string" ? sanitizeText(r.utility, locale) : r.utility,
+          comment: typeof r.comment === "string" ? sanitizeText(r.comment, locale) : r.comment,
+        }));
+      }
     }
 
     console.log("Returning insights successfully");

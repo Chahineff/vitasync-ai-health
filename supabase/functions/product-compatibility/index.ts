@@ -1,5 +1,58 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// Light QA pass on AI output:
+// - swap forbidden disease-claim verbs for compliant structure/function phrasing
+// - replace common untranslated English wellness terms when the locale isn't English
+function sanitizeInsight(text: string, locale: string): string {
+  if (!text) return text;
+  let out = text;
+
+  // Regulatory: forbidden -> compliant. Order matters (longest first).
+  const enClaims: Array<[RegExp, string]> = [
+    [/\bcures?\b/gi, "supports"],
+    [/\bcured\b/gi, "supported"],
+    [/\btreats?\b/gi, "helps support"],
+    [/\btreated\b/gi, "supported"],
+    [/\bprevents?\b/gi, "helps maintain"],
+    [/\bdiagnoses?\b/gi, "helps you understand"],
+    [/\bheals?\b/gi, "supports"],
+  ];
+  const frClaims: Array<[RegExp, string]> = [
+    [/\bgu[ée]rit\b/gi, "soutient"],
+    [/\bgu[ée]rir\b/gi, "soutenir"],
+    [/\btraite\b/gi, "aide à soutenir"],
+    [/\btraiter\b/gi, "aider à soutenir"],
+    [/\bpr[ée]vient\b/gi, "aide à maintenir"],
+    [/\bpr[ée]venir\b/gi, "aider à maintenir"],
+    [/\bdiagnostique\b/gi, "aide à comprendre"],
+    [/\bsoigne\b/gi, "soutient"],
+  ];
+  for (const [re, rep] of enClaims) out = out.replace(re, rep);
+  if (locale === "fr") for (const [re, rep] of frClaims) out = out.replace(re, rep);
+
+  // Untranslated English wellness terms when target isn't English.
+  if (locale !== "en") {
+    const dict: Record<string, Record<string, string>> = {
+      fr: {
+        sleep: "sommeil", energy: "énergie", stress: "stress", focus: "concentration",
+        recovery: "récupération", strength: "force", immunity: "immunité",
+        mood: "humeur", "gut health": "santé digestive", digestion: "digestion",
+        skin: "peau", hair: "cheveux", "weight loss": "perte de poids",
+        performance: "performance", workout: "entraînement", stack: "routine",
+      },
+    };
+    const d = dict[locale];
+    if (d) {
+      for (const [en, tr] of Object.entries(d)) {
+        const re = new RegExp(`\\b${en}\\b`, "gi");
+        out = out.replace(re, tr);
+      }
+    }
+  }
+
+  return out.replace(/\s{2,}/g, " ").trim();
+}
+
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/vitasyncai\.lovable\.app$/,
   /^https:\/\/.*\.lovable\.app$/,
@@ -116,6 +169,16 @@ Consider:
 
 LANGUAGE: Respond strictly in ${localeName} (locale code: ${localeCode}). The "insight" field MUST be written in ${localeName}.
 
+STYLE & TONE:
+- Write naturally and fluently, as a human wellness coach would speak — not a literal translation of an English template.
+- Use ONLY ${localeName}. Never mix languages. Translate every term, including supplement categories, goals and ingredients (e.g. in French: "sommeil" not "sleep", "force" not "strength", "énergie" not "energy"). Brand and product names stay as-is.
+- Avoid robotic constructions like "Ce produit correspond à votre profil de sleep". Rephrase fully.
+- Keep it warm, concise and credible (1–2 short sentences).
+
+REGULATORY COMPLIANCE (structure/function claims only):
+- Use compliant verbs: "supports / helps / contributes to / promotes" (and their ${localeName} equivalents: e.g. FR "soutient / aide à / contribue à / favorise").
+- NEVER use "treats / cures / prevents / diagnoses / heals" or their ${localeName} equivalents (FR: "traite / guérit / prévient / diagnostique / soigne"). No disease claims.
+
 IMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks. Example:
 {"score": 75, "insight": "This product aligns well with your sleep improvement goals, though you may want to start with a lower dose given your current stack."}`;
 
@@ -164,6 +227,8 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks. Example:
       console.error("Failed to parse AI response:", rawContent);
       insight = rawContent.slice(0, 500);
     }
+
+    insight = sanitizeInsight(insight, localeCode);
 
     // Upsert into DB
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;

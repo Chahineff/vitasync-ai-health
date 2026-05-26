@@ -117,6 +117,7 @@ function AppContent() {
         <Route path="/terms-of-service" element={<Terms />} />
         <Route path="/refund-policy" element={<Shipping />} />
         <Route path="/shipping-policy" element={<Shipping />} />
+        <Route path="/admin/import-research" element={<AdminImportResearch />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

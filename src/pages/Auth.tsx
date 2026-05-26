@@ -334,11 +334,11 @@ const Auth = () => {
                 />
                 <label htmlFor="acceptTerms" className="text-sm text-foreground/70 leading-snug cursor-pointer">
                   {t("auth.acceptTermsLabel")}{" "}
-                  <Link to="/legal/terms" target="_blank" className="text-primary hover:underline">
+                  <Link to="/terms" target="_blank" className="text-primary hover:underline">
                     {t("auth.termsOfUse")}
                   </Link>
                   {" "}{t("auth.and")}{" "}
-                  <Link to="/legal/privacy" target="_blank" className="text-primary hover:underline">
+                  <Link to="/privacy" target="_blank" className="text-primary hover:underline">
                     {t("auth.privacyPolicy")}
                   </Link>
                   {" "}<span className="text-destructive">*</span>

@@ -552,7 +552,7 @@ const DashboardHome = ({
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.38 }}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SupplementTrackerEnhanced />
-        <AwaitingAnalysis title="Boutique" onStartDiagnostic={onGoToShop} />
+        <AwaitingAnalysis title="Découvrir la boutique" onStartDiagnostic={onGoToShop} />
       </div>
     </motion.div>
     <motion.div initial={{ opacity: 0, y: 20, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.46 }}>

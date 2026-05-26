@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { TestTube, ArrowRight, CheckCircle, Clock, WarningCircle } from '@phosphor-icons/react';
+import { TestTube, ArrowRight, CheckCircle, Clock, WarningCircle, ArrowClockwise } from '@phosphor-icons/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -25,21 +25,28 @@ export function AnalysesPreviewWidget({ onGoToAnalyses }: AnalysesPreviewWidgetP
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchAnalyses = useCallback(async () => {
     if (!user) { setLoading(false); return; }
-
-    supabase
+    setLoading(true);
+    setError(null);
+    const { data, error: err } = await supabase
       .from('blood_test_analyses')
       .select('id, file_name, status, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .limit(3)
-      .then(({ data, error }) => {
-        if (!error && data) setAnalyses(data);
-        setLoading(false);
-      });
+      .limit(3);
+    if (err) {
+      setError(err.message || 'Erreur de chargement');
+      setAnalyses([]);
+    } else {
+      setAnalyses(data || []);
+    }
+    setLoading(false);
   }, [user]);
+
+  useEffect(() => { fetchAnalyses(); }, [fetchAnalyses]);
 
   return (
     <motion.div
@@ -53,12 +60,22 @@ export function AnalysesPreviewWidget({ onGoToAnalyses }: AnalysesPreviewWidgetP
         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
           <TestTube weight="light" className="w-5 h-5 text-primary/60" />
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <h3 className="text-base font-medium tracking-tight text-foreground">Mes Analyses</h3>
           <p className="text-xs text-foreground/50 font-light">
-            {loading ? '...' : `${analyses.length} analyse${analyses.length !== 1 ? 's' : ''}`}
+            {loading ? 'Chargement…' : error ? 'Erreur de chargement' : `${analyses.length} analyse${analyses.length !== 1 ? 's' : ''}`}
           </p>
         </div>
+        {!loading && (
+          <button
+            onClick={fetchAnalyses}
+            className="p-2 rounded-lg text-foreground/50 hover:text-foreground hover:bg-muted/40 transition-all"
+            aria-label="Actualiser"
+            title="Actualiser"
+          >
+            <ArrowClockwise weight="bold" className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Content */}
@@ -68,6 +85,17 @@ export function AnalysesPreviewWidget({ onGoToAnalyses }: AnalysesPreviewWidgetP
             {[1, 2, 3].map(i => (
               <div key={i} className="h-10 rounded-xl bg-muted/30 animate-pulse" />
             ))}
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-full text-center py-6 gap-3">
+            <WarningCircle weight="duotone" className="w-10 h-10 text-destructive/70" />
+            <p className="text-sm text-foreground/60 font-light">{error}</p>
+            <button
+              onClick={fetchAnalyses}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-all"
+            >
+              <ArrowClockwise weight="bold" className="w-3.5 h-3.5" /> Réessayer
+            </button>
           </div>
         ) : analyses.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center py-6">

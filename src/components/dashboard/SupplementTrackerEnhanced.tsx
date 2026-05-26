@@ -144,6 +144,8 @@ export function SupplementTrackerEnhanced() {
   const [prevTab, setPrevTab] = useState('day');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importing, setImporting] = useState(false);
   const prevProgressRef = useRef(0);
   const { 
     supplements, loading, toggleSupplementTaken, isSupplementTakenToday,
@@ -153,6 +155,53 @@ export function SupplementTrackerEnhanced() {
 
   const shopifyIds = supplements.map(s => s.shopify_product_id);
   const { getProduct, loading: resolving } = useShopifyProductResolver(shopifyIds);
+
+  // ─── Recommended (from AI cache) not yet in tracking ───
+  type CachedReco = { handle: string; title: string; productType?: string };
+  const recommendedNotTracked = useMemo<CachedReco[]>(() => {
+    if (loading) return [];
+    try {
+      const raw = localStorage.getItem('vitasync_ai_recommendations');
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as { products?: CachedReco[] } | null;
+      const cached = parsed?.products || [];
+      if (!cached.length) return [];
+      const trackedNames = new Set(
+        supplements.map((s) => (s.product_name || '').toLowerCase().trim())
+      );
+      return cached.filter(
+        (p) => p?.title && !trackedNames.has(p.title.toLowerCase().trim())
+      );
+    } catch {
+      return [];
+    }
+  }, [supplements, loading]);
+
+  const handleImportRecommended = async () => {
+    if (recommendedNotTracked.length === 0) return;
+    setImporting(true);
+    let added = 0;
+    for (const reco of recommendedNotTracked) {
+      const { error } = await addSupplement({
+        product_name: reco.title,
+        shopify_product_id: reco.handle, // handle used as identifier — resolver tolerates
+        dosage: null,
+        time_of_day: 'morning',
+        recommended_by_ai: true,
+        active: true,
+      });
+      if (!error) added += 1;
+    }
+    setImporting(false);
+    setShowImportDialog(false);
+    toast({
+      title: added > 0 ? '✅ Compléments ajoutés au suivi' : 'Aucun complément ajouté',
+      description:
+        added > 0
+          ? `${added} recommandation${added > 1 ? 's' : ''} ajoutée${added > 1 ? 's' : ''} à ton suivi quotidien.`
+          : "Une erreur s'est produite. Réessaie plus tard.",
+    });
+  };
 
   // Trigger confetti when reaching 100%
   useEffect(() => {
@@ -247,6 +296,34 @@ export function SupplementTrackerEnhanced() {
                   <div className="mb-4">
                     <NextSlotBadge supplements={supplements} isSupplementTakenToday={isSupplementTakenToday} />
                   </div>
+                )}
+
+                {/* AI → Tracking bridge: import recommended supplements into the daily tracker. */}
+                {recommendedNotTracked.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-4 flex items-center gap-3 p-3 rounded-2xl bg-primary/5 border border-primary/20"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
+                      <Sparkle weight="fill" className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        {recommendedNotTracked.length} recommandation{recommendedNotTracked.length > 1 ? 's' : ''} IA non suivie{recommendedNotTracked.length > 1 ? 's' : ''}
+                      </p>
+                      <p className="text-[11px] text-foreground/50 font-light truncate">
+                        Ajoute-les à ton suivi quotidien en un clic.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowImportDialog(true)}
+                      className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:shadow-md hover:shadow-primary/20 transition-all flex items-center gap-1.5"
+                    >
+                      <Plus weight="bold" className="w-3.5 h-3.5" />
+                      Ajouter au suivi
+                    </button>
+                  </motion.div>
                 )}
 
                 {supplements.length === 0 ? (
@@ -345,6 +422,50 @@ export function SupplementTrackerEnhanced() {
         onClose={() => setShowAddModal(false)}
         onAdd={addSupplement}
       />
+
+      {/* Confirmation: import AI-recommended supplements into daily tracking */}
+      <AlertDialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Sparkle weight="fill" className="w-5 h-5 text-primary" />
+              Ajouter les recommandations IA à ton suivi
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <span className="block">
+                Ces compléments recommandés par le Coach IA seront ajoutés à ton
+                suivi quotidien (créneau «&nbsp;Matin&nbsp;» par défaut). Tu pourras
+                ajuster le dosage et l'heure ensuite.
+              </span>
+              {recommendedNotTracked.length > 0 && (
+                <span className="block max-h-40 overflow-auto rounded-lg bg-muted/40 border border-border/40 p-2 space-y-1">
+                  {recommendedNotTracked.map((r) => (
+                    <span key={r.handle} className="flex items-center gap-2 text-xs text-foreground/80">
+                      <Pill weight="duotone" className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                      <span className="truncate">{r.title}</span>
+                    </span>
+                  ))}
+                </span>
+              )}
+              <span className="block text-[11px] text-muted-foreground/80">
+                Cela ne déclenche aucun achat — uniquement le suivi.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={importing}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleImportRecommended();
+              }}
+              disabled={importing}
+            >
+              {importing ? 'Ajout…' : `Ajouter ${recommendedNotTracked.length}`}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Package, ArrowRight } from '@phosphor-icons/react';
+import { Package, ArrowRight, ArrowClockwise, WarningCircle } from '@phosphor-icons/react';
 import { useShopifyCustomer } from '@/hooks/useShopifyCustomer';
 import { formatPriceUSD } from '@/lib/utils';
 
@@ -20,7 +20,7 @@ interface MyStackPreviewWidgetProps {
  *   - dailyTracking      → supplement_tracking table (Supplement Tracking tab)
  */
 export function MyStackPreviewWidget({ onGoToStack }: MyStackPreviewWidgetProps) {
-  const { subscriptions, isLoading } = useShopifyCustomer();
+  const { subscriptions, isLoading, error, refresh } = useShopifyCustomer();
 
   const activeContract =
     subscriptions.find((s) => s.status === 'ACTIVE') ?? subscriptions[0] ?? null;
@@ -49,16 +49,30 @@ export function MyStackPreviewWidget({ onGoToStack }: MyStackPreviewWidgetProps)
         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
           <Package weight="light" className="w-5 h-5 text-primary/60" />
         </div>
-        <div>
-          <h3 className="text-base font-medium tracking-tight text-foreground">Mon Stack</h3>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-medium tracking-tight text-foreground">
+            {activeContract ? 'Dans ta prochaine box' : 'Mon Stack'}
+          </h3>
           <p className="text-xs text-foreground/50 font-light">
             {loading
-              ? '...'
+              ? 'Chargement…'
+              : error
+              ? 'Erreur de chargement'
               : activeContract
-              ? `${products.length} produit${products.length !== 1 ? 's' : ''} dans la prochaine box`
+              ? `${products.length} produit${products.length !== 1 ? 's' : ''} · source : ton abonnement`
               : 'Aucun abonnement actif'}
           </p>
         </div>
+        {!loading && (
+          <button
+            onClick={() => refresh()}
+            className="p-2 rounded-lg text-foreground/50 hover:text-foreground hover:bg-muted/40 transition-all"
+            aria-label="Actualiser"
+            title="Actualiser"
+          >
+            <ArrowClockwise weight="bold" className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Content */}
@@ -68,6 +82,17 @@ export function MyStackPreviewWidget({ onGoToStack }: MyStackPreviewWidgetProps)
             {[1, 2, 3].map(i => (
               <div key={i} className="h-10 rounded-xl bg-muted/30 animate-pulse" />
             ))}
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-full text-center py-6 gap-3">
+            <WarningCircle weight="duotone" className="w-10 h-10 text-destructive/70" />
+            <p className="text-sm text-foreground/60 font-light">{error}</p>
+            <button
+              onClick={() => refresh()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-all"
+            >
+              <ArrowClockwise weight="bold" className="w-3.5 h-3.5" /> Réessayer
+            </button>
           </div>
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center py-6">

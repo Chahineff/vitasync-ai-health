@@ -9298,7 +9298,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 };
 
 export function getTranslation(locale: Locale, key: string): string {
-  return translations[locale]?.[key] ?? translations['en']?.[key] ?? "";
+  // Fallback chain: active locale → English → key itself (never empty,
+  // never a different locale, so missing strings are visible in QA).
+  return translations[locale]?.[key] ?? translations['en']?.[key] ?? key;
 }
 
 export function detectBrowserLocale(): Locale {

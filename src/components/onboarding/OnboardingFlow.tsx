@@ -29,7 +29,7 @@ import {
   MoonStars, Egg, Fish, Nut,
 } from "@phosphor-icons/react";
 
-type QuestionType = "yesno" | "country" | "multi" | "single" | "single-bonus" | "slider-single" | "dual-slider" | "multi-doses" | "budget" | "optional-text" | "sport-builder";
+type QuestionType = "yesno" | "country" | "multi" | "single" | "single-bonus" | "slider-single" | "dual-slider" | "multi-doses" | "budget" | "optional-text" | "sport-builder" | "personal-info";
 
 interface OnboardingQuestion {
   id: string;
@@ -41,6 +41,10 @@ interface OnboardingQuestion {
   sliders?: { id: string; label: string; leftLabel: string; rightLabel: string }[];
   maxSelections?: number;
   required?: boolean;
+  /** Short "why we ask" microcopy displayed under the subtitle. */
+  why?: string;
+  /** Marks the step as containing sensitive health data — surfaces a consent line. */
+  sensitive?: boolean;
 }
 
 const iconCircle = (icon: ReactNode, bg: string) => (

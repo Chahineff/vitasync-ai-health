@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShoppingCartSimple,
@@ -56,7 +56,12 @@ export function ProductPurchaseBox({
 }: ProductPurchaseBoxProps) {
   const { t, locale } = useTranslation();
   const navigate = useNavigate();
-  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const variants = product.variants.edges;
+  const initialVariantIdx = useMemo(() => {
+    const idx = variants.findIndex(v => v.node.availableForSale);
+    return idx >= 0 ? idx : 0;
+  }, [variants]);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(initialVariantIdx);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [purchaseMode, setPurchaseMode] = useState<'once' | 'subscribe'>('subscribe');
@@ -65,7 +70,6 @@ export function ProductPurchaseBox({
   
   const addItem = useCartStore(state => state.addItem);
   
-  const variants = product.variants.edges;
   const selectedVariant = variants[selectedVariantIndex]?.node;
   const price = selectedVariant?.price || product.priceRange.minVariantPrice;
   const hasMultipleVariants = variants.length > 1;

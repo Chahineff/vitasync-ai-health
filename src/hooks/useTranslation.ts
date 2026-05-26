@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { translations, detectBrowserLocale, type Locale } from '@/lib/i18n';
+import { getTranslation, detectBrowserLocale, type Locale } from '@/lib/i18n';
 
 interface I18nStore {
   locale: Locale;
@@ -14,16 +14,17 @@ export const useI18n = create<I18nStore>()(
     (set, get) => ({
       locale: 'en' as Locale,
       initialized: false,
-      setLocale: () => set({ locale: 'en' as Locale }),
+      setLocale: (locale: Locale) => set({ locale }),
       initialize: () => {
         if (!get().initialized) {
-          set({ locale: 'en' as Locale, initialized: true });
+          const browserLocale = detectBrowserLocale();
+          set({ locale: browserLocale, initialized: true });
         }
       },
     }),
     { 
       name: 'vitasync-locale',
-      partialize: (state) => ({ locale: 'en' as Locale }),
+      partialize: (state) => ({ locale: state.locale }),
     }
   )
 );
@@ -37,7 +38,7 @@ export function useTranslation() {
   }
   
   const t = (key: string): string => {
-    return translations[locale]?.[key] || translations['en']?.[key] || key;
+    return getTranslation(locale, key);
   };
   
   return { t, locale, setLocale };

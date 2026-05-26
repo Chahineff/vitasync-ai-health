@@ -1,14 +1,10 @@
 export type Locale = 'fr' | 'en' | 'es' | 'ar' | 'zh' | 'pt';
 
-export const locales: Locale[] = ['fr', 'en', 'es', 'ar', 'zh', 'pt'];
+export const locales: Locale[] = ['fr', 'en'];
 
 export const languages = [
   { code: 'en' as Locale, label: 'English', flag: '🇬🇧' },
   { code: 'fr' as Locale, label: 'Français', flag: '🇫🇷' },
-  { code: 'es' as Locale, label: 'Español', flag: '🇪🇸' },
-  { code: 'ar' as Locale, label: 'العربية', flag: '🇸🇦' },
-  { code: 'zh' as Locale, label: '中文', flag: '🇨🇳' },
-  { code: 'pt' as Locale, label: 'Português', flag: '🇧🇷' },
 ];
 
 // Translations organized by namespace
@@ -9302,7 +9298,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 };
 
 export function getTranslation(locale: Locale, key: string): string {
-  return translations[locale]?.[key] || translations['en']?.[key] || key;
+  return translations[locale]?.[key] ?? translations['en']?.[key] ?? "";
 }
 
 export function detectBrowserLocale(): Locale {

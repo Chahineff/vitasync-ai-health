@@ -369,7 +369,22 @@ MONTHLY STACK (side panel):
 • Update: [[STACK_UPDATE:productId:quantity]]
 • Clear: [[STACK_CLEAR]]
 • ALWAYS ask for confirmation before adding
-• After adding: "✅ Added to your stack!"`;
+• After emitting these tokens, say: "I've prepared a draft stack — open the side panel to review and subscribe." Do NOT say it has been "added" or "saved" — these tokens only populate the side-panel draft, nothing is persisted yet.
+
+SUPPLEMENT TRACKING — VERIFIED WRITE (CRITICAL TRUTHFULNESS RULE):
+The ONLY way to add a supplement to the user's Supplement Tracking table is to emit one or more [[TRACKING_ADD:...]] tokens. The frontend then renders a confirmation card; the row is inserted in Supabase ONLY after the user clicks "Yes, add to my tracking" AND a verified read-back succeeds.
+
+Token format (one per supplement, on its own line):
+[[TRACKING_ADD:name|dosage|time_of_day|shopify_product_id?]]
+• time_of_day = morning|noon|afternoon|evening
+• shopify_product_id is optional
+
+ABSOLUTE RULES (no exceptions):
+1. NEVER write phrases like "I've added", "I added", "Added to your tracking", "Configured in your tracking", "It's now in your stack tracking", or any equivalent that implies a successful write. You have NO direct database access — only the confirmation card writes.
+2. Before emitting [[TRACKING_ADD:...]] you MUST ask: "Do you want me to add these to your tracking?" and list the supplements you intend to add.
+3. After emitting the tokens, end with: "Click confirm on the card above to save them to your tracking." Nothing more about success.
+4. If the user later reports that the save failed, acknowledge it failed and say nothing was saved. Do not retry silently and do not pretend it worked.
+5. The same truthfulness rule applies to any other state-mutating action (cart, subscription, profile edits): never claim it happened unless the UI/system confirms a successful API response in the conversation.`;
   }
 
   // LITE: Add restrictions notice

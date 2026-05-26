@@ -77,7 +77,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Qualité Certifiée",
     "hero.card4Sub": "Transparence totale",
     "hero.card4Desc": "Chaque complément recommandé est testé en laboratoire indépendant. Formules clean, sans additifs inutiles.",
-    "hero.card4Date": "Garanti sans risque",
+    "hero.card4Date": "Annulable à tout moment",
 
     "features.title": "Une IA qui",
     "features.titleHighlight": "comprend vraiment",
@@ -121,7 +121,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q4": "Puis-je annuler mon abonnement à tout moment ?",
     "faq.a4": "Absolument. Vous pouvez annuler votre abonnement Premium IA ou votre abonnement compléments à tout moment depuis votre espace personnel. Aucun engagement, aucun frais caché.",
     "faq.q5": "L'IA peut-elle remplacer mon médecin ?",
-    "faq.a5": "Non. VitaSync est un outil d'accompagnement et de prévention, pas un substitut médical. Notre IA vous aide à mieux comprendre votre corps et à optimiser votre nutrition, mais elle ne pose pas de diagnostic. Pour toute question médicale, consultez un professionnel de santé.",
+    "faq.a5": "Non. VitaSync est un outil de soutien et d'éducation au bien-être, pas un substitut médical. Notre IA vous aide à mieux comprendre votre corps et à optimiser votre nutrition, mais elle ne pose pas de diagnostic. Pour toute question médicale, consultez un professionnel de santé.",
 
     // Features Section - Details
     "features.feature1.title": "Coach IA disponible 24/7",
@@ -1677,7 +1677,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Certified Quality",
     "hero.card4Sub": "Total transparency",
     "hero.card4Desc": "Every recommended supplement is independently lab-tested. Clean formulas, no unnecessary additives.",
-    "hero.card4Date": "Risk-free guaranteed",
+    "hero.card4Date": "Cancel anytime",
 
     "features.title": "An AI that",
     "features.titleHighlight": "truly understands",
@@ -1721,7 +1721,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q4": "Can I cancel my subscription at any time?",
     "faq.a4": "Absolutely. You can cancel your AI Premium subscription or your supplement subscription at any time from your personal space. No commitment, no hidden fees.",
     "faq.q5": "Can the AI replace my doctor?",
-    "faq.a5": "No. VitaSync is a support and prevention tool, not a medical substitute. Our AI helps you better understand your body and optimize your nutrition, but it does not diagnose. For any medical questions, consult a healthcare professional.",
+    "faq.a5": "No. VitaSync is a wellness support and education tool, not a medical substitute. Our AI helps you better understand your body and optimize your nutrition, but it does not diagnose. For any medical questions, consult a healthcare professional.",
 
     // Features Section - Details
     "features.feature1.title": "AI Coach available 24/7",
@@ -3274,7 +3274,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Calidad Certificada",
     "hero.card4Sub": "Transparencia total",
     "hero.card4Desc": "Cada suplemento recomendado es probado en laboratorio independiente. Fórmulas limpias, sin aditivos innecesarios.",
-    "hero.card4Date": "Garantizado sin riesgo",
+    "hero.card4Date": "Cancela cuando quieras",
 
     "features.title": "Una IA que",
     "features.titleHighlight": "realmente entiende",
@@ -3318,7 +3318,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q4": "¿Puedo cancelar mi suscripción en cualquier momento?",
     "faq.a4": "Absolutamente. Puedes cancelar tu suscripción en cualquier momento desde tu espacio personal. Sin compromiso, sin cargos ocultos.",
     "faq.q5": "¿Puede la IA reemplazar a mi médico?",
-    "faq.a5": "No. VitaSync es una herramienta de apoyo y prevención, no un sustituto médico. Para cualquier pregunta médica, consulta a un profesional de la salud.",
+    "faq.a5": "No. VitaSync es una herramienta de apoyo y educación al bienestar, no un sustituto médico. Para cualquier pregunta médica, consulta a un profesional de la salud.",
 
     // Features Details
     "features.feature1.title": "Coach IA disponible 24/7",
@@ -4797,7 +4797,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "جودة معتمدة",
     "hero.card4Sub": "شفافية كاملة",
     "hero.card4Desc": "كل مكمل موصى به يتم اختباره في مختبر مستقل. تركيبات نظيفة بدون إضافات غير ضرورية.",
-    "hero.card4Date": "مضمونة بدون مخاطر",
+    "hero.card4Date": "إلغاء في أي وقت",
 
     "features.title": "ذكاء اصطناعي",
     "features.titleHighlight": "يفهم حقاً",
@@ -4841,7 +4841,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q4": "هل يمكنني إلغاء اشتراكي في أي وقت؟",
     "faq.a4": "بالطبع. يمكنك إلغاء اشتراكك في أي وقت من مساحتك الشخصية. بدون التزام، بدون رسوم خفية.",
     "faq.q5": "هل يمكن للذكاء الاصطناعي أن يحل محل طبيبي؟",
-    "faq.a5": "لا. VitaSync أداة دعم ووقاية وليس بديلاً طبياً. لأي سؤال طبي، استشر أخصائي رعاية صحية.",
+    "faq.a5": "لا. VitaSync أداة دعم وتثقيف بشأن العافية، وليس بديلاً طبياً. لأي سؤال طبي، استشر أخصائي رعاية صحية.",
 
     // Features Details
     "features.feature1.title": "مدرب ذكاء اصطناعي متاح 24/7",
@@ -6319,7 +6319,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "认证质量",
     "hero.card4Sub": "完全透明",
     "hero.card4Desc": "每种推荐的补充剂均经独立实验室检测。纯净配方，无不必要添加剂。",
-    "hero.card4Date": "零风险保证",
+    "hero.card4Date": "随时取消",
 
     "features.title": "真正",
     "features.titleHighlight": "理解",
@@ -6363,7 +6363,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q4": "我可以随时取消订阅吗？",
     "faq.a4": "当然。您可以随时从个人空间取消订阅。无承诺，无隐藏费用。",
     "faq.q5": "AI能替代我的医生吗？",
-    "faq.a5": "不能。VitaSync是支持和预防工具，不是医疗替代品。如有医疗问题，请咨询医疗专业人员。",
+    "faq.a5": "不能。VitaSync 是健康支持和教育工具，不是医疗替代品。如有医疗问题，请咨询医疗专业人员。",
 
     // Features Details
     "features.feature1.title": "AI教练全天候在线",
@@ -7841,7 +7841,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "hero.card4Title": "Qualidade Certificada",
     "hero.card4Sub": "Transparência total",
     "hero.card4Desc": "Cada suplemento recomendado é testado em laboratório independente. Fórmulas limpas, sem aditivos desnecessários.",
-    "hero.card4Date": "Garantido sem risco",
+    "hero.card4Date": "Cancele a qualquer momento",
 
     "features.title": "Uma IA que",
     "features.titleHighlight": "realmente entende",
@@ -7885,7 +7885,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     "faq.q4": "Posso cancelar minha assinatura a qualquer momento?",
     "faq.a4": "Absolutamente. Você pode cancelar sua assinatura a qualquer momento no seu espaço pessoal. Sem compromisso, sem taxas ocultas.",
     "faq.q5": "A IA pode substituir meu médico?",
-    "faq.a5": "Não. O VitaSync é uma ferramenta de apoio e prevenção, não um substituto médico. Para qualquer questão médica, consulte um profissional de saúde.",
+    "faq.a5": "Não. O VitaSync é uma ferramenta de apoio e educação ao bem-estar, não um substituto médico. Para qualquer questão médica, consulte um profissional de saúde.",
 
     // Features Details
     "features.feature1.title": "Coach IA disponível 24/7",

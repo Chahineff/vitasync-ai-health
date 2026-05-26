@@ -1213,7 +1213,8 @@ export function OnboardingFlow() {
 
     // Budget
     if (q.type === "budget") {
-      const currency = selectedCountry?.currency || "EUR";
+      // US-only market: budget UI is always in USD.
+      const currency = "USD";
       return (
         <BudgetSlider
           currency={currency}

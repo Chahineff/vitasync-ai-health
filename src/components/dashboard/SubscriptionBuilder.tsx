@@ -19,7 +19,8 @@ import {
   SUBSCRIPTION_DISCOUNT_RATE,
   DEFAULT_CYCLE_DAYS
 } from '@/lib/subscription-calculator';
-import { createSubscriptionCart } from '@/lib/shopify';
+import { checkoutConfirmedStack } from '@/lib/shopify';
+import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 
 interface SubscriptionBuilderProps {
@@ -36,17 +37,20 @@ export function SubscriptionBuilder({
   onClose 
 }: SubscriptionBuilderProps) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const clearDraftCart = useCartStore(state => state.clearCart);
 
   const handleCheckout = async () => {
     setIsCheckingOut(true);
     try {
+      // CONFIRMED STACK checkout: build a fresh Shopify cart from the
+      // confirmed lines only. Ad-hoc cart-draft items must NOT be included.
       const items = summary.lines.map(line => ({
         variantId: line.variantId,
         quantity: line.packsNeeded,
         sellingPlanId: line.sellingPlanId || undefined
       }));
 
-      const result = await createSubscriptionCart(items);
+      const result = await checkoutConfirmedStack(items, { clearDraftCart });
       
       if (result?.checkoutUrl) {
         window.open(result.checkoutUrl, '_blank');

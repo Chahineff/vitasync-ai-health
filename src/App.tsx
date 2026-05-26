@@ -35,6 +35,7 @@ const CookiesPage = lazy(() => import("./pages/legal/Cookies"));
 const CGV = lazy(() => import("./pages/legal/CGV"));
 const Disclaimer = lazy(() => import("./pages/legal/Disclaimer"));
 const Shipping = lazy(() => import("./pages/legal/Shipping"));
+const AdminImportResearch = lazy(() => import("./pages/AdminImportResearch"));
 
 const queryClient = new QueryClient();
 

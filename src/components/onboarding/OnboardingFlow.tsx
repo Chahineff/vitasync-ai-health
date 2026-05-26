@@ -88,6 +88,7 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Ajoute chaque sport et précise ta fréquence hebdomadaire",
     type: "sport-builder",
     required: false,
+    why: "Aide le coach à ajuster les apports (récupération, protéines, électrolytes).",
   },
   {
     id: "sleep",
@@ -189,8 +190,23 @@ const questions: OnboardingQuestion[] = [
     subtitle: "Prends-tu des médicaments ou as-tu une condition à connaître pour éviter des incompatibilités ?",
     type: "optional-text",
     required: false,
+    why: "Transmis uniquement à ton coach IA pour signaler d'éventuelles interactions. Tu peux laisser vide.",
+    sensitive: true,
   },
 ];
+
+// Optional personalization step — height, weight, biological sex, medical constraints.
+// Inserted before the free-text medications step.
+const personalInfoQuestion: OnboardingQuestion = {
+  id: "personal_info",
+  title: "Quelques infos pour personnaliser tes recommandations",
+  subtitle: "Toutes ces informations sont optionnelles. Tu peux passer cette étape.",
+  type: "personal-info",
+  required: false,
+  why: "Les apports recommandés (protéines, micronutriments) dépendent souvent du poids, de la taille et du sexe biologique. Plus c'est précis, plus le coach est juste.",
+  sensitive: true,
+};
+questions.splice(questions.length - 1, 0, personalInfoQuestion);
 
 // Medication question (uses custom rendering in renderQuestion)
 const medicationQuestion: OnboardingQuestion = {

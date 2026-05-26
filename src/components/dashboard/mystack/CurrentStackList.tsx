@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowsClockwise, Trash, Spinner, Package, Sun, Moon, Coffee, Sparkle, ArrowRight } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
@@ -23,36 +22,6 @@ interface CurrentStackListProps {
   customer: ReturnType<typeof useShopifyCustomer>;
 }
 
-const SUBSCRIPTION_LINES_QUERY = `
-  query {
-    customer {
-      orders(first: 1, sortKey: PROCESSED_AT, reverse: true) {
-        edges {
-          node {
-            id
-            lineItems(first: 20) {
-              edges {
-                node {
-                  title
-                  quantity
-                  image {
-                    url
-                    altText
-                  }
-                  discountedTotalPrice {
-                    amount
-                    currencyCode
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 const timeIcons: Record<string, typeof Sun> = {
   morning: Sun,
   afternoon: Coffee,
@@ -61,40 +30,27 @@ const timeIcons: Record<string, typeof Sun> = {
 
 export function CurrentStackList({ index, customer }: CurrentStackListProps) {
   const { t } = useTranslation();
-  const { isConnected, isLoading: customerLoading, executeQuery } = customer;
-  const [products, setProducts] = useState<StackProduct[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading: customerLoading, subscriptions } = customer;
 
-  useEffect(() => {
-    async function loadSubscriptionProducts() {
-      if (!isConnected) { setProducts([]); return; }
-      setIsLoading(true);
-      try {
-        const data = await executeQuery(SUBSCRIPTION_LINES_QUERY);
-        const orders = (data as any)?.data?.customer?.orders?.edges || [];
-        if (orders.length > 0) {
-          const latestOrder = orders[0].node;
-          const lineItems = latestOrder.lineItems.edges.map((edge: any) => edge.node);
-          setProducts(
-            lineItems.map((item: any, idx: number) => ({
-              id: `order-${idx}`,
-              name: item.title,
-              image: item.image?.url || '/placeholder.svg',
-              quantity: item.quantity,
-              price: formatPriceUSD(item.discountedTotalPrice.amount),
-            }))
-          );
-        }
-      } catch (err) {
-        console.error('Failed to fetch subscription lines:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadSubscriptionProducts();
-  }, [isConnected, executeQuery]);
+  // Single source of truth: the active subscription contract from
+  // useShopifyCustomer (Customer Account API → subscriptionContracts).
+  // We DO NOT derive "next box" from the cart, orders, or AI stack —
+  // those are separate states (see comment in useShopifyCustomer.tsx).
+  const activeContract =
+    subscriptions.find((s) => s.status === 'ACTIVE') ?? subscriptions[0] ?? null;
 
-  const loading = customerLoading || isLoading;
+  const products: StackProduct[] = activeContract
+    ? activeContract.lines.edges.map((edge) => ({
+        id: edge.node.id,
+        name: edge.node.title,
+        image: edge.node.variantImage?.url || '/placeholder.svg',
+        quantity: edge.node.quantity,
+        price: formatPriceUSD(edge.node.currentPrice.amount),
+        shopifyProductId: edge.node.productId,
+      }))
+    : [];
+
+  const loading = customerLoading;
 
   return (
     <motion.div

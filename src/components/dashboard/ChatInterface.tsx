@@ -111,8 +111,7 @@ export function ChatInterface({ onFirstMessage, onProductSelect }: ChatInterface
   const loadConversations = async () => {
     if (!user) return;
     const { getHistoryCutoffISO } = await import('@/lib/subscription-tier');
-    const { tier } = (await import('@/hooks/useSubscription'));
-    // Read current tier directly from DB-backed cache via a one-off query to avoid prop drilling
+    // Read current tier directly via a one-off query to avoid prop drilling
     let userTier: 'free' | 'go' | 'premium' = 'free';
     try {
       const { data: sub } = await supabase

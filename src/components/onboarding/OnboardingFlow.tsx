@@ -667,6 +667,10 @@ export function OnboardingFlow() {
         prefilled.budget_range = { min: healthProfile.budget_range_min, max: healthProfile.budget_range_max };
       }
       if (healthProfile.medications_notes) prefilled.medications_notes = healthProfile.medications_notes;
+      if (healthProfile.height_cm) prefilled.height_cm = healthProfile.height_cm;
+      if (healthProfile.weight_kg) prefilled.weight_kg = healthProfile.weight_kg;
+      if (healthProfile.biological_sex) prefilled.biological_sex = healthProfile.biological_sex;
+      if (healthProfile.medical_constraints?.length) prefilled.medical_constraints = healthProfile.medical_constraints;
       setAnswers(prefilled);
     }
   }, [isEditMode, healthProfile]);

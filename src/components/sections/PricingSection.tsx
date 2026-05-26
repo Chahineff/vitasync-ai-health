@@ -241,7 +241,18 @@ export function PricingSection() {
                         ))}
                       </ul>
                       <div className="h-px bg-border/50 mb-6" />
-                      <Link to="/auth?mode=signup" className={cn("w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300", plan.popular ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110" : "bg-muted hover:bg-muted/80 text-foreground border border-border/50")}>{plan.cta}</Link>
+                      {plan.priceId ? (
+                        <button
+                          type="button"
+                          disabled={checkoutLoading === plan.priceId}
+                          onClick={() => handleSubscribe(plan.priceId!)}
+                          className={cn("w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 disabled:opacity-70", plan.popular ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110" : "bg-muted hover:bg-muted/80 text-foreground border border-border/50")}
+                        >
+                          {checkoutLoading === plan.priceId ? "…" : plan.cta}
+                        </button>
+                      ) : (
+                        <Link to="/auth?mode=signup" className={cn("w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300", plan.popular ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110" : "bg-muted hover:bg-muted/80 text-foreground border border-border/50")}>{plan.cta}</Link>
+                      )}
                       <p className="text-[11px] text-muted-foreground/50 text-center mt-3">{plan.description}</p>
                     </div>
                   </GlowCard>
@@ -265,7 +276,18 @@ export function PricingSection() {
                       ))}
                     </ul>
                     <div className="h-px bg-border/50 mb-6" />
-                    <Link to="/auth?mode=signup" className="w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 bg-muted hover:bg-muted/80 text-foreground border border-border/50">{plan.cta}</Link>
+                    {plan.priceId ? (
+                      <button
+                        type="button"
+                        disabled={checkoutLoading === plan.priceId}
+                        onClick={() => handleSubscribe(plan.priceId!)}
+                        className="w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 bg-muted hover:bg-muted/80 text-foreground border border-border/50 disabled:opacity-70"
+                      >
+                        {checkoutLoading === plan.priceId ? "…" : plan.cta}
+                      </button>
+                    ) : (
+                      <Link to="/auth?mode=signup" className="w-full block text-center text-sm font-medium py-3.5 rounded-xl transition-all duration-300 bg-muted hover:bg-muted/80 text-foreground border border-border/50">{plan.cta}</Link>
+                    )}
                     <p className="text-[11px] text-muted-foreground/50 text-center mt-3">{plan.description}</p>
                   </div>
                 </GlowCard>

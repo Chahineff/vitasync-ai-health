@@ -35,6 +35,17 @@ Deno.serve(async (req) => {
 
     console.log("Authenticated user:", user.id);
 
+    // Locale from client
+    let locale = "fr";
+    try {
+      const body = await req.json();
+      if (body && typeof body.locale === "string") locale = body.locale;
+    } catch { /* no body */ }
+    const LOCALE_NAMES: Record<string, string> = {
+      en: "English", fr: "French", es: "Spanish", de: "German", it: "Italian", pt: "Portuguese",
+    };
+    const localeName = LOCALE_NAMES[locale] || "French";
+
     // Fetch all data in parallel
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -146,7 +157,9 @@ ${supplementDetails.map((s: { name: string; time_of_day: string; dosage: string 
 
 ${conversationContext ? `═══ HISTORIQUE COACH IA ═══\n${conversationContext}\n` : ""}
 
-INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse structurée.`;
+INSTRUCTIONS: Utilise le tool "provide_insights" pour retourner ton analyse structurée.
+
+LANGUAGE: Respond strictly in ${localeName} (locale code: ${locale}). All text fields (regularity_comment, supplement_reviews[].utility, supplement_reviews[].comment, recommendations) MUST be written in ${localeName}.`;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {

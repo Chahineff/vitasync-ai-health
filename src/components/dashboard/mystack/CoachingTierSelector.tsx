@@ -1,9 +1,15 @@
 import { motion } from 'framer-motion';
-import { Check, Crown, Lightning, Brain, ChatsCircle, Microphone, ChartLine, Headset } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { Check, Crown, Lightning, Brain, ChatsCircle, Microphone, ChartLine, Headset, CircleNotch, Gear, ArrowUp } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
 import { cn } from '@/lib/utils';
+import { useSubscription, startCheckout, openCustomerPortal } from '@/hooks/useSubscription';
+import { TIER_PRICE_ID, type Tier } from '@/lib/subscription-tier';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface CoachingTierSelectorProps {
   index: number;
@@ -13,36 +19,72 @@ const featureIcons = [ChatsCircle, ChatsCircle, Microphone, Brain, ChartLine, He
 
 export function CoachingTierSelector({ index }: CoachingTierSelectorProps) {
   const { t } = useTranslation();
+  const { tier: currentTier, isActive, subscription } = useSubscription();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [loadingTier, setLoadingTier] = useState<Tier | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const handleUpgrade = async (targetTier: Exclude<Tier, 'free'>) => {
+    if (!user) {
+      sessionStorage.setItem('pending_subscription_price', TIER_PRICE_ID[targetTier]);
+      navigate('/auth?mode=signup');
+      return;
+    }
+    setLoadingTier(targetTier);
+    try {
+      await startCheckout(TIER_PRICE_ID[targetTier], `${window.location.origin}/dashboard`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'ouverture du checkout");
+      setLoadingTier(null);
+    }
+  };
+
+  const handleManage = async () => {
+    setPortalLoading(true);
+    try {
+      await openCustomerPortal(`${window.location.origin}/dashboard`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'ouverture du portail");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   const TIERS = [
     {
       id: 'basic',
+      tierKey: 'free' as Tier,
       name: 'Basic',
       price: '0',
       features: [t('tier.basic.f1'), t('tier.basic.f2'), t('tier.basic.f3')],
       featureIcons: [ChatsCircle, ChartLine, Brain],
-      isCurrent: true,
+      isCurrent: currentTier === 'free',
       isUpgrade: false,
       isPopular: false,
     },
     {
       id: 'go-ai',
+      tierKey: 'go' as Tier,
       name: 'Go AI',
       price: '7,99',
       features: [t('tier.go.f1'), t('tier.go.f2'), t('tier.go.f3')],
       featureIcons: [ChatsCircle, ChartLine, Brain],
-      isCurrent: false,
-      isUpgrade: true,
+      isCurrent: currentTier === 'go',
+      isUpgrade: currentTier !== 'go',
       isPopular: true,
     },
     {
       id: 'premium-ai',
+      tierKey: 'premium' as Tier,
       name: 'Premium AI',
       price: '24,99',
       features: [t('tier.premium.f1'), t('tier.premium.f2'), t('tier.premium.f3'), t('tier.premium.f4')],
       featureIcons: [ChatsCircle, ChartLine, Microphone, ChartLine],
-      isCurrent: false,
-      isUpgrade: true,
+      isCurrent: currentTier === 'premium',
+      isUpgrade: currentTier !== 'premium',
       isPopular: false,
     },
   ];
@@ -53,9 +95,28 @@ export function CoachingTierSelector({ index }: CoachingTierSelectorProps) {
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
     >
-      <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-6">
-        {t('tier.title')}
-      </h2>
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-foreground">
+          {t('tier.title')}
+        </h2>
+        {isActive && (
+          <Button
+            onClick={handleManage}
+            disabled={portalLoading}
+            variant="outline"
+            size="sm"
+            className="rounded-full"
+          >
+            {portalLoading ? <CircleNotch className="w-4 h-4 animate-spin" /> : <Gear weight="bold" className="w-4 h-4" />}
+            Gérer mon abonnement
+          </Button>
+        )}
+      </div>
+      {subscription?.cancel_at_period_end && subscription.current_period_end && (
+        <p className="text-xs text-amber-600 dark:text-amber-400 mb-4">
+          Abonnement annulé — accès actif jusqu'au {new Date(subscription.current_period_end).toLocaleDateString('fr-FR')}
+        </p>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {TIERS.map((tier, i) => (
@@ -146,15 +207,31 @@ export function CoachingTierSelector({ index }: CoachingTierSelectorProps) {
                 <Button disabled variant="outline" className="w-full rounded-xl">
                   {t('tier.currentPlan')}
                 </Button>
+              ) : tier.tierKey === 'free' ? (
+                <Button
+                  onClick={handleManage}
+                  disabled={portalLoading}
+                  variant="outline"
+                  className="w-full rounded-xl"
+                >
+                  {portalLoading ? <CircleNotch className="w-4 h-4 animate-spin" /> : null}
+                  Rétrograder
+                </Button>
               ) : (
                 <Button
-                  disabled
+                  onClick={() => handleUpgrade(tier.tierKey as Exclude<Tier, 'free'>)}
+                  disabled={loadingTier !== null}
                   className={cn(
-                    "w-full rounded-xl opacity-60",
-                    tier.isPopular && "bg-gradient-to-r from-secondary to-primary text-primary-foreground"
+                    "w-full rounded-xl",
+                    tier.isPopular && "bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90"
                   )}
                 >
-                  {t('tier.comingSoon')}
+                  {loadingTier === tier.tierKey ? (
+                    <CircleNotch className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <ArrowUp weight="bold" className="w-4 h-4" />
+                  )}
+                  {currentTier === 'free' ? `Passer à ${tier.name}` : 'Changer de plan'}
                 </Button>
               )}
             </div>

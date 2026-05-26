@@ -110,10 +110,37 @@ export function ChatInterface({ onFirstMessage, onProductSelect }: ChatInterface
 
   const loadConversations = async () => {
     if (!user) return;
+    const { getHistoryCutoffISO } = await import('@/lib/subscription-tier');
+    // Read current tier directly via a one-off query to avoid prop drilling
+    let userTier: 'free' | 'go' | 'premium' = 'free';
+    try {
+      const { data: sub } = await supabase
+        .from('subscriptions' as any)
+        .select('status, price_id, current_period_end, environment')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (sub) {
+        const s: any = sub;
+        const end = s.current_period_end ? new Date(s.current_period_end).getTime() : null;
+        const active =
+          (['active', 'trialing', 'past_due'].includes(s.status) && (end === null || end > Date.now())) ||
+          (s.status === 'canceled' && end && end > Date.now());
+        if (active) {
+          if (s.price_id === 'premium_ai_monthly') userTier = 'premium';
+          else if (s.price_id === 'go_ai_monthly') userTier = 'go';
+        }
+      }
+    } catch (e) {
+      console.warn('Tier lookup failed, defaulting to free:', e);
+    }
+    const cutoff = getHistoryCutoffISO(userTier);
     const { data } = await supabase
       .from('conversations')
       .select('*')
       .eq('user_id', user.id)
+      .gte('updated_at', cutoff)
       .order('updated_at', { ascending: false });
     if (data) setConversations(data);
   };

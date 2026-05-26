@@ -512,6 +512,7 @@ export type Database = {
           activity_level: string | null
           age_range: string | null
           allergies: string[] | null
+          biological_sex: string | null
           budget_range_max: number | null
           budget_range_min: number | null
           created_at: string
@@ -519,10 +520,12 @@ export type Database = {
           diet_type: string | null
           energy_level: number | null
           health_goals: string[] | null
+          height_cm: number | null
           id: string
           is_adult: boolean | null
           max_daily_intakes: string | null
           medical_conditions: string[] | null
+          medical_constraints: string[] | null
           medications_notes: string | null
           monthly_budget: string | null
           notify_analysis_ready: boolean | null
@@ -540,11 +543,13 @@ export type Database = {
           tutorial_completed: boolean | null
           updated_at: string
           user_id: string
+          weight_kg: number | null
         }
         Insert: {
           activity_level?: string | null
           age_range?: string | null
           allergies?: string[] | null
+          biological_sex?: string | null
           budget_range_max?: number | null
           budget_range_min?: number | null
           created_at?: string
@@ -552,10 +557,12 @@ export type Database = {
           diet_type?: string | null
           energy_level?: number | null
           health_goals?: string[] | null
+          height_cm?: number | null
           id?: string
           is_adult?: boolean | null
           max_daily_intakes?: string | null
           medical_conditions?: string[] | null
+          medical_constraints?: string[] | null
           medications_notes?: string | null
           monthly_budget?: string | null
           notify_analysis_ready?: boolean | null
@@ -573,11 +580,13 @@ export type Database = {
           tutorial_completed?: boolean | null
           updated_at?: string
           user_id: string
+          weight_kg?: number | null
         }
         Update: {
           activity_level?: string | null
           age_range?: string | null
           allergies?: string[] | null
+          biological_sex?: string | null
           budget_range_max?: number | null
           budget_range_min?: number | null
           created_at?: string
@@ -585,10 +594,12 @@ export type Database = {
           diet_type?: string | null
           energy_level?: number | null
           health_goals?: string[] | null
+          height_cm?: number | null
           id?: string
           is_adult?: boolean | null
           max_daily_intakes?: string | null
           medical_conditions?: string[] | null
+          medical_constraints?: string[] | null
           medications_notes?: string | null
           monthly_budget?: string | null
           notify_analysis_ready?: boolean | null
@@ -606,6 +617,7 @@ export type Database = {
           tutorial_completed?: boolean | null
           updated_at?: string
           user_id?: string
+          weight_kg?: number | null
         }
         Relationships: []
       }

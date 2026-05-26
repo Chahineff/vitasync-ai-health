@@ -56,3 +56,38 @@ export function parseStackCommands(content: string): { cleanContent: string; com
 
   return { cleanContent: cleanContent.trim(), commands };
 }
+
+/**
+ * Parse [[TRACKING_ADD:name|dosage|time_of_day|shopify_product_id?]] proposals.
+ * Multiple consecutive TRACKING_ADD tokens are grouped into a single proposal
+ * rendered by <TrackingProposalCard/>. The coach MUST NOT claim a row was
+ * persisted — only the card's verified write may do that.
+ */
+export interface TrackingProposalItem {
+  name: string;
+  dosage?: string;
+  time_of_day?: string;
+  shopify_product_id?: string;
+}
+
+export function parseTrackingProposals(content: string): {
+  cleanContent: string;
+  proposals: TrackingProposalItem[];
+} {
+  const proposals: TrackingProposalItem[] = [];
+  const re = /\[\[TRACKING_ADD:([^\]]+)\]\]/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(content)) !== null) {
+    const parts = match[1].split('|').map((s) => s.trim());
+    const [name, dosage, time_of_day, shopify_product_id] = parts;
+    if (!name) continue;
+    proposals.push({
+      name,
+      dosage: dosage || undefined,
+      time_of_day: time_of_day || 'morning',
+      shopify_product_id: shopify_product_id || undefined,
+    });
+  }
+  const cleanContent = content.replace(re, '').trim();
+  return { cleanContent, proposals };
+}

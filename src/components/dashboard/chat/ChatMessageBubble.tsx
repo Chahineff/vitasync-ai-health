@@ -15,9 +15,10 @@ import {
   ProductDetailCard, 
   ReportButton 
 } from './ChatReferenceBlocks';
-import { parseStackCommands } from '@/lib/parse-stack-commands';
+import { parseStackCommands, parseTrackingProposals } from '@/lib/parse-stack-commands';
 import { useAIStackStore } from '@/stores/aiStackStore';
 import { Package } from '@phosphor-icons/react';
+import { TrackingProposalCard } from './TrackingProposalCard';
 
 const vitasyncLogoUrl = "/lovable-uploads/0eea2f50-2700-4e68-8bee-0e6a5d1bf128.png";
 
@@ -34,11 +35,17 @@ function MessageContent({ content, isStreaming, onQuizComplete, onProductSelect 
   // Clean stack command tags from displayed content
   const { cleanContent: stackCleanedContent, commands: stackCommands } = parseStackCommands(content);
   const hasStackCommands = stackCommands.length > 0;
-  
+
+  // Tracking proposals — coach MUST NOT claim "added"; the card performs
+  // the verified DB write on user confirmation.
+  const { cleanContent: trackingCleaned, proposals: trackingProposals } =
+    parseTrackingProposals(stackCleanedContent);
+  const hasTrackingProposals = trackingProposals.length > 0;
+
   // Check for quiz blocks first
-  const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(stackCleanedContent);
+  const { beforeQuiz, quiz, afterQuiz } = parseQuizBlock(trackingCleaned);
   // Parse charts from content
-  const chartResult = parseChartBlocks(quiz ? beforeQuiz : stackCleanedContent);
+  const chartResult = parseChartBlocks(quiz ? beforeQuiz : trackingCleaned);
   // Parse reference blocks
   const refResult = parseReferenceBlocks(chartResult.text);
   // Parse products and deduplicate
@@ -59,10 +66,10 @@ function MessageContent({ content, isStreaming, onQuizComplete, onProductSelect 
     <span className="inline-block w-0.5 h-4 bg-primary ml-0.5 align-middle animate-cursor-blink" />
   ) : null;
 
-  if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0 && !hasStackCommands) {
+  if (products.length === 0 && !subscription && !quiz && charts.length === 0 && references.length === 0 && !hasStackCommands && !hasTrackingProposals) {
     return (
       <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed chat-markdown">
-        <ReactMarkdown>{stackCleanedContent}</ReactMarkdown>
+        <ReactMarkdown>{trackingCleaned}</ReactMarkdown>
         {streamingCursor}
       </div>
     );
@@ -146,6 +153,12 @@ function MessageContent({ content, isStreaming, onQuizComplete, onProductSelect 
   
   if (stackButton) {
     elements.push(stackButton);
+  }
+
+  if (hasTrackingProposals && !isStreaming) {
+    elements.push(
+      <TrackingProposalCard key="tracking-proposal" items={trackingProposals} />
+    );
   }
 
   return <div className="space-y-2">{elements}</div>;

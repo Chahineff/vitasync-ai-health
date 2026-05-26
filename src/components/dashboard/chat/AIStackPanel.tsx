@@ -91,17 +91,47 @@ export function AIStackPanel() {
         });
       }
 
-      // Add products to supplement_tracking for the user's stack
+      // Add products to supplement_tracking for the user's stack — verified write.
+      // We deliberately do NOT swallow errors here: if the DB doesn't accept the
+      // row, the UI must not claim it was saved.
       if (user) {
+        const failed: string[] = [];
         for (const item of items) {
-          await supabase.from('supplement_tracking').upsert({
-            user_id: user.id,
-            product_name: item.name,
-            shopify_product_id: item.productId,
-            recommended_by_ai: true,
-            active: true,
-            time_of_day: 'morning',
-          }, { onConflict: 'user_id,shopify_product_id', ignoreDuplicates: true });
+          const { error: insertErr } = await supabase
+            .from('supplement_tracking')
+            .insert({
+              user_id: user.id,
+              product_name: item.name,
+              shopify_product_id: item.productId,
+              recommended_by_ai: true,
+              active: true,
+              time_of_day: 'morning',
+            });
+          if (insertErr) {
+            // Duplicate is fine (already tracked); anything else is a real failure.
+            const isDup = insertErr.code === '23505';
+            if (!isDup) {
+              console.error('supplement_tracking insert failed:', insertErr);
+              failed.push(item.name);
+              continue;
+            }
+          }
+          // Verified read-back so we know the row is actually persisted.
+          const { data: verify, error: verifyErr } = await supabase
+            .from('supplement_tracking')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('shopify_product_id', item.productId)
+            .maybeSingle();
+          if (verifyErr || !verify) {
+            console.error('supplement_tracking verify failed:', verifyErr);
+            failed.push(item.name);
+          }
+        }
+        if (failed.length > 0) {
+          toast.error(`Could not save ${failed.length} item(s) to tracking. Cart was not affected.`);
+        } else {
+          window.dispatchEvent(new CustomEvent('supplement-tracking-changed'));
         }
       }
 

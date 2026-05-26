@@ -1,5 +1,5 @@
 import { Check, X, Star, Lightning } from "@phosphor-icons/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import { motion } from "framer-motion";
@@ -13,6 +13,10 @@ import confetti from "canvas-confetti";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { startCheckout } from "@/hooks/useSubscription";
+import { PRICE_IDS } from "@/lib/stripe";
+import { toast } from "sonner";
 
 function FeatureValue({ value }: { value: boolean | string }) {
   if (typeof value === "boolean") {
@@ -29,6 +33,28 @@ export function PricingSection() {
   const { t } = useTranslation();
   const [isMonthly, setIsMonthly] = useState(true);
   const switchRef = useRef<HTMLButtonElement>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  const handleSubscribe = async (priceId: string) => {
+    if (!user) {
+      // Persist intent so we can resume after login
+      try {
+        sessionStorage.setItem("pending_subscription_price", priceId);
+      } catch {}
+      navigate("/auth?mode=signup&next=subscribe");
+      return;
+    }
+    try {
+      setCheckoutLoading(priceId);
+      await startCheckout(priceId, `${window.location.origin}/dashboard`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Unable to start checkout. Please try again.");
+      setCheckoutLoading(null);
+    }
+  };
 
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);

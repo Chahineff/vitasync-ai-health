@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkle, ArrowClockwise, ShoppingCartSimple, Check, SpinnerGap, Star, Timer, ArrowRight } from '@phosphor-icons/react';
+import { Sparkle, ArrowClockwise, ShoppingCartSimple, Check, SpinnerGap, Star, Timer, ArrowRight, WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -36,6 +36,7 @@ export function AIRecommendationsWidget({ onProductClick, onViewAll }: { onProdu
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const [addedProducts, setAddedProducts] = useState<Set<string>>(new Set());
   const [hasRequested, setHasRequested] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const addItem = useCartStore(state => state.addItem);
   const hasInitialized = useRef(false);
 
@@ -69,6 +70,7 @@ export function AIRecommendationsWidget({ onProductClick, onViewAll }: { onProdu
 
   const fetchAIRecommendations = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const allProducts = await fetchProducts(250);
       const { data, error } = await supabase.functions.invoke('ai-shop-recommendations', { body: {} });
@@ -104,6 +106,11 @@ export function AIRecommendationsWidget({ onProductClick, onViewAll }: { onProdu
     } catch (error) {
       console.error('AI recommendations error:', error);
       setRecommendations([]);
+      setFetchError(
+        (error as Error)?.message ||
+          (t('shop.aiFetchError') as string) ||
+          'Impossible de charger les recommandations.'
+      );
     } finally {
       setLoading(false);
     }
@@ -182,10 +189,15 @@ export function AIRecommendationsWidget({ onProductClick, onViewAll }: { onProdu
             </div>
             <div>
               <h3 className="font-semibold text-foreground flex items-center gap-2 text-[15px]">
-                {t('shop.aiRecommendations')}
+                {t('shop.aiRecommendations') || 'Recommandé pour toi'}
                 <span className="px-1.5 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">AI</span>
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">{t('shop.aiRecommendationsDesc')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {t('shop.aiRecommendationsDesc')}
+              </p>
+              <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+                Source&nbsp;: ton profil santé et tes objectifs
+              </p>
             </div>
           </div>
           {hasRequested && (
@@ -240,6 +252,22 @@ export function AIRecommendationsWidget({ onProductClick, onViewAll }: { onProdu
                 <p className="text-sm font-medium text-foreground mb-1">{t('shop.aiThinking')}</p>
                 <p className="text-xs text-muted-foreground">{t('shop.aiAnalyzingProfile') || "Analyse de votre profil en cours..."}</p>
               </div>
+            </motion.div>
+          ) : fetchError ? (
+            <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-10 gap-4">
+              <WarningCircle weight="duotone" className="w-12 h-12 text-destructive/70" />
+              <div className="text-center max-w-[280px]">
+                <p className="text-sm font-medium text-foreground mb-1">
+                  {t('shop.aiErrorTitle') || "On n'a pas pu charger tes recommandations"}
+                </p>
+                <p className="text-xs text-muted-foreground">{fetchError}</p>
+              </div>
+              <button
+                onClick={fetchAIRecommendations}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-all"
+              >
+                <ArrowClockwise weight="bold" className="w-4 h-4" /> {t('shop.retry') || 'Réessayer'}
+              </button>
             </motion.div>
           ) : recommendations.length > 0 ? (
             <motion.div key="products" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

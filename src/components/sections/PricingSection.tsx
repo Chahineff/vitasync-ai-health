@@ -97,6 +97,7 @@ export function PricingSection() {
       popular: false,
       glowColor: "cyan" as const,
       shineColors: null as string[] | null,
+      priceId: null as string | null,
     },
     {
       name: t("pricing.plan2.name"),
@@ -116,6 +117,7 @@ export function PricingSection() {
       popular: false,
       glowColor: "green" as const,
       shineColors: ["#00D787", "#00F0FF", "#00D787"],
+      priceId: PRICE_IDS.goAiMonthly,
     },
     {
       name: t("pricing.plan3.name"),
@@ -136,6 +138,7 @@ export function PricingSection() {
       popular: true,
       glowColor: "blue" as const,
       shineColors: ["#3B82F6", "#00F0FF", "#3B82F6"],
+      priceId: PRICE_IDS.premiumAiMonthly,
     },
   ];
 

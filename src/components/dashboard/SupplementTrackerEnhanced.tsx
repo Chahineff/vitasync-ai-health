@@ -422,6 +422,50 @@ export function SupplementTrackerEnhanced() {
         onClose={() => setShowAddModal(false)}
         onAdd={addSupplement}
       />
+
+      {/* Confirmation: import AI-recommended supplements into daily tracking */}
+      <AlertDialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Sparkle weight="fill" className="w-5 h-5 text-primary" />
+              Ajouter les recommandations IA à ton suivi
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <span className="block">
+                Ces compléments recommandés par le Coach IA seront ajoutés à ton
+                suivi quotidien (créneau «&nbsp;Matin&nbsp;» par défaut). Tu pourras
+                ajuster le dosage et l'heure ensuite.
+              </span>
+              {recommendedNotTracked.length > 0 && (
+                <span className="block max-h-40 overflow-auto rounded-lg bg-muted/40 border border-border/40 p-2 space-y-1">
+                  {recommendedNotTracked.map((r) => (
+                    <span key={r.handle} className="flex items-center gap-2 text-xs text-foreground/80">
+                      <Pill weight="duotone" className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                      <span className="truncate">{r.title}</span>
+                    </span>
+                  ))}
+                </span>
+              )}
+              <span className="block text-[11px] text-muted-foreground/80">
+                Cela ne déclenche aucun achat — uniquement le suivi.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={importing}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleImportRecommended();
+              }}
+              disabled={importing}
+            >
+              {importing ? 'Ajout…' : `Ajouter ${recommendedNotTracked.length}`}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

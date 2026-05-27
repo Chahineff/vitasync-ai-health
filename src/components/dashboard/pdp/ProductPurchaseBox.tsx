@@ -65,7 +65,15 @@ export function ProductPurchaseBox({
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [purchaseMode, setPurchaseMode] = useState<'once' | 'subscribe'>('subscribe');
-  const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
+  // Initialise to the product's primary cadence (non-monthly when multiple
+  // groups are attached on Shopify). User can switch via cadence chips.
+  const initialPlanIndex = useMemo(() => {
+    const plans = getSellingPlans(product);
+    const primary = getFirstSellingPlan(product);
+    const idx = plans.findIndex((p) => p.id === primary?.id);
+    return idx >= 0 ? idx : 0;
+  }, [product]);
+  const [selectedPlanIndex, setSelectedPlanIndex] = useState(initialPlanIndex);
   const [quantity, setQuantity] = useState(1);
   
   const addItem = useCartStore(state => state.addItem);
@@ -76,14 +84,7 @@ export function ProductPurchaseBox({
 
   const sellingPlans = getSellingPlans(product);
   const hasSubscription = sellingPlans.length > 0;
-  // Default to the product's configured cadence on Shopify (prefers a
-  // non-monthly group when multiple are attached) instead of blindly picking
-  // the first plan. User can still override via the cadence chips when
-  // multiple plans exist.
-  const primaryPlan = useMemo(() => getFirstSellingPlan(product), [product]);
-  const userOverridePlan = sellingPlans[selectedPlanIndex];
-  const selectedPlan: typeof primaryPlan =
-    (selectedPlanIndex > 0 && userOverridePlan) ? userOverridePlan : (primaryPlan || sellingPlans[0] || null);
+  const selectedPlan = sellingPlans[selectedPlanIndex] || sellingPlans[0] || null;
   
   const basePrice = parseFloat(price.amount);
   const subscriptionPrice = selectedPlan ? calculateSubscriptionPrice(basePrice, selectedPlan) : basePrice;

@@ -257,7 +257,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                 >
                   <Repeat weight="bold" className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                    {pct ? `${t('shop.saveWithSub')} · -${pct}%` : t('shop.saveWithSub')}
+                    {[cadenceLabel, pct ? `-${pct}%` : null].filter(Boolean).join(' · ') || t('shop.saveWithSub')}
                   </span>
                 </motion.div>
               )}

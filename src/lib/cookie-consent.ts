@@ -1,4 +1,4 @@
-// Cookie consent state management (CNIL/RGPD compliant).
+// Cookie consent state management (US — CCPA/CPRA, opt-out of non-essential cookies, GPC honored).
 // Stored in localStorage with a 13-month expiration.
 
 export type CookieConsent = {

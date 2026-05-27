@@ -20,7 +20,7 @@ import {
   Clock,
   Timer,
 } from '@phosphor-icons/react';
-import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
+import { ProductDetail, ShopifyProduct, getSellingPlans, getFirstSellingPlan, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -76,7 +76,15 @@ export function ProductPurchaseBox({
 
   const sellingPlans = getSellingPlans(product);
   const hasSubscription = sellingPlans.length > 0;
-  const selectedPlan = sellingPlans[selectedPlanIndex] || null;
+  // Default to the product's configured cadence on Shopify (non-monthly when
+  // multiple groups exist) instead of always picking the first plan.
+  const primaryPlan = useMemo(() => getFirstSellingPlan(product), [product]);
+  const primaryPlanIndex = useMemo(
+    () => Math.max(0, sellingPlans.findIndex((p) => p.id === primaryPlan?.id)),
+    [sellingPlans, primaryPlan]
+  );
+  const effectivePlanIndex = selectedPlanIndex || primaryPlanIndex;
+  const selectedPlan = sellingPlans[effectivePlanIndex] || primaryPlan;
   
   const basePrice = parseFloat(price.amount);
   const subscriptionPrice = selectedPlan ? calculateSubscriptionPrice(basePrice, selectedPlan) : basePrice;

@@ -76,15 +76,14 @@ export function ProductPurchaseBox({
 
   const sellingPlans = getSellingPlans(product);
   const hasSubscription = sellingPlans.length > 0;
-  // Default to the product's configured cadence on Shopify (non-monthly when
-  // multiple groups exist) instead of always picking the first plan.
+  // Default to the product's configured cadence on Shopify (prefers a
+  // non-monthly group when multiple are attached) instead of blindly picking
+  // the first plan. User can still override via the cadence chips when
+  // multiple plans exist.
   const primaryPlan = useMemo(() => getFirstSellingPlan(product), [product]);
-  const primaryPlanIndex = useMemo(
-    () => Math.max(0, sellingPlans.findIndex((p) => p.id === primaryPlan?.id)),
-    [sellingPlans, primaryPlan]
-  );
-  const effectivePlanIndex = selectedPlanIndex || primaryPlanIndex;
-  const selectedPlan = sellingPlans[effectivePlanIndex] || primaryPlan;
+  const userOverridePlan = sellingPlans[selectedPlanIndex];
+  const selectedPlan: typeof primaryPlan =
+    (selectedPlanIndex > 0 && userOverridePlan) ? userOverridePlan : (primaryPlan || sellingPlans[0] || null);
   
   const basePrice = parseFloat(price.amount);
   const subscriptionPrice = selectedPlan ? calculateSubscriptionPrice(basePrice, selectedPlan) : basePrice;

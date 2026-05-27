@@ -5,7 +5,7 @@ import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
-import { getFirstSellingPlan, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
+import { getFirstSellingPlan, calculateSubscriptionPrice, getDiscountPercentage, getPlanCadenceLabel } from '@/lib/shopify';
 
 interface ProductGroupCardProps {
   group: ProductGroup;
@@ -49,6 +49,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const plan = getFirstSellingPlan(displayProduct);
   const subPrice = plan ? calculateSubscriptionPrice(parseFloat(price.amount), plan) : null;
   const pct = plan ? getDiscountPercentage(plan) : null;
+  const cadenceLabel = plan ? getPlanCadenceLabel(plan) : '';
 
   const handleAddToCart = async (e: React.MouseEvent, mode: 'sub' | 'once') => {
     e.preventDefault();
@@ -71,12 +72,12 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
         selectedOptions: selectedVariant.selectedOptions || [],
         ...(mode === 'sub' && plan ? {
           sellingPlanId: plan.id,
-          sellingPlanName: plan.name || t('shop.monthlySubscription'),
+          sellingPlanName: plan.name || cadenceLabel,
         } : {}),
       });
       setJustAdded(mode);
       toast.success(t('shop.productAdded'), {
-        description: `${displayProduct.node.title}${mode === 'sub' ? ' · ' + t('shop.monthlySubscription') : ''}`,
+        description: `${displayProduct.node.title}${mode === 'sub' && cadenceLabel ? ' · ' + cadenceLabel : ''}`,
         position: 'top-center',
       });
       setTimeout(() => setJustAdded(null), 2000);

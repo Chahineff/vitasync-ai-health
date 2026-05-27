@@ -15,6 +15,10 @@ export interface SellingPlan {
   name: string;
   options: Array<{ name: string; value: string }>;
   priceAdjustments: SellingPlanPriceAdjustment[];
+  deliveryPolicy?: {
+    interval?: 'DAY' | 'WEEK' | 'MONTH' | 'YEAR' | string;
+    intervalCount?: number;
+  } | null;
 }
 
 export interface SellingPlanGroup {
@@ -169,6 +173,12 @@ const SELLING_PLAN_FRAGMENT = `
               id
               name
               options { name value }
+              deliveryPolicy {
+                ... on SellingPlanRecurringDeliveryPolicy {
+                  interval
+                  intervalCount
+                }
+              }
               priceAdjustments {
                 adjustmentValue {
                   ... on SellingPlanPercentagePriceAdjustment { adjustmentPercentage }

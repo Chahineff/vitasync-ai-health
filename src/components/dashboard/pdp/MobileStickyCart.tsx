@@ -1,7 +1,7 @@
 import { ShoppingCartSimple, Check, SpinnerGap, Repeat } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice } from '@/lib/shopify';
+import { ProductDetail, ShopifyProduct, getFirstSellingPlan, calculateSubscriptionPrice } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
@@ -25,9 +25,10 @@ export function MobileStickyCart({ product, selectedVariantIndex, purchaseMode =
   const selectedVariant = variants[selectedVariantIndex]?.node;
   const basePrice = selectedVariant?.price || product.priceRange.minVariantPrice;
 
-  const sellingPlans = getSellingPlans(product);
-  const selectedPlan = sellingPlans[0] || null;
-  const effectiveMode = sellingPlans.length > 0 ? purchaseMode : 'once';
+  // Use the configured Shopify plan (prefers the product's non-monthly cadence
+  // if multiple groups are attached) instead of blindly picking the first one.
+  const selectedPlan = getFirstSellingPlan(product);
+  const effectiveMode = selectedPlan ? purchaseMode : 'once';
   
   const displayPrice = effectiveMode === 'subscribe' && subscriptionPrice
     ? subscriptionPrice

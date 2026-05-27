@@ -15,6 +15,10 @@ export interface SellingPlan {
   name: string;
   options: Array<{ name: string; value: string }>;
   priceAdjustments: SellingPlanPriceAdjustment[];
+  deliveryPolicy?: {
+    interval?: 'DAY' | 'WEEK' | 'MONTH' | 'YEAR' | string;
+    intervalCount?: number;
+  } | null;
 }
 
 export interface SellingPlanGroup {
@@ -169,6 +173,12 @@ const SELLING_PLAN_FRAGMENT = `
               id
               name
               options { name value }
+              deliveryPolicy {
+                ... on SellingPlanRecurringDeliveryPolicy {
+                  interval
+                  intervalCount
+                }
+              }
               priceAdjustments {
                 adjustmentValue {
                   ... on SellingPlanPercentagePriceAdjustment { adjustmentPercentage }
@@ -491,12 +501,24 @@ export function groupProductsByBaseName(products: ShopifyProduct[]): ProductGrou
 
 // ═══════════════ Selling Plan Helpers ═══════════════
 
+/**
+ * Returns the single cadence the product is configured with on Shopify.
+ * If multiple selling-plan groups are attached, prefers the most specific
+ * non-monthly one (i.e. anything that isn't `MONTH` x 1). Each VitaSync
+ * product has its own Shopify cadence — never hardcode "monthly".
+ */
 export function getFirstSellingPlan(product: ShopifyProduct | ProductDetail): SellingPlan | null {
-  const groups = 'node' in product 
-    ? (product as ShopifyProduct).node.sellingPlanGroups?.edges 
-    : (product as ProductDetail).sellingPlanGroups?.edges;
-  if (!groups?.length) return null;
-  return groups[0].node.sellingPlans.edges[0]?.node || null;
+  const plans = getSellingPlans(product);
+  if (!plans.length) {
+    const handle = 'node' in product ? product.node.handle : product.handle;
+    if (typeof console !== 'undefined') {
+      console.warn(`[shopify] No selling plan group attached to product "${handle}" — subscribe option will be hidden.`);
+    }
+    return null;
+  }
+  const isMonthly = (p: SellingPlan) =>
+    p.deliveryPolicy?.interval === 'MONTH' && (p.deliveryPolicy?.intervalCount ?? 1) === 1;
+  return plans.find((p) => !isMonthly(p)) || plans[0];
 }
 
 export function getSellingPlans(product: ShopifyProduct | ProductDetail): SellingPlan[] {
@@ -532,7 +554,32 @@ export function getDiscountPercentage(plan: SellingPlan): number | null {
   return null;
 }
 
+/**
+ * Human-readable cadence built from Shopify's `deliveryPolicy` (interval +
+ * intervalCount) — the source of truth. Falls back to parsing option/name
+ * strings only when deliveryPolicy is absent.
+ */
+export function getPlanCadenceLabel(plan: SellingPlan): string {
+  const dp = plan.deliveryPolicy;
+  if (dp?.interval) {
+    const n = Math.max(1, dp.intervalCount ?? 1);
+    const unit = dp.interval.toUpperCase();
+    const singularPlural = (singular: string, plural: string) => (n === 1 ? singular : `${n} ${plural}`);
+    switch (unit) {
+      case 'DAY':   return `every ${singularPlural('day', 'days')}`;
+      case 'WEEK':  return `every ${singularPlural('week', 'weeks')}`;
+      case 'MONTH': return `every ${singularPlural('month', 'months')}`;
+      case 'YEAR':  return `every ${singularPlural('year', 'years')}`;
+    }
+  }
+  return getDeliveryFrequency(plan);
+}
+
 export function getDeliveryFrequency(plan: SellingPlan): string {
+  // Prefer live deliveryPolicy when available
+  if (plan.deliveryPolicy?.interval) {
+    return getPlanCadenceLabel(plan);
+  }
   const opt = plan.options?.find(o => o.name.toLowerCase().includes('delivery') || o.name.toLowerCase().includes('frequency') || o.name.toLowerCase().includes('billing'));
   const raw = opt?.value || plan.name || '';
   

@@ -5,7 +5,7 @@ import { ProductGroup, getFlavorFromTitle } from '@/hooks/useProductGroups';
 import { useCartStore } from '@/stores/cartStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
-import { getFirstSellingPlan, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
+import { getFirstSellingPlan, calculateSubscriptionPrice, getDiscountPercentage, getPlanCadenceLabel } from '@/lib/shopify';
 
 interface ProductGroupCardProps {
   group: ProductGroup;
@@ -49,6 +49,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
   const plan = getFirstSellingPlan(displayProduct);
   const subPrice = plan ? calculateSubscriptionPrice(parseFloat(price.amount), plan) : null;
   const pct = plan ? getDiscountPercentage(plan) : null;
+  const cadenceLabel = plan ? getPlanCadenceLabel(plan) : '';
 
   const handleAddToCart = async (e: React.MouseEvent, mode: 'sub' | 'once') => {
     e.preventDefault();
@@ -71,12 +72,12 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
         selectedOptions: selectedVariant.selectedOptions || [],
         ...(mode === 'sub' && plan ? {
           sellingPlanId: plan.id,
-          sellingPlanName: plan.name || t('shop.monthlySubscription'),
+          sellingPlanName: plan.name || cadenceLabel,
         } : {}),
       });
       setJustAdded(mode);
       toast.success(t('shop.productAdded'), {
-        description: `${displayProduct.node.title}${mode === 'sub' ? ' · ' + t('shop.monthlySubscription') : ''}`,
+        description: `${displayProduct.node.title}${mode === 'sub' && cadenceLabel ? ' · ' + cadenceLabel : ''}`,
         position: 'top-center',
       });
       setTimeout(() => setJustAdded(null), 2000);
@@ -256,7 +257,7 @@ export function ProductGroupCard({ group, recommendedByAI = false, onProductClic
                 >
                   <Repeat weight="bold" className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                    {pct ? `${t('shop.saveWithSub')} · -${pct}%` : t('shop.saveWithSub')}
+                    {[cadenceLabel, pct ? `-${pct}%` : null].filter(Boolean).join(' · ') || t('shop.saveWithSub')}
                   </span>
                 </motion.div>
               )}

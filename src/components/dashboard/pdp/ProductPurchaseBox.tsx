@@ -20,7 +20,7 @@ import {
   Clock,
   Timer,
 } from '@phosphor-icons/react';
-import { ProductDetail, ShopifyProduct, getSellingPlans, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
+import { ProductDetail, ShopifyProduct, getSellingPlans, getFirstSellingPlan, calculateSubscriptionPrice, getDiscountPercentage, getDeliveryFrequency } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -65,7 +65,15 @@ export function ProductPurchaseBox({
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [purchaseMode, setPurchaseMode] = useState<'once' | 'subscribe'>('subscribe');
-  const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
+  // Initialise to the product's primary cadence (non-monthly when multiple
+  // groups are attached on Shopify). User can switch via cadence chips.
+  const initialPlanIndex = useMemo(() => {
+    const plans = getSellingPlans(product);
+    const primary = getFirstSellingPlan(product);
+    const idx = plans.findIndex((p) => p.id === primary?.id);
+    return idx >= 0 ? idx : 0;
+  }, [product]);
+  const [selectedPlanIndex, setSelectedPlanIndex] = useState(initialPlanIndex);
   const [quantity, setQuantity] = useState(1);
   
   const addItem = useCartStore(state => state.addItem);
@@ -76,7 +84,7 @@ export function ProductPurchaseBox({
 
   const sellingPlans = getSellingPlans(product);
   const hasSubscription = sellingPlans.length > 0;
-  const selectedPlan = sellingPlans[selectedPlanIndex] || null;
+  const selectedPlan = sellingPlans[selectedPlanIndex] || sellingPlans[0] || null;
   
   const basePrice = parseFloat(price.amount);
   const subscriptionPrice = selectedPlan ? calculateSubscriptionPrice(basePrice, selectedPlan) : basePrice;

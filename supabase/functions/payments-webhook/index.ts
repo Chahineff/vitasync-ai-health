@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { type StripeEnv, verifyWebhook } from "../_shared/stripe.ts";
+import { sendEmail } from "../_shared/emails/sender.ts";
 
 let _supabase: ReturnType<typeof createClient> | null = null;
 function getSupabase() {
@@ -47,6 +48,27 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
     },
     { onConflict: "stripe_subscription_id" },
   );
+
+  // Fire subscription_confirmed email (best-effort).
+  try {
+    const { data: userRes } = await getSupabase().auth.admin.getUserById(userId);
+    const email = userRes?.user?.email;
+    if (email) {
+      const amountCents = item?.price?.unit_amount ?? 0;
+      const currency = (item?.price?.currency ?? "usd").toUpperCase();
+      const planName = item?.price?.nickname || subscription.metadata?.planName || "VitaSync";
+      await sendEmail({
+        template: "subscription_confirmed",
+        to: email,
+        data: {
+          planName,
+          amount: `${currency} ${(amountCents / 100).toFixed(2)}`,
+          nextBillingDate: periodEnd ? new Date(periodEnd * 1000).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "TBD",
+          shippingAddress: subscription.metadata?.shippingAddress,
+        },
+      });
+    }
+  } catch (e) { console.error("subscription_confirmed email failed:", e); }
 }
 
 async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
@@ -77,6 +99,18 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
     .update({ status: "canceled", updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", subscription.id)
     .eq("environment", env);
+
+  try {
+    const userId = subscription.metadata?.userId;
+    if (!userId) return;
+    const { data: userRes } = await getSupabase().auth.admin.getUserById(userId);
+    const email = userRes?.user?.email;
+    if (!email) return;
+    const endTs = subscription.current_period_end ?? subscription.items?.data?.[0]?.current_period_end;
+    const endDate = endTs ? new Date(endTs * 1000).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "the end of your billing period";
+    const firstName = userRes?.user?.user_metadata?.first_name || null;
+    await sendEmail({ template: "subscription_cancelled", to: email, data: { firstName, endDate } });
+  } catch (e) { console.error("subscription_cancelled email failed:", e); }
 }
 
 async function handleWebhook(req: Request, env: StripeEnv) {

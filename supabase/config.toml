@@ -44,3 +44,15 @@ verify_jwt = false
 
 [functions.process-email-queue]
 verify_jwt = true
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.auth-email-hook]
+verify_jwt = false
+
+[functions.supliful-webhook]
+verify_jwt = false
+
+[functions.email-cron]
+verify_jwt = false

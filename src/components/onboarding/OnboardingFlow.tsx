@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -382,6 +382,8 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
   const [addedToCart, setAddedToCart] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
   const addItem = useCartStore(state => state.addItem);
+  // Idempotency guard: ensure stack_ready email is sent at most once per onboarding session.
+  const stackReadyEmailSentRef = useRef(false);
 
   const goals = (answers.health_goals || []) as string[];
   const sports = (answers.selected_sports || []) as { label: string; emoji: string; frequency: number }[];
@@ -417,6 +419,18 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
             const { data: userData } = await supabase.auth.getUser();
             const user = userData?.user;
             if (!user?.email || !recos.length) return;
+            // In-memory guard against double-invocation within the same mount (e.g. React StrictMode).
+            if (stackReadyEmailSentRef.current) return;
+            // Cross-mount guard within the same browser session, scoped per user.
+            const sessionKey = `stack_ready_email_sent:${user.id}`;
+            try {
+              if (sessionStorage.getItem(sessionKey)) {
+                stackReadyEmailSentRef.current = true;
+                return;
+              }
+            } catch { /* sessionStorage may be unavailable */ }
+            stackReadyEmailSentRef.current = true;
+            try { sessionStorage.setItem(sessionKey, "1"); } catch { /* ignore */ }
             const firstName =
               (user.user_metadata?.first_name as string | undefined) ??
               (user.user_metadata?.firstName as string | undefined) ??
@@ -425,14 +439,21 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
               product: r.product?.title || r.handle,
               benefit: r.reason || "",
             }));
-            await supabase.functions.invoke("send-email", {
+            const { error: sendErr } = await supabase.functions.invoke("send-email", {
               body: {
                 template: "stack_ready",
                 to: user.email,
                 data: { firstName, items },
               },
             });
+            if (sendErr) {
+              // Roll back guards so a later retry can succeed.
+              stackReadyEmailSentRef.current = false;
+              try { sessionStorage.removeItem(sessionKey); } catch { /* ignore */ }
+              console.warn("stack_ready email failed", sendErr);
+            }
           } catch (e) {
+            stackReadyEmailSentRef.current = false;
             console.warn("stack_ready email failed", e);
           }
         })();

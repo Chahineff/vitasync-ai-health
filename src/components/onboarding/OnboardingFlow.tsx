@@ -410,6 +410,32 @@ function CoachIntroScreen({ answers, onContinue }: { answers: Record<string, any
         recos.forEach((_: any, i: number) => {
           setTimeout(() => setTypedLines(i + 1), 400 + i * 500);
         });
+
+        // Fire-and-forget: send "Stack Ready" email (non-blocking)
+        (async () => {
+          try {
+            const { data: userData } = await supabase.auth.getUser();
+            const user = userData?.user;
+            if (!user?.email || !recos.length) return;
+            const firstName =
+              (user.user_metadata?.first_name as string | undefined) ??
+              (user.user_metadata?.firstName as string | undefined) ??
+              null;
+            const items = recos.slice(0, 5).map((r: any) => ({
+              product: r.product?.title || r.handle,
+              benefit: r.reason || "",
+            }));
+            await supabase.functions.invoke("send-email", {
+              body: {
+                template: "stack_ready",
+                to: user.email,
+                data: { firstName, items },
+              },
+            });
+          } catch (e) {
+            console.warn("stack_ready email failed", e);
+          }
+        })();
       } catch (err) {
         console.error("Onboarding recommendations error:", err);
         setError(true);

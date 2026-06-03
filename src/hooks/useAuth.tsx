@@ -124,6 +124,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", data.user.id);
     }
 
+    // Fire welcome email (non-blocking — never fail signup if email fails)
+    try {
+      supabase.functions.invoke("send-email", {
+        body: {
+          template: "welcome",
+          to: email,
+          data: { firstName: firstName ?? null, email },
+        },
+      }).catch((e) => console.warn("welcome email failed", e));
+    } catch (e) {
+      console.warn("welcome email invoke error", e);
+    }
+
     return { error: null };
   };
 
